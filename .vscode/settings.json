@@ -1,5 +1,9 @@
 {
     "conventionalCommits.scopes": [
-        "workspace"
-    ]
+        "workspace",
+        "core"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+      },
 }

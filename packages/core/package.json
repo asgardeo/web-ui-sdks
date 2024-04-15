@@ -1,0 +1,44 @@
+{
+  "name": "@asgardeo/js-ui-core",
+  "version": "0.1.0",
+  "description": "Framework agnostic JS UI Core for Asgardeo or Identity Server",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "umd": "dist/umd/index.js",
+  "types": "dist/index.d.ts",
+  "author": "WSO2",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/movinsilva/web-ui-sdks/tree/main/packages/core#readme",
+  "bugs": {
+    "url": "https://github.com/movinsilva/web-ui-sdks/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/movinsilva/web-ui-sdks",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "asgardeo",
+    "identity",
+    "ui",
+    "core"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f",
+    "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f",
+    "eslint": "~8.57.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
