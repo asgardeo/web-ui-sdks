@@ -19,6 +19,9 @@
 import {AsgardeoAuthClient, Store, CryptoUtils} from '@asgardeo/auth-js';
 import {UIAuthClient, UIAuthConfig} from './models/auth-config';
 
+/**
+ * The `AuthClient` class is a singleton class that provides an instance of the `UIAuthClient`.
+ */
 export class AuthClient {
   private static instance: UIAuthClient;
 
@@ -30,6 +33,14 @@ export class AuthClient {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
+  /**
+   * Returns the singleton instance of `UIAuthClient`. If the instance does not exist, it is created.
+   *
+   * @param {UIAuthConfig} authClientConfig - The configuration for the `UIAuthClient`.
+   * @param {Store} store - The store for the `UIAuthClient`.
+   * @param {CryptoUtils} cryptoUtils - The crypto utilities for the `UIAuthClient`.
+   * @returns {UIAuthClient} The singleton instance of `UIAuthClient`.
+   */
   static getInstance(authClientConfig?: UIAuthConfig, store?: Store, cryptoUtils?: CryptoUtils): UIAuthClient {
     if (!AuthClient.instance) {
       AuthClient.instance = new AsgardeoAuthClient();
