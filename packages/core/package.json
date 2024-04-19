@@ -44,6 +44,6 @@
   },
   "dependencies": {
     "@asgardeo/auth-js": "^5.0.1",
-    "@asgardeo/js-ui-core": "link:"
+    "csstype": "^3.1.3"
   }
 }
