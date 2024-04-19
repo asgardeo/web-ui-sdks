@@ -29,6 +29,6 @@ interface AuthClientConfigExtension {
   type?: string;
 }
 
-export type UIAuthConfig = AuthClientConfig<AuthClientConfigExtension>;
+export type UIAuthConfig<T = {}> = AuthClientConfig<AuthClientConfigExtension & T>;
 
-export type UIAuthClient = AsgardeoAuthClient<AuthClientConfigExtension>;
+export type UIAuthClient<T = {}> = AsgardeoAuthClient<AuthClientConfigExtension & T>;
