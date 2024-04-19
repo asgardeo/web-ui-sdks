@@ -541,44 +541,44 @@ export enum BrandingPreferenceTypes {
   /**
    * Branding Preference for the Organization.
    */
-  ORG = 'ORG',
+  Org = 'ORG',
 }
 
 /**
  * Enum for the font config strategies.
  */
 export enum FontConfigurationStrategies {
-  BROWSER_DEFAULT = 'BROWSER_DEFAULT',
-  CDN = 'CDN',
+  BrowserDefault = 'BROWSER_DEFAULT',
+  Cdn = 'CDN',
 }
 
 /**
  * Enum for preview screen types.
  */
 export enum PreviewScreenType {
-  EMAIL_TEMPLATE = 'email-template',
-  LOGIN = 'login',
-  MY_ACCOUNT = 'myaccount',
+  EmailTemplate = 'email-template',
+  Login = 'login',
+  MyAccount = 'myaccount',
 }
 
 /**
  * Enum for set of predefined layouts.
  */
 export enum PredefinedLayouts {
-  CENTERED = 'centered',
-  CUSTOM = 'custom',
-  LEFT_ALIGNED = 'left-aligned',
-  LEFT_IMAGE = 'left-image',
-  RIGHT_ALIGNED = 'right-aligned',
-  RIGHT_IMAGE = 'right-image',
+  Centered = 'centered',
+  Custom = 'custom',
+  LeftAligned = 'left-aligned',
+  LeftImage = 'left-image',
+  RightAligned = 'right-aligned',
+  RightImage = 'right-image',
 }
 
 /**
  * Enum for set of predefined themes.
  */
 export enum PredefinedThemes {
-  DARK = 'DARK',
-  LIGHT = 'LIGHT',
+  Dark = 'DARK',
+  Light = 'LIGHT',
 }
 
 /**
