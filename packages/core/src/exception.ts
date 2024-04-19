@@ -16,16 +16,39 @@
  * under the License.
  */
 
+/**
+ * `AsgardeoUIException` is a custom error class that extends the built-in `Error` class.
+ *
+ * @extends {Error}
+ */
 export default class AsgardeoUIException extends Error {
+  /**
+   * The name of the error, which is set to the name of the constructor.
+   * @override
+   */
   public override name: string;
 
+  /**
+   * The stack trace of the error.
+   * @override
+   */
   public override stack: string;
 
+  /**
+   * The code of the error.
+   */
   public code: string;
 
+  /**
+   * Constructs a new `AsgardeoUIException`.
+   *
+   * @param {string} code - The error code.
+   * @param {string} message - The error message.
+   * @param {any} [stack] - The error stack trace.
+   */
   constructor(code: string, message: string, stack?: any) {
     super(message);
-    this.code = `ASG-${code}`;
+    this.code = code;
     this.name = this.constructor.name;
     this.stack = stack;
   }
