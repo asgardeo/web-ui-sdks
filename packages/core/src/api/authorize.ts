@@ -16,17 +16,21 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient} from '@asgardeo/auth-js';
+import {UIAuthClient} from 'src/models/auth-config';
 import {AuthClient} from '../auth-client';
 import AsgardeoUIException from '../exception';
 import {AuthApiResponse} from '../models/auth-api-response';
 
+/**
+ * This function is used to authorize the user.
+ * @returns {Promise<AuthApiResponse>} A promise that resolves with the authorization response.
+ */
 const authorize = async (): Promise<AuthApiResponse> => {
   let response: Response;
   let requestOptions: RequestInit;
   let authzURL: string;
   try {
-    const authInstace: AsgardeoAuthClient<any> = AuthClient.getInstance();
+    const authInstace: UIAuthClient = AuthClient.getInstance();
     const params: Map<string, string> = await authInstace.getAuthorizationURLParams();
 
     const formBody: URLSearchParams = new URLSearchParams();

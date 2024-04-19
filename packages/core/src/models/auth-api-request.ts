@@ -16,16 +16,30 @@
  * under the License.
  */
 
+/**
+ * Interface for the Authn API request body.
+ */
 export interface AuthApiRequestBody {
-  /* The authentication flow id. */
+  /**
+   * The authentication flow id.
+   */
   flowId: string;
-  /* Contains selected authenticator's required details. */
+  /**
+   * Contains selected authenticator's required details.
+   */
   selectedAuthenticator: SelectedAuthenticator;
 }
 
+/**
+ * Interface for the selected authenticator.
+ */
 export interface SelectedAuthenticator {
-  /* The authentication authenticator id. */
+  /**
+   * The authentication authenticator id.
+   */
   authenticatorId: string;
-  /* Required parameters for the selected authenticator. */
+  /**
+   *Required parameters for the selected authenticator.
+   */
   params?: Record<string, string>;
 }

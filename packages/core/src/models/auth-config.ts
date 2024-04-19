@@ -18,17 +18,45 @@
 
 import {AsgardeoAuthClient, AuthClientConfig} from '@asgardeo/auth-js';
 
+/**
+ * Interface for the configuration extension from the AuthClientConfig of '@asgardeo/auth-js'.
+ */
 interface AuthClientConfigExtension {
-  /* If enabled, the branding from the console will be used. Default value is true */
+  /**
+   * If enabled, the branding from the console will be used. Default value is true.
+   */
   enableConsoleBranding?: boolean;
-  /* If enabled, the text branding from the console will be used for the text. Default value is true */
+  /**
+   * If enabled, the text branding from the console will be used for the text. Default value is true.
+   */
   enableConsoleTextBranding?: boolean;
   /* Language code of the locale. */
   locale?: string;
+  /**
+   * Tenant/Application name to filter the retrieval of customizations.
+   */
   name?: string;
-  type?: string;
+  /**
+   * Type to filter the retrieval of customizations.
+   */
+  type?: OrgType;
 }
 
+/**
+ * Enum for the organization type.
+ */
+export enum OrgType {
+  App = 'APP',
+  Custom = 'CUSTOM',
+  Org = 'ORG',
+}
+
+/**
+ * Type for the UI Auth configuration.
+ */
 export type UIAuthConfig<T = {}> = AuthClientConfig<AuthClientConfigExtension & T>;
 
+/**
+ * Type for the UI Auth client.
+ */
 export type UIAuthClient<T = {}> = AsgardeoAuthClient<AuthClientConfigExtension & T>;

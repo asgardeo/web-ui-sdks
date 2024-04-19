@@ -21,28 +21,18 @@ import {AuthApiRequestBody} from 'src/models/auth-api-request';
 import AsgardeoUIException from '../exception';
 import {AuthApiResponse} from '../models/auth-api-response';
 
-interface Authenticate {
-  authenticatorID: string;
-  authenticatorParametres?: Record<string, string>;
-  flowID: string;
-}
-
-const authenticate = async (props: Authenticate): Promise<AuthApiResponse> => {
-  const {flowID, authenticatorID, authenticatorParametres} = props;
-
+/**
+ * Sends an authentication request to the authentication API.
+ *
+ * @param {AuthApiRequestBody} props - The authentication request body.
+ * @returns {Promise<AuthApiResponse>} A promise that resolves with the authentication API response.
+ */
+const authenticate = async (props: AuthApiRequestBody): Promise<AuthApiResponse> => {
   let authnRequest: Request;
   let response: Response;
 
   try {
-    const authBody: AuthApiRequestBody = {
-      flowId: flowID,
-      selectedAuthenticator: {
-        authenticatorId: authenticatorID,
-        ...(authenticatorParametres && {params: authenticatorParametres}),
-      },
-    };
-
-    const formBody: string = JSON.stringify(authBody);
+    const formBody: string = JSON.stringify(props);
 
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
