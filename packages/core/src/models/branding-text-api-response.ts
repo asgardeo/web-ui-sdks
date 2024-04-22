@@ -17,6 +17,7 @@
  */
 
 import {BrandingPreferenceTypes} from './branding-api-response';
+import {ScreenType} from './screen-type';
 
 /**
  * Branding text response interface.
@@ -37,7 +38,7 @@ export interface BrandingTextAPIResponse {
   /**
    * Screen to filter the retrieval of customizations.
    */
-  screen: string;
+  screen: ScreenType;
   /**
    * Type to filter the retrieval of customizations.
    */
