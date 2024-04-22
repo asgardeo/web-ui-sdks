@@ -11,13 +11,13 @@
   "files": [
     "dist"
   ],
-  "homepage": "https://github.com/movinsilva/web-ui-sdks/tree/main/packages/core#readme",
+  "homepage": "https://github.com/asgardeo/web-ui-sdks/tree/main/packages/core#readme",
   "bugs": {
-    "url": "https://github.com/movinsilva/web-ui-sdks/issues"
+    "url": "https://github.com/asgardeo/web-ui-sdks/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/movinsilva/web-ui-sdks",
+    "url": "https://github.com/asgardeo/web-ui-sdks/web-ui-sdks",
     "directory": "packages/core"
   },
   "keywords": [
