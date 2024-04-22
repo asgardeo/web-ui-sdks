@@ -18,13 +18,18 @@
 
 import {AuthClient} from '../auth-client';
 import AsgardeoUIException from '../exception';
-import {BrandingPreferenceAPIResponseInterface} from '../models/branding-api-response';
+import {BrandingPreferenceAPIResponseInterface, BrandingPreferenceTypes} from '../models/branding-api-response';
 
 const branding = async (): Promise<BrandingPreferenceAPIResponseInterface> => {
-  const {baseUrl} = await AuthClient.getInstance().getDataLayer().getConfigData();
+  const {
+    baseUrl,
+    type = BrandingPreferenceTypes.Org,
+    name = 'WSO2',
+  } = await AuthClient.getInstance().getDataLayer().getConfigData();
   let response: Response;
+  const brandingUrl: string = `${baseUrl}/api/server/v1/branding-preference?type=${type}&name=${name}`;
   try {
-    response = await fetch(`${baseUrl}/api/server/v1/branding-preference`);
+    response = await fetch(brandingUrl);
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-BR-B-NE', 'Error while fetching branding data.', error.stack);
   }
