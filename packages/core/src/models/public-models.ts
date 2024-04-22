@@ -16,8 +16,10 @@
  * under the License.
  */
 
-export * from './api/public-api';
-export {default as getBranding} from './branding/branding';
-export * from './i18n/public';
-export * from './auth-client';
-export * from './models/public-models';
+export * from './auth-api-request';
+export * from './auth-api-response';
+export * from './auth-config';
+export * from './branding-api-response';
+export * from './customization';
+export * from './me-api-response';
+export * from './screen-type';
