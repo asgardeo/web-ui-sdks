@@ -28,3 +28,8 @@ export interface TextPreference {
   login: Login;
   totp: TOTP;
 }
+
+/**
+ * Interface for the return type of the getLocalization function.
+ */
+export type TextObject = Login | TOTP | Common;
