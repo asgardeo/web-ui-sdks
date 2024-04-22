@@ -1,0 +1,13 @@
+{
+  "name": "web-ui-sdks",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "scripts": {},
+  "private": true,
+  "devDependencies": {
+    "nx": "18.2.4"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
