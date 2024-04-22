@@ -16,28 +16,15 @@
  * under the License.
  */
 
-import {TextPreference} from 'src/i18n/public';
-import {BrandingPreferenceInterface, BrandingPreferenceTypes} from './branding-api-response';
-import {RecursivePartial} from './common';
+import {Common} from './common/model';
+import {Login} from './login/model';
+import {TOTP} from './totp/model';
 
-export type BrandingPreferenceText = Record<string, TextPreference>;
-
-interface BrandingPreferenceWithText extends BrandingPreferenceInterface {
-  text: BrandingPreferenceText;
-}
-
-export interface Customization {
-  locale?: string;
-  /**
-   * Requested resource name.
-   */
-  name?: string;
-  /**
-   * Preference object.
-   */
-  preference?: RecursivePartial<BrandingPreferenceWithText>;
-  /**
-   * Preference type.
-   */
-  type?: RecursivePartial<BrandingPreferenceTypes>;
+/**
+ * Interface for the text preference.
+ */
+export interface TextPreference {
+  common: Common;
+  login: Login;
+  totp: TOTP;
 }

@@ -16,28 +16,13 @@
  * under the License.
  */
 
-import {TextPreference} from 'src/i18n/public';
-import {BrandingPreferenceInterface, BrandingPreferenceTypes} from './branding-api-response';
-import {RecursivePartial} from './common';
+import {TOTP} from './model';
 
-export type BrandingPreferenceText = Record<string, TextPreference>;
-
-interface BrandingPreferenceWithText extends BrandingPreferenceInterface {
-  text: BrandingPreferenceText;
-}
-
-export interface Customization {
-  locale?: string;
-  /**
-   * Requested resource name.
-   */
-  name?: string;
-  /**
-   * Preference object.
-   */
-  preference?: RecursivePartial<BrandingPreferenceWithText>;
-  /**
-   * Preference type.
-   */
-  type?: RecursivePartial<BrandingPreferenceTypes>;
-}
+export const totp: TOTP = {
+  continue: 'Continuer',
+  'enter.verification.code.got.by.device':
+    "Entrez le code de vérification généré par votre application d'authentification.",
+  'totp.enroll.message1': "Vous n'avez pas encore configuré votre application d'authentification TOTP?",
+  'totp.enroll.message2': 'Contacter le support',
+  'totp.heading': 'Vérifiez votre identité',
+};

@@ -16,28 +16,13 @@
  * under the License.
  */
 
-import {TextPreference} from 'src/i18n/public';
-import {BrandingPreferenceInterface, BrandingPreferenceTypes} from './branding-api-response';
-import {RecursivePartial} from './common';
-
-export type BrandingPreferenceText = Record<string, TextPreference>;
-
-interface BrandingPreferenceWithText extends BrandingPreferenceInterface {
-  text: BrandingPreferenceText;
-}
-
-export interface Customization {
-  locale?: string;
-  /**
-   * Requested resource name.
-   */
-  name?: string;
-  /**
-   * Preference object.
-   */
-  preference?: RecursivePartial<BrandingPreferenceWithText>;
-  /**
-   * Preference type.
-   */
-  type?: RecursivePartial<BrandingPreferenceTypes>;
+/**
+ * Interface for the TOTP text.
+ */
+export interface TOTP {
+  continue: string;
+  'enter.verification.code.got.by.device': string;
+  'totp.enroll.message1': string;
+  'totp.enroll.message2': string;
+  'totp.heading': string;
 }

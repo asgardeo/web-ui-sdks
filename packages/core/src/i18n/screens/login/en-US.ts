@@ -16,28 +16,14 @@
  * under the License.
  */
 
-import {TextPreference} from 'src/i18n/public';
-import {BrandingPreferenceInterface, BrandingPreferenceTypes} from './branding-api-response';
-import {RecursivePartial} from './common';
+import {Login} from './model';
 
-export type BrandingPreferenceText = Record<string, TextPreference>;
-
-interface BrandingPreferenceWithText extends BrandingPreferenceInterface {
-  text: BrandingPreferenceText;
-}
-
-export interface Customization {
-  locale?: string;
-  /**
-   * Requested resource name.
-   */
-  name?: string;
-  /**
-   * Preference object.
-   */
-  preference?: RecursivePartial<BrandingPreferenceWithText>;
-  /**
-   * Preference type.
-   */
-  type?: RecursivePartial<BrandingPreferenceTypes>;
-}
+export const login: Login = {
+  'enter.your.password': 'Enter your password',
+  'enter.your.username': 'Enter your username',
+  'login.button': 'Sign In',
+  'login.heading': 'Sign In',
+  password: 'Password',
+  'remember.me': 'Remember me on this computer',
+  username: 'Username',
+};
