@@ -538,6 +538,8 @@ export interface BrandingPreferenceConfigInterface {
  * Enum for Branding Preference Types.
  */
 export enum BrandingPreferenceTypes {
+  App = 'APP',
+  Custom = 'CUSTOM',
   /**
    * Branding Preference for the Organization.
    */
