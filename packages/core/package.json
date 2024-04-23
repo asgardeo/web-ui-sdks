@@ -27,6 +27,7 @@
     "core"
   ],
   "scripts": {
+    "build": "rollup -c",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
