@@ -16,14 +16,14 @@
  * under the License.
  */
 
+import DARK_THEME from './dark-theme';
+import LIGHT_THEME from './light-theme';
 import {
   BrandingPreferenceAPIResponseInterface,
   PredefinedThemes,
   PredefinedLayouts,
   BrandingPreferenceTypes,
-} from 'src/models/branding-api-response';
-import DARK_THEME from './dark-theme';
-import LIGHT_THEME from './light-theme';
+} from '../../models/branding-api-response';
 
 const DEFAULT_BRANDING: BrandingPreferenceAPIResponseInterface = {
   locale: 'en-US',

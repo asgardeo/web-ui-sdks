@@ -16,10 +16,10 @@
  * under the License.
  */
 
-import {UIAuthClient} from 'src/models/auth-config';
 import {AuthClient} from '../auth-client';
 import AsgardeoUIException from '../exception';
 import {AuthApiResponse} from '../models/auth-api-response';
+import {UIAuthClient} from '../models/auth-config';
 
 /**
  * This function is used to authorize the user.
