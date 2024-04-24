@@ -218,7 +218,6 @@ export interface Params {
    * The i18n key for the parameter.
    */
   i18nKey: string;
-
   /**
    * Indicates the recommended display order of the parameter.
    */

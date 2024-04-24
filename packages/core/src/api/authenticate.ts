@@ -22,7 +22,7 @@ import AsgardeoUIException from '../exception';
 import {AuthApiResponse} from '../models/auth-api-response';
 
 /**
- * Sends an authentication request to the authentication API.
+ * Send an authentication request to the authentication API.
  *
  * @param {AuthApiRequestBody} props - The authentication request body.
  * @returns {Promise<AuthApiResponse>} A promise that resolves with the authentication API response.
