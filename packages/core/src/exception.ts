@@ -44,9 +44,9 @@ export default class AsgardeoUIException extends Error {
    *
    * @param {string} code - The error code.
    * @param {string} message - The error message.
-   * @param {any} [stack] - The error stack trace.
+   * @param {string} [stack] - The error stack trace.
    */
-  constructor(code: string, message: string, stack?: any) {
+  constructor(code: string, message: string, stack?: string) {
     super(message);
     this.code = code;
     this.name = this.constructor.name;
