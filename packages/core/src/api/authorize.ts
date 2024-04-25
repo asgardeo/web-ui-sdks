@@ -29,6 +29,7 @@ const authorize = async (): Promise<AuthApiResponse> => {
   let response: Response;
   let requestOptions: RequestInit;
   let authzURL: string;
+
   try {
     const authInstace: UIAuthClient = AuthClient.getInstance();
     const params: Map<string, string> = await authInstace.getAuthorizationURLParams();
