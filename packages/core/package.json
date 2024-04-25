@@ -32,13 +32,18 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
-    "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f",
-    "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f",
+    "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?fa0b844715320a3953d6d055997c0770f8695082",
+    "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?fa0b844715320a3953d6d055997c0770f8695082",
     "eslint": "~8.57.0",
     "prettier": "^3.2.5",
+    "tslib": "^2.6.2",
     "typescript": "^5.4.5"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@asgardeo/auth-js": "^5.0.1",
+    "@asgardeo/js-ui-core": "link:"
   }
 }

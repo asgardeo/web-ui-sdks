@@ -16,12 +16,30 @@
  * under the License.
  */
 
-const path = require('path');
+/**
+ * Interface for the Authn API request body.
+ */
+export interface AuthApiRequestBody {
+  /**
+   * The authentication flow id.
+   */
+  flowId: string;
+  /**
+   * Contains selected authenticator's required details.
+   */
+  selectedAuthenticator: SelectedAuthenticator;
+}
 
-module.exports = {
-  extends: ['plugin:@wso2/typescript', 'plugin:@wso2/strict', 'plugin:@wso2/internal', 'plugin:@wso2/prettier'],
-  parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.eslint.json')],
-  },
-  plugins: ['@wso2'],
-};
+/**
+ * Interface for the selected authenticator.
+ */
+export interface SelectedAuthenticator {
+  /**
+   * The authentication authenticator id.
+   */
+  authenticatorId: string;
+  /**
+   *Required parameters for the selected authenticator.
+   */
+  params?: Record<string, string>;
+}

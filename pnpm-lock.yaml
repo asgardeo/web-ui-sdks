@@ -13,22 +13,32 @@ importers:
         version: 18.2.4
 
   packages/core:
+    dependencies:
+      '@asgardeo/auth-js':
+        specifier: ^5.0.1
+        version: 5.0.1
+      '@asgardeo/js-ui-core':
+        specifier: 'link:'
+        version: 'link:'
     devDependencies:
       '@types/node':
         specifier: ^20.12.7
         version: 20.12.7
       '@wso2/eslint-plugin':
-        specifier: https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f
-        version: '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f(eslint@8.57.0)(typescript@5.4.5)'
+        specifier: https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?fa0b844715320a3953d6d055997c0770f8695082
+        version: '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?fa0b844715320a3953d6d055997c0770f8695082(eslint@8.57.0)(typescript@5.4.5)'
       '@wso2/prettier-config':
-        specifier: https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f
-        version: '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f(prettier@3.2.5)(typescript@5.4.5)'
+        specifier: https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?fa0b844715320a3953d6d055997c0770f8695082
+        version: '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?fa0b844715320a3953d6d055997c0770f8695082(prettier@3.2.5)(typescript@5.4.5)'
       eslint:
         specifier: ~8.57.0
         version: 8.57.0
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.2
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -47,6 +57,10 @@ packages:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
     dev: true
+
+  /@asgardeo/auth-js@5.0.1:
+    resolution: {integrity: sha512-XTb/+jPPBAnNGlZYeHVz2Ut5hI8DeJiMmX5YcAijiAvtW4Ove82lT4aLXm+FL8XmCYc+61hFNG1QLf8q2nMfSQ==}
+    dev: false
 
   /@babel/code-frame@7.24.2:
     resolution: {integrity: sha512-y5+tLQyV8pg3fsiln67BVLD1P13Eg4lh5RW9mF0zUuvLrv9uIQ4MCL+CRT+FTsBlBjcIan6PGsLcBN0m3ClUyQ==}
@@ -938,8 +952,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001610
-      electron-to-chromium: 1.4.736
+      caniuse-lite: 1.0.30001612
+      electron-to-chromium: 1.4.747
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.23.0)
     dev: true
@@ -967,8 +981,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /caniuse-lite@1.0.30001610:
-    resolution: {integrity: sha512-QFutAY4NgaelojVMjY63o6XlZyORPaLfyMnsl3HgnWdJUcX6K0oaJymHjH8PT5Gk7sTm8rvC/c5COUQKXqmOMA==}
+  /caniuse-lite@1.0.30001612:
+    resolution: {integrity: sha512-lFgnZ07UhaCcsSZgWW0K5j4e69dK1u/ltrL9lTUiFOwNHs12S3UMIEYgBV0Z6C6hRDev7iRnMzzYmKabYdXF9g==}
     dev: true
 
   /chalk@2.4.2:
@@ -1107,7 +1121,7 @@ packages:
       supports-color:
         optional: true
     dependencies:
-      ms: 2.1.3
+      ms: 2.1.2
     dev: true
 
   /debug@4.3.4:
@@ -1205,8 +1219,8 @@ packages:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
     dev: true
 
-  /electron-to-chromium@1.4.736:
-    resolution: {integrity: sha512-Rer6wc3ynLelKNM4lOCg7/zPQj8tPOCB2hzD32PX9wd3hgRRi9MxEbmkFCokzcEhRVMiOVLjnL9ig9cefJ+6+Q==}
+  /electron-to-chromium@1.4.747:
+    resolution: {integrity: sha512-+FnSWZIAvFHbsNVmUxhEqWiaOiPMcfum1GQzlWCg/wLigVtshOsjXHyEFfmt6cFK6+HkS3QOJBv6/3OPumbBfw==}
     dev: true
 
   /emoji-regex@8.0.0:
@@ -2567,10 +2581,6 @@ packages:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
     dev: true
 
-  /ms@2.1.3:
-    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
-    dev: true
-
   /natural-compare-lite@1.4.0:
     resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==}
     dev: true
@@ -3486,9 +3496,9 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f(eslint@8.57.0)(typescript@5.4.5)':
-    resolution: {tarball: https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f}
-    id: '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f'
+  '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?fa0b844715320a3953d6d055997c0770f8695082(eslint@8.57.0)(typescript@5.4.5)':
+    resolution: {tarball: https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?fa0b844715320a3953d6d055997c0770f8695082}
+    id: '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?fa0b844715320a3953d6d055997c0770f8695082'
     name: '@wso2/eslint-plugin'
     version: 0.1.0
     engines: {node: ^14.17.0 || ^16.0.0 || >= 18.0.0}
@@ -3531,9 +3541,9 @@ packages:
       - supports-color
     dev: true
 
-  '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f(prettier@3.2.5)(typescript@5.4.5)':
-    resolution: {tarball: https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f}
-    id: '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f'
+  '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?fa0b844715320a3953d6d055997c0770f8695082(prettier@3.2.5)(typescript@5.4.5)':
+    resolution: {tarball: https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?fa0b844715320a3953d6d055997c0770f8695082}
+    id: '@gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?fa0b844715320a3953d6d055997c0770f8695082'
     name: '@wso2/prettier-config'
     version: 0.1.0
     engines: {node: '>=14.0.0'}
