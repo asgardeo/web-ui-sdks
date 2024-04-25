@@ -1,20 +1,18 @@
-### Purpose
-<!-- Describe the problem, feature, improvement or the change introduces by the PR briefly. Add screenshots/GIFs if UI/UX changes are introduced. -->
+**Description:**
+<!-- Give a brief description of the issue -->
 
-### Related Issues
-- 
+**Suggested Labels:**
+<!-- Optional comma separated list of suggested labels. Non committers can’t assign labels to issues, so this will help issue creators who are not a committer to suggest possible labels-->
 
-### Related PRs
-- 
+**Suggested Assignees:**
+<!--Optional comma separated list of suggested team members who should attend the issue. Non committers can’t assign issues to assignees, so this will help issue creators who are not a committer to suggest possible assignees-->
 
-### Checklist
-- [ ] Manual test round performed and verified.
-- [ ] UX/UI review done on the final implementation.
-- [ ] Documentation provided. (Add links if there are any)
-- [ ] Unit tests provided. (Add links if there are any)
-- [ ] Integration tests provided. (Add links if there are any)
+**Affected Product Version:**
 
-### Security checks
-- [ ] Followed secure coding standards in http://wso2.com/technical-reports/wso2-secure-engineering-guidelines?
-- [ ] Ran FindSecurityBugs plugin and verified report?
-- [ ] Confirmed that this PR doesn't commit any keys, passwords, tokens, usernames, or other secrets?
+**OS, DB, other environment details and versions:**    
+
+**Steps to reproduce:**
+
+
+**Related Issues:**
+<!-- Any related issues such as sub tasks, issues reported in other repositories (e.g component repositories), similar problems, etc. -->
