@@ -56,6 +56,7 @@ const authenticate = async (props: AuthApiRequestBody): Promise<AuthApiResponse>
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-AUTHN-A-NE', `Authentication API call Failed: ${error}`, error.stack);
   }
+
   if (response.ok) {
     return (await response.json()) as AuthApiResponse;
   }
