@@ -46,6 +46,7 @@ export class AuthClient {
       AuthClient.instance = new AsgardeoAuthClient();
       AuthClient.instance.initialize(authClientConfig, store, cryptoUtils);
     }
+
     return AuthClient.instance;
   }
 }
