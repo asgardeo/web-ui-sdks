@@ -30,7 +30,6 @@ export class AuthClient {
    * This is necessary because this is a singleton class.
    * @private
    */
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
   /**

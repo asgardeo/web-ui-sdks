@@ -24,4 +24,12 @@ module.exports = {
     project: [path.resolve(__dirname, 'tsconfig.eslint.json')],
   },
   plugins: ['@wso2'],
+  rules: {
+    '@typescript-eslint/no-empty-function': [
+      'error',
+      {
+        allow: ['constructors'],
+      },
+    ],
+  },
 };
