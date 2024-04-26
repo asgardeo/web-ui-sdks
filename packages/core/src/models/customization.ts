@@ -20,12 +20,18 @@ import {TextPreference} from 'src/i18n/public';
 import {BrandingPreferenceInterface, BrandingPreferenceTypes} from './branding-api-response';
 import {RecursivePartial} from './common';
 
+/**
+ * Interface for the text in the customization object.
+ */
 export type BrandingPreferenceText = Record<string, TextPreference>;
 
 interface BrandingPreferenceWithText extends BrandingPreferenceInterface {
   text: BrandingPreferenceText;
 }
 
+/**
+ * Interface for the customization object.
+ */
 export interface Customization {
   locale?: string;
   /**
