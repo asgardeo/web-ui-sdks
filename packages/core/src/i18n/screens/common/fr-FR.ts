@@ -19,7 +19,7 @@
 import {Common} from './model';
 
 export const common: Common = {
-  copyright: '© {{currentYear}} WSO2 LLC Test.',
+  copyright: '© {{currentYear}} WSO2 LLC.',
   'privacy.policy': 'Politique de confidentialité',
   'site.title': 'Identity Server WSO2',
   'terms.of.service': 'Conditions de service',
