@@ -30,15 +30,10 @@ import {GetLocalization, TextObject} from './screens/model';
  */
 const getLocalization = async (props: GetLocalization): Promise<TextObject> => {
   const {componentCustomization, locale, providerCustomization, screen} = props;
-  /**
-   * Default stored branding
-   */
-  const module: TextObject = await import(`./screens/${screen}/${locale}.ts`); // PRIORITY 04
 
-  /**
-   * Text from console branding
-   */
-  let textFromConsoleBranding: BrandingTextAPIResponse; // PRIORITY 03
+  const module: TextObject = await import(`./screens/${screen}/${locale}.ts`);
+
+  let textFromConsoleBranding: BrandingTextAPIResponse;
 
   if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleTextBranding ?? true) {
     textFromConsoleBranding = await brandingText(
@@ -53,9 +48,21 @@ const getLocalization = async (props: GetLocalization): Promise<TextObject> => {
    * Merge text objects according to the priority
    */
   const mergedText: TextObject = await merge(
+    /**
+     * PRIORITY 04: Default stored branding text
+     */
     module[screen] ?? {},
+    /**
+     * PRIORITY 03: Text from console branding
+     */
     textFromConsoleBranding?.preference?.text ?? {},
+    /**
+     * PRIORITY 02: Text from provider customization
+     */
     providerCustomization?.preference?.text?.[locale]?.[screen] ?? {},
+    /**
+     * PRIORITY 01: Text from component customization
+     */
     componentCustomization?.preference?.text?.[locale]?.[screen] ?? {},
   );
 
