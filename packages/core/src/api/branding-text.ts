@@ -61,9 +61,11 @@ export const brandingText = async (
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-BT-BT-NE', 'Branding Text API call failed', error.stack);
   }
+
   if (response.ok) {
     return (await response.json()) as BrandingTextAPIResponse;
   }
+
   throw new AsgardeoUIException(
     'JS_UI_CORE-BT-BT-HE',
     'Failed to receive a successful response from the branding text endpoint',

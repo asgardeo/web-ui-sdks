@@ -28,14 +28,17 @@ const branding = async (): Promise<BrandingPreferenceAPIResponseInterface> => {
   } = await AuthClient.getInstance().getDataLayer().getConfigData();
   let response: Response;
   const brandingUrl: string = `${baseUrl}/api/server/v1/branding-preference?type=${type}&name=${name}`;
+
   try {
     response = await fetch(brandingUrl);
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-BR-B-NE', 'Error while fetching branding data.', error.stack);
   }
+
   if (response.ok) {
     return (await response.json()) as Promise<BrandingPreferenceAPIResponseInterface>;
   }
+
   throw new AsgardeoUIException('JS_UI_CORE-BR-B-HE', 'Failed to receive a successful response from the branding API.');
 };
 

@@ -38,6 +38,7 @@ export const getBranding = async (props: BrandingProps): Promise<Customization> 
    */
   if (!merged) {
     let brandingFromConsole: BrandingPreferenceAPIResponseInterface;
+
     if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleBranding ?? true) {
       brandingFromConsole = await branding();
     }
