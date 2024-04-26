@@ -21,7 +21,7 @@ import AsgardeoUIException from 'src/exception';
 import {BrandingTextAPIResponse} from 'src/models/branding-text-api-response';
 
 /**
- * Fetches the branding text from the server.
+ * Fetch the branding text from the server.
  *
  * @param locale - The locale of the branding text.
  * @param name - The name of the branding text.

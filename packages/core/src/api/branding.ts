@@ -20,6 +20,12 @@ import {AuthClient} from '../auth-client';
 import AsgardeoUIException from '../exception';
 import {BrandingPreferenceAPIResponseInterface, BrandingPreferenceTypes} from '../models/branding-api-response';
 
+/**
+ * Fetch branding preferences from the server.
+ *
+ * @returns {Promise<BrandingPreferenceAPIResponseInterface>} A promise that resolves with the branding preferences.
+ * @throws {AsgardeoUIException} If an error occurs while fetching the branding preferences or when the response is unsuccessful.
+ */
 const branding = async (): Promise<BrandingPreferenceAPIResponseInterface> => {
   const {
     baseUrl,

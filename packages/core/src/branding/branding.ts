@@ -23,11 +23,26 @@ import {BrandingPreferenceAPIResponseInterface} from 'src/models/branding-api-re
 import {Customization} from 'src/models/customization';
 import DEFAULT_BRANDING from './default-branding/default-branding';
 
+/**
+ * Interface for the getBranding function props.
+ */
 interface BrandingProps {
+  /**
+   * Customization prop passed to the component/provider.
+   */
   customization?: Customization;
+  /**
+   * Merged customization object.
+   */
   merged?: Customization;
 }
 
+/**
+ * Fetch and merge branding properties.
+ *
+ * @param {BrandingProps} props - Branding properties.
+ * @returns {Promise<Customization>} A promise that resolves with the merged branding properties.
+ */
 export const getBranding = async (props: BrandingProps): Promise<Customization> => {
   const {customization, merged} = props;
   let mergedBranding: Customization;

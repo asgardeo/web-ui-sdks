@@ -23,7 +23,10 @@ import {BrandingTextAPIResponse} from 'src/models/branding-text-api-response';
 import {GetLocalization, TextObject} from './screens/model';
 
 /**
- * merge text objects
+ * Fetch and merge branding properties.
+ *
+ * @param {BrandingProps} props - Branding properties.
+ * @returns {Promise<Customization>} A promise that resolves with the merged branding properties.
  */
 const getLocalization = async (props: GetLocalization): Promise<TextObject> => {
   const {componentCustomization, locale, providerCustomization, screen} = props;
