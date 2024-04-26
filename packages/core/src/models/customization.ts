@@ -41,3 +41,17 @@ export interface Customization {
    */
   type?: RecursivePartial<BrandingPreferenceTypes>;
 }
+
+/**
+ * Interface for the getBranding function props.
+ */
+export interface GetBranding {
+  /**
+   * Customization prop passed to the component/provider.
+   */
+  customization?: Customization;
+  /**
+   * Merged customization object.
+   */
+  merged?: Customization;
+}
