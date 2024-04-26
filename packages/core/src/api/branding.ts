@@ -26,8 +26,8 @@ const branding = async (): Promise<BrandingPreferenceAPIResponseInterface> => {
     type = BrandingPreferenceTypes.Org,
     name = 'WSO2',
   } = await AuthClient.getInstance().getDataLayer().getConfigData();
-  let response: Response;
   const brandingUrl: string = `${baseUrl}/api/server/v1/branding-preference?type=${type}&name=${name}`;
+  let response: Response;
 
   try {
     response = await fetch(brandingUrl);
