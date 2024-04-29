@@ -17,7 +17,7 @@
  */
 
 import merge from 'lodash.merge';
-import branding from 'src/api/branding';
+import getBrandingPreference from 'src/api/branding-preference';
 import {AuthClient} from 'src/auth-client';
 import {BrandingPreferenceAPIResponseInterface} from 'src/models/branding-api-response';
 import DEFAULT_BRANDING from './default-branding/default-branding';
@@ -41,7 +41,7 @@ export const getBranding = async (props: GetBranding): Promise<Customization> =>
     let brandingFromConsole: BrandingPreferenceAPIResponseInterface;
 
     if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleBranding ?? true) {
-      brandingFromConsole = await branding();
+      brandingFromConsole = await getBrandingPreference();
     }
 
     if (brandingFromConsole?.preference?.configs?.isBrandingEnabled) {

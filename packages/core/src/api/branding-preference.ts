@@ -26,7 +26,7 @@ import {BrandingPreferenceAPIResponseInterface, BrandingPreferenceTypes} from '.
  * @returns {Promise<BrandingPreferenceAPIResponseInterface>} A promise that resolves with the branding preferences.
  * @throws {AsgardeoUIException} If an error occurs while fetching the branding preferences or when the response is unsuccessful.
  */
-const branding = async (): Promise<BrandingPreferenceAPIResponseInterface> => {
+const getBrandingPreference = async (): Promise<BrandingPreferenceAPIResponseInterface> => {
   const {
     baseUrl,
     type = BrandingPreferenceTypes.Org,
@@ -38,14 +38,17 @@ const branding = async (): Promise<BrandingPreferenceAPIResponseInterface> => {
   try {
     response = await fetch(brandingUrl);
   } catch (error) {
-    throw new AsgardeoUIException('JS_UI_CORE-BR-B-NE', 'Error while fetching branding data.', error.stack);
+    throw new AsgardeoUIException('JS_UI_CORE-BR-GBP-NE', 'Error while fetching branding data.', error.stack);
   }
 
   if (response.ok) {
     return (await response.json()) as Promise<BrandingPreferenceAPIResponseInterface>;
   }
 
-  throw new AsgardeoUIException('JS_UI_CORE-BR-B-HE', 'Failed to receive a successful response from the branding API.');
+  throw new AsgardeoUIException(
+    'JS_UI_CORE-BR-GBP-HE',
+    'Failed to receive a successful response from the branding API.',
+  );
 };
 
-export default branding;
+export default getBrandingPreference;
