@@ -16,20 +16,11 @@
  * under the License.
  */
 
-const path = require('path');
+import {Common} from './model';
 
-module.exports = {
-  extends: ['plugin:@wso2/typescript', 'plugin:@wso2/strict', 'plugin:@wso2/internal', 'plugin:@wso2/prettier'],
-  parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.eslint.json')],
-  },
-  plugins: ['@wso2'],
-  rules: {
-    '@typescript-eslint/no-empty-function': [
-      'error',
-      {
-        allow: ['constructors'],
-      },
-    ],
-  },
+export const common: Common = {
+  copyright: '© {{currentYear}} WSO2 LLC.',
+  'privacy.policy': 'Privacy Policy',
+  'site.title': 'WSO2 Identity Server',
+  'terms.of.service': 'Terms of Servicet',
 };

@@ -16,20 +16,5 @@
  * under the License.
  */
 
-const path = require('path');
-
-module.exports = {
-  extends: ['plugin:@wso2/typescript', 'plugin:@wso2/strict', 'plugin:@wso2/internal', 'plugin:@wso2/prettier'],
-  parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.eslint.json')],
-  },
-  plugins: ['@wso2'],
-  rules: {
-    '@typescript-eslint/no-empty-function': [
-      'error',
-      {
-        allow: ['constructors'],
-      },
-    ],
-  },
-};
+export * from './screens/model';
+export * from './screens/keys';

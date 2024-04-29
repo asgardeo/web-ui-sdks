@@ -62,7 +62,7 @@ const authenticate = async (props: AuthApiRequestBody): Promise<AuthApiResponse>
   }
 
   throw new AsgardeoUIException(
-    'JS_UI_CORE-AUTHN-AN-HE',
+    'JS_UI_CORE-AUTHN-A-HE',
     'Failed to receive a successful response from the authentication endpoint',
   );
 };

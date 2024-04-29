@@ -16,20 +16,13 @@
  * under the License.
  */
 
-const path = require('path');
+import {TOTP} from './model';
 
-module.exports = {
-  extends: ['plugin:@wso2/typescript', 'plugin:@wso2/strict', 'plugin:@wso2/internal', 'plugin:@wso2/prettier'],
-  parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.eslint.json')],
-  },
-  plugins: ['@wso2'],
-  rules: {
-    '@typescript-eslint/no-empty-function': [
-      'error',
-      {
-        allow: ['constructors'],
-      },
-    ],
-  },
+export const totp: TOTP = {
+  continue: 'Continuer',
+  'enter.verification.code.got.by.device':
+    "Entrez le code de vérification généré par votre application d'authentification.",
+  'totp.enroll.message1': "Vous n'avez pas encore configuré votre application d'authentification TOTP?",
+  'totp.enroll.message2': 'Contacter le support',
+  'totp.heading': 'Vérifiez votre identité',
 };

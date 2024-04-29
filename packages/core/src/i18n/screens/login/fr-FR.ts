@@ -16,20 +16,14 @@
  * under the License.
  */
 
-const path = require('path');
+import {Login} from './model';
 
-module.exports = {
-  extends: ['plugin:@wso2/typescript', 'plugin:@wso2/strict', 'plugin:@wso2/internal', 'plugin:@wso2/prettier'],
-  parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.eslint.json')],
-  },
-  plugins: ['@wso2'],
-  rules: {
-    '@typescript-eslint/no-empty-function': [
-      'error',
-      {
-        allow: ['constructors'],
-      },
-    ],
-  },
+export const login: Login = {
+  'enter.your.password': 'Entrez votre mot de passe',
+  'enter.your.username': "Entrez votre nom d'utilisateur",
+  'login.button': 'Se connecter',
+  'login.heading': 'Se connecter',
+  password: 'Mot de passe',
+  'remember.me': 'Se souvenir de moi sur cet ordinateur',
+  username: "Nom d'utilisateur",
 };
