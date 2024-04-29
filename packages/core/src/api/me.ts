@@ -23,15 +23,21 @@ import {MeAPIResponse} from 'src/models/me-api-response';
 const me = async (): Promise<MeAPIResponse> => {
   let baseUrl: string;
   let accessToken: string;
+  let response: Response;
+
   try {
     baseUrl = (await AuthClient.getInstance().getDataLayer().getConfigData()).baseUrl;
     accessToken = await AuthClient.getInstance().getAccessToken();
   } catch (error) {
-    throw new AsgardeoUIException('JS_UI_CORE-ME-M-NF', 'Failed in getting the base URL and access token', error.stack);
+    throw new AsgardeoUIException(
+      'JS_UI_CORE-ME-M-NF',
+      'Failed in getting the base URL and access token.',
+      error.stack,
+    );
   }
 
   if (!accessToken) {
-    throw new AsgardeoUIException('JS_UI_CORE-ME-M-IV', 'Access token is null');
+    throw new AsgardeoUIException('JS_UI_CORE-ME-M-IV', 'Access token is null.');
   }
 
   const headers: Headers = new Headers();
@@ -42,18 +48,18 @@ const me = async (): Promise<MeAPIResponse> => {
     headers,
     method: 'GET',
   };
-  let response: Response;
+
   try {
-    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     response = await fetch(new Request(`${baseUrl}/scim2/Me`, requestOptions));
-    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
   } catch (error) {
-    throw new AsgardeoUIException('JS_UI_CORE-ME-M-NE', 'Me API call failed', error);
+    throw new AsgardeoUIException('JS_UI_CORE-ME-M-NE', 'Me API call failed.', error.stack);
   }
+
   if (response.ok) {
     return (await response.json()) as MeAPIResponse;
   }
-  throw new AsgardeoUIException('JS_UI_CORE-ME-M-HE', 'Me response is not OK');
+
+  throw new AsgardeoUIException('JS_UI_CORE-ME-M-HE', 'Failed to receive a successful response from the Me API.');
 };
 
 export default me;
