@@ -17,9 +17,9 @@
  */
 
 import merge from 'lodash.merge';
-import {brandingText} from 'src/api/branding-text';
+import {getBrandingPreferenceText} from 'src/api/branding-preference-text';
 import {AuthClient} from 'src/auth-client';
-import {BrandingTextAPIResponse} from 'src/models/branding-text-api-response';
+import {BrandingPreferenceTextAPIResponse} from 'src/models/branding-text-api-response';
 import {GetLocalization, TextObject} from './screens/model';
 
 /**
@@ -33,10 +33,10 @@ const getLocalization = async (props: GetLocalization): Promise<TextObject> => {
 
   const module: TextObject = await import(`./screens/${screen}/${locale}.ts`);
 
-  let textFromConsoleBranding: BrandingTextAPIResponse;
+  let textFromConsoleBranding: BrandingPreferenceTextAPIResponse;
 
   if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleTextBranding ?? true) {
-    textFromConsoleBranding = await brandingText(
+    textFromConsoleBranding = await getBrandingPreferenceText(
       locale,
       providerCustomization.name,
       screen,

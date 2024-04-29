@@ -20,9 +20,9 @@ import {BrandingPreferenceTypes} from './branding-api-response';
 import {ScreenType} from './screen-type';
 
 /**
- * Branding text response interface.
+ * Branding preference text response interface.
  */
-export interface BrandingTextAPIResponse {
+export interface BrandingPreferenceTextAPIResponse {
   /**
    * Locale to filter the retrieval of customizations.
    */

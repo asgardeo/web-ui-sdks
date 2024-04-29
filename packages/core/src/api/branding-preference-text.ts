@@ -18,10 +18,10 @@
 
 import {AuthClient} from 'src/auth-client';
 import AsgardeoUIException from 'src/exception';
-import {BrandingTextAPIResponse} from 'src/models/branding-text-api-response';
+import {BrandingPreferenceTextAPIResponse} from 'src/models/branding-text-api-response';
 
 /**
- * Fetch the branding text from the server.
+ * Fetch the branding preference text from the server.
  *
  * @param locale - The locale of the branding text.
  * @param name - The name of the branding text.
@@ -30,12 +30,12 @@ import {BrandingTextAPIResponse} from 'src/models/branding-text-api-response';
  * @returns A Promise that resolves to the response from the server.
  * @throws {AsgardeoUIException} If the API call fails or when the response is not successful.
  */
-export const brandingText = async (
+export const getBrandingPreferenceText = async (
   locale: string,
   name: string,
   screen: string,
   type: string,
-): Promise<BrandingTextAPIResponse> => {
+): Promise<BrandingPreferenceTextAPIResponse> => {
   const headers: Headers = new Headers();
   headers.append('Accept', 'application/json');
   headers.append('Content-Type', 'application/json');
@@ -59,15 +59,15 @@ export const brandingText = async (
   try {
     response = await fetch(new Request(urlWithParams, requestOptions));
   } catch (error) {
-    throw new AsgardeoUIException('JS_UI_CORE-BT-BT-NE', 'Branding Text API call failed', error.stack);
+    throw new AsgardeoUIException('JS_UI_CORE-BT-GBPT-NE', 'Branding Text API call failed', error.stack);
   }
 
   if (response.ok) {
-    return (await response.json()) as BrandingTextAPIResponse;
+    return (await response.json()) as BrandingPreferenceTextAPIResponse;
   }
 
   throw new AsgardeoUIException(
-    'JS_UI_CORE-BT-BT-HE',
+    'JS_UI_CORE-BT-GBPT-HE',
     'Failed to receive a successful response from the branding text endpoint',
   );
 };
