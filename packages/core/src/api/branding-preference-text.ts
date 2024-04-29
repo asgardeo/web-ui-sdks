@@ -30,7 +30,7 @@ import {BrandingPreferenceTextAPIResponse} from 'src/models/branding-text-api-re
  * @returns A Promise that resolves to the response from the server.
  * @throws {AsgardeoUIException} If the API call fails or when the response is not successful.
  */
-export const getBrandingPreferenceText = async (
+const getBrandingPreferenceText = async (
   locale: string,
   name: string,
   screen: string,
@@ -71,3 +71,5 @@ export const getBrandingPreferenceText = async (
     'Failed to receive a successful response from the branding text endpoint',
   );
 };
+
+export default getBrandingPreferenceText;

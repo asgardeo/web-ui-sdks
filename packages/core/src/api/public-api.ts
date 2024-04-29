@@ -18,6 +18,6 @@
 
 export {default as authorize} from './authorize';
 export {default as authenticate} from './authenticate';
-export {default as branding} from './branding';
+export {default as getBrandingPreference} from './branding-preference';
 export {default as me} from './me';
-export {default as brandingText} from './branding-text';
+export {default as getBrandingPreferenceText} from './branding-preference-text';
