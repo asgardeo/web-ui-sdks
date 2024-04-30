@@ -17,6 +17,7 @@
  */
 
 const commonjs = require('@rollup/plugin-commonjs');
+const dynamicImportVars = require('@rollup/plugin-dynamic-import-vars');
 const nodeResolve = require('@rollup/plugin-node-resolve');
 const typescript = require('@rollup/plugin-typescript');
 const dts = require('rollup-plugin-dts');
@@ -48,7 +49,7 @@ module.exports = [
         sourcemap: true,
       },
     ],
-    plugins: [nodeResolve(), commonjs(), typescript({tsconfig: './tsconfig.lib.json'})],
+    plugins: [nodeResolve(), commonjs(), dynamicImportVars(), typescript({tsconfig: './tsconfig.lib.json'})],
   },
   {
     cache: false,
