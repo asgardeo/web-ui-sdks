@@ -39,14 +39,14 @@ const getProfileInformation = async (): Promise<MeAPIResponse> => {
     accessToken = await AuthClient.getInstance().getAccessToken();
   } catch (error) {
     throw new AsgardeoUIException(
-      'JS_UI_CORE-ME-M-NF',
+      'JS_UI_CORE-ME-GPI-NF',
       'Failed in getting the base URL and access token.',
       error.stack,
     );
   }
 
   if (!accessToken) {
-    throw new AsgardeoUIException('JS_UI_CORE-ME-M-IV', 'Access token is null.');
+    throw new AsgardeoUIException('JS_UI_CORE-ME-GPI-IV', 'Access token is null.');
   }
 
   const headers: Headers = new Headers();
@@ -61,14 +61,14 @@ const getProfileInformation = async (): Promise<MeAPIResponse> => {
   try {
     response = await fetch(new Request(`${baseUrl}/scim2/Me`, requestOptions));
   } catch (error) {
-    throw new AsgardeoUIException('JS_UI_CORE-ME-M-NE', 'Me API call failed.', error.stack);
+    throw new AsgardeoUIException('JS_UI_CORE-ME-GPI-NE', 'Me API call failed.', error.stack);
   }
 
   if (response.ok) {
     return (await response.json()) as MeAPIResponse;
   }
 
-  throw new AsgardeoUIException('JS_UI_CORE-ME-M-HE', 'Failed to receive a successful response from the Me API.');
+  throw new AsgardeoUIException('JS_UI_CORE-ME-GPI-HE', 'Failed to receive a successful response from the Me API.');
 };
 
 export default getProfileInformation;
