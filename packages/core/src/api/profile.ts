@@ -20,7 +20,7 @@ import {AuthClient} from 'src/auth-client';
 import AsgardeoUIException from 'src/exception';
 import {MeAPIResponse} from 'src/models/me-api-response';
 
-const me = async (): Promise<MeAPIResponse> => {
+const getProfileInformation = async (): Promise<MeAPIResponse> => {
   let baseUrl: string;
   let accessToken: string;
   let response: Response;
@@ -62,4 +62,4 @@ const me = async (): Promise<MeAPIResponse> => {
   throw new AsgardeoUIException('JS_UI_CORE-ME-M-HE', 'Failed to receive a successful response from the Me API.');
 };
 
-export default me;
+export default getProfileInformation;
