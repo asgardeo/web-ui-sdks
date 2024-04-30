@@ -20,6 +20,15 @@ import {AuthClient} from 'src/auth-client';
 import AsgardeoUIException from 'src/exception';
 import {MeAPIResponse} from 'src/models/me-api-response';
 
+/**
+ * Fetch the profile information of the authenticated user.
+ *
+ * This function uses the `AuthClient` instance to get the base URL and access token,
+ * and then makes a GET request to the `/scim2/Me` endpoint to fetch the user's profile information.
+ *
+ * @returns {Promise<MeAPIResponse>} A promise that resolves to an object containing the user's profile information.
+ * @throws {AsgardeoUIException} Throws an exception if there's an error getting the base URL and access token, or if the fetch request fails.
+ */
 const getProfileInformation = async (): Promise<MeAPIResponse> => {
   let baseUrl: string;
   let accessToken: string;
