@@ -17,7 +17,7 @@
  */
 
 import merge from 'lodash.merge';
-import {getBrandingPreferenceText} from 'src/api/branding-preference-text';
+import getBrandingPreferenceText from 'src/api/branding-preference-text';
 import {AuthClient} from 'src/auth-client';
 import {BrandingPreferenceTextAPIResponse} from 'src/models/branding-text-api-response';
 import {GetLocalization, TextObject} from './screens/model';

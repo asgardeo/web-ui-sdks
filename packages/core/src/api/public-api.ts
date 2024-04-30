@@ -16,6 +16,8 @@
  * under the License.
  */
 
-export * from './screens/model';
-export * from './screens/keys';
-export {default as getLocalization} from './i18n';
+export {default as authorize} from './authorize';
+export {default as authenticate} from './authenticate';
+export {default as getBrandingPreference} from './branding-preference';
+export {default as getProfileInformation} from './profile';
+export {default as getBrandingPreferenceText} from './branding-preference-text';

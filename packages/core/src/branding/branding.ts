@@ -55,3 +55,5 @@ export const getBranding = async (props: GetBranding): Promise<Customization> =>
 
   return mergedBranding;
 };
+
+export default getBranding;
