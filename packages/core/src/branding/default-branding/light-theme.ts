@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {ThemeConfigInterface} from 'src/models/branding-api-response';
+import {ThemeConfigInterface} from '../../models/branding-api-response';
 
 const LIGHT_THEME: ThemeConfigInterface = {
   buttons: {

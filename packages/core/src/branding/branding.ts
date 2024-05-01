@@ -17,10 +17,10 @@
  */
 
 import merge from 'lodash.merge';
-import getBrandingPreference from 'src/api/branding-preference';
-import {AuthClient} from 'src/auth-client';
-import {BrandingPreferenceAPIResponseInterface} from 'src/models/branding-api-response';
 import DEFAULT_BRANDING from './default-branding/default-branding';
+import getBrandingPreference from '../api/branding-preference';
+import {AuthClient} from '../auth-client';
+import {BrandingPreferenceAPIResponseInterface} from '../models/branding-api-response';
 import {Customization, GetBranding} from '../models/customization';
 
 /**
@@ -45,12 +45,12 @@ export const getBranding = async (props: GetBranding): Promise<Customization> =>
     }
 
     if (brandingFromConsole?.preference?.configs?.isBrandingEnabled) {
-      mergedBranding = await merge(DEFAULT_BRANDING, brandingFromConsole ?? {}, customization ?? {});
+      mergedBranding = merge(DEFAULT_BRANDING, brandingFromConsole ?? {}, customization ?? {});
     } else {
-      mergedBranding = await merge(DEFAULT_BRANDING, customization ?? {});
+      mergedBranding = merge(DEFAULT_BRANDING, customization ?? {});
     }
   } else {
-    mergedBranding = await merge(merged ?? {}, customization ?? {});
+    mergedBranding = merge(merged ?? {}, customization ?? {});
   }
 
   return mergedBranding;

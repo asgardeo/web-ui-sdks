@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import {AuthClient} from 'src/auth-client';
-import {AuthApiRequestBody} from 'src/models/auth-api-request';
+import {AuthClient} from '../auth-client';
 import AsgardeoUIException from '../exception';
+import {AuthApiRequestBody} from '../models/auth-api-request';
 import {AuthApiResponse} from '../models/auth-api-response';
 
 /**

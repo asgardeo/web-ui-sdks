@@ -21,3 +21,4 @@ export {default as getBranding} from './branding/branding';
 export * from './i18n/public';
 export * from './auth-client';
 export * from './models/public-models';
+export {default as AsgardeoUIException} from './exception';
