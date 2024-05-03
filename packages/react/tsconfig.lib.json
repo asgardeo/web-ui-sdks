@@ -24,4 +24,3 @@
     ],
     "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "rollup.config.cjs", "declarations.d.ts"]
   }
-  
