@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import {AuthClient, ResponseMode} from 'src/auth-client';
-import AsgardeoUIException from 'src/exception';
+import {AuthClient, ResponseMode} from '../auth-client';
+import AsgardeoUIException from '../exception';
 
 const logout = async (): Promise<void> => {
   let response: Response;
