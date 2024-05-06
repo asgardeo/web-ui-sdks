@@ -18,4 +18,4 @@
 
 export * from './screens/model';
 export * from './screens/keys';
-export {default as getLocalization} from './i18n';
+export {default as getLocalization} from './get-localization';
