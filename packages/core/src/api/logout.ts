@@ -19,6 +19,22 @@
 import {AuthClient, ResponseMode} from '../auth-client';
 import AsgardeoUIException from '../exception';
 
+/**
+ * Log out the user.
+ *
+ * This function sends a logout request to the server.
+ *
+ * @returns {Promise<void>} A promise that resolves when the logout process is complete.
+ *
+ * @example
+ * logout()
+ *   .then(() => {
+ *     console.log('Logged out!');
+ *   })
+ *   .catch((error) => {
+ *     console.error('Failed to log out:', error);
+ *   });
+ */
 const logout = async (): Promise<void> => {
   let response: Response;
   let logoutUrl: string;
