@@ -16,9 +16,5 @@
  * under the License.
  */
 
-export * from './api/public-api';
-export * from './branding/public';
-export * from './i18n/public';
-export * from './auth-client';
-export * from './models/public-models';
-export {default as AsgardeoUIException} from './exception';
+export {default as getBranding} from './get-branding';
+export {default as getBrandingCSS} from './get-branding-css';
