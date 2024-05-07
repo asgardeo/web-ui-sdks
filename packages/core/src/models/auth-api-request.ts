@@ -19,7 +19,7 @@
 /**
  * Interface for the Authn API request body.
  */
-export interface AuthApiRequestBody {
+export interface AuthenticateProps {
   /**
    * The authentication flow id.
    */

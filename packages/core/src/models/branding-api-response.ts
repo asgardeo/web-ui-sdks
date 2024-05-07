@@ -17,18 +17,18 @@
  */
 
 import {
-  BackgroundStyleAttributesInterface,
-  BorderStyleAttributesInterface,
-  ButtonStyleAttributesInterface,
-  ColorStyleAttributesInterface,
-  ElementStateInterface,
-  FontStyleAttributesInterface,
+  BackgroundStyleAttributes,
+  BorderStyleAttributes,
+  ButtonStyleAttributes,
+  ColorStyleAttributes,
+  ElementState,
+  FontStyleAttributes,
 } from './element-styles';
 
 /**
  * Interface for the Branding Preference API response.
  */
-export interface BrandingPreferenceAPIResponseInterface {
+export interface BrandingPreferenceAPIResponse {
   /**
    * Resource locale.
    */
@@ -40,7 +40,7 @@ export interface BrandingPreferenceAPIResponseInterface {
   /**
    * Preference object.
    */
-  preference: BrandingPreferenceInterface;
+  preference: BrandingPreference;
   /**
    * Preference type.
    */
@@ -50,42 +50,42 @@ export interface BrandingPreferenceAPIResponseInterface {
 /**
  * Interface Branding preference object.
  */
-export interface BrandingPreferenceInterface {
+export interface BrandingPreference {
   /**
    * Configurations.
    */
-  configs: BrandingPreferenceConfigInterface;
+  configs: BrandingPreferenceConfig;
   /**
    * images such as Logo, Favicon, etc.
    * @deprecated Use the images object in `theme.[<DESIRED_THEME>].images`.
    */
-  images?: BrandingPreferenceImagesInterface;
+  images?: BrandingPreferenceImages;
   /**
    * Layout.
    */
-  layout: BrandingPreferenceLayoutInterface;
+  layout: BrandingPreferenceLayout;
   /**
    * Organization's basic details.
    */
-  organizationDetails: BrandingPreferenceOrganizationDetailsInterface;
+  organizationDetails: BrandingPreferenceOrganizationDetails;
   /**
    * Stylesheets for login pages etc..
    */
-  stylesheets?: BrandingPreferenceStylesheetsInterface;
+  stylesheets?: BrandingPreferenceStylesheets;
   /**
    * Theme.
    */
-  theme: BrandingPreferenceThemeInterface;
+  theme: BrandingPreferenceTheme;
   /**
    * Links for policies, etc.
    */
-  urls: BrandingPreferenceURLInterface;
+  urls: BrandingPreferenceURL;
 }
 
 /**
  * Interface Branding preference organization details.
  */
-export interface BrandingPreferenceOrganizationDetailsInterface {
+export interface BrandingPreferenceOrganizationDetails {
   /**
    * Copyright for the footer.
    * @deprecated Moved to the `/branding-preference/text` API.
@@ -109,25 +109,25 @@ export interface BrandingPreferenceOrganizationDetailsInterface {
 /**
  * Interface Branding preference images.
  */
-export interface BrandingPreferenceImagesInterface {
+export interface BrandingPreferenceImages {
   /**
    * Organization Favicon.
    */
-  favicon: Omit<BrandingPreferenceImageInterface, 'altText'>;
+  favicon: Omit<BrandingPreferenceImage, 'altText'>;
   /**
    * Organization Logo.
    */
-  logo: BrandingPreferenceImageInterface;
+  logo: BrandingPreferenceImage;
   /**
    * Organization My Account Logo.
    */
-  myAccountLogo: BrandingPreferenceImageInterface;
+  myAccountLogo: BrandingPreferenceImage;
 }
 
 /**
  * Interface Branding preference image.
  */
-export interface BrandingPreferenceImageInterface {
+export interface BrandingPreferenceImage {
   /**
    * Image Alt.
    */
@@ -145,7 +145,7 @@ export interface BrandingPreferenceImageInterface {
 /**
  * Interface Branding preference URLs.
  */
-export interface BrandingPreferenceURLInterface {
+export interface BrandingPreferenceURL {
   /**
    * Link for Cookie Policy.
    */
@@ -163,70 +163,69 @@ export interface BrandingPreferenceURLInterface {
 /**
  * Interface Branding preference stylesheets.
  */
-export interface BrandingPreferenceStylesheetsInterface {
+export interface BrandingPreferenceStylesheets {
   /**
    * Login portal stylesheet.
    */
   accountApp: PredefinedThemes;
 }
 
-export type BrandingPreferenceThemeInterface = StrictBrandingPreferenceThemeInterface &
-  DynamicBrandingPreferenceThemeInterface;
+export type BrandingPreferenceTheme = StrictBrandingPreferenceTheme & DynamicBrandingPreferenceTheme;
 
 /**
  * Interface Branding preference theme.
  */
-export type DynamicBrandingPreferenceThemeInterface = {
-  [key in PredefinedThemesKeys]: ThemeConfigInterface;
+export type DynamicBrandingPreferenceTheme = {
+  [key in PredefinedThemesKeys]: ThemeConfig;
 };
 
 /**
  * Theme Configurations Interface.
  */
-export interface ThemeConfigInterface {
+export interface ThemeConfig {
   /**
    * Button Preferences.
    */
-  buttons: BrandingPreferenceButtonsInterface;
+  buttons: BrandingPreferenceButtons;
   /**
    * Color Palette.
    */
-  colors: BrandingPreferenceColorsInterface;
+  colors: BrandingPreferenceColors;
   /**
    * Footer Preferences.
    */
-  footer: BrandingPreferenceFooterInterface;
+  footer: BrandingPreferenceFooter;
   /**
    * images such as Logo, Favicon, etc.
    */
-  images: BrandingPreferenceImagesInterface;
+  images: BrandingPreferenceImages;
   /**
    * Input Fields Preferences.
    */
-  inputs: ElementStateInterface<BrandingPreferenceInputInterface>;
+  inputs: ElementState<BrandingPreferenceInput>;
   /**
    * Login Box Preferences.
    */
-  loginBox: BrandingPreferenceLoginBoxInterface;
+  loginBox: BrandingPreferenceLoginBox;
   /**
    * Login Page Preferences.
    */
-  loginPage?: BrandingPreferencePageInterface;
+  loginPage?: BrandingPreferencePage;
   /**
    * Page Preferences.
    * @deprecated Renamed to `loginPage` to keep it specific for login page.
    */
-  page?: BrandingPreferencePageInterface;
+  page?: BrandingPreferencePage;
   /**
    * Typography Preferences.
    */
-  typography: BrandingPreferenceTypographyInterface;
+  typography: BrandingPreferenceTypography;
 }
 
 /**
  * Strict Interface Branding preference theme.
  */
-export interface StrictBrandingPreferenceThemeInterface {
+export interface StrictBrandingPreferenceTheme {
   /**
    * The active theme.
    */
@@ -266,7 +265,7 @@ export interface PaletteColor {
 /**
  * Interface defining the color palette for a branding preference theme.
  */
-export interface BrandingPreferenceColorsInterface {
+export interface BrandingPreferenceColors {
   /**
    * The alerts color palette of the theme.
    */
@@ -361,39 +360,39 @@ export interface BrandingPreferenceColorsInterface {
 /**
  * Interface Branding preference footer preferences.
  */
-export interface BrandingPreferenceFooterInterface {
+export interface BrandingPreferenceFooter {
   /**
    * Page Body Font.
    */
-  border: Pick<BorderStyleAttributesInterface, 'borderColor'>;
+  border: Pick<BorderStyleAttributes, 'borderColor'>;
   /**
    * Page Body Font.
    */
-  font: FontStyleAttributesInterface;
+  font: FontStyleAttributes;
 }
 
 /**
  * Interface Branding preference page preferences.
  */
-export interface BrandingPreferencePageInterface {
+export interface BrandingPreferencePage {
   /**
    * Page Background.
    */
-  background: BackgroundStyleAttributesInterface;
+  background: BackgroundStyleAttributes;
   /**
    * Page Body Font.
    */
-  font: FontStyleAttributesInterface;
+  font: FontStyleAttributes;
 }
 
 /**
  * Interface for the Branding Preference Typography.
  */
-export interface BrandingPreferenceTypographyInterface {
+export interface BrandingPreferenceTypography {
   /**
    * Page Font.
    */
-  font: BrandingPreferenceTypographyFontInterface;
+  font: BrandingPreferenceTypographyFont;
   /**
    * Page Heading Typography.
    */
@@ -401,14 +400,14 @@ export interface BrandingPreferenceTypographyInterface {
     /**
      * Page Heading Font Preferences.
      */
-    font: ColorStyleAttributesInterface;
+    font: ColorStyleAttributes;
   };
 }
 
 /**
  * Interface for the Font Typography Font.
  */
-export interface BrandingPreferenceTypographyFontInterface {
+export interface BrandingPreferenceTypographyFont {
   /**
    * Font Family.
    */
@@ -422,37 +421,37 @@ export interface BrandingPreferenceTypographyFontInterface {
 /**
  * Interface for the Login Box Preferences.
  */
-export interface BrandingPreferenceButtonsInterface {
+export interface BrandingPreferenceButtons {
   /**
    * Social, External IDP Connection Button Preference.
    */
-  externalConnection: ElementStateInterface<ButtonStyleAttributesInterface>;
+  externalConnection: ElementState<ButtonStyleAttributes>;
   /**
    * Primary Button Preferences.
    */
-  primary: ElementStateInterface<Omit<ButtonStyleAttributesInterface, 'background'>>;
+  primary: ElementState<Omit<ButtonStyleAttributes, 'background'>>;
   /**
    * Secondary Button Preferences.
    */
-  secondary: ElementStateInterface<Omit<ButtonStyleAttributesInterface, 'background'>>;
+  secondary: ElementState<Omit<ButtonStyleAttributes, 'background'>>;
 }
 
 /**
  * Interface for the Login Box Preferences.
  */
-export interface BrandingPreferenceInputInterface {
+export interface BrandingPreferenceInput {
   /**
    * Input field background.
    */
-  background: BackgroundStyleAttributesInterface;
+  background: BackgroundStyleAttributes;
   /**
    * Secondary Button Preferences.
    */
-  border: Pick<BorderStyleAttributesInterface, 'borderRadius' | 'borderColor'>;
+  border: Pick<BorderStyleAttributes, 'borderRadius' | 'borderColor'>;
   /**
    * Input Field Font Preferences.
    */
-  font: FontStyleAttributesInterface;
+  font: FontStyleAttributes;
   /**
    * Input Labels Preferences.
    */
@@ -460,35 +459,34 @@ export interface BrandingPreferenceInputInterface {
     /**
      * Input Labels Font Preferences.
      */
-    font: FontStyleAttributesInterface;
+    font: FontStyleAttributes;
   };
 }
 
-export interface BrandingPreferenceLoginBoxInterface {
+export interface BrandingPreferenceLoginBox {
   /**
    * Login Box Background.
    */
-  background: BackgroundStyleAttributesInterface;
+  background: BackgroundStyleAttributes;
   /**
    * Login Box Border.
    */
-  border: BorderStyleAttributesInterface;
+  border: BorderStyleAttributes;
   /**
    * Login Box Font.
    */
-  font: FontStyleAttributesInterface;
+  font: FontStyleAttributes;
 }
 
 /**
  * Interface Branding preference layout.
  */
-export type BrandingPreferenceLayoutInterface = StrictBrandingPreferenceLayoutInterface &
-  Partial<DynamicBrandingPreferenceLayoutInterface>;
+export type BrandingPreferenceLayout = StrictBrandingPreferenceLayout & Partial<DynamicBrandingPreferenceLayout>;
 
 /**
  * Strict Interface Branding preference layout.
  */
-export interface StrictBrandingPreferenceLayoutInterface {
+export interface StrictBrandingPreferenceLayout {
   /**
    * The active layout.
    */
@@ -498,27 +496,26 @@ export interface StrictBrandingPreferenceLayoutInterface {
 /**
  * Interface dynamic branding preference layout.
  */
-export type DynamicBrandingPreferenceLayoutInterface = BrandingPreferenceSideImageLayoutInterface &
-  BrandingPreferenceSideAlignedLayoutInterface;
+export type DynamicBrandingPreferenceLayout = BrandingPreferenceSideImageLayout & BrandingPreferenceSideAlignedLayout;
 
 /**
  * Left Image and Right Image layouts preference interface.
  */
-export interface BrandingPreferenceSideImageLayoutInterface {
-  sideImg: BrandingPreferenceImageInterface;
+export interface BrandingPreferenceSideImageLayout {
+  sideImg: BrandingPreferenceImage;
 }
 
 /**
  * Left Aligned and Right Aligned layouts preference interface.
  */
-export interface BrandingPreferenceSideAlignedLayoutInterface {
+export interface BrandingPreferenceSideAlignedLayout {
   productTagLine: string;
 }
 
 /**
  * Interface Branding preference configurations.
  */
-export interface BrandingPreferenceConfigInterface {
+export interface BrandingPreferenceConfig {
   /**
    * Should the changes be published?
    */

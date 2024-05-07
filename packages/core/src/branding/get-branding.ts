@@ -21,7 +21,7 @@ import DEFAULT_BRANDING from './default-branding/default-branding';
 import getBrandingPreference from '../api/get-branding-preference';
 import {AuthClient} from '../auth-client';
 import {Branding} from '../models/branding';
-import {BrandingPreferenceAPIResponseInterface} from '../models/branding-api-response';
+import {BrandingPreferenceAPIResponse} from '../models/branding-api-response';
 import GetBrandingProps from '../models/get-branding-props';
 
 /**
@@ -39,7 +39,7 @@ const getBranding = async (props: GetBrandingProps): Promise<Branding> => {
    * If the `merged` prop is provided, merge it with the branding props.
    */
   if (!merged) {
-    let brandingFromConsole: BrandingPreferenceAPIResponseInterface;
+    let brandingFromConsole: BrandingPreferenceAPIResponse;
 
     if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleBranding ?? true) {
       brandingFromConsole = await getBrandingPreference();

@@ -18,7 +18,7 @@
 
 import isEmpty from 'lodash.isempty';
 import getBranding from './get-branding';
-import {ThemeConfigInterface} from '../models/branding-api-response';
+import {ThemeConfig} from '../models/branding-api-response';
 import GetBrandingProps from '../models/get-branding-props';
 
 /**
@@ -43,7 +43,7 @@ const getBrandingCSS = async (props: GetBrandingProps): Promise<string> => {
   if (!theme) {
     return '';
   }
-  const activeTheme: ThemeConfigInterface = theme[theme.activeTheme];
+  const activeTheme: ThemeConfig = theme[theme.activeTheme];
 
   const footerFontColor: string = !isEmpty(activeTheme.footer.font.color) ? activeTheme.footer.font.color : 'inherit';
   const headingFontColor: string = !isEmpty(activeTheme.typography.heading.font.color)

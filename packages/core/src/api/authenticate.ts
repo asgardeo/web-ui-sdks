@@ -18,16 +18,16 @@
 
 import {AuthClient} from '../auth-client';
 import AsgardeoUIException from '../exception';
-import {AuthApiRequestBody} from '../models/auth-api-request';
+import {AuthenticateProps} from '../models/auth-api-request';
 import {AuthApiResponse} from '../models/auth-api-response';
 
 /**
  * Send an authentication request to the authentication API.
  *
- * @param {AuthApiRequestBody} props - The authentication request body.
+ * @param {AuthenticateProps} props - The authentication request body.
  * @returns {Promise<AuthApiResponse>} A promise that resolves with the authentication API response.
  */
-const authenticate = async (props: AuthApiRequestBody): Promise<AuthApiResponse> => {
+const authenticate = async (props: AuthenticateProps): Promise<AuthApiResponse> => {
   let authnRequest: Request;
   let response: Response;
 

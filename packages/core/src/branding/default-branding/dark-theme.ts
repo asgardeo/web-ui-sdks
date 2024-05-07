@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import {ThemeConfigInterface} from '../../models/branding-api-response';
+import {ThemeConfig} from '../../models/branding-api-response';
 
-const DARK_THEME: ThemeConfigInterface = {
+const DARK_THEME: ThemeConfig = {
   buttons: {
     externalConnection: {
       base: {

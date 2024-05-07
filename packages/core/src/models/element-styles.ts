@@ -21,38 +21,38 @@ import type * as CSS from 'csstype';
 /**
  * Interface for the Primary Button Style Attributes..
  */
-export interface ButtonStyleAttributesInterface {
+export interface ButtonStyleAttributes {
   /**
    * Button Background.
    */
-  background: BackgroundStyleAttributesInterface;
+  background: BackgroundStyleAttributes;
   /**
    * Button Border.
    */
-  border: Pick<BorderStyleAttributesInterface, 'borderRadius'>;
+  border: Pick<BorderStyleAttributes, 'borderRadius'>;
   /**
    * Button Text.
    */
-  font: FontStyleAttributesInterface;
+  font: FontStyleAttributes;
 }
 
 /**
  * Color styles interface.
  * @remarks Extend with contrast, alpha. whenever necessary.
  */
-export type ColorStyleAttributesInterface = Pick<CSS.Properties, 'color'>;
+export type ColorStyleAttributes = Pick<CSS.Properties, 'color'>;
 
 /**
  * Font styles interface.
  * @remarks Extend with font size, weight. whenever necessary.
  */
-export type FontStyleAttributesInterface = ColorStyleAttributesInterface;
+export type FontStyleAttributes = ColorStyleAttributes;
 
 /**
  * Border styles interface.
  * @remarks Extend with borderStyle, etc. whenever necessary.
  */
-export type BorderStyleAttributesInterface = Pick<CSS.Properties, 'borderColor'> &
+export type BorderStyleAttributes = Pick<CSS.Properties, 'borderColor'> &
   Pick<CSS.Properties, 'borderRadius'> &
   Pick<CSS.Properties, 'borderWidth'>;
 
@@ -60,12 +60,12 @@ export type BorderStyleAttributesInterface = Pick<CSS.Properties, 'borderColor'>
  * Background styles interface.
  * @remarks Extend with backgroundImage, backgroundSize, etc. whenever necessary.
  */
-export type BackgroundStyleAttributesInterface = Pick<CSS.Properties, 'backgroundColor'>;
+export type BackgroundStyleAttributes = Pick<CSS.Properties, 'backgroundColor'>;
 
 /**
  * Generic interface for element states.
  * @remarks Extend with hover, active & other possible element states.
  */
-export interface ElementStateInterface<T> {
+export interface ElementState<T> {
   base: T;
 }
