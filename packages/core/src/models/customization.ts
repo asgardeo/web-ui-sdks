@@ -45,7 +45,7 @@ export interface Customization {
   /**
    * Preference type.
    */
-  type?: RecursivePartial<BrandingPreferenceTypes>;
+  type?: BrandingPreferenceTypes;
 }
 
 /**
