@@ -17,7 +17,7 @@
  */
 
 export * from './api/public-api';
-export {default as getBranding} from './branding/branding';
+export * from './branding/public';
 export * from './i18n/public';
 export * from './auth-client';
 export * from './models/public-models';

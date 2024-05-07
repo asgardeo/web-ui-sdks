@@ -18,7 +18,7 @@
 
 import merge from 'lodash.merge';
 import DEFAULT_BRANDING from './default-branding/default-branding';
-import getBrandingPreference from '../api/branding-preference';
+import getBrandingPreference from '../api/get-branding-preference';
 import {AuthClient} from '../auth-client';
 import {BrandingPreferenceAPIResponseInterface} from '../models/branding-api-response';
 import {Customization, GetBranding} from '../models/customization';

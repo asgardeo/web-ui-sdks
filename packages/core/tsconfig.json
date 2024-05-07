@@ -22,7 +22,6 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
     "types": ["node", "jest"],
   },
   "exclude": ["node_modules", "tmp"],
