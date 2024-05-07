@@ -52,17 +52,3 @@ export interface Branding {
  * Type for the branding props.
  */
 export type BrandingProps = RecursivePartial<Branding>;
-
-/**
- * Interface for the getBranding function props.
- */
-export interface GetBranding {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  customization?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
-}

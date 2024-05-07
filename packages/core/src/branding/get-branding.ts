@@ -20,16 +20,17 @@ import merge from 'lodash.merge';
 import DEFAULT_BRANDING from './default-branding/default-branding';
 import getBrandingPreference from '../api/get-branding-preference';
 import {AuthClient} from '../auth-client';
-import {Branding, GetBranding} from '../models/branding';
+import {Branding} from '../models/branding';
 import {BrandingPreferenceAPIResponseInterface} from '../models/branding-api-response';
+import GetBrandingProps from '../models/get-branding-props';
 
 /**
  * Fetch and merge branding properties.
  *
- * @param {GetBranding} props - Branding properties.
+ * @param {GetBrandingProps} props - Branding properties.
  * @returns {Promise<Branding>} A promise that resolves with the merged branding properties.
  */
-export const getBranding = async (props: GetBranding): Promise<Branding> => {
+export const getBranding = async (props: GetBrandingProps): Promise<Branding> => {
   const {customization, merged} = props;
   let mergedBranding: Branding;
 
