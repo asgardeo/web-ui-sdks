@@ -30,9 +30,9 @@ interface BrandingPreferenceWithText extends BrandingPreferenceInterface {
 }
 
 /**
- * Interface for the customization object.
+ * Interface for the branding object.
  */
-export interface Customization {
+export interface Branding {
   locale?: string;
   /**
    * Requested resource name.
@@ -55,9 +55,9 @@ export interface GetBranding {
   /**
    * Customization prop passed to the component/provider.
    */
-  customization?: Customization;
+  customization?: Branding;
   /**
    * Merged customization object.
    */
-  merged?: Customization;
+  merged?: Branding;
 }

@@ -21,17 +21,17 @@ import DEFAULT_BRANDING from './default-branding/default-branding';
 import getBrandingPreference from '../api/get-branding-preference';
 import {AuthClient} from '../auth-client';
 import {BrandingPreferenceAPIResponseInterface} from '../models/branding-api-response';
-import {Customization, GetBranding} from '../models/customization';
+import {Branding, GetBranding} from '../models/branding';
 
 /**
  * Fetch and merge branding properties.
  *
  * @param {GetBranding} props - Branding properties.
- * @returns {Promise<Customization>} A promise that resolves with the merged branding properties.
+ * @returns {Promise<Branding>} A promise that resolves with the merged branding properties.
  */
-export const getBranding = async (props: GetBranding): Promise<Customization> => {
+export const getBranding = async (props: GetBranding): Promise<Branding> => {
   const {customization, merged} = props;
-  let mergedBranding: Customization;
+  let mergedBranding: Branding;
 
   /**
    * If the `merged` prop is not provided, fetch the branding from the console and merge it with the default branding.

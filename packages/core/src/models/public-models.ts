@@ -20,6 +20,6 @@ export * from './auth-api-request';
 export * from './auth-api-response';
 export * from './auth-config';
 export * from './branding-api-response';
-export * from './customization';
+export * from './branding';
 export * from './me-api-response';
 export * from './screen-type';
