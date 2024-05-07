@@ -21,7 +21,7 @@ import {TextObject} from './screens/model';
 import getBrandingPreferenceText from '../api/get-branding-preference-text';
 import {AuthClient} from '../auth-client';
 import {BrandingPreferenceTextAPIResponse} from '../models/branding-text-api-response';
-import { GetLocalizationProps } from '../models/get-localization-props';
+import GetLocalizationProps from '../models/get-localization-props';
 
 /**
  * Fetch and merge branding properties.

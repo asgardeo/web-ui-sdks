@@ -22,7 +22,7 @@ import {ScreenType} from './screen-type';
 /**
  * Interface for getLocalization function props.
  */
-export interface GetLocalizationProps {
+interface GetLocalizationProps {
   /**
    * Customiztion prop passed to the component
    */
@@ -40,3 +40,5 @@ export interface GetLocalizationProps {
    */
   screen: ScreenType;
 }
+
+export default GetLocalizationProps;
