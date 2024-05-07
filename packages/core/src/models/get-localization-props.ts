@@ -16,20 +16,27 @@
  * under the License.
  */
 
-import {Common} from './common/model';
-import {Login} from './login/model';
-import {TOTP} from './totp/model';
+import {BrandingProps} from './branding';
+import {ScreenType} from './screen-type';
 
 /**
- * Interface for the text preference.
+ * Interface for getLocalization function props.
  */
-export interface TextPreference {
-  common: Common;
-  login: Login;
-  totp: TOTP;
+export interface GetLocalizationProps {
+  /**
+   * Customiztion prop passed to the component
+   */
+  componentCustomization?: BrandingProps;
+  /**
+   * Locale to filter the retrieval of localization.
+   */
+  locale: string;
+  /**
+   * Customization prop passed to the provider
+   */
+  providerCustomization?: BrandingProps;
+  /**
+   * Screen to filter the retrieval of localization.
+   */
+  screen: ScreenType;
 }
-
-/**
- * Interface for the return type of the getLocalization function.
- */
-export type TextObject = Login | TOTP | Common;
