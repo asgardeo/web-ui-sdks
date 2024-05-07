@@ -17,7 +17,7 @@
  */
 
 import {BrandingPreferenceThemeInterface, ThemeConfigInterface} from '../models/branding-api-response';
-import isEmpty from '../utils/is-empty';
+import isEmpty from 'lodash.isempty';
 
 const getBrandingCSS = (theme: BrandingPreferenceThemeInterface): string => {
   if (!theme) {
