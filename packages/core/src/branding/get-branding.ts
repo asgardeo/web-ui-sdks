@@ -20,8 +20,8 @@ import merge from 'lodash.merge';
 import DEFAULT_BRANDING from './default-branding/default-branding';
 import getBrandingPreference from '../api/get-branding-preference';
 import {AuthClient} from '../auth-client';
-import {BrandingPreferenceAPIResponseInterface} from '../models/branding-api-response';
 import {Branding, GetBranding} from '../models/branding';
+import {BrandingPreferenceAPIResponseInterface} from '../models/branding-api-response';
 
 /**
  * Fetch and merge branding properties.
@@ -50,7 +50,7 @@ export const getBranding = async (props: GetBranding): Promise<Branding> => {
       mergedBranding = merge(DEFAULT_BRANDING, customization ?? {});
     }
   } else {
-    mergedBranding = merge(merged ?? {}, customization ?? {});
+    mergedBranding = merge(merged, customization ?? {});
   }
 
   return mergedBranding;

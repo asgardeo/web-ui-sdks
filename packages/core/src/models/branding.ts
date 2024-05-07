@@ -26,27 +26,32 @@ import {TextPreference} from '../i18n/screens/model';
 export type BrandingPreferenceText = Record<string, TextPreference>;
 
 interface BrandingPreferenceWithText extends BrandingPreferenceInterface {
-  text: BrandingPreferenceText;
+  text?: BrandingPreferenceText;
 }
 
 /**
  * Interface for the branding object.
  */
 export interface Branding {
-  locale?: string;
+  locale: string;
   /**
    * Requested resource name.
    */
-  name?: string;
+  name: string;
   /**
    * Preference object.
    */
-  preference?: RecursivePartial<BrandingPreferenceWithText>;
+  preference: BrandingPreferenceWithText;
   /**
    * Preference type.
    */
-  type?: BrandingPreferenceTypes;
+  type: BrandingPreferenceTypes;
 }
+
+/**
+ * Type for the branding props.
+ */
+export type BrandingProps = RecursivePartial<Branding>;
 
 /**
  * Interface for the getBranding function props.
@@ -55,7 +60,7 @@ export interface GetBranding {
   /**
    * Customization prop passed to the component/provider.
    */
-  customization?: Branding;
+  customization?: BrandingProps;
   /**
    * Merged customization object.
    */

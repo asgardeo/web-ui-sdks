@@ -19,7 +19,7 @@
 import {Common} from './common/model';
 import {Login} from './login/model';
 import {TOTP} from './totp/model';
-import {Branding} from '../../models/branding';
+import {BrandingProps} from '../../models/branding';
 import {ScreenType} from '../../models/screen-type';
 
 /**
@@ -43,7 +43,7 @@ export interface GetLocalization {
   /**
    * Customiztion prop passed to the component
    */
-  componentCustomization?: Branding;
+  componentCustomization?: BrandingProps;
   /**
    * Locale to filter the retrieval of localization.
    */
@@ -51,7 +51,7 @@ export interface GetLocalization {
   /**
    * Customization prop passed to the provider
    */
-  providerCustomization?: Branding;
+  providerCustomization?: BrandingProps;
   /**
    * Screen to filter the retrieval of localization.
    */
