@@ -30,7 +30,7 @@ import GetBrandingProps from '../models/get-branding-props';
  * @param {GetBrandingProps} props - Branding properties.
  * @returns {Promise<Branding>} A promise that resolves with the merged branding properties.
  */
-export const getBranding = async (props: GetBrandingProps): Promise<Branding> => {
+const getBranding = async (props: GetBrandingProps): Promise<Branding> => {
   const {customization, merged} = props;
   let mergedBranding: Branding;
 
