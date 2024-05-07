@@ -18,8 +18,29 @@
 
 import {BrandingPreferenceThemeInterface, ThemeConfigInterface} from '../models/branding-api-response';
 import isEmpty from 'lodash.isempty';
+import GetBrandingProps from '../models/get-branding-props';
+import getBranding from './get-branding';
 
-const getBrandingCSS = (theme: BrandingPreferenceThemeInterface): string => {
+/**
+ * Generate a CSS string based on branding properties.
+ *
+ * This function retrieves the branding preferences based on the provided props, 
+ * then generates a CSS string based on the active theme within those preferences. 
+ * If no active theme is found, an empty string is returned.
+ *
+ * @param {GetBrandingProps} props - The properties used to retrieve the branding preferences.
+ * @returns {Promise<string>} A promise that resolves to a CSS string. If no theme is found,
+ * the promise resolves to an empty string.
+ *
+ * @example
+ * getBrandingCSS(props).then(css => {
+ *   // do something with the css string
+ * });
+ */
+const getBrandingCSS = async (props: GetBrandingProps): Promise<string> => {
+
+  const theme: BrandingPreferenceThemeInterface = ((await getBranding(props)).preference.theme);
+
   if (!theme) {
     return '';
   }
