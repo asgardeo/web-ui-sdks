@@ -20,24 +20,24 @@ import {AuthClient, ResponseMode} from '../auth-client';
 import AsgardeoUIException from '../exception';
 
 /**
- * Log out the user.
+ * Sign out the user.
  *
- * This function sends a logout request to the server.
+ * This function sends a signout request to the server.
  *
- * @returns {Promise<void>} A promise that resolves when the logout process is complete.
+ * @returns {Promise<void>} A promise that resolves when the sign out process is complete.
  *
  * @example
- * logout()
+ * signOut()
  *   .then(() => {
- *     console.log('Logged out!');
+ *     console.log('Signed out!');
  *   })
  *   .catch((error) => {
- *     console.error('Failed to log out:', error);
+ *     console.error('Failed to sign out:', error);
  *   });
  */
-const logout = async (): Promise<void> => {
+const signOut = async (): Promise<void> => {
   let response: Response;
-  let logoutUrl: string;
+  let signOutUrl: string;
 
   const headers: Headers = new Headers();
   headers.append('Accept', 'application/json');
@@ -50,7 +50,7 @@ const logout = async (): Promise<void> => {
     formBody.append('client_id', (await AuthClient.getInstance().getDataLayer().getConfigData()).clientID);
     formBody.append('response_mode', ResponseMode.direct);
   } catch (error) {
-    throw new AsgardeoUIException('JS_UI_CORE-LOGOUT-L-IV', 'Failed to build the body of the logout request.');
+    throw new AsgardeoUIException('JS_UI_CORE-SIGNOUT-SO-IV', 'Failed to build the body of the signout request.');
   }
 
   const requestOptions: RequestInit = {
@@ -60,23 +60,23 @@ const logout = async (): Promise<void> => {
   };
 
   try {
-    logoutUrl = (await AuthClient.getInstance().getOIDCServiceEndpoints()).endSessionEndpoint;
+    signOutUrl = (await AuthClient.getInstance().getOIDCServiceEndpoints()).endSessionEndpoint;
   } catch (error) {
-    throw new AsgardeoUIException('JS_UI_CORE-LOGOUT-L-NF', 'Failed to retrieve the logout endpoint.');
+    throw new AsgardeoUIException('JS_UI_CORE-SIGNOUT-SO-NF', 'Failed to retrieve the sign out endpoint.');
   }
 
   try {
-    response = await fetch(logoutUrl, requestOptions);
+    response = await fetch(signOutUrl, requestOptions);
   } catch (error) {
-    throw new AsgardeoUIException('JS_UI_CORE-LOGOUT-L-NE', 'Failed to send a request to the logout endpoint.');
+    throw new AsgardeoUIException('JS_UI_CORE-SIGNOUT-SO-NE', 'Failed to send a request to the sign out endpoint.');
   }
 
   if (!response.ok) {
     throw new AsgardeoUIException(
-      'JS_UI_CORE-LOGOUT-L-HE',
-      'Failed to receive a successful response from the logout endpoint.',
+      'JS_UI_CORE-SIGNOUT-SO-HE',
+      'Failed to receive a successful response from the sign out endpoint.',
     );
   }
 };
 
-export default logout;
+export default signOut;
