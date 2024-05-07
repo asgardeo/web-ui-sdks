@@ -20,6 +20,7 @@ import merge from 'lodash.merge';
 import {TextObject} from './screens/model';
 import getBrandingPreferenceText from '../api/get-branding-preference-text';
 import {AuthClient} from '../auth-client';
+import AsgardeoUIException from '../exception';
 import {BrandingPreferenceTextAPIResponse} from '../models/branding-text-api-response';
 import GetLocalizationProps from '../models/get-localization-props';
 
@@ -36,12 +37,20 @@ const getLocalization = async (props: GetLocalizationProps): Promise<TextObject>
 
   let textFromConsoleBranding: BrandingPreferenceTextAPIResponse;
 
-  if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleTextBranding ?? true) {
-    textFromConsoleBranding = await getBrandingPreferenceText(
-      locale,
-      providerCustomization.name,
-      screen,
-      providerCustomization.type,
+  try {
+    if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleTextBranding ?? true) {
+      textFromConsoleBranding = await getBrandingPreferenceText(
+        locale,
+        providerCustomization.name,
+        screen,
+        providerCustomization.type,
+      );
+    }
+  } catch (error) {
+    throw new AsgardeoUIException(
+      'JS_UI_CORE-LOCALIZATION-IV',
+      'Error occurred while fetching text from console branding.',
+      error.stack,
     );
   }
 
