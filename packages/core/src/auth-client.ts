@@ -42,13 +42,13 @@ export class AuthClient {
    */
   static getInstance(authClientConfig?: UIAuthConfig, store?: Store, cryptoUtils?: CryptoUtils): UIAuthClient {
     if (!AuthClient.instance) {
-      const updatedAuthClientConfig: UIAuthConfig = {
+      const extendedAuthClientConfig: UIAuthConfig = {
         ...authClientConfig,
         responseMode: ResponseMode.direct,
       };
 
       AuthClient.instance = new AsgardeoAuthClient();
-      AuthClient.instance.initialize(updatedAuthClientConfig, store, cryptoUtils);
+      AuthClient.instance.initialize(extendedAuthClientConfig, store, cryptoUtils);
     }
 
     return AuthClient.instance;
