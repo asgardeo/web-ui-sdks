@@ -17,10 +17,12 @@
  */
 
 import merge from 'lodash.merge';
-import {GetLocalization, TextObject} from './screens/model';
+import {TextObject} from './screens/model';
 import getBrandingPreferenceText from '../api/get-branding-preference-text';
 import {AuthClient} from '../auth-client';
+import AsgardeoUIException from '../exception';
 import {BrandingPreferenceTextAPIResponse} from '../models/branding-text-api-response';
+import GetLocalizationProps from '../models/get-localization-props';
 
 /**
  * Fetch and merge branding properties.
@@ -28,19 +30,27 @@ import {BrandingPreferenceTextAPIResponse} from '../models/branding-text-api-res
  * @param {BrandingProps} props - Branding properties.
  * @returns {Promise<Customization>} A promise that resolves with the merged branding properties.
  */
-const getLocalization = async (props: GetLocalization): Promise<TextObject> => {
+const getLocalization = async (props: GetLocalizationProps): Promise<TextObject> => {
   const {componentCustomization, locale, providerCustomization, screen} = props;
 
   const module: TextObject = await import(`./screens/${screen}/${locale}.ts`);
 
   let textFromConsoleBranding: BrandingPreferenceTextAPIResponse;
 
-  if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleTextBranding ?? true) {
-    textFromConsoleBranding = await getBrandingPreferenceText(
-      locale,
-      providerCustomization.name,
-      screen,
-      providerCustomization.type,
+  try {
+    if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleTextBranding ?? true) {
+      textFromConsoleBranding = await getBrandingPreferenceText(
+        locale,
+        providerCustomization.name,
+        screen,
+        providerCustomization.type,
+      );
+    }
+  } catch (error) {
+    throw new AsgardeoUIException(
+      'JS_UI_CORE-LOCALIZATION-IV',
+      'Error occurred while fetching text from console branding.',
+      error.stack,
     );
   }
 

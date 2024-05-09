@@ -18,7 +18,7 @@
 
 import {AuthClient} from '../auth-client';
 import AsgardeoUIException from '../exception';
-import {BrandingPreferenceTextAPIResponse} from '../models/branding-text-api-response';
+import {BrandingPreferenceTextAPIResponse, GetBrandingPreferenceTextProps} from '../models/branding-text-api-response';
 
 /**
  * Fetch the branding preference text from the server.
@@ -31,11 +31,10 @@ import {BrandingPreferenceTextAPIResponse} from '../models/branding-text-api-res
  * @throws {AsgardeoUIException} If the API call fails or when the response is not successful.
  */
 const getBrandingPreferenceText = async (
-  locale: string,
-  name: string,
-  screen: string,
-  type: string,
+  props: GetBrandingPreferenceTextProps,
 ): Promise<BrandingPreferenceTextAPIResponse> => {
+  const {locale, name, screen, type} = props;
+
   const headers: Headers = new Headers();
   headers.append('Accept', 'application/json');
   headers.append('Content-Type', 'application/json');

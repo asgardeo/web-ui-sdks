@@ -16,10 +16,29 @@
  * under the License.
  */
 
-export * from './auth-api-request';
-export * from './auth-api-response';
-export * from './auth-config';
-export * from './branding-api-response';
-export * from './branding';
-export * from './me-api-response';
-export * from './screen-type';
+import {BrandingProps} from './branding';
+import {ScreenType} from './screen-type';
+
+/**
+ * Interface for getLocalization function props.
+ */
+interface GetLocalizationProps {
+  /**
+   * Customiztion prop passed to the component
+   */
+  componentCustomization?: BrandingProps;
+  /**
+   * Locale to filter the retrieval of localization.
+   */
+  locale: string;
+  /**
+   * Customization prop passed to the provider
+   */
+  providerCustomization?: BrandingProps;
+  /**
+   * Screen to filter the retrieval of localization.
+   */
+  screen: ScreenType;
+}
+
+export default GetLocalizationProps;

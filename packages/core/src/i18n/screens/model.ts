@@ -19,8 +19,6 @@
 import {Common} from './common/model';
 import {Login} from './login/model';
 import {TOTP} from './totp/model';
-import {Customization} from '../../models/customization';
-import {ScreenType} from '../../models/screen-type';
 
 /**
  * Interface for the text preference.
@@ -35,25 +33,3 @@ export interface TextPreference {
  * Interface for the return type of the getLocalization function.
  */
 export type TextObject = Login | TOTP | Common;
-
-/**
- * Interface for getLocalization function props.
- */
-export interface GetLocalization {
-  /**
-   * Customiztion prop passed to the component
-   */
-  componentCustomization?: Customization;
-  /**
-   * Locale to filter the retrieval of localization.
-   */
-  locale: string;
-  /**
-   * Customization prop passed to the provider
-   */
-  providerCustomization?: Customization;
-  /**
-   * Screen to filter the retrieval of localization.
-   */
-  screen: ScreenType;
-}

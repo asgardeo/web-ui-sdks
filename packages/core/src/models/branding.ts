@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {BrandingPreferenceInterface, BrandingPreferenceTypes} from './branding-api-response';
+import {BrandingPreference, BrandingPreferenceTypes} from './branding-api-response';
 import {RecursivePartial} from './common';
 import {TextPreference} from '../i18n/screens/model';
 
@@ -25,39 +25,30 @@ import {TextPreference} from '../i18n/screens/model';
  */
 export type BrandingPreferenceText = Record<string, TextPreference>;
 
-interface BrandingPreferenceWithText extends BrandingPreferenceInterface {
-  text: BrandingPreferenceText;
+interface BrandingPreferenceWithText extends BrandingPreference {
+  text?: BrandingPreferenceText;
 }
 
 /**
- * Interface for the customization object.
+ * Interface for the branding object.
  */
-export interface Customization {
-  locale?: string;
+export interface Branding {
+  locale: string;
   /**
    * Requested resource name.
    */
-  name?: string;
+  name: string;
   /**
    * Preference object.
    */
-  preference?: RecursivePartial<BrandingPreferenceWithText>;
+  preference: BrandingPreferenceWithText;
   /**
    * Preference type.
    */
-  type?: BrandingPreferenceTypes;
+  type: BrandingPreferenceTypes;
 }
 
 /**
- * Interface for the getBranding function props.
+ * Type for the branding props.
  */
-export interface GetBranding {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  customization?: Customization;
-  /**
-   * Merged customization object.
-   */
-  merged?: Customization;
-}
+export type BrandingProps = RecursivePartial<Branding>;

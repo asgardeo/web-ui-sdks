@@ -16,10 +16,20 @@
  * under the License.
  */
 
-export * from './auth-api-request';
-export * from './auth-api-response';
-export * from './auth-config';
-export * from './branding-api-response';
-export * from './branding';
-export * from './me-api-response';
-export * from './screen-type';
+import {Branding, BrandingProps} from './branding';
+
+/**
+ * Interface for the getBranding function props.
+ */
+interface GetBrandingProps {
+  /**
+   * Customization prop passed to the component/provider.
+   */
+  customization?: BrandingProps;
+  /**
+   * Merged customization object.
+   */
+  merged?: Branding;
+}
+
+export default GetBrandingProps;

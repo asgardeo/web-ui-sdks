@@ -18,15 +18,15 @@
 
 import {AuthClient} from '../auth-client';
 import AsgardeoUIException from '../exception';
-import {BrandingPreferenceAPIResponseInterface, BrandingPreferenceTypes} from '../models/branding-api-response';
+import {BrandingPreferenceAPIResponse, BrandingPreferenceTypes} from '../models/branding-api-response';
 
 /**
  * Fetch branding preferences from the server.
  *
- * @returns {Promise<BrandingPreferenceAPIResponseInterface>} A promise that resolves with the branding preferences.
+ * @returns {Promise<BrandingPreferenceAPIResponse>} A promise that resolves with the branding preferences.
  * @throws {AsgardeoUIException} If an error occurs while fetching the branding preferences or when the response is unsuccessful.
  */
-const getBrandingPreference = async (): Promise<BrandingPreferenceAPIResponseInterface> => {
+const getBrandingPreference = async (): Promise<BrandingPreferenceAPIResponse> => {
   const {
     baseUrl,
     type = BrandingPreferenceTypes.Org,
@@ -42,7 +42,7 @@ const getBrandingPreference = async (): Promise<BrandingPreferenceAPIResponseInt
   }
 
   if (response.ok) {
-    return (await response.json()) as Promise<BrandingPreferenceAPIResponseInterface>;
+    return (await response.json()) as Promise<BrandingPreferenceAPIResponse>;
   }
 
   throw new AsgardeoUIException(

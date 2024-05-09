@@ -20,9 +20,9 @@ import {BrandingPreferenceTypes} from './branding-api-response';
 import {ScreenType} from './screen-type';
 
 /**
- * Branding preference text response interface.
+ * Interface for the props of the `getBrandingPreferenceText` function.
  */
-export interface BrandingPreferenceTextAPIResponse {
+export interface GetBrandingPreferenceTextProps {
   /**
    * Locale to filter the retrieval of customizations.
    */
@@ -32,10 +32,6 @@ export interface BrandingPreferenceTextAPIResponse {
    */
   name: string;
   /**
-   * Branding text preference.
-   */
-  preference: BrandingTextPreference;
-  /**
    * Screen to filter the retrieval of customizations.
    */
   screen: ScreenType;
@@ -43,6 +39,16 @@ export interface BrandingPreferenceTextAPIResponse {
    * Type to filter the retrieval of customizations.
    */
   type: BrandingPreferenceTypes;
+}
+
+/**
+ * Branding preference text response interface.
+ */
+export interface BrandingPreferenceTextAPIResponse extends GetBrandingPreferenceTextProps {
+  /**
+   * Branding text preference.
+   */
+  preference: BrandingTextPreference;
 }
 
 /**

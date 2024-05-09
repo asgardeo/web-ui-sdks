@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, Store, CryptoUtils} from '@asgardeo/auth-js';
+import {AsgardeoAuthClient, Store, CryptoUtils, ResponseMode} from '@asgardeo/auth-js';
 import {UIAuthClient, UIAuthConfig} from './models/auth-config';
 
 /**
@@ -42,8 +42,13 @@ export class AuthClient {
    */
   static getInstance(authClientConfig?: UIAuthConfig, store?: Store, cryptoUtils?: CryptoUtils): UIAuthClient {
     if (!AuthClient.instance) {
+      const extendedAuthClientConfig: UIAuthConfig = {
+        ...authClientConfig,
+        responseMode: ResponseMode.direct,
+      };
+
       AuthClient.instance = new AsgardeoAuthClient();
-      AuthClient.instance.initialize(authClientConfig, store, cryptoUtils);
+      AuthClient.instance.initialize(extendedAuthClientConfig, store, cryptoUtils);
     }
 
     return AuthClient.instance;

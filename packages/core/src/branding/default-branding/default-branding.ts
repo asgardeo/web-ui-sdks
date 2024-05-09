@@ -19,13 +19,13 @@
 import DARK_THEME from './dark-theme';
 import LIGHT_THEME from './light-theme';
 import {
-  BrandingPreferenceAPIResponseInterface,
+  BrandingPreferenceAPIResponse,
   PredefinedThemes,
   PredefinedLayouts,
   BrandingPreferenceTypes,
 } from '../../models/branding-api-response';
 
-const DEFAULT_BRANDING: BrandingPreferenceAPIResponseInterface = {
+const DEFAULT_BRANDING: BrandingPreferenceAPIResponse = {
   locale: 'en-US',
   name: '',
   preference: {
