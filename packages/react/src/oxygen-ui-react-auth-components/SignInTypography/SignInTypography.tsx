@@ -20,6 +20,7 @@ import {Typography, TypographyProps} from '@oxygen-ui/react';
 import clsx from 'clsx';
 import {ElementType, ForwardRefExoticComponent, MutableRefObject, ReactElement, forwardRef} from 'react';
 import {WithWrapperProps} from '../models/component';
+import './sign-in-typography.scss';
 
 export type SignInTypographyProps<C extends ElementType = ElementType> = {
   component?: C;
@@ -32,7 +33,7 @@ const SignInTypography: ForwardRefExoticComponent<SignInTypographyProps> & WithW
   <C extends ElementType>(props: SignInTypographyProps<C>, ref: MutableRefObject<HTMLDivElement>): ReactElement => {
     const {className, title, subtitle, variant, align, ...rest} = props;
 
-    const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
+    let classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
     let extendedVariant: string = variant || 'body1';
     let extendedAlign: string = align || 'left';
@@ -42,6 +43,7 @@ const SignInTypography: ForwardRefExoticComponent<SignInTypographyProps> & WithW
         extendedVariant = 'h5';
       } else if (subtitle) {
         extendedVariant = 'body1';
+        classes = clsx(classes, `Oxygen${COMPONENT_NAME}-subtitle`);
       }
     }
 
@@ -51,7 +53,7 @@ const SignInTypography: ForwardRefExoticComponent<SignInTypographyProps> & WithW
       }
     }
 
-    return <Typography ref={ref} className={classes} variant={extendedVariant} align={extendedAlign} {...rest} />;
+    return <Typography ref={ref} className={classes} color variant={extendedVariant} align={extendedAlign} {...rest} />;
   },
 ) as ForwardRefExoticComponent<SignInTypographyProps> & WithWrapperProps;
 
