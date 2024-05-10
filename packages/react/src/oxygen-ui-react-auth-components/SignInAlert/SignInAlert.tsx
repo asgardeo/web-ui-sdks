@@ -33,6 +33,12 @@ export type SignInAlertProps<C extends ElementType = ElementType> = {
 
 const COMPONENT_NAME: string = 'SignInAlert';
 
+enum Color {
+  Error = 'error',
+  Info = 'info',
+  Warning = 'warning',
+}
+
 const SignInAlert: ForwardRefExoticComponent<SignInAlertProps> & WithWrapperProps = forwardRef(
   <C extends ElementType>(props: SignInAlertProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
     const {className, error, info, warning, color, icon, ...rest} = props;
@@ -42,11 +48,11 @@ const SignInAlert: ForwardRefExoticComponent<SignInAlertProps> & WithWrapperProp
     let extendedColor: string = color;
     if (!color) {
       if (error) {
-        extendedColor = 'error';
+        extendedColor = Color.Error;
       } else if (warning) {
-        extendedColor = 'warning';
+        extendedColor = Color.Warning;
       } else {
-        extendedColor = 'info';
+        extendedColor = Color.Info;
       }
     }
 
