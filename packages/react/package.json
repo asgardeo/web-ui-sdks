@@ -49,7 +49,9 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@asgardeo/js-ui-core": "*"
+    "@asgardeo/js-ui-core": "*",
+    "@oxygen-ui/react": "^1.11.0",
+    "clsx": "^2.1.1"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
