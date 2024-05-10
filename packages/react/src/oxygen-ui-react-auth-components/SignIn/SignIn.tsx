@@ -25,12 +25,13 @@ import SignInButton, {SignInButtonProps} from '../SignInButton/SignInButton';
 import SignInDivider from '../SignInDivider/SignInDivider';
 import SignInLink, {SignInLinkProps} from '../SignInLink/SignInLink';
 import SignInPaper from '../SignInPaper/SignInPaper';
+import SignInPinInput from '../SignInPinInput/SignInPinInput';
 import SignInTextField, {SignInTextFieldProps} from '../SignInTextField/SignInTextField';
 import SignInTypography from '../SignInTypography/SignInTypography';
 
 export type SignInProps<C extends ElementType = ElementType> = {
   component?: C;
-  links: SignInLinkProps[];
+  links?: SignInLinkProps[];
   loginOptions?: SignInButtonProps[];
   subtitle?: string;
   textFields?: SignInTextFieldProps[];
@@ -43,6 +44,7 @@ type SignInCompoundProps = {
   Divider: typeof SignInDivider;
   Link: typeof SignInLink;
   Paper: typeof SignInPaper;
+  PinInput: typeof SignInPinInput;
   TextField: typeof SignInTextField;
   Typography: typeof SignInTypography;
 };
@@ -50,18 +52,22 @@ type SignInCompoundProps = {
 const COMPONENT_NAME: string = 'SignIn';
 
 const renderTextFields = (textFields: SignInTextFieldProps[]): ReactElement[] =>
-  textFields.map((textFieldProps: SignInTextFieldProps) => <SignInTextField {...textFieldProps} />);
+  textFields.map((textFieldProps: SignInTextFieldProps, index: number) => (
+    <SignInTextField key={`sign-in-text-field${index + 1}`} {...textFieldProps} />
+  ));
 
 const renderLinks = (links: SignInLinkProps[]): ReactElement[] =>
-  links.map((linkProps: SignInLinkProps) => (
-    <>
+  links.map((linkProps: SignInLinkProps, index: number) => (
+    <div key={`sign-in-link-holder${index + 1}`}>
       <SignInLink {...linkProps} />
       <br />
-    </>
+    </div>
   ));
 
 const renderLoginOptions = (loginOptions: SignInButtonProps[]): ReactElement[] =>
-  loginOptions.map((loginOptionProps: SignInButtonProps) => <SignInButton social {...loginOptionProps} />);
+  loginOptions.map((loginOptionProps: SignInButtonProps, index: number) => (
+    <SignInButton key={`sign-in-button-social${index + 1}`} social {...loginOptionProps} />
+  ));
 
 const SignIn: ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignInCompoundProps = forwardRef(
   <C extends ElementType>(props: SignInProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
@@ -108,5 +114,6 @@ SignIn.Divider = SignInDivider;
 SignIn.Link = SignInLink;
 SignIn.Button = SignInButton;
 SignIn.TextField = SignInTextField;
+SignIn.PinInput = SignInPinInput;
 
 export default SignIn;
