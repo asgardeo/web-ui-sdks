@@ -26,18 +26,30 @@ import './sign-in-alert.scss';
 // TODO: AlertProps is not available in oxygen-ui/react
 export type SignInAlertProps<C extends ElementType = ElementType> = {
   component?: C;
-  error?: boolean;
-};
+} & (
+  | {error?: boolean; info?: never; warning?: never}
+  | {error?: never; info?: boolean; warning?: never}
+  | {error?: never; info?: never; warning?: boolean}
+);
 
 const COMPONENT_NAME: string = 'SignInAlert';
 
 const SignInAlert: ForwardRefExoticComponent<SignInAlertProps> & WithWrapperProps = forwardRef(
   <C extends ElementType>(props: SignInAlertProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
-    const {className, error, color, icon, ...rest} = props;
+    const {className, error, info, warning, color, icon, ...rest} = props;
 
     const classes: string = clsx(`oxygen-${pascalCaseToKebabCase(COMPONENT_NAME)}`, className);
 
-    const extendedColor: string = color || (error ? 'error' : 'error');
+    let extendedColor: string = color;
+    if (!color) {
+      if (error) {
+        extendedColor = 'error';
+      } else if (warning) {
+        extendedColor = 'warning';
+      } else {
+        extendedColor = 'info';
+      }
+    }
 
     const extendedIcon: Node | boolean = icon || false;
 
