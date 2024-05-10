@@ -20,7 +20,6 @@ import {Alert} from '@oxygen-ui/react';
 import clsx from 'clsx';
 import {ElementType, ForwardRefExoticComponent, MutableRefObject, ReactElement, forwardRef} from 'react';
 import {WithWrapperProps} from '../models/component';
-import pascalCaseToKebabCase from '../utils/pascal-case-to-kebab-case';
 import './sign-in-alert.scss';
 
 // TODO: AlertProps is not available in oxygen-ui/react
