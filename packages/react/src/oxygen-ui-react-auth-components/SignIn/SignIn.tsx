@@ -27,7 +27,6 @@ import SignInLink from '../SignInLink/SignInLink';
 import SignInPaper from '../SignInPaper/SignInPaper';
 import SignInTextField from '../SignInTextField/SignInTextField';
 import SignInTypography from '../SignInTypography/SignInTypography';
-import pascalCaseToKebabCase from '../utils/pascal-case-to-kebab-case';
 
 export type SignInProps<C extends ElementType = ElementType> = {
   component?: C;
@@ -49,7 +48,7 @@ const SignIn: ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignIn
   <C extends ElementType>(props: SignInProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
     const {className, ...rest} = props;
 
-    const classes: string = clsx(`oxygen-${pascalCaseToKebabCase(COMPONENT_NAME)}`, className);
+    const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
     return <Box ref={ref} className={classes} {...rest} />;
   },

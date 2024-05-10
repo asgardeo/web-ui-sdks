@@ -21,7 +21,6 @@ import clsx from 'clsx';
 import {ElementType, ForwardRefExoticComponent, MutableRefObject, ReactElement, forwardRef} from 'react';
 import {WithWrapperProps} from '../models/component';
 import './sign-in-button.scss';
-import pascalCaseToKebabCase from '../utils/pascal-case-to-kebab-case';
 
 export type SignInButtonProps<C extends ElementType = ElementType> = {
   component?: C;
@@ -34,9 +33,9 @@ const SignInButton: ForwardRefExoticComponent<SignInButtonProps> & WithWrapperPr
   <C extends ElementType>(props: SignInButtonProps<C>, ref: MutableRefObject<HTMLButtonElement>): ReactElement => {
     const {className, variant, social, ...rest} = props;
 
-    let classes: string = clsx(`oxygen-${pascalCaseToKebabCase(COMPONENT_NAME)}`, className);
+    let classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
     if (social) {
-      classes = clsx(classes, `oxygen-${pascalCaseToKebabCase(COMPONENT_NAME)}-social`);
+      classes = clsx(classes, `Oxygen${COMPONENT_NAME}Social`);
     }
 
     return <Button ref={ref} className={classes} fullWidth variant="contained" {...rest} />;

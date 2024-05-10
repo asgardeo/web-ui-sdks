@@ -20,7 +20,6 @@ import {Divider, DividerProps} from '@oxygen-ui/react';
 import clsx from 'clsx';
 import {ElementType, ForwardRefExoticComponent, MutableRefObject, ReactElement, forwardRef} from 'react';
 import {WithWrapperProps} from '../models/component';
-import pascalCaseToKebabCase from '../utils/pascal-case-to-kebab-case';
 import './sign-in-divider.scss';
 
 export type SignInDividerProps<C extends ElementType = ElementType> = {
@@ -33,7 +32,7 @@ const SignInDivider: ForwardRefExoticComponent<SignInDividerProps> & WithWrapper
   <C extends ElementType>(props: SignInDividerProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
     const {className, ...rest} = props;
 
-    const classes: string = clsx(`oxygen-${pascalCaseToKebabCase(COMPONENT_NAME)}`, className);
+    const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
     return <Divider ref={ref} className={classes} {...rest} />;
   },

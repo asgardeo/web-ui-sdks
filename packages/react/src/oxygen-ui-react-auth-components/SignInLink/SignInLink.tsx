@@ -20,7 +20,6 @@ import {Link, LinkProps} from '@oxygen-ui/react';
 import clsx from 'clsx';
 import {ElementType, ForwardRefExoticComponent, MutableRefObject, ReactElement, forwardRef} from 'react';
 import {WithWrapperProps} from '../models/component';
-import pascalCaseToKebabCase from '../utils/pascal-case-to-kebab-case';
 
 export type SignInLinkProps<C extends ElementType = ElementType> = {
   component?: C;
@@ -32,7 +31,7 @@ const SignInLink: ForwardRefExoticComponent<SignInLinkProps> & WithWrapperProps 
   <C extends ElementType>(props: SignInLinkProps<C>, ref: MutableRefObject<HTMLAnchorElement>): ReactElement => {
     const {className, ...rest} = props;
 
-    const classes: string = clsx(`oxygen-${pascalCaseToKebabCase(COMPONENT_NAME)}`, className);
+    const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
     return <Link ref={ref} className={classes} {...rest} />;
   },

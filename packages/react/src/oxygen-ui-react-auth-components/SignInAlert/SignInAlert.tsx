@@ -38,7 +38,7 @@ const SignInAlert: ForwardRefExoticComponent<SignInAlertProps> & WithWrapperProp
   <C extends ElementType>(props: SignInAlertProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
     const {className, error, info, warning, color, icon, ...rest} = props;
 
-    const classes: string = clsx(`oxygen-${pascalCaseToKebabCase(COMPONENT_NAME)}`, className);
+    const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
     let extendedColor: string = color;
     if (!color) {

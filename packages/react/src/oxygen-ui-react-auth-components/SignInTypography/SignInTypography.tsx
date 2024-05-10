@@ -20,8 +20,6 @@ import {Typography, TypographyProps} from '@oxygen-ui/react';
 import clsx from 'clsx';
 import {ElementType, ForwardRefExoticComponent, MutableRefObject, ReactElement, forwardRef} from 'react';
 import {WithWrapperProps} from '../models/component';
-import pascalCaseToKebabCase from '../utils/pascal-case-to-kebab-case';
-import './sign-in-typography.scss';
 
 export type SignInTypographyProps<C extends ElementType = ElementType> = {
   component?: C;
@@ -34,7 +32,7 @@ const SignInTypography: ForwardRefExoticComponent<SignInTypographyProps> & WithW
   <C extends ElementType>(props: SignInTypographyProps<C>, ref: MutableRefObject<HTMLDivElement>): ReactElement => {
     const {className, title, subtitle, variant, align, ...rest} = props;
 
-    const classes: string = clsx(`oxygen-${pascalCaseToKebabCase(COMPONENT_NAME)}`, className);
+    const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
     let extendedVariant: string = variant || 'body1';
     let extendedAlign: string = align || 'left';

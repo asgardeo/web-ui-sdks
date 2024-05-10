@@ -20,7 +20,7 @@ import {TextField, TextFieldProps} from '@oxygen-ui/react';
 import clsx from 'clsx';
 import {ElementType, ForwardRefExoticComponent, MutableRefObject, ReactElement, forwardRef} from 'react';
 import {WithWrapperProps} from '../models/component';
-import pascalCaseToKebabCase from '../utils/pascal-case-to-kebab-case';
+import './sign-in-text-field.scss';
 
 export type SignInTextFieldProps<C extends ElementType = ElementType> = {
   component?: C;
@@ -32,7 +32,7 @@ const SignInTextField: ForwardRefExoticComponent<SignInTextFieldProps> & WithWra
   <C extends ElementType>(props: SignInTextFieldProps<C>, ref: MutableRefObject<HTMLDivElement>): ReactElement => {
     const {className, variant, ...rest} = props;
 
-    const classes: string = clsx(`oxygen-${pascalCaseToKebabCase(COMPONENT_NAME)}`, className);
+    const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
     return <TextField fullWidth ref={ref} className={classes} variant={variant} {...rest} />;
   },
