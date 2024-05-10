@@ -16,4 +16,5 @@
  * under the License.
  */
 
+export {default as SignIn} from './SignIn/SignIn';
 export * from './SignIn/SignIn';
