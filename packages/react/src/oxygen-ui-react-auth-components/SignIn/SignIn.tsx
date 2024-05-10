@@ -21,15 +21,20 @@ import clsx from 'clsx';
 import {ElementType, ForwardRefExoticComponent, MutableRefObject, ReactElement, forwardRef} from 'react';
 import {WithWrapperProps} from '../models/component';
 import SignInAlert from '../SignInAlert/SignInAlert';
-import SignInButton from '../SignInButton/SignInButton';
+import SignInButton, {SignInButtonProps} from '../SignInButton/SignInButton';
 import SignInDivider from '../SignInDivider/SignInDivider';
-import SignInLink from '../SignInLink/SignInLink';
+import SignInLink, {SignInLinkProps} from '../SignInLink/SignInLink';
 import SignInPaper from '../SignInPaper/SignInPaper';
-import SignInTextField from '../SignInTextField/SignInTextField';
+import SignInTextField, {SignInTextFieldProps} from '../SignInTextField/SignInTextField';
 import SignInTypography from '../SignInTypography/SignInTypography';
 
 export type SignInProps<C extends ElementType = ElementType> = {
   component?: C;
+  links: SignInLinkProps[];
+  loginOptions?: SignInButtonProps[];
+  subtitle?: string;
+  textFields?: SignInTextFieldProps[];
+  title?: string;
 } & Omit<BoxProps, 'component'>;
 
 type SignInCompoundProps = {
@@ -44,11 +49,50 @@ type SignInCompoundProps = {
 
 const COMPONENT_NAME: string = 'SignIn';
 
+const renderTextFields = (textFields: SignInTextFieldProps[]): ReactElement[] =>
+  textFields.map((textFieldProps: SignInTextFieldProps) => <SignInTextField {...textFieldProps} />);
+
+const renderLinks = (links: SignInLinkProps[]): ReactElement[] =>
+  links.map((linkProps: SignInLinkProps) => (
+    <>
+      <SignInLink {...linkProps} />
+      <br />
+    </>
+  ));
+
+const renderLoginOptions = (loginOptions: SignInButtonProps[]): ReactElement[] =>
+  loginOptions.map((loginOptionProps: SignInButtonProps) => <SignInButton social {...loginOptionProps} />);
+
 const SignIn: ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignInCompoundProps = forwardRef(
   <C extends ElementType>(props: SignInProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
-    const {className, ...rest} = props;
+    const {className, title, subtitle, textFields, links, loginOptions, ...rest} = props;
 
     const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
+
+    if (title || subtitle || textFields || links || loginOptions) {
+      return (
+        <Box ref={ref} className={classes} {...rest}>
+          <SignInPaper>
+            {title && <SignInTypography title>{title}</SignInTypography>}
+
+            {subtitle && <SignInTypography subtitle>{subtitle}</SignInTypography>}
+
+            {textFields && renderTextFields(textFields)}
+
+            <SignInButton>Sign In</SignInButton>
+
+            {links && renderLinks(links)}
+
+            {loginOptions && (
+              <>
+                <SignInDivider>OR</SignInDivider>
+                {renderLoginOptions(loginOptions)}
+              </>
+            )}
+          </SignInPaper>
+        </Box>
+      );
+    }
 
     return <Box ref={ref} className={classes} {...rest} />;
   },
