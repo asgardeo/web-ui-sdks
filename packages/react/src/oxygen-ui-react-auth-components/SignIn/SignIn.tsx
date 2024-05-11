@@ -29,6 +29,7 @@ import SignInPaper from '../SignInPaper/SignInPaper';
 import SignInPinInput from '../SignInPinInput/SignInPinInput';
 import SignInTextField, {SignInTextFieldProps} from '../SignInTextField/SignInTextField';
 import SignInTypography from '../SignInTypography/SignInTypography';
+import './sign-in.scss';
 
 export type SignInProps<C extends ElementType = ElementType> = {
   component?: C;
