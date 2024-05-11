@@ -39,12 +39,12 @@ const getLocalization = async (props: GetLocalizationProps): Promise<TextObject>
 
   try {
     if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleTextBranding ?? true) {
-      textFromConsoleBranding = await getBrandingPreferenceText(
+      textFromConsoleBranding = await getBrandingPreferenceText({
         locale,
-        providerCustomization.name,
+        name: providerCustomization.name,
         screen,
-        providerCustomization.type,
-      );
+        type: providerCustomization.type,
+      });
     }
   } catch (error) {
     throw new AsgardeoUIException(
