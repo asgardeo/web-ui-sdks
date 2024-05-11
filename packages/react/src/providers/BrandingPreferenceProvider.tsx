@@ -40,7 +40,7 @@ const BrandingPreferenceProvider: FC<PropsWithChildren<BrandingPreferenceProvide
   }, [brandingPreference]);
 
   useEffect(() => {
-    getBranding({customization: branding}).then((response: Branding) => {
+    getBranding({branding}).then((response: Branding) => {
       setBrandingPreference(response);
       injectBrandingCSSSkeleton();
     });
