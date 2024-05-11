@@ -25,7 +25,9 @@ import AuthContext from '../models/auth-context';
 import SPACryptoUtils from '../utils/crypto-utils';
 import SessionStore from '../utils/session-store';
 
-const AsgardeoProvider: FC<AsgardeProviderProps> = (props: PropsWithChildren<AsgardeProviderProps>) => {
+const AsgardeoProvider: FC<PropsWithChildren<AsgardeProviderProps>> = (
+  props: PropsWithChildren<AsgardeProviderProps>,
+) => {
   const {children, config, store, branding} = props;
 
   const [accessToken, setAccessToken] = useState<string>('');
@@ -89,7 +91,7 @@ const AsgardeoProvider: FC<AsgardeProviderProps> = (props: PropsWithChildren<Asg
 
   return (
     <AsgardeoContext.Provider value={value}>
-      <BrandingPreferenceProvider Branding={branding}>{children}</BrandingPreferenceProvider>
+      <BrandingPreferenceProvider branding={branding}>{children}</BrandingPreferenceProvider>
     </AsgardeoContext.Provider>
   );
 };
