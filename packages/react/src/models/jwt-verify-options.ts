@@ -16,23 +16,12 @@
  * under the License.
  */
 
-const path = require('path');
+interface JwtVerifyOptions {
+  algorithms: string[];
+  audience: string;
+  clockTolerance: number;
+  issuer: string;
+  subject: string;
+}
 
-module.exports = {
-  extends: [
-    'plugin:@wso2/typescript',
-    'plugin:@wso2/react',
-    'plugin:@wso2/strict',
-    'plugin:@wso2/internal',
-    'plugin:@wso2/prettier',
-    'plugin:@wso2/jest',
-    'plugin:react/jsx-runtime',
-  ],
-  parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.lib.json'), path.resolve(__dirname, 'tsconfig.eslint.json')],
-  },
-  plugins: ['@wso2'],
-  rules: {
-    'class-methods-use-this': 'off',
-  },
-};
+export default JwtVerifyOptions;
