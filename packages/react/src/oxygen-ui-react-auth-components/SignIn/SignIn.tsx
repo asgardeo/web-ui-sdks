@@ -83,6 +83,7 @@ const SignIn: ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignIn
       return (
         <Box ref={ref} className={classes} {...rest}>
           {logo && <SignInImage src={logo} />}
+
           <SignInPaper>
             {title && <SignInTypography title>{title}</SignInTypography>}
 
