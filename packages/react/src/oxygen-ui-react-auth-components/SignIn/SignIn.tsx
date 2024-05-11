@@ -35,6 +35,7 @@ export type SignInProps<C extends ElementType = ElementType> = {
   component?: C;
   links?: SignInLinkProps[];
   loginOptions?: SignInButtonProps[];
+  logo?: string;
   subtitle?: string;
   textFields?: SignInTextFieldProps[];
   title?: string;
@@ -74,13 +75,14 @@ const renderLoginOptions = (loginOptions: SignInButtonProps[]): ReactElement[] =
 
 const SignIn: ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignInCompoundProps = forwardRef(
   <C extends ElementType>(props: SignInProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
-    const {className, title, subtitle, textFields, links, loginOptions, ...rest} = props;
+    const {className, title, subtitle, textFields, links, loginOptions, logo, ...rest} = props;
 
     const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
-    if (title || subtitle || textFields || links || loginOptions) {
+    if (title || subtitle || textFields || links || loginOptions || logo) {
       return (
         <Box ref={ref} className={classes} {...rest}>
+          {logo && <SignInImage src={logo} />}
           <SignInPaper>
             {title && <SignInTypography title>{title}</SignInTypography>}
 
