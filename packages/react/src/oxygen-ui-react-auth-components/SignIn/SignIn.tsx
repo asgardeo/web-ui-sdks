@@ -23,6 +23,7 @@ import {WithWrapperProps} from '../models/component';
 import SignInAlert from '../SignInAlert/SignInAlert';
 import SignInButton, {SignInButtonProps} from '../SignInButton/SignInButton';
 import SignInDivider from '../SignInDivider/SignInDivider';
+import SignInFooter from '../SignInFooter/SignInFooter';
 import SignInImage from '../SignInImage/SignInImage';
 import SignInLink, {SignInLinkProps} from '../SignInLink/SignInLink';
 import SignInPaper from '../SignInPaper/SignInPaper';
@@ -45,6 +46,7 @@ type SignInCompoundProps = {
   Alert: typeof SignInAlert;
   Button: typeof SignInButton;
   Divider: typeof SignInDivider;
+  Footer: typeof SignInFooter;
   Image: typeof SignInImage;
   Link: typeof SignInLink;
   Paper: typeof SignInPaper;
@@ -122,5 +124,6 @@ SignIn.Button = SignInButton;
 SignIn.TextField = SignInTextField;
 SignIn.PinInput = SignInPinInput;
 SignIn.Image = SignInImage;
+SignIn.Footer = SignInFooter;
 
 export default SignIn;
