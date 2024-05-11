@@ -25,7 +25,7 @@ interface GetBrandingProps {
   /**
    * Customization prop passed to the component/provider.
    */
-  customization?: BrandingProps;
+  branding?: BrandingProps;
   /**
    * Merged customization object.
    */

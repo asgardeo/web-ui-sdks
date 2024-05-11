@@ -31,7 +31,7 @@ import GetBrandingProps from '../models/get-branding-props';
  * @returns {Promise<Branding>} A promise that resolves with the merged branding properties.
  */
 const getBranding = async (props: GetBrandingProps): Promise<Branding> => {
-  const {customization, merged} = props;
+  const {branding, merged} = props;
   let mergedBranding: Branding;
 
   /**
@@ -46,12 +46,12 @@ const getBranding = async (props: GetBrandingProps): Promise<Branding> => {
     }
 
     if (brandingFromConsole?.preference?.configs?.isBrandingEnabled) {
-      mergedBranding = merge(DEFAULT_BRANDING, brandingFromConsole ?? {}, customization ?? {});
+      mergedBranding = merge(DEFAULT_BRANDING, brandingFromConsole ?? {}, branding ?? {});
     } else {
-      mergedBranding = merge(DEFAULT_BRANDING, customization ?? {});
+      mergedBranding = merge(DEFAULT_BRANDING, branding ?? {});
     }
   } else {
-    mergedBranding = merge(merged, customization ?? {});
+    mergedBranding = merge(merged, branding ?? {});
   }
 
   return mergedBranding;
