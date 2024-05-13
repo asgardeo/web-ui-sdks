@@ -19,13 +19,13 @@
 .OxygenSignInFooter {
   width: 100%;
   margin: 16px 0;
-  color: grey;
+  color: var(--oxygen-palette-text-secondary);
 
   .OxygenSignInLink {
-    color: grey;
+    color: var(--oxygen-palette-text-secondary);
 
     &:hover {
-      color: #ff7300;
+      color: var(--oxygen-palette-primary-main);
       cursor: pointer;
     }
   }
