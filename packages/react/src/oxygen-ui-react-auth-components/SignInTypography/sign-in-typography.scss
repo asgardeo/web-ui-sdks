@@ -16,23 +16,6 @@
  * under the License.
  */
 
-.OxygenSignInButton {
-  margin: 16px 0;
-}
-
-.OxygenSignInButton-social {
-  background: white;
-  color: black;
-  margin: 0;
-  padding: 8px 0;
-  box-shadow: 0 1px 1px 2px rgb(0 0 0 / 12%), 0 1px 1px 0 rgb(0 0 0 / 24%);
-
-  &:hover {
-    background: rgb(213 212 212);
-    box-shadow: 0 1px 1px 2px rgb(0 0 0 / 12%), 0 1px 1px 0 rgb(0 0 0 / 24%);
-  }
-
-  &:not(:last-child) {
-    margin-bottom: 16px;
-  }
+.OxygenSignInTypography-subtitle {
+  color: grey;
 }

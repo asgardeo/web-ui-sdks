@@ -35,7 +35,7 @@ const SignInButton: ForwardRefExoticComponent<SignInButtonProps> & WithWrapperPr
 
     let classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
     if (social) {
-      classes = clsx(classes, `Oxygen${COMPONENT_NAME}Social`);
+      classes = clsx(classes, `Oxygen${COMPONENT_NAME}-social`);
     }
 
     return <Button ref={ref} className={classes} fullWidth variant="contained" {...rest} />;
