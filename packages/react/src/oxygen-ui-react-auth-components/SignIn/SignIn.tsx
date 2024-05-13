@@ -18,7 +18,14 @@
 
 import {Box, BoxProps} from '@oxygen-ui/react';
 import clsx from 'clsx';
-import {ElementType, ForwardRefExoticComponent, MutableRefObject, ReactElement, forwardRef} from 'react';
+import {
+  ElementType,
+  ForwardRefExoticComponent,
+  MutableRefObject,
+  ReactElement,
+  forwardRef,
+  isValidElement,
+} from 'react';
 import {WithWrapperProps} from '../models/component';
 import SignInAlert from '../SignInAlert/SignInAlert';
 import SignInButton, {SignInButtonProps} from '../SignInButton/SignInButton';
@@ -29,17 +36,39 @@ import SignInLink, {SignInLinkProps} from '../SignInLink/SignInLink';
 import SignInPaper from '../SignInPaper/SignInPaper';
 import SignInPinInput from '../SignInPinInput/SignInPinInput';
 import SignInTextField, {SignInTextFieldProps} from '../SignInTextField/SignInTextField';
-import SignInTypography from '../SignInTypography/SignInTypography';
+import SignInTypography, {SignInTypographyProps} from '../SignInTypography/SignInTypography';
 import './sign-in.scss';
+
+type Footer =
+  | ReactElement
+  | {
+      copyrights?: {
+        link?: string;
+        text: string;
+      };
+      locale?: {
+        text: string;
+      };
+      privacyPolicy?: {
+        link?: string;
+        text: string;
+      };
+      termsOfUse?: {
+        link?: string;
+        text: string;
+      };
+    };
 
 export type SignInProps<C extends ElementType = ElementType> = {
   component?: C;
+  footer?: Footer;
   links?: SignInLinkProps[];
   loginOptions?: SignInButtonProps[];
   logo?: string;
-  subtitle?: string;
+  submitButton?: {text: string} & SignInButtonProps;
+  subtitle?: {text: string} & SignInTypographyProps;
   textFields?: SignInTextFieldProps[];
-  title?: string;
+  title?: {text: string} & SignInTypographyProps;
 } & Omit<BoxProps, 'component'>;
 
 type SignInCompoundProps = {
@@ -77,38 +106,107 @@ const renderLoginOptions = (loginOptions: SignInButtonProps[]): ReactElement[] =
 
 const SignIn: ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignInCompoundProps = forwardRef(
   <C extends ElementType>(props: SignInProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
-    const {className, title, subtitle, textFields, links, loginOptions, logo, ...rest} = props;
+    const {
+      className,
+      title,
+      subtitle,
+      textFields = [
+        {
+          label: 'username',
+          name: 'text',
+          placeholder: 'Enter your username',
+        },
+        {
+          label: 'Password',
+          name: 'password',
+          placeholder: 'Enter your password',
+          type: 'password',
+        },
+      ],
+      links,
+      loginOptions,
+      logo,
+      submitButton,
+      footer,
+      ...rest
+    } = props;
 
     const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
-    if (title || subtitle || textFields || links || loginOptions || logo) {
-      return (
-        <Box ref={ref} className={classes} {...rest}>
-          {logo && <SignInImage src={logo} />}
+    /**
+     * Destructure the title and subtitle props to extract the title and subtitle as both cannot be passed.
+     */
+    const {
+      children: titleChildren,
+      text: titleText,
+      title: titleTitle,
+      subtitle: titleSubtitle,
+      ...restTitleProps
+    } = title ?? {};
 
-          <SignInPaper>
-            {title && <SignInTypography title>{title}</SignInTypography>}
+    const {
+      children: subtitleChildren,
+      text: subtitleText,
+      title: subtitleTitle,
+      subtitle: subtitleSubtitle,
+      ...restSubtitleProps
+    } = subtitle ?? {};
 
-            {subtitle && <SignInTypography subtitle>{subtitle}</SignInTypography>}
+    const {children: submitButtonChildren, text: submitButtonText, ...restSubmitButtonTextProps} = submitButton ?? {};
 
-            {textFields && renderTextFields(textFields)}
-
-            <SignInButton>Sign In</SignInButton>
-
-            {links && renderLinks(links)}
-
-            {loginOptions && (
-              <>
-                <SignInDivider>OR</SignInDivider>
-                {renderLoginOptions(loginOptions)}
-              </>
-            )}
-          </SignInPaper>
-        </Box>
-      );
+    /**
+     * If SignIn component contains any children render only the outer box.
+     * Otherwise render the default SignIn component.
+     */
+    if (props?.['children']) {
+      return <Box ref={ref} className={classes} {...rest} />;
     }
 
-    return <Box ref={ref} className={classes} {...rest} />;
+    return (
+      <Box ref={ref} className={classes} {...rest}>
+        {logo && <SignInImage src={logo} />}
+
+        <SignInPaper>
+          <SignInTypography title {...restTitleProps}>
+            {titleChildren ?? titleText ?? 'Sign In'}
+          </SignInTypography>
+
+          {subtitle && (
+            <SignInTypography subtitle {...restSubtitleProps}>
+              {subtitleChildren ?? subtitleText}
+            </SignInTypography>
+          )}
+
+          {renderTextFields(textFields)}
+
+          <SignInButton {...restSubmitButtonTextProps}>
+            {submitButtonChildren ?? submitButtonText ?? 'Sign In'}
+          </SignInButton>
+
+          {links && renderLinks(links)}
+
+          {loginOptions && (
+            <>
+              <SignInDivider>OR</SignInDivider>
+              {renderLoginOptions(loginOptions)}
+            </>
+          )}
+        </SignInPaper>
+
+        {footer && isValidElement(footer) ? (
+          footer
+        ) : (
+          <SignInFooter
+            copyrights={{children: <SignInLink href={footer?.copyrights?.link}>{footer?.copyrights?.text}</SignInLink>}}
+            items={[
+              {children: <SignInLink href={footer?.termsOfUse?.link}>{footer?.termsOfUse?.text}</SignInLink>},
+              {children: <SignInLink href={footer?.privacyPolicy?.link}>{footer?.privacyPolicy?.text}</SignInLink>},
+              {children: <SignInTypography>{footer?.locale?.text}</SignInTypography>},
+            ]}
+          />
+        )}
+      </Box>
+    );
   },
 ) as ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignInCompoundProps;
 
