@@ -53,7 +53,7 @@ const SignInTypography: ForwardRefExoticComponent<SignInTypographyProps> & WithW
       }
     }
 
-    return <Typography ref={ref} className={classes} color variant={extendedVariant} align={extendedAlign} {...rest} />;
+    return <Typography ref={ref} className={classes} variant={extendedVariant} align={extendedAlign} {...rest} />;
   },
 ) as ForwardRefExoticComponent<SignInTypographyProps> & WithWrapperProps;
 
