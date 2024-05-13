@@ -86,24 +86,6 @@ type SignInCompoundProps = {
 
 const COMPONENT_NAME: string = 'SignIn';
 
-const renderTextFields = (textFields: SignInTextFieldProps[]): ReactElement[] =>
-  textFields.map((textFieldProps: SignInTextFieldProps, index: number) => (
-    <SignInTextField key={`sign-in-text-field${index + 1}`} {...textFieldProps} />
-  ));
-
-const renderLinks = (links: SignInLinkProps[]): ReactElement[] =>
-  links.map((linkProps: SignInLinkProps, index: number) => (
-    <div key={`sign-in-link-holder${index + 1}`}>
-      <SignInLink {...linkProps} />
-      <br />
-    </div>
-  ));
-
-const renderLoginOptions = (loginOptions: SignInButtonProps[]): ReactElement[] =>
-  loginOptions.map((loginOptionProps: SignInButtonProps, index: number) => (
-    <SignInButton key={`sign-in-button-social${index + 1}`} social {...loginOptionProps} />
-  ));
-
 const SignIn: ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignInCompoundProps = forwardRef(
   <C extends ElementType>(props: SignInProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
     const {
@@ -177,18 +159,28 @@ const SignIn: ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignIn
             </SignInTypography>
           )}
 
-          {renderTextFields(textFields)}
+          {textFields.map((textFieldProps: SignInTextFieldProps, index: number) => (
+            <SignInTextField key={`sign-in-text-field${index + 1}`} {...textFieldProps} />
+          ))}
 
           <SignInButton {...restSubmitButtonTextProps}>
             {submitButtonChildren ?? submitButtonText ?? 'Sign In'}
           </SignInButton>
 
-          {links && renderLinks(links)}
+          {links &&
+            links.map((linkProps: SignInLinkProps, index: number) => (
+              <div key={`sign-in-link-holder${index + 1}`}>
+                <SignInLink {...linkProps} />
+                <br />
+              </div>
+            ))}
 
           {loginOptions && (
             <>
               <SignInDivider>OR</SignInDivider>
-              {renderLoginOptions(loginOptions)}
+              {loginOptions.map((loginOptionProps: SignInButtonProps, index: number) => (
+                <SignInButton key={`sign-in-button-social${index + 1}`} social {...loginOptionProps} />
+              ))}
             </>
           )}
         </SignInPaper>
