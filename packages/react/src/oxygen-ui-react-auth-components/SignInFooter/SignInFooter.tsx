@@ -20,40 +20,30 @@ import {Grid, GridProps} from '@oxygen-ui/react';
 import clsx from 'clsx';
 import {ElementType, ForwardRefExoticComponent, MutableRefObject, ReactElement, forwardRef} from 'react';
 import {WithWrapperProps} from '../models/component';
-import SignInLink from '../SignInLink/SignInLink';
-import SignInTypography from '../SignInTypography/SignInTypography';
+import SignInTypography, {SignInTypographyProps} from '../SignInTypography/SignInTypography';
 import './sign-in-footer.scss';
 
 const COMPONENT_NAME: string = 'SignInFooter';
 
 export type SignInFooterProps<C extends ElementType = ElementType> = {
   component?: C;
+  copyrights?: SignInTypographyProps;
+  items?: GridProps[];
 } & Omit<GridProps, 'component'>;
 
-// TODO: Handling props for the component
 const SignInFooter: ForwardRefExoticComponent<SignInFooterProps> & WithWrapperProps = forwardRef(
   <C extends ElementType>(props: SignInFooterProps<C>, ref: MutableRefObject<HTMLDivElement>): ReactElement => {
-    const year: number = new Date().getFullYear();
-
-    const {className, ...rest} = props;
+    const {className, copyrights, items, ...rest} = props;
 
     const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
     return (
       <Grid className={classes} container direction="column" alignItems="center" ref={ref} {...rest}>
         <Grid>
-          <SignInTypography>© {year} WSO2 LLC.</SignInTypography>
+          <SignInTypography {...copyrights} />
         </Grid>
         <Grid container justifyContent="space-between" xs={12}>
-          <Grid>
-            <SignInLink>Terms of Use</SignInLink>
-          </Grid>
-          <Grid>
-            <SignInLink>Privacy Policy</SignInLink>
-          </Grid>
-          <Grid>
-            <SignInTypography>en-US</SignInTypography>
-          </Grid>
+          {items && items.map((item: GridProps, index: number) => <Grid key={`gride-item-${index + 1}`} {...item} />)}
         </Grid>
       </Grid>
     );
