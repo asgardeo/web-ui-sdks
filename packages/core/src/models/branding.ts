@@ -25,6 +25,8 @@ import {TextPreference} from '../i18n/screens/model';
  */
 export type BrandingPreferenceText = Record<string, TextPreference>;
 
+export type BrandingPreferenceTextProps = RecursivePartial<BrandingPreferenceText>;
+
 interface BrandingPreferenceWithText extends BrandingPreference {
   text?: BrandingPreferenceText;
 }

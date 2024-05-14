@@ -17,6 +17,7 @@
  */
 
 import {AsgardeoAuthClient, AuthClientConfig} from '@asgardeo/auth-js';
+import {BrandingPreferenceTypes} from './branding-api-response';
 
 /**
  * Interface for the configuration extension from the AuthClientConfig of '@asgardeo/auth-js'.
@@ -39,16 +40,7 @@ interface AuthClientConfigExtension {
   /**
    * Type to filter the retrieval of customizations.
    */
-  type?: OrgType;
-}
-
-/**
- * Enum for the organization type.
- */
-export enum OrgType {
-  App = 'APP',
-  Custom = 'CUSTOM',
-  Org = 'ORG',
+  type?: BrandingPreferenceTypes;
 }
 
 /**

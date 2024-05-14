@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {BrandingProps} from './branding';
+import {BrandingPreferenceTextProps} from './branding';
 import {ScreenType} from './screen-type';
 
 /**
@@ -26,7 +26,7 @@ interface GetLocalizationProps {
   /**
    * Customiztion prop passed to the component
    */
-  componentCustomization?: BrandingProps;
+  componentTextOverrides?: BrandingPreferenceTextProps;
   /**
    * Locale to filter the retrieval of localization.
    */
@@ -34,7 +34,7 @@ interface GetLocalizationProps {
   /**
    * Customization prop passed to the provider
    */
-  providerCustomization?: BrandingProps;
+  providerTextOverrides?: BrandingPreferenceTextProps;
   /**
    * Screen to filter the retrieval of localization.
    */
