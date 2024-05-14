@@ -89,6 +89,7 @@ const COMPONENT_NAME: string = 'SignIn';
 const SignIn: ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignInCompoundProps = forwardRef(
   <C extends ElementType>(props: SignInProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
     const {
+      children,
       className,
       title,
       subtitle,
@@ -140,8 +141,12 @@ const SignIn: ForwardRefExoticComponent<SignInProps> & WithWrapperProps & SignIn
      * If SignIn component contains any children render only the outer box.
      * Otherwise render the default SignIn component.
      */
-    if (props?.['children']) {
-      return <Box ref={ref} className={classes} {...rest} />;
+    if (children) {
+      return (
+        <Box ref={ref} className={classes} {...rest}>
+          {children}
+        </Box>
+      );
     }
 
     return (
