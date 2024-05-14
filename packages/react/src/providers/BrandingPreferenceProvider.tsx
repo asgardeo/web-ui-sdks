@@ -21,6 +21,7 @@ import {ThemeProvider} from '@oxygen-ui/react';
 import {FC, PropsWithChildren, useEffect, useState} from 'react';
 import BrandingPreferenceContext from '../contexts/branding-preference-context';
 import BrandingPreferenceProviderProps from '../models/branding-preference-provider-props';
+import generateTheme from '../theme/generate-theme';
 
 const BrandingPreferenceProvider: FC<PropsWithChildren<BrandingPreferenceProviderProps>> = (
   props: PropsWithChildren<BrandingPreferenceProviderProps>,
@@ -37,7 +38,7 @@ const BrandingPreferenceProvider: FC<PropsWithChildren<BrandingPreferenceProvide
 
   return (
     <BrandingPreferenceContext.Provider value={brandingPreference}>
-      <ThemeProvider theme={generateTheme({branding: brandingPreference})}>{children}</ThemeProvider>
+      <ThemeProvider theme={generateTheme(brandingPreference?.preference.theme)}>{children}</ThemeProvider>
     </BrandingPreferenceContext.Provider>
   );
 };
