@@ -19,13 +19,26 @@
 import {AuthClient, CryptoUtils, MeAPIResponse, Store, UIAuthClient, getProfileInformation} from '@asgardeo/js-ui-core';
 import {FC, PropsWithChildren, useCallback, useEffect, useMemo, useState} from 'react';
 import BrandingPreferenceProvider from './BrandingPreferenceProvider';
+import I18nProvider from './I18nProvider';
 import AsgardeoContext from '../contexts/asgardeo-context';
 import AsgardeProviderProps from '../models/asgardeo-provider-props';
 import AuthContext from '../models/auth-context';
 import SPACryptoUtils from '../utils/crypto-utils';
 import SessionStore from '../utils/session-store';
-import I18nProvider from './I18nProvider';
 
+/**
+ * `AsgardeoProvider` is a component that provides an Asgardeo context to all its children.
+ * It takes an object of type `AsgardeProviderProps` as props, which includes the children to render,
+ * a configuration object, a store instance, and a branding object.
+ *
+ * @param {PropsWithChildren<AsgardeProviderProps>} props - The properties passed to the component.
+ * @param {ReactNode} props.children - The children to render inside the provider.
+ * @param {Config} props.config - The configuration object for the Asgardeo context.
+ * @param {Store} [props.store] - An optional store instance. If not provided, a new SessionStore will be created.
+ * @param {Branding} props.branding - The branding object for the Asgardeo context.
+ *
+ * @returns {ReactElement} A React element that provides the Asgardeo context to all its children.
+ */
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeProviderProps>> = (
   props: PropsWithChildren<AsgardeProviderProps>,
 ) => {

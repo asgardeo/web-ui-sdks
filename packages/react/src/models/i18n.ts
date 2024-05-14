@@ -33,3 +33,8 @@ export interface I18n {
   setTranslations: (props: SetTranslationsProps) => Promise<boolean>;
   text: I18nLocalization;
 }
+
+export interface I18nProviderProps {
+  providerLocaleOverride?: string;
+  providerTextOverrides?: BrandingPreferenceTextProps;
+}

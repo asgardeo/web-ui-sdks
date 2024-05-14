@@ -23,6 +23,17 @@ import BrandingPreferenceContext from '../contexts/branding-preference-context';
 import BrandingPreferenceProviderProps from '../models/branding-preference-provider-props';
 import generateTheme from '../theme/generate-theme';
 
+/**
+ * `BrandingPreferenceProvider` is a component that provides a branding context to all its children.
+ * It takes an object of type `BrandingPreferenceProviderProps` as props, which includes the children to render,
+ * and a branding object.
+ *
+ * @param {PropsWithChildren<BrandingPreferenceProviderProps>} props - The properties passed to the component.
+ * @param {ReactNode} props.children - The children to render inside the provider.
+ * @param {Branding} props.branding - The branding object for the context.
+ *
+ * @returns {ReactElement} A React element that provides the branding context to all its children.
+ */
 const BrandingPreferenceProvider: FC<PropsWithChildren<BrandingPreferenceProviderProps>> = (
   props: PropsWithChildren<BrandingPreferenceProviderProps>,
 ) => {

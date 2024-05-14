@@ -19,6 +19,15 @@
 import {BrandingPreferenceTheme, ThemeConfig} from '@asgardeo/js-ui-core';
 import {extendTheme, Theme} from '@oxygen-ui/react';
 
+/**
+ * `generateTheme` is a function that generates a theme based on the provided branding preferences.
+ * It takes an object of type `BrandingPreferenceTheme` as an argument, which includes the active
+ * theme and configurations for different themes.
+ *
+ * @param {BrandingPreferenceTheme} brandingPreferenceTheme - The branding preferences used to generate the theme.
+ *
+ * @returns {Theme} A theme object that can be used with the `extendTheme` function from `@oxygen-ui/react`.
+ */
 const generateTheme: (brandingPreferenceTheme: BrandingPreferenceTheme) => Theme = (
   brandingPreferenceTheme: BrandingPreferenceTheme,
 ) => {
