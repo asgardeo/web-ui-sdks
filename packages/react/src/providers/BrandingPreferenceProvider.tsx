@@ -18,10 +18,8 @@
 
 import {Branding, getBranding} from '@asgardeo/js-ui-core';
 import {ThemeProvider} from '@oxygen-ui/react';
-import {FC, PropsWithChildren, useCallback, useEffect, useState} from 'react';
+import {FC, PropsWithChildren, useEffect, useState} from 'react';
 import BrandingPreferenceContext from '../contexts/branding-preference-context';
-import generateTheme from '../customization/theme';
-import getThemeSkeleton from '../customization/theme/theme-skeleton';
 import BrandingPreferenceProviderProps from '../models/branding-preference-provider-props';
 
 const BrandingPreferenceProvider: FC<PropsWithChildren<BrandingPreferenceProviderProps>> = (
@@ -31,20 +29,11 @@ const BrandingPreferenceProvider: FC<PropsWithChildren<BrandingPreferenceProvide
 
   const [brandingPreference, setBrandingPreference] = useState<Branding>();
 
-  const injectBrandingCSSSkeleton: () => void = useCallback((): void => {
-    if (brandingPreference) {
-      const styleElement: HTMLStyleElement = document.createElement('style');
-      styleElement.innerHTML = getThemeSkeleton(brandingPreference.preference.theme);
-      document.head.appendChild(styleElement);
-    }
-  }, [brandingPreference]);
-
   useEffect(() => {
     getBranding({branding}).then((response: Branding) => {
       setBrandingPreference(response);
-      injectBrandingCSSSkeleton();
     });
-  }, [branding, injectBrandingCSSSkeleton]);
+  }, [branding]);
 
   return (
     <BrandingPreferenceContext.Provider value={brandingPreference}>
