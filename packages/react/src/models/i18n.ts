@@ -24,11 +24,12 @@ export type I18nLocalization =
     }
   | {};
 
+export interface SetTranslationsProps {
+  componentLocaleOverride?: string;
+  componentTextOverrides?: BrandingPreferenceTextProps;
+  screen: ScreenType;
+}
 export interface I18n {
-  setTranslations: (
-    screen: ScreenType,
-    componentLocaleOverride?: string,
-    componentTextOverrides?: BrandingPreferenceTextProps,
-  ) => Promise<boolean>;
+  setTranslations: (props: SetTranslationsProps) => Promise<boolean>;
   text: I18nLocalization;
 }

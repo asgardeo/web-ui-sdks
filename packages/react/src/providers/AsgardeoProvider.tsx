@@ -24,6 +24,7 @@ import AsgardeProviderProps from '../models/asgardeo-provider-props';
 import AuthContext from '../models/auth-context';
 import SPACryptoUtils from '../utils/crypto-utils';
 import SessionStore from '../utils/session-store';
+import I18nProvider from './I18nProvider';
 
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeProviderProps>> = (
   props: PropsWithChildren<AsgardeProviderProps>,
@@ -91,7 +92,11 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeProviderProps>> = (
 
   return (
     <AsgardeoContext.Provider value={value}>
-      <BrandingPreferenceProvider branding={branding}>{children}</BrandingPreferenceProvider>
+      <BrandingPreferenceProvider branding={branding}>
+        <I18nProvider providerLocaleOverride={branding?.locale} providerTextOverrides={branding?.preference?.text}>
+          {children}
+        </I18nProvider>
+      </BrandingPreferenceProvider>
     </AsgardeoContext.Provider>
   );
 };
