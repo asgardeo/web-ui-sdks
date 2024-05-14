@@ -16,19 +16,20 @@
  * under the License.
  */
 
-import {MeAPIResponse, signOut as signOutApiCall} from '@asgardeo/js-ui-core';
+import {signOut as signOutApiCall} from '@asgardeo/js-ui-core';
 import {useContext} from 'react';
 import AsgardeoContext from '../contexts/asgardeo-context';
 import AuthContext from '../models/auth-context';
+import UseAuthentication from '../models/use-authentication';
 
-interface UseAuthenticationResponse {
-  accessToken: string;
-  isAuthenticated: Promise<boolean> | boolean;
-  signOut: () => void;
-  user: MeAPIResponse;
-}
-
-export const useAuthentication = (): UseAuthenticationResponse => {
+/**
+ * `useAuthentication` is a custom hook that provides access to the authentication context.
+ * It returns an object containing the current user, the authentication status, the access token, and a sign out function.
+ *
+ * @returns {UseAuthentication} An object containing the current user (`user`), the authentication status (`isAuthenticated`),
+ * the access token (`accessToken`), and a sign out function (`signOut`).
+ */
+const useAuthentication = (): UseAuthentication => {
   const contextValue: AuthContext = useContext(AsgardeoContext);
 
   const {user, isAuthenticated, accessToken} = contextValue;
@@ -41,3 +42,5 @@ export const useAuthentication = (): UseAuthenticationResponse => {
 
   return {accessToken, isAuthenticated, signOut, user};
 };
+
+export default useAuthentication;
