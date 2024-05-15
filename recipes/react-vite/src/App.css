@@ -1,4 +1,6 @@
 #root {
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
   padding: 2rem;
+  text-align: center;
 }

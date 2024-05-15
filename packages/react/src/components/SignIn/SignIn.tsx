@@ -30,6 +30,7 @@ import {
   authenticate,
   authorize,
   getBranding,
+  keys,
 } from '@asgardeo/js-ui-core';
 import {CircularProgress, ThemeProvider} from '@oxygen-ui/react';
 import {FC, ReactElement, useContext, useEffect, useState} from 'react';
@@ -261,7 +262,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
     return SignInCore;
   };
 
-  if (isComponentLoading) {
+  if (isComponentLoading || isLoading) {
     return (
       <div className="circular-progress-holder">
         <CircularProgress className="circular-progress" />
@@ -270,6 +271,11 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
   }
 
   const imgUrl: string = brandingPreference?.preference?.theme?.LIGHT?.images?.logo?.imgURL;
+  let copyrightText: string = t(keys.common.copyright);
+
+  if (copyrightText.includes('{{currentYear}}')) {
+    copyrightText = copyrightText.replace('{{currentYear}}', new Date().getFullYear().toString());
+  }
 
   return (
     <ThemeProvider theme={generateThemeSignIn(componentBranding?.preference.theme)}>
@@ -278,7 +284,27 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
         {authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
           <>
             {renderSignIn()}
-            <UISignIn.Footer />
+
+            <UISignIn.Footer
+              copyrights={{children: copyrightText}}
+              items={[
+                {
+                  children: (
+                    <UISignIn.Link href={componentBranding.preference.urls.termsOfUseURL}>
+                      {t(keys.common.terms.of.service)}
+                    </UISignIn.Link>
+                  ),
+                },
+                {
+                  children: (
+                    <UISignIn.Link href={componentBranding.preference.urls.privacyPolicyURL}>
+                      {t(keys.common.privacy.policy)}
+                    </UISignIn.Link>
+                  ),
+                },
+                {children: <UISignIn.Typography>{componentBranding?.locale ?? 'en-US'}</UISignIn.Typography>},
+              ]}
+            />
           </>
         )}
         {(authResponse?.flowStatus === FlowStatus.SuccessCompleted || isAuthenticated) && (
