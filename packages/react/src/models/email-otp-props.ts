@@ -17,8 +17,10 @@
  */
 
 import {Authenticator, BrandingProps} from '@asgardeo/js-ui-core';
+import {AlertType} from './sign-in';
 
 interface EmailOtpProps {
+  alert?: AlertType;
   authenticator?: Authenticator;
   brandingProps?: BrandingProps;
   handleAuthenticate: Function;

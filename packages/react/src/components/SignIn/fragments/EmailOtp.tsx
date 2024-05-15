@@ -30,9 +30,10 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
  * @param {BrandingProps} props.brandingProps - Branding props.
  * @param {Authenticator} props.authenticator - Authenticator.
  * @param {Function} props.handleAuthenticate - Callback to handle authentication.
+ * @param {AlertType} props.isAlert - Alert type.
  * @return {ReactElement}
  */
-const EmailOtp = ({brandingProps, authenticator, handleAuthenticate}: EmailOtpProps): ReactElement => {
+const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: EmailOtpProps): ReactElement => {
   const [otp, setOtp] = useState<string>();
 
   const {isLoading, t} = useTranslations({
@@ -52,6 +53,8 @@ const EmailOtp = ({brandingProps, authenticator, handleAuthenticate}: EmailOtpPr
   return (
     <UISignIn.Paper>
       <UISignIn.Typography title>{t(keys.emailOtp.email.otp.heading)}</UISignIn.Typography>
+
+      {alert && <UISignIn.Alert {...alert?.alertType}>{alert.message}</UISignIn.Alert>}
 
       <UISignIn.TextField
         fullWidth
