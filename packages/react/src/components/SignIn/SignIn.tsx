@@ -178,7 +178,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
       LoginOptions.push(
         <LoginOptionsBox
           socialName={authenticator.authenticator}
-          idp={authenticator.idp}
+          displayName={authenticator.idp}
           handleOnClick={(): Promise<void> => handleAuthenticate(authenticator.authenticatorId)}
           key={authenticator.authenticatorId}
         />,
