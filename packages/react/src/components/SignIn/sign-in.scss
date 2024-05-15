@@ -17,6 +17,9 @@
  */
 
 .asgardeo-sign-in {
+  min-width: 350px;
+  min-height: 200px;
+
   .email-otp-resend-button {
     margin-top: 0;
   }
@@ -27,5 +30,16 @@
 
   .multiple-options-paper {
     padding-bottom: 64px;
+  }
+}
+
+.circular-progress-holder {
+  min-height: 0.7*100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .circular-progress {
+    color: rgb(214, 211, 211);
   }
 }
