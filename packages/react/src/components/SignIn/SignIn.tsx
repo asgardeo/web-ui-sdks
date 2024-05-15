@@ -93,7 +93,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
    * Handles the generalized authentication process.
    * @param {any} authParams - The authentication parameters.
    */
-  const handleAuthenticate = async (authenticatorId: string, authParams?: any): Promise<void> => {
+  const handleAuthenticate = async (authenticatorId: string, authParams?: {[key: string]: string}): Promise<void> => {
     if (authResponse === undefined) {
       throw new AsgardeoUIException('REACT_UI-SIGN_IN-HA-IV02', 'Auth response is undefined.');
     }
