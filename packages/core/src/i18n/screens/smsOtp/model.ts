@@ -17,12 +17,11 @@
  */
 
 /**
- * Enum to store screen types.
+ * Interface for the TOTP text.
  */
-export enum ScreenType {
-  Common = 'common',
-  EmailOTP = 'emailOtp',
-  Login = 'login',
-  SMSOTP = 'smsOtp',
-  TOTP = 'totp',
+export interface SmsOTP {
+  continue: string;
+  'resend.code': string;
+  'sms.otp.heading': string;
+  'sms.otp.subheading': string;
 }

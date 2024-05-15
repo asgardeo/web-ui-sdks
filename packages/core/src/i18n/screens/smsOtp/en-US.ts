@@ -16,13 +16,11 @@
  * under the License.
  */
 
-/**
- * Enum to store screen types.
- */
-export enum ScreenType {
-  Common = 'common',
-  EmailOTP = 'emailOtp',
-  Login = 'login',
-  SMSOTP = 'smsOtp',
-  TOTP = 'totp',
-}
+import {SmsOTP} from './model';
+
+export const smsOtp: SmsOTP = {
+  continue: 'Continue',
+  'resend.code': 'Resend code',
+  'sms.otp.heading': 'OTP Verification',
+  'sms.otp.subheading': 'Enter the code sent to your mobile device.',
+};

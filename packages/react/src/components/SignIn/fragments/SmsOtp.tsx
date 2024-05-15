@@ -29,7 +29,7 @@ const SmsOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Email
   const {isLoading, t} = useTranslations({
     componentLocaleOverride: brandingProps?.locale,
     componentTextOverrides: brandingProps?.preference?.text,
-    screen: ScreenType.EmailOTP,
+    screen: ScreenType.SMSOTP,
   });
 
   if (isLoading) {
@@ -42,9 +42,9 @@ const SmsOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Email
 
   return (
     <UISignIn.Paper>
-      <UISignIn.Typography title>{t(keys.emailOtp.email.otp.heading)}</UISignIn.Typography>
+      <UISignIn.Typography title>{t(keys.smsOtp.sms.otp.heading)}</UISignIn.Typography>
 
-      <UISignIn.Typography subtitle>Enter the code sent to your mobile phone</UISignIn.Typography>
+      <UISignIn.Typography subtitle>{t(keys.smsOtp.sms.otp.subheading)}</UISignIn.Typography>
 
       {alert && <UISignIn.Alert {...alert?.alertType}>{alert.key}</UISignIn.Alert>}
 
@@ -59,7 +59,7 @@ const SmsOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Email
           setOtp('');
         }}
       >
-        {t(keys.emailOtp.continue)}
+        {t(keys.smsOtp.continue)}
       </UISignIn.Button>
 
       <UISignIn.Button
@@ -68,7 +68,7 @@ const SmsOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Email
         color="secondary"
         variant="contained"
       >
-        {t(keys.emailOtp.resend.code)}
+        {t(keys.smsOtp.resend.code)}
       </UISignIn.Button>
     </UISignIn.Paper>
   );

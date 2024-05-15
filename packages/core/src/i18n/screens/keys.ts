@@ -80,6 +80,19 @@ interface Keys {
     retry: string;
     username: string;
   };
+  smsOtp: {
+    continue: string;
+    resend: {
+      code: string;
+    };
+
+    sms: {
+      otp: {
+        heading: string;
+        subheading: string;
+      };
+    };
+  };
   totp: {
     continue: string;
     enroll: {
@@ -161,6 +174,19 @@ export const keys: Keys = {
     },
     retry: 'login.retry',
     username: 'login.username',
+  },
+  smsOtp: {
+    continue: 'smsOtp.continue',
+    resend: {
+      code: 'smsOtp.resend.code',
+    },
+
+    sms: {
+      otp: {
+        heading: 'smsOtp.sms.otp.heading',
+        subheading: 'smsOtp.sms.otp.subheading',
+      },
+    },
   },
   totp: {
     continue: 'totp.continue',
