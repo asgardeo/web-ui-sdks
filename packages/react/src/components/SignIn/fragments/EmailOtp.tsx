@@ -23,6 +23,15 @@ import useTranslations from '../../../hooks/use-translations';
 import EmailOtpProps from '../../../models/email-otp-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 
+/**
+ * Email OTP component.
+ *
+ * @param {EmailOtpProps} props - Props injected to the component.
+ * @param {BrandingProps} props.brandingProps - Branding props.
+ * @param {Authenticator} props.authenticator - Authenticator.
+ * @param {Function} props.handleAuthenticate - Callback to handle authentication.
+ * @return {ReactElement}
+ */
 const EmailOtp = ({brandingProps, authenticator, handleAuthenticate}: EmailOtpProps): ReactElement => {
   const [otp, setOtp] = useState<string>();
 

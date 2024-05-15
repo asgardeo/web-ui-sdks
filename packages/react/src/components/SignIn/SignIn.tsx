@@ -49,6 +49,14 @@ import generateThemeSignIn from '../../theme/generate-theme-sign-in';
 import SPACryptoUtils from '../../utils/crypto-utils';
 import './sign-in.scss';
 
+/**
+ * This component provides the sign-in functionality.
+ *
+ * @param {SignInProps} props - Props injected to the component.
+ * @param {BrandingProps} props.brandingProps - Branding related props.
+ *
+ * @returns {ReactElement} - React element.
+ */
 const SignIn: FC<SignInProps> = (props: SignInProps) => {
   const {brandingProps} = props;
   const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
