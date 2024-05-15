@@ -41,11 +41,13 @@ const getLocalization = async (props: GetLocalizationProps): Promise<TextObject>
 
   const configData: AuthClientConfig<UIAuthConfig> = await AuthClient.getInstance().getDataLayer().getConfigData();
 
+  const DEFAULT_NAME: string = 'carbon.super';
+
   try {
     if (configData.enableConsoleTextBranding ?? true) {
       textFromConsoleBranding = await getBrandingPreferenceText({
         locale,
-        name: configData.name ?? 'carbon.super',
+        name: configData.name ?? DEFAULT_NAME,
         screen,
         type: configData.type ?? BrandingPreferenceTypes.Org,
       });
