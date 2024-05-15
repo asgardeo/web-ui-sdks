@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {ScreenType} from '@asgardeo/js-ui-core';
+import {ScreenType, keys} from '@asgardeo/js-ui-core';
 import {CircularProgress} from '@oxygen-ui/react';
 import {ReactElement, useState} from 'react';
 import useTranslations from '../../../hooks/use-translations';
@@ -42,12 +42,12 @@ const EmailOtp = ({brandingProps, authenticator, handleAuthenticate}: EmailOtpPr
 
   return (
     <UISignIn.Paper>
-      <UISignIn.Typography title>OTP Verfication</UISignIn.Typography>
+      <UISignIn.Typography title>{t(keys.emailOtp.email.otp.heading)}</UISignIn.Typography>
 
       <UISignIn.TextField
         fullWidth
         autoComplete="off"
-        label="Enter the code sent to your email ID"
+        label={t(keys.emailOtp.enter.verification.code.got.by.device)}
         name="text"
         value={otp}
         type="password"
@@ -63,7 +63,7 @@ const EmailOtp = ({brandingProps, authenticator, handleAuthenticate}: EmailOtpPr
           setOtp('');
         }}
       >
-        Continue
+        {t(keys.emailOtp.continue)}
       </UISignIn.Button>
 
       <UISignIn.Button
@@ -72,7 +72,7 @@ const EmailOtp = ({brandingProps, authenticator, handleAuthenticate}: EmailOtpPr
         color="secondary"
         variant="contained"
       >
-        Resend Code
+        {t(keys.emailOtp.resend.code)}
       </UISignIn.Button>
     </UISignIn.Paper>
   );

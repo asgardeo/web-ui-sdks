@@ -16,12 +16,11 @@
  * under the License.
  */
 
-/**
- * Enum to store screen types.
- */
-export enum ScreenType {
-  Common = 'common',
-  EmailOTP = 'emailOtp',
-  Login = 'login',
-  TOTP = 'totp',
-}
+import {EmailOTP} from './model';
+
+export const emailOtp: EmailOTP = {
+  continue: 'Continue',
+  'email.otp.heading': 'OTP Verification',
+  'enter.verification.code.got.by.device': 'Enter the code sent to your email ID.',
+  'resend.code': 'Resend code',
+};

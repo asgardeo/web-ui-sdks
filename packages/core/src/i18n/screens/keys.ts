@@ -34,6 +34,28 @@ interface Keys {
       };
     };
   };
+  emailOtp: {
+    continue: string;
+    email: {
+      otp: {
+        heading: string;
+      };
+    };
+    enter: {
+      verification: {
+        code: {
+          got: {
+            by: {
+              device: string;
+            };
+          };
+        };
+      };
+    };
+    resend: {
+      code: string;
+    };
+  };
   login: {
     button: string;
     enter: {
@@ -85,6 +107,28 @@ export const keys: Keys = {
       of: {
         service: 'common.terms.of.service',
       },
+    },
+  },
+  emailOtp: {
+    continue: 'emailOtp.continue',
+    email: {
+      otp: {
+        heading: 'emailOtp.email.otp.heading',
+      },
+    },
+    enter: {
+      verification: {
+        code: {
+          got: {
+            by: {
+              device: 'emailOtp.enter.verification.code.got.by.device',
+            },
+          },
+        },
+      },
+    },
+    resend: {
+      code: 'emailOtp.resend.code',
     },
   },
   login: {
