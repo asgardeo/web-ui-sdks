@@ -16,12 +16,6 @@
  * under the License.
  */
 
-import {BrandingProps, Store, UIAuthConfig} from '@asgardeo/js-ui-core';
-
-interface AsgardeoProviderProps {
-  branding?: BrandingProps;
-  config: UIAuthConfig;
-  store?: Store;
-}
-
-export default AsgardeoProviderProps;
+export type {UIAuthConfig} from '@asgardeo/js-ui-core';
+export {SignInProps} from './sign-in';
+export {default as AsgardeoProviderProps} from './asgardeo-provider-props';
