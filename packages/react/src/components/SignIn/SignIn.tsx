@@ -37,6 +37,7 @@ import {FC, ReactElement, useContext, useEffect, useState} from 'react';
 import BasicAuth from './fragments/BasicAuth';
 import EmailOtp from './fragments/EmailOtp';
 import LoginOptionsBox from './fragments/LoginOptionsBox';
+import SmsOtp from './fragments/SmsOtp';
 import Totp from './fragments/Totp';
 import AsgardeoContext from '../../contexts/asgardeo-context';
 import BrandingPreferenceContext from '../../contexts/branding-preference-context';
@@ -245,6 +246,22 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
         ) {
           return (
             <EmailOtp
+              alert={alert}
+              brandingProps={brandingProps}
+              authenticator={authenticators[0]}
+              handleAuthenticate={handleAuthenticate}
+            />
+          );
+        }
+
+        if (
+          // TODO: change after api based auth gets fixed
+          new SPACryptoUtils()
+            .base64URLDecode(authResponse.nextStep.authenticators[0].authenticatorId)
+            .split(':')[0] === 'sms-otp-authenticator'
+        ) {
+          return (
+            <SmsOtp
               alert={alert}
               brandingProps={brandingProps}
               authenticator={authenticators[0]}
