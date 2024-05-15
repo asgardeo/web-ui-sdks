@@ -42,7 +42,7 @@ import useAuthentication from '../../hooks/use-authentication';
 import {useConfig} from '../../hooks/use-config';
 import useTranslations from '../../hooks/use-translations';
 import AuthContext from '../../models/auth-context';
-import SignInProps from '../../models/sign-in-props';
+import {AlertType, SignInProps} from '../../models/sign-in';
 import {SignIn as UISignIn} from '../../oxygen-ui-react-auth-components';
 import generateThemeSignIn from '../../theme/generate-theme-sign-in';
 import SPACryptoUtils from '../../utils/crypto-utils';
@@ -51,7 +51,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
   const {brandingProps} = props;
   const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
   const [isComponentLoading, setIsComponentLoading] = useState(true);
-  const [Alert, setAlert] = useState<string>();
+  const [Alert, setAlert] = useState<AlertType>();
   const [showSelfSignUp, setShowSelfSignUp] = useState(true);
   const [componentBranding, setComponentBranding] = useState<Branding>();
 
@@ -162,7 +162,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
       });
 
       // TODO: Move this to core: and take from i18n
-      setAlert('Retry');
+      setAlert({alertType: {error: true}, message: 'authentication failed'});
     } else {
       setAuthResponse(resp);
       setShowSelfSignUp(false);
@@ -253,7 +253,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
   if (Alert) {
     return (
       <div>
-        <UISignIn.Alert>{Alert}</UISignIn.Alert>
+        <UISignIn.Alert {...Alert.alertType}>{Alert.message}</UISignIn.Alert>
       </div>
     );
   }

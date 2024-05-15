@@ -18,8 +18,14 @@
 
 import {BrandingProps} from '@asgardeo/js-ui-core';
 
-interface SignInProps {
+export interface SignInProps {
   brandingProps?: BrandingProps;
 }
 
-export default SignInProps;
+export type AlertType = {
+  alertType:
+    | {error?: boolean; info?: never; warning?: never}
+    | {error?: never; info?: boolean; warning?: never}
+    | {error?: never; infor?: never; warning?: boolean};
+  message: string;
+};
