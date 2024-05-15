@@ -16,11 +16,11 @@
  * under the License.
  */
 
-import {BrandingProps} from '@asgardeo/js-ui-core';
+import {Authenticator, BrandingProps} from '@asgardeo/js-ui-core';
 import {ReactElement} from 'react';
 
 interface BasicAuthProps {
-  authenticatorId: string;
+  authenticator: Authenticator;
   brandingProps?: BrandingProps;
   handleAuthenticate: Function;
   isAlert?: {

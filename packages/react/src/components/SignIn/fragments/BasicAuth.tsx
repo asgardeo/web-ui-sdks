@@ -25,7 +25,7 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 
 const BasicAuth = ({
   handleAuthenticate,
-  authenticatorId,
+  authenticator,
   isAlert,
   brandingProps,
   showSelfSignUp,
@@ -81,7 +81,7 @@ const BasicAuth = ({
         type="submit"
         fullWidth
         onClick={(): void => {
-          handleAuthenticate(authenticatorId, {password, username});
+          handleAuthenticate(authenticator.authenticatorId, {password, username});
           setUsername('');
           setPassword('');
         }}

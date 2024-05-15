@@ -16,11 +16,11 @@
  * under the License.
  */
 
-import {BrandingProps} from '@asgardeo/js-ui-core';
+import {Authenticator, BrandingProps} from '@asgardeo/js-ui-core';
 import {AlertType} from './sign-in';
 
 interface TotpProps {
-  authenticatorId: string;
+  authenticator: Authenticator;
   brandingProps?: BrandingProps;
   handleAuthenticate: Function;
   isAlert?: AlertType;

@@ -218,7 +218,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
           SignInCore = (
             <BasicAuth
               brandingProps={brandingProps}
-              authenticatorId={authenticator.authenticatorId}
+              authenticator={authenticator}
               handleAuthenticate={handleAuthenticate}
               showSelfSignUp={showSelfSignUp}
               isAlert={Alert}
@@ -235,7 +235,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
           SignInCore = (
             <Totp
               brandingProps={brandingProps}
-              authenticatorId={authenticators[0].authenticatorId}
+              authenticator={authenticators[0]}
               isAlert={Alert}
               handleAuthenticate={handleAuthenticate}
             />

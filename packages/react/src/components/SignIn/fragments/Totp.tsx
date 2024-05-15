@@ -27,13 +27,13 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
  * This component renders the TOTP authentication screen.
  *
  * @param {TotpProps} props - Props injected to the component.
- * @param {string} props.authenticatorId - Authenticator ID.
+ * @param {string} props.authenticator - Authenticator.
  * @param {BrandingProps} props.brandingProps - Branding props.
  * @param {Function} props.handleAuthenticate - Callback to handle authentication.
  *
  * @return {ReactElement}
  */
-const Totp = ({brandingProps, authenticatorId, handleAuthenticate, isAlert}: TotpProps): ReactElement => {
+const Totp = ({brandingProps, authenticator, handleAuthenticate, isAlert}: TotpProps): ReactElement => {
   const [totp, setTotp] = useState<string>();
 
   const {isLoading, t} = useTranslations({
@@ -66,7 +66,7 @@ const Totp = ({brandingProps, authenticatorId, handleAuthenticate, isAlert}: Tot
         className="oxygen-sign-in-cta"
         type="submit"
         fullWidth
-        onClick={(): void => handleAuthenticate(authenticatorId, {token: totp})}
+        onClick={(): void => handleAuthenticate(authenticator.authenticatorId, {token: totp})}
       >
         totp.continue
       </UISignIn.Button>
