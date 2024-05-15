@@ -16,20 +16,12 @@
  * under the License.
  */
 
-import {Branding, BrandingProps} from './branding';
-
-/**
- * Interface for the getBranding function props.
- */
-interface GetBrandingProps {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  branding?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
+interface JwtVerifyOptions {
+  algorithms: string[];
+  audience: string;
+  clockTolerance: number;
+  issuer: string;
+  subject: string;
 }
 
-export default GetBrandingProps;
+export default JwtVerifyOptions;

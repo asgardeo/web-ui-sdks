@@ -16,20 +16,10 @@
  * under the License.
  */
 
-import {Branding, BrandingProps} from './branding';
+import {UIAuthConfig} from '@asgardeo/js-ui-core';
 
-/**
- * Interface for the getBranding function props.
- */
-interface GetBrandingProps {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  branding?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
+interface UseConfig {
+  config: UIAuthConfig;
 }
 
-export default GetBrandingProps;
+export default UseConfig;

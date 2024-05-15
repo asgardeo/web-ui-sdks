@@ -16,20 +16,9 @@
  * under the License.
  */
 
-import {Branding, BrandingProps} from './branding';
+import {BrandingProps} from '@asgardeo/js-ui-core';
+import {Context, createContext} from 'react';
 
-/**
- * Interface for the getBranding function props.
- */
-interface GetBrandingProps {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  branding?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
-}
+const BrandingPreferenceContext: Context<BrandingProps> = createContext<BrandingProps>(undefined);
 
-export default GetBrandingProps;
+export default BrandingPreferenceContext;

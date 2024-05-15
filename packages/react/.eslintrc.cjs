@@ -32,4 +32,7 @@ module.exports = {
     project: [path.resolve(__dirname, 'tsconfig.lib.json'), path.resolve(__dirname, 'tsconfig.eslint.json')],
   },
   plugins: ['@wso2'],
+  rules: {
+    'class-methods-use-this': 'off',
+  },
 };

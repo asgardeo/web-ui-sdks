@@ -16,20 +16,13 @@
  * under the License.
  */
 
-import {Branding, BrandingProps} from './branding';
+import {MeAPIResponse} from '@asgardeo/js-ui-core';
 
-/**
- * Interface for the getBranding function props.
- */
-interface GetBrandingProps {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  branding?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
+interface UseAuthentication {
+  accessToken: string;
+  isAuthenticated: Promise<boolean> | boolean;
+  signOut: () => void;
+  user: MeAPIResponse;
 }
 
-export default GetBrandingProps;
+export default UseAuthentication;

@@ -16,20 +16,24 @@
  * under the License.
  */
 
-import {Branding, BrandingProps} from './branding';
+import {Store} from '@asgardeo/js-ui-core';
 
-/**
- * Interface for the getBranding function props.
- */
-interface GetBrandingProps {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  branding?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
+export default class SessionStore implements Store {
+  private storage: Storage;
+
+  constructor() {
+    this.storage = sessionStorage;
+  }
+
+  public async setData(key: string, value: string): Promise<void> {
+    this.storage.setItem(key, value);
+  }
+
+  public async getData(key: string): Promise<string> {
+    return this.storage.getItem(key) ?? '{}';
+  }
+
+  public async removeData(key: string): Promise<void> {
+    this.storage.removeItem(key);
+  }
 }
-
-export default GetBrandingProps;

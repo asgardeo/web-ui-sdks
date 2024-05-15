@@ -16,20 +16,19 @@
  * under the License.
  */
 
-import {Branding, BrandingProps} from './branding';
+import {UIAuthConfig} from '@asgardeo/js-ui-core';
+import {useContext} from 'react';
+import AsgardeoContext from '../contexts/asgardeo-context';
+import UseConfig from '../models/use-config';
 
 /**
- * Interface for the getBranding function props.
+ * Custom hook to access the authentication configuration from the AsgardeoProviderContext.
+ * @returns An object containing the authentication configuration.
  */
-interface GetBrandingProps {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  branding?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
-}
+export const useConfig = (): UseConfig => {
+  const {config} = useContext(AsgardeoContext) as {
+    config: UIAuthConfig;
+  };
 
-export default GetBrandingProps;
+  return {config};
+};

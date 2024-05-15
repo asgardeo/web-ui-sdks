@@ -16,20 +16,9 @@
  * under the License.
  */
 
-import {Branding, BrandingProps} from './branding';
+import {Context, createContext} from 'react';
+import AuthContext from '../models/auth-context';
 
-/**
- * Interface for the getBranding function props.
- */
-interface GetBrandingProps {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  branding?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
-}
+const AsgardeoContext: Context<AuthContext> = createContext<AuthContext>(undefined);
 
-export default GetBrandingProps;
+export default AsgardeoContext;

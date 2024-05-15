@@ -16,20 +16,9 @@
  * under the License.
  */
 
-import {Branding, BrandingProps} from './branding';
-
-/**
- * Interface for the getBranding function props.
- */
-interface GetBrandingProps {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  branding?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
+interface UseTranslations {
+  isLoading: boolean;
+  t: (key: string) => string;
 }
 
-export default GetBrandingProps;
+export default UseTranslations;

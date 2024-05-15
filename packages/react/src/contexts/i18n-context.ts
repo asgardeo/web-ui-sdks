@@ -16,20 +16,9 @@
  * under the License.
  */
 
-import {Branding, BrandingProps} from './branding';
+import {Context, createContext} from 'react';
+import {I18n} from '../models/i18n';
 
-/**
- * Interface for the getBranding function props.
- */
-interface GetBrandingProps {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  branding?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
-}
+const I18nContext: Context<I18n> = createContext<I18n>(undefined);
 
-export default GetBrandingProps;
+export default I18nContext;

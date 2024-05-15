@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
+    "@types/randombytes": "^2.0.3",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?fa0b844715320a3953d6d055997c0770f8695082",
@@ -46,12 +47,17 @@
     "sass": "^1.75.0",
     "stylelint": "15.1.0",
     "tslib": "^2.6.2",
-    "typescript": "^5.4.5"
+    "typescript": "5.1.6"
   },
   "dependencies": {
     "@asgardeo/js-ui-core": "*",
     "@oxygen-ui/react": "^1.11.0",
-    "clsx": "^2.1.1"
+    "base64url": "^3.0.1",
+    "buffer": "^6.0.3",
+    "clsx": "^2.1.1",
+    "fast-sha256": "^1.3.0",
+    "jose": "^5.3.0",
+    "randombytes": "^2.1.0"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

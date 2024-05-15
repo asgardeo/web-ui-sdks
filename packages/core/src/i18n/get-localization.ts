@@ -16,11 +16,14 @@
  * under the License.
  */
 
+import {AuthClientConfig} from '@asgardeo/auth-js';
 import merge from 'lodash.merge';
 import {TextObject} from './screens/model';
 import getBrandingPreferenceText from '../api/get-branding-preference-text';
 import {AuthClient} from '../auth-client';
 import AsgardeoUIException from '../exception';
+import {UIAuthConfig} from '../models/auth-config';
+import {BrandingPreferenceTypes} from '../models/branding-api-response';
 import {BrandingPreferenceTextAPIResponse} from '../models/branding-text-api-response';
 import GetLocalizationProps from '../models/get-localization-props';
 
@@ -31,20 +34,22 @@ import GetLocalizationProps from '../models/get-localization-props';
  * @returns {Promise<Customization>} A promise that resolves with the merged branding properties.
  */
 const getLocalization = async (props: GetLocalizationProps): Promise<TextObject> => {
-  const {componentCustomization, locale, providerCustomization, screen} = props;
+  const {componentTextOverrides, locale, providerTextOverrides, screen} = props;
 
   const module: TextObject = await import(`./screens/${screen}/${locale}.ts`);
 
   let textFromConsoleBranding: BrandingPreferenceTextAPIResponse;
 
+  const configData: AuthClientConfig<UIAuthConfig> = await AuthClient.getInstance().getDataLayer().getConfigData();
+
   try {
-    if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleTextBranding ?? true) {
-      textFromConsoleBranding = await getBrandingPreferenceText(
+    if (configData.enableConsoleTextBranding ?? true) {
+      textFromConsoleBranding = await getBrandingPreferenceText({
         locale,
-        providerCustomization.name,
+        name: configData.name ?? 'carbon.super',
         screen,
-        providerCustomization.type,
-      );
+        type: configData.type ?? BrandingPreferenceTypes.Org,
+      });
     }
   } catch (error) {
     throw new AsgardeoUIException(
@@ -69,11 +74,11 @@ const getLocalization = async (props: GetLocalizationProps): Promise<TextObject>
     /**
      * PRIORITY 02: Text from provider customization
      */
-    providerCustomization?.preference?.text?.[locale]?.[screen] ?? {},
+    providerTextOverrides?.[locale]?.[screen] ?? {},
     /**
      * PRIORITY 01: Text from component customization
      */
-    componentCustomization?.preference?.text?.[locale]?.[screen] ?? {},
+    componentTextOverrides?.[locale]?.[screen] ?? {},
   );
 
   return mergedText;

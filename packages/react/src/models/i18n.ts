@@ -16,20 +16,25 @@
  * under the License.
  */
 
-import {Branding, BrandingProps} from './branding';
+import {BrandingPreferenceTextProps, ScreenType, TextObject} from '@asgardeo/js-ui-core';
 
-/**
- * Interface for the getBranding function props.
- */
-interface GetBrandingProps {
-  /**
-   * Customization prop passed to the component/provider.
-   */
-  branding?: BrandingProps;
-  /**
-   * Merged customization object.
-   */
-  merged?: Branding;
+export type I18nLocalization =
+  | {
+      [key in ScreenType]: TextObject;
+    }
+  | {};
+
+export interface SetTranslationsProps {
+  componentLocaleOverride?: string;
+  componentTextOverrides?: BrandingPreferenceTextProps;
+  screen: ScreenType;
+}
+export interface I18n {
+  setTranslations: (props: SetTranslationsProps) => Promise<boolean>;
+  text: I18nLocalization;
 }
 
-export default GetBrandingProps;
+export interface I18nProviderProps {
+  providerLocaleOverride?: string;
+  providerTextOverrides?: BrandingPreferenceTextProps;
+}
