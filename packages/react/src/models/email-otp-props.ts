@@ -16,12 +16,12 @@
  * under the License.
  */
 
-/**
- * Enum to store screen types.
- */
-export enum ScreenType {
-  Common = 'common',
-  EmailOTP = 'email_otp',
-  Login = 'login',
-  TOTP = 'totp',
+import {Authenticator, BrandingProps} from '@asgardeo/js-ui-core';
+
+interface EmailOtpProps {
+  authenticator?: Authenticator;
+  brandingProps?: BrandingProps;
+  handleAuthenticate: Function;
 }
+
+export default EmailOtpProps;

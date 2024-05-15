@@ -34,6 +34,7 @@ import {
 import {CircularProgress, ThemeProvider} from '@oxygen-ui/react';
 import {FC, ReactElement, useContext, useEffect, useState} from 'react';
 import BasicAuth from './fragments/BasicAuth';
+import EmailOtp from './fragments/EmailOtp';
 import LoginOptionsBox from './fragments/LoginOptionsBox';
 import Totp from './fragments/Totp';
 import AsgardeoContext from '../../contexts/asgardeo-context';
@@ -46,6 +47,7 @@ import {AlertType, SignInProps} from '../../models/sign-in';
 import {SignIn as UISignIn} from '../../oxygen-ui-react-auth-components';
 import generateThemeSignIn from '../../theme/generate-theme-sign-in';
 import SPACryptoUtils from '../../utils/crypto-utils';
+import './sign-in.scss';
 
 const SignIn: FC<SignInProps> = (props: SignInProps) => {
   const {brandingProps} = props;
@@ -236,7 +238,13 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
             .base64URLDecode(authResponse.nextStep.authenticators[0].authenticatorId)
             .split(':')[0] === 'email-otp-authenticator'
         ) {
-          SignInCore = <EmailOtp />;
+          SignInCore = (
+            <EmailOtp
+              brandingProps={brandingProps}
+              authenticator={authenticators[0]}
+              handleAuthenticate={handleAuthenticate}
+            />
+          );
         }
       }
     }
@@ -256,7 +264,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
 
   return (
     <ThemeProvider theme={generateThemeSignIn(componentBranding?.preference.theme)}>
-      <UISignIn>
+      <UISignIn className="asgardeo-sign-in">
         <UISignIn.Image src={imgUrl} />
         {authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
           <>
@@ -270,7 +278,6 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
       </UISignIn>
     </ThemeProvider>
   );
-
 };
 
 export default SignIn;
