@@ -201,39 +201,35 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
 
   const renderSignIn = (): ReactElement => {
     const {authenticators} = authResponse.nextStep;
-    let SignInCore: JSX.Element = <div />;
+    let usernamePasswordAuthenticator: Authenticator;
 
     if (authenticators) {
-      let usernamePassword: boolean = false;
-      let isMultipleAuthenticators: boolean = false;
-      let usernamePasswordID: string = '';
-
-      if (authenticators.length > 1) {
-        isMultipleAuthenticators = true;
-      }
-
       authenticators.forEach((authenticator: Authenticator) => {
         if (authenticator.authenticator === 'Username & Password') {
-          usernamePassword = true;
-          usernamePasswordID = authenticator.authenticatorId;
-          SignInCore = (
-            <BasicAuth
-              brandingProps={brandingProps}
-              authenticator={authenticator}
-              handleAuthenticate={handleAuthenticate}
-              showSelfSignUp={showSelfSignUp}
-              alert={alert}
-              renderLoginOptions={renderLoginOptions(
-                authenticators.filter((auth: Authenticator) => auth.authenticatorId !== usernamePasswordID),
-              )}
-            />
-          );
+          usernamePasswordAuthenticator = authenticator;
         }
       });
 
+      if (usernamePasswordAuthenticator) {
+        return (
+          <BasicAuth
+            brandingProps={brandingProps}
+            authenticator={usernamePasswordAuthenticator}
+            handleAuthenticate={handleAuthenticate}
+            showSelfSignUp={showSelfSignUp}
+            alert={alert}
+            renderLoginOptions={renderLoginOptions(
+              authenticators.filter(
+                (auth: Authenticator) => auth.authenticatorId !== usernamePasswordAuthenticator.authenticatorId,
+              ),
+            )}
+          />
+        );
+      }
+
       if (authenticators.length === 1) {
         if (authenticators[0].authenticator === 'TOTP') {
-          SignInCore = (
+          return (
             <Totp
               brandingProps={brandingProps}
               authenticator={authenticators[0]}
@@ -241,13 +237,14 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
               handleAuthenticate={handleAuthenticate}
             />
           );
-        } else if (
+        }
+        if (
           // TODO: change after api based auth gets fixed
           new SPACryptoUtils()
             .base64URLDecode(authResponse.nextStep.authenticators[0].authenticatorId)
             .split(':')[0] === 'email-otp-authenticator'
         ) {
-          SignInCore = (
+          return (
             <EmailOtp
               alert={alert}
               brandingProps={brandingProps}
@@ -257,11 +254,24 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
           );
         }
       }
-    }
 
-    return SignInCore;
+      if (authenticators.length > 1) {
+        return (
+          <UISignIn.Paper className="multiple-options-paper">
+            <UISignIn.Typography title className="multiple-otions-title">
+              Sign In
+            </UISignIn.Typography>
+            {renderLoginOptions(authenticators)}
+          </UISignIn.Paper>
+        );
+      }
+    }
+    return null;
   };
 
+  /**
+   * Renders the circular progress component while the component or text is loading.
+   */
   if (isComponentLoading || isLoading) {
     return (
       <div className="circular-progress-holder">
