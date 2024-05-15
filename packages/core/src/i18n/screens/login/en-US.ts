@@ -25,5 +25,6 @@ export const login: Login = {
   'login.heading': 'Sign In',
   password: 'Password',
   'remember.me': 'Remember me on this computer',
+  retry: 'Login failed! Please check your username and password and try again.',
   username: 'Username',
 };

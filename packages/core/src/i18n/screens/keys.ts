@@ -22,6 +22,7 @@
 interface Keys {
   common: {
     copyright: string;
+    error: string;
     or: string;
     prefix: {
       register: string;
@@ -76,6 +77,7 @@ interface Keys {
     remember: {
       me: string;
     };
+    retry: string;
     username: string;
   };
   totp: {
@@ -102,6 +104,7 @@ interface Keys {
 export const keys: Keys = {
   common: {
     copyright: 'common.copyright',
+    error: 'common.error',
     or: 'common.or',
     prefix: {
       register: 'common.prefix.register',
@@ -156,6 +159,7 @@ export const keys: Keys = {
     remember: {
       me: 'login.remember.me',
     },
+    retry: 'login.retry',
     username: 'login.username',
   },
   totp: {

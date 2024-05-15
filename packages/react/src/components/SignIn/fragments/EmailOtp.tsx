@@ -54,7 +54,7 @@ const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Ema
     <UISignIn.Paper>
       <UISignIn.Typography title>{t(keys.emailOtp.email.otp.heading)}</UISignIn.Typography>
 
-      {alert && <UISignIn.Alert {...alert?.alertType}>{alert.message}</UISignIn.Alert>}
+      {alert && <UISignIn.Alert {...alert?.alertType}>{alert.key}</UISignIn.Alert>}
 
       <UISignIn.TextField
         fullWidth

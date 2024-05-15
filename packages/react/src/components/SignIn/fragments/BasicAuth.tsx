@@ -65,7 +65,7 @@ const BasicAuth = ({
     <UISignIn.Paper>
       <UISignIn.Typography title>{t(keys.login.login.heading)}</UISignIn.Typography>
 
-      {alert && <UISignIn.Alert {...alert?.alertType}>{alert.message}</UISignIn.Alert>}
+      {alert && <UISignIn.Alert {...alert?.alertType}>{t(alert.key)}</UISignIn.Alert>}
 
       <UISignIn.TextField
         fullWidth
@@ -104,14 +104,14 @@ const BasicAuth = ({
 
       {showSelfSignUp && (
         <Grid container>
-          <UISignIn.Typography>Don&apos;t have an account?</UISignIn.Typography>
+          <UISignIn.Typography>{t(keys.common.prefix.register)}</UISignIn.Typography>
           <UISignIn.Link href="./register" className="asgardeo-register-link">
-            Register
+            {t(keys.common.register)}
           </UISignIn.Link>
         </Grid>
       )}
 
-      <UISignIn.Divider> OR</UISignIn.Divider>
+      <UISignIn.Divider> {t(keys.common.or)} </UISignIn.Divider>
 
       {renderLoginOptions}
     </UISignIn.Paper>

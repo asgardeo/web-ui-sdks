@@ -57,7 +57,7 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
 
       <UISignIn.Typography subtitle>{t(keys.totp.enter.verification.code.got.by.device)}</UISignIn.Typography>
 
-      {alert && <UISignIn.Alert {...alert?.alertType}>{alert.message}</UISignIn.Alert>}
+      {alert && <UISignIn.Alert {...alert?.alertType}>{alert.key}</UISignIn.Alert>}
 
       <UISignIn.PinInput length={6} onPinChange={setTotp} />
 

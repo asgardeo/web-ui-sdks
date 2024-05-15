@@ -18,15 +18,10 @@
 
 import {Authenticator, BrandingProps} from '@asgardeo/js-ui-core';
 import {ReactElement} from 'react';
+import {AlertType} from './sign-in';
 
 interface BasicAuthProps {
-  alert?: {
-    alertType:
-      | {error?: boolean; info?: never; warning?: never}
-      | {error?: never; info?: boolean; warning?: never}
-      | {error?: never; infor?: never; warning?: boolean};
-    message: string;
-  };
+  alert?: AlertType;
   authenticator: Authenticator;
   brandingProps?: BrandingProps;
   handleAuthenticate: Function;

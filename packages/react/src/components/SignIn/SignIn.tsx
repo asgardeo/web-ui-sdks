@@ -94,7 +94,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
         setIsComponentLoading(false);
       })
       .catch((error: Error) => {
-        setAlert({alertType: {error: true}, message: error.message});
+        setAlert({alertType: {error: true}, key: keys.common.error});
         setIsComponentLoading(false);
         throw new AsgardeoUIException('REACT_UI-SIGN_IN-SI-SE01', 'Authorization failed', error.stack);
       });
@@ -105,6 +105,8 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
    * @param {any} authParams - The authentication parameters.
    */
   const handleAuthenticate = async (authenticatorId: string, authParams?: {[key: string]: string}): Promise<void> => {
+    setAlert(undefined);
+
     if (authResponse === undefined) {
       throw new AsgardeoUIException('REACT_UI-SIGN_IN-HA-IV02', 'Auth response is undefined.');
     }
@@ -173,7 +175,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
       });
 
       // TODO: Move this to core: and take from i18n
-      setAlert({alertType: {error: true}, message: 'authentication failed'});
+      setAlert({alertType: {error: true}, key: keys.login.retry});
     } else {
       setAuthResponse(resp);
       setShowSelfSignUp(false);

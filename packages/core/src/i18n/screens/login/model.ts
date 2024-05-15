@@ -26,5 +26,6 @@ export interface Login {
   'login.heading': string;
   password: string;
   'remember.me': string;
+  retry: string;
   username: string;
 }

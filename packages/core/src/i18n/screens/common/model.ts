@@ -21,6 +21,7 @@
  */
 export interface Common {
   copyright: string;
+  error: string;
   or: string;
   'prefix.register': string;
   'privacy.policy': string;

@@ -27,5 +27,5 @@ export type AlertType = {
     | {error?: boolean; info?: never; warning?: never}
     | {error?: never; info?: boolean; warning?: never}
     | {error?: never; infor?: never; warning?: boolean};
-  message: string;
+  key: string;
 };

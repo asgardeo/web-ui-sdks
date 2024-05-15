@@ -20,6 +20,7 @@ import {Common} from './model';
 
 export const common: Common = {
   copyright: '© {{currentYear}} WSO2 LLC.',
+  error: "Quelque chose s'est mal passé. Veuillez réessayer.",
   or: 'OU',
   'prefix.register': "Vous n'avez pas de compte?",
   'privacy.policy': 'Politique de confidentialité',
