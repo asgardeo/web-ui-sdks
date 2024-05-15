@@ -17,11 +17,13 @@
  */
 
 import {BrandingProps} from '@asgardeo/js-ui-core';
+import {AlertType} from './sign-in';
 
 interface TotpProps {
   authenticatorId: string;
   brandingProps?: BrandingProps;
   handleAuthenticate: Function;
+  isAlert?: AlertType;
 }
 
 export default TotpProps;

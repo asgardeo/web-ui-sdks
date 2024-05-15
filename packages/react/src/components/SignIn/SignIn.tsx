@@ -226,6 +226,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
             <Totp
               brandingProps={brandingProps}
               authenticatorId={authenticators[0].authenticatorId}
+              isAlert={Alert}
               handleAuthenticate={handleAuthenticate}
             />
           );
@@ -250,13 +251,6 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
       </div>
     );
   }
-  if (Alert) {
-    return (
-      <div>
-        <UISignIn.Alert {...Alert.alertType}>{Alert.message}</UISignIn.Alert>
-      </div>
-    );
-  }
 
   const imgUrl: string = brandingPreference?.preference?.theme?.LIGHT?.images?.logo?.imgURL;
 
@@ -276,6 +270,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
       </UISignIn>
     </ThemeProvider>
   );
+
 };
 
 export default SignIn;

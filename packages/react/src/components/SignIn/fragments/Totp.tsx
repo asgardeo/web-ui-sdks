@@ -33,7 +33,7 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
  *
  * @return {ReactElement}
  */
-const Totp = ({brandingProps, authenticatorId, handleAuthenticate}: TotpProps): ReactElement => {
+const Totp = ({brandingProps, authenticatorId, handleAuthenticate, isAlert}: TotpProps): ReactElement => {
   const [totp, setTotp] = useState<string>();
 
   const {isLoading, t} = useTranslations({
@@ -55,6 +55,8 @@ const Totp = ({brandingProps, authenticatorId, handleAuthenticate}: TotpProps): 
       <UISignIn.Typography title>{t(keys.totp.heading)}</UISignIn.Typography>
 
       <UISignIn.Typography subtitle>{t(keys.totp.enter.verification.code.got.by.device)}</UISignIn.Typography>
+
+      {isAlert && <UISignIn.Alert {...isAlert?.alertType}>{isAlert.message}</UISignIn.Alert>}
 
       <UISignIn.PinInput length={6} onPinChange={setTotp} />
 
