@@ -8,6 +8,7 @@
     "nx": "18.2.4"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "recipes/*"
   ]
 }
