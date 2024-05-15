@@ -27,13 +27,14 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
  * This component renders the TOTP authentication screen.
  *
  * @param {TotpProps} props - Props injected to the component.
+ * @param {AlertType} props.alert - Alert type.
  * @param {string} props.authenticator - Authenticator.
  * @param {BrandingProps} props.brandingProps - Branding props.
  * @param {Function} props.handleAuthenticate - Callback to handle authentication.
  *
  * @return {ReactElement}
  */
-const Totp = ({brandingProps, authenticator, handleAuthenticate, isAlert}: TotpProps): ReactElement => {
+const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpProps): ReactElement => {
   const [totp, setTotp] = useState<string>();
 
   const {isLoading, t} = useTranslations({
@@ -56,7 +57,7 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, isAlert}: TotpP
 
       <UISignIn.Typography subtitle>{t(keys.totp.enter.verification.code.got.by.device)}</UISignIn.Typography>
 
-      {isAlert && <UISignIn.Alert {...isAlert?.alertType}>{isAlert.message}</UISignIn.Alert>}
+      {alert && <UISignIn.Alert {...alert?.alertType}>{alert.message}</UISignIn.Alert>}
 
       <UISignIn.PinInput length={6} onPinChange={setTotp} />
 

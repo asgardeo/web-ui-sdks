@@ -20,16 +20,16 @@ import {Authenticator, BrandingProps} from '@asgardeo/js-ui-core';
 import {ReactElement} from 'react';
 
 interface BasicAuthProps {
-  authenticator: Authenticator;
-  brandingProps?: BrandingProps;
-  handleAuthenticate: Function;
-  isAlert?: {
+  alert?: {
     alertType:
       | {error?: boolean; info?: never; warning?: never}
       | {error?: never; info?: boolean; warning?: never}
       | {error?: never; infor?: never; warning?: boolean};
     message: string;
   };
+  authenticator: Authenticator;
+  brandingProps?: BrandingProps;
+  handleAuthenticate: Function;
   renderLoginOptions?: ReactElement[];
   showSelfSignUp: boolean;
 }

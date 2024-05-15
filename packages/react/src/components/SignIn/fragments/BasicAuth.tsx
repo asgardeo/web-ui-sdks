@@ -30,7 +30,7 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
  * @param {BrandingProps} props.brandingProps - Branding props.
  * @param {Function} props.handleAuthenticate - Callback to handle authentication.
  * @param {Authenticator} props.authenticator - Authenticator.
- * @param {AlertType} props.isAlert - Alert type.
+ * @param {AlertType} props.alert - Alert type.
  * @param {ReactElement[]} props.renderLoginOptions - Login options.
  * @param {boolean} props.showSelfSignUp - Show self sign up.
  *
@@ -39,7 +39,7 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 const BasicAuth = ({
   handleAuthenticate,
   authenticator,
-  isAlert,
+  alert,
   brandingProps,
   showSelfSignUp,
   renderLoginOptions,
@@ -65,7 +65,7 @@ const BasicAuth = ({
     <UISignIn.Paper>
       <UISignIn.Typography title>{t(keys.login.login.heading)}</UISignIn.Typography>
 
-      {isAlert && <UISignIn.Alert {...isAlert?.alertType}>{isAlert.message}</UISignIn.Alert>}
+      {alert && <UISignIn.Alert {...alert?.alertType}>{alert.message}</UISignIn.Alert>}
 
       <UISignIn.TextField
         fullWidth

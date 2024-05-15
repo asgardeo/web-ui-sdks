@@ -30,7 +30,7 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
  * @param {BrandingProps} props.brandingProps - Branding props.
  * @param {Authenticator} props.authenticator - Authenticator.
  * @param {Function} props.handleAuthenticate - Callback to handle authentication.
- * @param {AlertType} props.isAlert - Alert type.
+ * @param {AlertType} props.alert - Alert type.
  * @return {ReactElement}
  */
 const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: EmailOtpProps): ReactElement => {

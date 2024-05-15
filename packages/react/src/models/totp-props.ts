@@ -20,10 +20,10 @@ import {Authenticator, BrandingProps} from '@asgardeo/js-ui-core';
 import {AlertType} from './sign-in';
 
 interface TotpProps {
+  alert?: AlertType;
   authenticator: Authenticator;
   brandingProps?: BrandingProps;
   handleAuthenticate: Function;
-  isAlert?: AlertType;
 }
 
 export default TotpProps;

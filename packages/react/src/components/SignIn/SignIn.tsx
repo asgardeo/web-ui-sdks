@@ -61,7 +61,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
   const {brandingProps} = props;
   const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
   const [isComponentLoading, setIsComponentLoading] = useState(true);
-  const [Alert, setAlert] = useState<AlertType>();
+  const [alert, setAlert] = useState<AlertType>();
   const [showSelfSignUp, setShowSelfSignUp] = useState(true);
   const [componentBranding, setComponentBranding] = useState<Branding>();
 
@@ -221,7 +221,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
               authenticator={authenticator}
               handleAuthenticate={handleAuthenticate}
               showSelfSignUp={showSelfSignUp}
-              isAlert={Alert}
+              alert={alert}
               renderLoginOptions={renderLoginOptions(
                 authenticators.filter((auth: Authenticator) => auth.authenticatorId !== usernamePasswordID),
               )}
@@ -236,7 +236,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
             <Totp
               brandingProps={brandingProps}
               authenticator={authenticators[0]}
-              isAlert={Alert}
+              alert={alert}
               handleAuthenticate={handleAuthenticate}
             />
           );
@@ -248,6 +248,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
         ) {
           SignInCore = (
             <EmailOtp
+              alert={alert}
               brandingProps={brandingProps}
               authenticator={authenticators[0]}
               handleAuthenticate={handleAuthenticate}
