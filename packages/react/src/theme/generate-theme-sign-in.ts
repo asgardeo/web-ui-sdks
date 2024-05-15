@@ -106,6 +106,7 @@ const generateThemeSignIn: (brandingPreferenceTheme: BrandingPreferenceTheme) =>
             },
             background: brandingTheme?.colors?.background?.surface?.main,
             borderColor: brandingTheme?.colors?.outlined?.default,
+            borderRadius: brandingTheme?.loginBox?.border?.borderRadius,
           },
         },
       },
