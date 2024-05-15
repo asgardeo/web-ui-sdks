@@ -21,7 +21,6 @@ import {UIAuthConfig, MeAPIResponse} from '@asgardeo/js-ui-core';
 interface AuthContext {
   accessToken: string;
   config: UIAuthConfig;
-  customizationOptions?: any;
   isAuthenticated: boolean | undefined;
   setAuthentication: () => void;
   user: MeAPIResponse;
