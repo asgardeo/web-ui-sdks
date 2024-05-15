@@ -22,9 +22,14 @@
 interface Keys {
   common: {
     copyright: string;
+    or: string;
+    prefix: {
+      register: string;
+    };
     privacy: {
       policy: string;
     };
+    register: string;
     site: {
       title: string;
     };
@@ -97,9 +102,14 @@ interface Keys {
 export const keys: Keys = {
   common: {
     copyright: 'common.copyright',
+    or: 'common.or',
+    prefix: {
+      register: 'common.prefix.register',
+    },
     privacy: {
       policy: 'common.privacy.policy',
     },
+    register: 'common.register',
     site: {
       title: 'common.site.title',
     },

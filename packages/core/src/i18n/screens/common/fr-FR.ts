@@ -20,7 +20,10 @@ import {Common} from './model';
 
 export const common: Common = {
   copyright: '© {{currentYear}} WSO2 LLC.',
+  or: 'OU',
+  'prefix.register': "Vous n'avez pas de compte?",
   'privacy.policy': 'Politique de confidentialité',
+  register: "S'inscrire",
   'site.title': 'Identity Server WSO2',
   'terms.of.service': 'Conditions de service',
 };
