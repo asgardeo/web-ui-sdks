@@ -16,6 +16,7 @@
  * under the License.
  */
 
+import emailSolid from '../../../assets/email-solid.svg';
 import facebook from '../../../assets/social-logins/facebook.svg';
 import github from '../../../assets/social-logins/github.svg';
 import google from '../../../assets/social-logins/google.svg';
@@ -24,6 +25,7 @@ import LoginOptionsBoxProps from '../../../models/login-options-box-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 
 const images: {[key: string]: string} = {
+  'Email OTP': emailSolid,
   Facebook: facebook,
   Github: github,
   Google: google,
