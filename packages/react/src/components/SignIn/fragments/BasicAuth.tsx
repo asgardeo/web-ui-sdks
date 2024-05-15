@@ -23,6 +23,19 @@ import useTranslations from '../../../hooks/use-translations';
 import BasicAuthProps from '../../../models/basic-auth-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 
+/**
+ * This component renders the basic authentication form.
+ *
+ * @param {BasicAuthProps} props - Props injected to the basic authentication component.
+ * @param {BrandingProps} props.brandingProps - Branding props.
+ * @param {Function} props.handleAuthenticate - Callback to handle authentication.
+ * @param {Authenticator} props.authenticator - Authenticator.
+ * @param {AlertType} props.isAlert - Alert type.
+ * @param {ReactElement[]} props.renderLoginOptions - Login options.
+ * @param {boolean} props.showSelfSignUp - Show self sign up.
+ *
+ * @return {JSX.Element}
+ */
 const BasicAuth = ({
   handleAuthenticate,
   authenticator,
