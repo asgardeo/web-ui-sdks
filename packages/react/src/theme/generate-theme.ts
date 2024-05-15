@@ -43,6 +43,12 @@ const generateTheme: (brandingPreferenceTheme: BrandingPreferenceTheme) => Theme
           },
         },
         palette: {
+          gradients: {
+            primary: {
+              stop1: brandingTheme.colors.primary.main,
+              stop2: brandingTheme.colors.primary.main,
+            },
+          },
           primary: {
             main: brandingTheme?.colors?.primary?.main ?? 'var(--oxygen-palette-primary-main)',
           },
@@ -55,6 +61,12 @@ const generateTheme: (brandingPreferenceTheme: BrandingPreferenceTheme) => Theme
           },
         },
         palette: {
+          gradients: {
+            primary: {
+              stop1: brandingTheme.colors.primary.main,
+              stop2: brandingTheme.colors.primary.main,
+            },
+          },
           primary: {
             main: brandingTheme?.colors?.primary?.main ?? 'var(--oxygen-palette-primary-main)',
           },
