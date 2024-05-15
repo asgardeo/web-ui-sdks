@@ -52,11 +52,9 @@ const getLocalization = async (props: GetLocalizationProps): Promise<TextObject>
       });
     }
   } catch (error) {
-    throw new AsgardeoUIException(
-      'JS_UI_CORE-LOCALIZATION-IV',
-      'Error occurred while fetching text from console branding.',
-      error.stack,
-    );
+    /**
+     * If the branding from the console cannot be fetched, proceed with the default branding.
+     */
   }
 
   /**

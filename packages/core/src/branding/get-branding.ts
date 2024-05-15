@@ -41,8 +41,14 @@ const getBranding = async (props: GetBrandingProps): Promise<Branding> => {
   if (!merged) {
     let brandingFromConsole: BrandingPreferenceAPIResponse;
 
-    if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleBranding ?? true) {
-      brandingFromConsole = await getBrandingPreference();
+    try {
+      if ((await AuthClient.getInstance().getDataLayer().getConfigData()).enableConsoleBranding ?? true) {
+        brandingFromConsole = await getBrandingPreference();
+      }
+    } catch {
+      /**
+       * If the branding from the console cannot be fetched, proceed with the default branding.
+       */
     }
 
     if (brandingFromConsole?.preference?.configs?.isBrandingEnabled) {
