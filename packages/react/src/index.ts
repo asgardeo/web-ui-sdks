@@ -18,3 +18,5 @@
 
 export * from './components/public-components';
 export * from './models/public-models';
+export {default as AsgardeoProvider} from './providers/AsgardeoProvider';
+export {default as useAuthentication} from './hooks/use-authentication';
