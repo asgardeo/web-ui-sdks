@@ -83,7 +83,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
         setIsComponentLoading(false);
       })
       .catch((error: Error) => {
-        setAlert(error.message);
+        setAlert({alertType: {error: true}, message: error.message});
         setIsComponentLoading(false);
         throw new AsgardeoUIException('REACT_UI-SIGN_IN-SI-SE01', 'Authorization failed', error.stack);
       });
