@@ -27,7 +27,7 @@ export type I18nLocalization =
 export interface SetTranslationsProps {
   componentLocaleOverride?: string;
   componentTextOverrides?: BrandingPreferenceTextProps;
-  screen: ScreenType;
+  screen?: ScreenType;
 }
 export interface I18n {
   setTranslations: (props: SetTranslationsProps) => Promise<boolean>;
