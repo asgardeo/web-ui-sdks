@@ -21,7 +21,6 @@ import merge from 'lodash.merge';
 import {TextObject} from './screens/model';
 import getBrandingPreferenceText from '../api/get-branding-preference-text';
 import {AuthClient} from '../auth-client';
-import AsgardeoUIException from '../exception';
 import {UIAuthConfig} from '../models/auth-config';
 import {BrandingPreferenceTypes} from '../models/branding-api-response';
 import {BrandingPreferenceTextAPIResponse} from '../models/branding-text-api-response';
