@@ -57,10 +57,10 @@ const useTranslations = (props: SetTranslationsProps): UseTranslations => {
    * @returns {string} The requested translation.
    */
   const t = (key: string): string => {
-    const parts: string[] = key.split('.');
+    const keySegments: string[] = key.split('.');
 
-    const screenKey: string = parts[0];
-    const rightPart: string = parts.slice(1).join('.');
+    const screenKey: string = keySegments[0];
+    const rightPart: string = keySegments.slice(1).join('.');
 
     return text[screenKey][rightPart];
   };
