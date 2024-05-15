@@ -17,5 +17,3 @@
  */
 
 export type {UIAuthConfig} from '@asgardeo/js-ui-core';
-export {SignInProps} from './sign-in';
-export {default as AsgardeoProviderProps} from './asgardeo-provider-props';
