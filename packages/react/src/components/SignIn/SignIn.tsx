@@ -201,14 +201,11 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
 
   const renderSignIn = (): ReactElement => {
     const {authenticators} = authResponse.nextStep;
-    let usernamePasswordAuthenticator: Authenticator;
 
     if (authenticators) {
-      authenticators.forEach((authenticator: Authenticator) => {
-        if (authenticator.authenticator === 'Username & Password') {
-          usernamePasswordAuthenticator = authenticator;
-        }
-      });
+      const usernamePasswordAuthenticator: Authenticator = authenticators.find(
+        (authenticator: Authenticator) => authenticator.authenticator === 'Username & Password',
+      );
 
       if (usernamePasswordAuthenticator) {
         return (
@@ -255,6 +252,9 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
         }
       }
 
+      /**
+       * If there are multiple authenticators without Username and password, render the multiple options screen
+       */
       if (authenticators.length > 1) {
         return (
           <UISignIn.Paper className="multiple-options-paper">

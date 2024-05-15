@@ -82,6 +82,13 @@ const generateThemeSignIn: (brandingPreferenceTheme: BrandingPreferenceTheme) =>
           },
         },
       },
+      MuiLink: {
+        styleOverrides: {
+          root: {
+            color: `${brandingTheme?.colors?.text?.primary} !important`,
+          },
+        },
+      },
       MuiOutlinedInput: {
         styleOverrides: {
           input: {
