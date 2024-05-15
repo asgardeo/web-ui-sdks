@@ -261,7 +261,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
   const imgUrl: string = brandingPreference?.preference?.theme?.LIGHT?.images?.logo?.imgURL;
 
   return (
-    <ThemeProvider theme={generateThemeSignIn({branding: componentBranding})}>
+    <ThemeProvider theme={generateThemeSignIn(componentBranding?.preference.theme)}>
       <UISignIn>
         <UISignIn.Image src={imgUrl} />
         {authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
