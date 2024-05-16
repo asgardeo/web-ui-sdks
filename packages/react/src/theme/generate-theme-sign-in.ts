@@ -19,6 +19,13 @@
 import {BrandingPreferenceTheme, ThemeConfig} from '@asgardeo/js-ui-core';
 import {extendTheme, Theme} from '@oxygen-ui/react';
 
+/**
+ * This function generates the theme for the sign-in component.
+ *
+ * @param {BrandingPreferenceTheme} brandingPreferenceTheme - The branding preference theme.
+ *
+ * @return {Theme} The generated theme.
+ */
 const generateThemeSignIn: (brandingPreferenceTheme: BrandingPreferenceTheme) => Theme = (
   brandingPreferenceTheme: BrandingPreferenceTheme,
 ) => {

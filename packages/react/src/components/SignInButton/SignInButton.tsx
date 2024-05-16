@@ -22,7 +22,7 @@ import './sign-in-button.scss';
 import SignIn from '../SignIn/SignIn';
 
 /**
- * SignInButton component.
+ * SignInButton component. This button will render a modal with the SignIn component when clicked.
  *
  * @param {Object} props - Component props.
  * @param {ReactElement} props.customComponent - Optional custom component to be rendered.

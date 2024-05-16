@@ -20,6 +20,14 @@ import {FC, PropsWithChildren} from 'react';
 import useAuthentication from '../../hooks/use-authentication';
 import SignedProps from '../../models/signed-props';
 
+/**
+ * This component renders its children if the user is signed out.
+ *
+ * @param {PropsWithChildren<SignedProps>} props - Props injected to the component.
+ * @param {ReactElement} props.fallback - Fallback element to render.
+ *
+ * @return {JSX.Element}
+ */
 const SignedOut: FC<PropsWithChildren<SignedProps>> = (props: PropsWithChildren<SignedProps>) => {
   const {fallback, children} = props;
   const {isAuthenticated} = useAuthentication();
