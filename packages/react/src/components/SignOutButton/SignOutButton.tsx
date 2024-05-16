@@ -20,6 +20,13 @@ import {Button} from '@oxygen-ui/react';
 import {ReactElement} from 'react';
 import useAuthentication from '../../hooks/use-authentication';
 
+/**
+ * SignOutButton component.
+ *
+ * This component renders a sign out button. When clicked, it triggers the sign out process.
+ *
+ * @returns {ReactElement} Rendered SignOutButton component.
+ */
 const SignOutButton = (): ReactElement => {
   const {signOut} = useAuthentication();
 

@@ -21,6 +21,13 @@ import React, {ReactElement, useState} from 'react';
 import './sign-in-button.scss';
 import SignIn from '../SignIn/SignIn';
 
+/**
+ * SignInButton component.
+ *
+ * @param {Object} props - Component props.
+ * @param {ReactElement} props.customComponent - Optional custom component to be rendered.
+ * @returns {ReactElement} Rendered SignInButton component.
+ */
 const SignInButton = ({customComponent}: {customComponent?: ReactElement}): ReactElement => {
   const [modalVisible, setModalVisible] = useState(false);
 
