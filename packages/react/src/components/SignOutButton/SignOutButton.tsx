@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com). All Rights Reserved.
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,8 +16,20 @@
  * under the License.
  */
 
-export {default as SignIn} from './SignIn/SignIn';
-export {default as SignedIn} from './SignedIn/SignedIn';
-export {default as SignedOut} from './SignedOut/SignedOut';
-export {default as SignInButton} from './SignInButton/SignInButton';
-export {default as SignOutButton} from './SignOutButton/SignOutButton';
+import {Button} from '@oxygen-ui/react';
+import {ReactElement} from 'react';
+import useAuthentication from '../../hooks/use-authentication';
+
+const SignOutButton = (): ReactElement => {
+  const {signOut} = useAuthentication();
+
+  return (
+    <div className="asgardeo">
+      <Button className="asgardeo-sign-out-button" variant="contained" onClick={(): void => signOut()}>
+        Sign Out
+      </Button>
+    </div>
+  );
+};
+
+export default SignOutButton;

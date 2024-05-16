@@ -4,6 +4,7 @@ import {
   SignedIn,
   SignedOut,
   SignInButton,
+  SignOutButton,
 } from "../../../packages/react/src"; // ToDO: temporary
 
 function App() {
@@ -13,11 +14,12 @@ function App() {
 
       <SignedIn fallback={<div>Fallback content</div>}>
         <div>Protected content</div>
+        <SignOutButton />
       </SignedIn>
 
       <SignedOut fallback={<div>signedout fallback</div>}>
         <div>Public content</div>
-        <SignInButton />
+        <SignInButton/>
       </SignedOut>
     </>
   );

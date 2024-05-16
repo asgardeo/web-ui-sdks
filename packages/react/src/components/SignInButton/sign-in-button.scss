@@ -21,6 +21,10 @@
     color: var(--oxygen-palette-text-primary);
   }
 
+  .OxygenSignInImage {
+    height: 45px;
+  }
+
   .popup-box {
     position: fixed;
     top: 50%;
@@ -29,9 +33,21 @@
     z-index: 1000;
     min-height: 65%;
     min-width: 35%;
+    max-height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: auto;
+    padding-top: 40px;
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
 
   .popup-box-overlay {
