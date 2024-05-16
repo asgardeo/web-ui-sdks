@@ -1,5 +1,5 @@
 import "./App.css";
-import { SignIn, SignedIn } from "../../../packages/react/src"; // ToDO: temporary
+import { SignIn, SignedIn, SignedOut } from "../../../packages/react/src"; // ToDO: temporary
 
 function App() {
   return (
@@ -9,6 +9,10 @@ function App() {
       <SignedIn fallback={<div>Fallback content</div>}>
         <div>Protected content</div>
       </SignedIn>
+
+      <SignedOut fallback={<div>signedout fallback</div>}>
+        <div>Public content</div>
+      </SignedOut>
     </>
   );
 }
