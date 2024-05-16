@@ -16,5 +16,18 @@
  * under the License.
  */
 
-export {default as SignIn} from './SignIn/SignIn';
-export {default as SignedIn} from './SignedIn/SignedIn';
+import {FC, PropsWithChildren, ReactElement} from 'react';
+import useAuthentication from '../../hooks/use-authentication';
+
+interface SignedPropsInterface {
+  fallback?: ReactElement;
+}
+
+const SignedIn: FC<PropsWithChildren<SignedPropsInterface>> = (props: PropsWithChildren<SignedPropsInterface>) => {
+  const {fallback, children} = props;
+  const {isAuthenticated} = useAuthentication();
+
+  return isAuthenticated ? children : fallback ?? null;
+};
+
+export default SignedIn;
