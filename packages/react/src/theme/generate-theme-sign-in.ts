@@ -68,13 +68,6 @@ const generateThemeSignIn: (brandingPreferenceTheme: BrandingPreferenceTheme) =>
           },
         },
       },
-      MuiCircularProgress: {
-        styleOverrides: {
-          root: {
-            color: `${brandingTheme?.colors?.primary?.main} !important`,
-          },
-        },
-      },
       MuiFormControl: {
         styleOverrides: {
           root: {

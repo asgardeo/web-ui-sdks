@@ -17,8 +17,9 @@
  */
 
 import {Branding, getBranding} from '@asgardeo/js-ui-core';
-import {CircularProgress, ThemeProvider} from '@oxygen-ui/react';
-import {FC, PropsWithChildren, useEffect, useState} from 'react';
+import {ThemeProvider} from '@oxygen-ui/react';
+import {FC, PropsWithChildren, useContext, useEffect, useState} from 'react';
+import AsgardeoContext from '../contexts/asgardeo-context';
 import BrandingPreferenceContext from '../contexts/branding-preference-context';
 import BrandingPreferenceProviderProps from '../models/branding-preference-provider-props';
 import generateTheme from '../theme/generate-theme';
@@ -41,19 +42,15 @@ const BrandingPreferenceProvider: FC<PropsWithChildren<BrandingPreferenceProvide
 
   const [brandingPreference, setBrandingPreference] = useState<Branding>();
 
+  const {setIsBrandingLoading} = useContext(AsgardeoContext);
+
   useEffect(() => {
+    setIsBrandingLoading(true);
     getBranding({branding}).then((response: Branding) => {
       setBrandingPreference(response);
+      setIsBrandingLoading(false);
     });
-  }, [branding]);
-
-  if (brandingPreference === undefined) {
-    return (
-      <div className="circular-progress-holder">
-        <CircularProgress className="circular-progress" />
-      </div>
-    );
-  }
+  }, [branding, setIsBrandingLoading]);
 
   return (
     <BrandingPreferenceContext.Provider value={brandingPreference}>

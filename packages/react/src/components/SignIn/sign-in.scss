@@ -15,10 +15,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+$--min-height: 75vh;
 
 .asgardeo-sign-in {
   min-width: 350px;
-  min-height: 200px;
+  min-height: $--min-height;
 
   .email-otp-resend-button {
     margin-top: 0;
@@ -34,12 +35,24 @@
 }
 
 .circular-progress-holder {
-  min-height: 0.7*100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: $--min-height;
 
   .circular-progress {
-    color: rgb(214 211 211);
+    color: rgb(214 211 211) !important;
+  }
+}
+
+.asgardeo-sign-in-footer,
+.asgardeo-sign-in-logo {
+  opacity: 0.5;
+  animation: fade-in 0.7s ease-in-out forwards;
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
   }
 }

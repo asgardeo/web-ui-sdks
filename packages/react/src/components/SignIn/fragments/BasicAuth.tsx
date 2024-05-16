@@ -17,11 +17,13 @@
  */
 
 import {ScreenType, keys} from '@asgardeo/js-ui-core';
-import {CircularProgress, Grid} from '@oxygen-ui/react';
-import {useState} from 'react';
+import {Box, CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
+import {useContext, useState} from 'react';
 import useTranslations from '../../../hooks/use-translations';
 import BasicAuthProps from '../../../models/basic-auth-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
+import './basic-auth.scss';
+import AsgardeoContext from '../../../contexts/asgardeo-context';
 
 /**
  * This component renders the basic authentication form.
@@ -47,6 +49,8 @@ const BasicAuth = ({
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const {isAuthLoading} = useContext(AsgardeoContext);
+
   const {t, isLoading} = useTranslations({
     componentLocaleOverride: brandingProps?.locale,
     componentTextOverrides: brandingProps?.preference?.text,
@@ -55,14 +59,19 @@ const BasicAuth = ({
 
   if (isLoading) {
     return (
-      <div className="circular-progress-holder">
-        <CircularProgress className="circular-progress" />
-      </div>
+      <UISignIn.Paper className="asgardeo-basic-auth-skeleton">
+        <Skeleton className="skeleton-title" variant="text" width={100} height={55} />
+        <Skeleton className="skeleton-text-field-label" variant="text" width={70} />
+        <Skeleton variant="rectangular" width={300} height={40} />
+        <Skeleton className="skeleton-text-field-label" variant="text" width={70} />
+        <Skeleton variant="rectangular" width={300} height={40} />
+        <Skeleton className="skeleton-submit-button" variant="rectangular" width={270} height={40} />
+      </UISignIn.Paper>
     );
   }
 
   return (
-    <UISignIn.Paper>
+    <UISignIn.Paper className="asgardeo-basic-auth-paper">
       <UISignIn.Typography title>{t(keys.login.login.heading)}</UISignIn.Typography>
 
       {alert && <UISignIn.Alert {...alert?.alertType}>{t(alert.key)}</UISignIn.Alert>}
@@ -94,12 +103,15 @@ const BasicAuth = ({
         type="submit"
         fullWidth
         onClick={(): void => {
-          handleAuthenticate(authenticator.authenticatorId, {password, username});
+          handleAuthenticate(authenticator.authenticatorId, {
+            password,
+            username,
+          });
           setUsername('');
           setPassword('');
         }}
       >
-        {t(keys.login.button)}
+        {isAuthLoading ? <CircularProgress className="sign-in-button-progress" /> : t(keys.login.button)}
       </UISignIn.Button>
 
       {showSelfSignUp && (

@@ -15,7 +15,7 @@ function App() {
     <>
       <SignIn />
 
-      <SignedIn fallback={<div>Fallback content</div>}>
+      {/* <SignedIn fallback={<div>Fallback content</div>}>
         <div>Protected content</div>
         <SignOutButton />
         <div style={{textAlign: 'left'}}>
@@ -39,7 +39,7 @@ function App() {
       <SignedOut fallback={<div>signedout fallback</div>}>
         <div>Public content</div>
         <SignInButton/>
-      </SignedOut>
+      </SignedOut> */}
     </>
   );
 }

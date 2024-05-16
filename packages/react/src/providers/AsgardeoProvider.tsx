@@ -48,6 +48,10 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
   const [user, setUser] = useState<MeAPIResponse>();
 
+  const [isBrandingLoading, setIsBrandingLoading] = useState<boolean>(true);
+  const [isTextLoading, setIsTextLoading] = useState<boolean>(true);
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
+
   const storeInstance: Store = store || new SessionStore();
 
   const spaUtils: CryptoUtils = new SPACryptoUtils();
@@ -96,11 +100,18 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
     () => ({
       accessToken,
       config,
+      isAuthLoading,
       isAuthenticated,
+      isBrandingLoading,
+      isGlobalLoading: isBrandingLoading || isTextLoading || isAuthLoading,
+      isTextLoading,
       setAuthentication,
+      setIsAuthLoading,
+      setIsBrandingLoading,
+      setIsTextLoading,
       user,
     }),
-    [accessToken, config, isAuthenticated, setAuthentication, user],
+    [accessToken, config, isAuthLoading, isAuthenticated, isBrandingLoading, isTextLoading, setAuthentication, user],
   );
 
   return (

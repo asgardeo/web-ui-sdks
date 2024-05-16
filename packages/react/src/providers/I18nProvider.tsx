@@ -17,7 +17,8 @@
  */
 
 import {TextObject, getLocalization} from '@asgardeo/js-ui-core';
-import {FC, PropsWithChildren, useCallback, useMemo, useState} from 'react';
+import {FC, PropsWithChildren, useCallback, useContext, useMemo, useState} from 'react';
+import AsgardeoContext from '../contexts/asgardeo-context';
 import I18nContext from '../contexts/i18n-context';
 import {I18n, I18nLocalization, I18nProviderProps, SetTranslationsProps} from '../models/i18n';
 
@@ -38,6 +39,8 @@ const I18nProvider: FC<PropsWithChildren<I18nProviderProps>> = (props: PropsWith
 
   const [text, setText] = useState<I18nLocalization>({});
 
+  const {setIsTextLoading} = useContext(AsgardeoContext);
+
   /**
    * `setTranslations` is a function that fetches and sets the translations for a specific screen.
    * It takes an object of type `SetTranslationsProps` as an argument, which includes the screen type,
@@ -52,6 +55,7 @@ const I18nProvider: FC<PropsWithChildren<I18nProviderProps>> = (props: PropsWith
       const {componentLocaleOverride, componentTextOverrides, screen} = setTranslationProps;
 
       if (!Object.prototype.hasOwnProperty.call(text, screen)) {
+        setIsTextLoading(true);
         const newText: TextObject = await getLocalization({
           componentTextOverrides,
           locale: componentLocaleOverride ?? providerLocaleOverride ?? 'en-US',
@@ -60,10 +64,11 @@ const I18nProvider: FC<PropsWithChildren<I18nProviderProps>> = (props: PropsWith
         });
 
         setText({...text, [screen]: newText});
+        setIsTextLoading(false);
       }
       return true;
     },
-    [providerLocaleOverride, providerTextOverrides, text],
+    [providerLocaleOverride, providerTextOverrides, setIsTextLoading, text],
   );
 
   const value: I18n = useMemo(() => ({setTranslations, text}), [setTranslations, text]);

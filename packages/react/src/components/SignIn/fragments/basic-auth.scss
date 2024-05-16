@@ -16,21 +16,39 @@
  * under the License.
  */
 
-import {UIAuthConfig, MeAPIResponse} from '@asgardeo/js-ui-core';
+.asgardeo-basic-auth-skeleton {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 32px;
+  row-gap: 8px;
 
-interface AuthContext {
-  accessToken: string;
-  config: UIAuthConfig;
-  isAuthLoading: boolean;
-  isAuthenticated: boolean | undefined;
-  isBrandingLoading: boolean;
-  isGlobalLoading: boolean;
-  isTextLoading: boolean;
-  setAuthentication: () => void;
-  setIsAuthLoading: (value: boolean) => void;
-  setIsBrandingLoading: (value: boolean) => void;
-  setIsTextLoading: (value: boolean) => void;
-  user: MeAPIResponse;
+  .skeleton-title {
+    margin: 0 auto;
+  }
+
+  .skeleton-text-field-label {
+    margin-top: 12px;
+  }
+
+  .skeleton-submit-button {
+    margin: 20px auto 0;
+    border-radius: 20px;
+  }
 }
 
-export default AuthContext;
+.asgardeo-basic-auth-paper {
+  opacity: 0.5;
+  animation: fade-in 0.9s ease-in-out forwards;
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+.sign-in-button-progress {
+  color: white;
+  max-height: 25px;
+  max-width: 25px;
+}

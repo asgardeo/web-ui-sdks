@@ -17,11 +17,12 @@
  */
 
 import {ScreenType, keys} from '@asgardeo/js-ui-core';
-import {CircularProgress} from '@oxygen-ui/react';
+import {Box, CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
 import {useState, ReactElement} from 'react';
 import useTranslations from '../../../hooks/use-translations';
 import TotpProps from '../../../models/totp-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
+import './totp.scss';
 
 /**
  * This component renders the TOTP authentication screen.
@@ -45,12 +46,22 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
 
   if (isLoading) {
     return (
-      <div className="circular-progress-holder">
-        <CircularProgress className="circular-progress" />
-      </div>
+      <UISignIn.Paper className="asgardeo-totp-skeleton">
+        <Skeleton className="skeleton-title" variant="text" width={100} height={55} />
+        <Skeleton className="skeleton-title" variant="text" width={280} height={35} />
+        <Grid container>
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+        </Grid>
+
+        <Skeleton className="skeleton-submit-button" variant="rectangular" width={300} height={40} />
+      </UISignIn.Paper>
     );
   }
-
   return (
     <UISignIn.Paper>
       <UISignIn.Typography title>{t(keys.totp.heading)}</UISignIn.Typography>
@@ -69,7 +80,7 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
         fullWidth
         onClick={(): void => handleAuthenticate(authenticator.authenticatorId, {token: totp})}
       >
-        totp.continue
+        {t(keys.totp.continue)}
       </UISignIn.Button>
 
       <UISignIn.Typography subtitle>
@@ -78,7 +89,6 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
         {t(keys.totp.enroll.message2)}
       </UISignIn.Typography>
 
-      <UISignIn.Link href="./somewhere">{t(keys.totp.enroll.message2)}</UISignIn.Link>
     </UISignIn.Paper>
   );
 };

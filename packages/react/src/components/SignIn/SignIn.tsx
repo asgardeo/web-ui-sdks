@@ -113,7 +113,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
       throw new AsgardeoUIException('REACT_UI-SIGN_IN-HA-IV02', 'Auth response is undefined.');
     }
 
-    setIsComponentLoading(true);
+    authContext.setIsAuthLoading(true);
 
     const resp: AuthApiResponse = await authenticate({
       flowId: authResponse.flowId,
@@ -182,7 +182,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
       setShowSelfSignUp(false);
     }
 
-    setIsComponentLoading(false);
+    authContext.setIsAuthLoading(false);
   };
 
   const renderLoginOptions = (authenticators: Authenticator[]): ReactElement[] => {
@@ -291,7 +291,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
   /**
    * Renders the circular progress component while the component or text is loading.
    */
-  if (isComponentLoading || isLoading) {
+  if (isComponentLoading || isLoading || authContext.isBrandingLoading) {
     return (
       <div className="circular-progress-holder">
         <CircularProgress className="circular-progress" />
@@ -309,31 +309,34 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
   return (
     <ThemeProvider theme={generateThemeSignIn(componentBranding?.preference.theme)}>
       <UISignIn className="asgardeo-sign-in">
-        <UISignIn.Image src={imgUrl} />
+        {!(isLoading || isComponentLoading) && <UISignIn.Image className="asgardeo-sign-in-logo" src={imgUrl} />}
         {authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
           <>
             {renderSignIn()}
 
-            <UISignIn.Footer
-              copyrights={{children: copyrightText}}
-              items={[
-                {
-                  children: (
-                    <UISignIn.Link href={componentBranding.preference.urls.termsOfUseURL}>
-                      {t(keys.common.terms.of.service)}
-                    </UISignIn.Link>
-                  ),
-                },
-                {
-                  children: (
-                    <UISignIn.Link href={componentBranding.preference.urls.privacyPolicyURL}>
-                      {t(keys.common.privacy.policy)}
-                    </UISignIn.Link>
-                  ),
-                },
-                {children: <UISignIn.Typography>{componentBranding?.locale ?? 'en-US'}</UISignIn.Typography>},
-              ]}
-            />
+            {!(isLoading || isComponentLoading) && (
+              <UISignIn.Footer
+                className="asgardeo-sign-in-footer"
+                copyrights={{children: copyrightText}}
+                items={[
+                  {
+                    children: (
+                      <UISignIn.Link href={componentBranding.preference.urls.termsOfUseURL}>
+                        {t(keys.common.terms.of.service)}
+                      </UISignIn.Link>
+                    ),
+                  },
+                  {
+                    children: (
+                      <UISignIn.Link href={componentBranding.preference.urls.privacyPolicyURL}>
+                        {t(keys.common.privacy.policy)}
+                      </UISignIn.Link>
+                    ),
+                  },
+                  {children: <UISignIn.Typography>{componentBranding?.locale ?? 'en-US'}</UISignIn.Typography>},
+                ]}
+              />
+            )}
           </>
         )}
         {(authResponse?.flowStatus === FlowStatus.SuccessCompleted || isAuthenticated) && (

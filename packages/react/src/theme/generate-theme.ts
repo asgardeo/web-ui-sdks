@@ -31,6 +31,10 @@ import {extendTheme, Theme} from '@oxygen-ui/react';
 const generateTheme: (brandingPreferenceTheme: BrandingPreferenceTheme) => Theme = (
   brandingPreferenceTheme: BrandingPreferenceTheme,
 ) => {
+  if (!brandingPreferenceTheme) {
+    return null;
+  }
+
   const mode: string = brandingPreferenceTheme?.activeTheme.toLowerCase() ?? 'light';
   const brandingTheme: ThemeConfig = brandingPreferenceTheme[mode.toUpperCase()];
 
