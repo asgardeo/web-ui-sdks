@@ -103,7 +103,8 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
 
   /**
    * Handles the generalized authentication process.
-   * @param {any} authParams - The authentication parameters.
+   * @param {string} authenticatorId - Authenticator ID.
+   * @param {object} [authParams] - Authentication parameters.
    */
   const handleAuthenticate = async (authenticatorId: string, authParams?: {[key: string]: string}): Promise<void> => {
     setAlert(undefined);
@@ -175,7 +176,6 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
         nextStep: authResponse.nextStep,
       });
 
-      // TODO: Move this to core: and take from i18n
       setAlert({alertType: {error: true}, key: keys.login.retry});
     } else {
       setAuthResponse(resp);
