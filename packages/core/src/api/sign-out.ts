@@ -18,6 +18,7 @@
 
 import {AuthClient, ResponseMode} from '../auth-client';
 import AsgardeoUIException from '../exception';
+import {UIAuthClient} from '../models/auth-config';
 
 /**
  * Sign out the user.
@@ -45,9 +46,11 @@ const signOut = async (): Promise<void> => {
 
   const formBody: URLSearchParams = new URLSearchParams();
 
+  const authClient: UIAuthClient = AuthClient.getInstance();
+
   try {
-    formBody.append('id_token_hint', await AuthClient.getInstance().getIDToken());
-    formBody.append('client_id', (await AuthClient.getInstance().getDataLayer().getConfigData()).clientID);
+    formBody.append('id_token_hint', await authClient.getIDToken());
+    formBody.append('client_id', (await authClient.getDataLayer().getConfigData()).clientID);
     formBody.append('response_mode', ResponseMode.direct);
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-SIGNOUT-SO-IV', 'Failed to build the body of the signout request.');
@@ -60,7 +63,8 @@ const signOut = async (): Promise<void> => {
   };
 
   try {
-    signOutUrl = (await AuthClient.getInstance().getOIDCServiceEndpoints()).endSessionEndpoint;
+    const {endSessionEndpoint} = await authClient.getOIDCServiceEndpoints();
+    signOutUrl = endSessionEndpoint;
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-SIGNOUT-SO-NF', 'Failed to retrieve the sign out endpoint.');
   }
