@@ -111,7 +111,7 @@ const BasicAuth = ({
         </Grid>
       )}
 
-      <UISignIn.Divider> {t(keys.common.or)} </UISignIn.Divider>
+      {renderLoginOptions.length !== 0 && <UISignIn.Divider> {t(keys.common.or)} </UISignIn.Divider>}
 
       {renderLoginOptions}
     </UISignIn.Paper>
