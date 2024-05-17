@@ -102,6 +102,7 @@ const BasicAuth = ({
         variant="contained"
         type="submit"
         fullWidth
+        disabled={isAuthLoading}
         onClick={(): void => {
           handleAuthenticate(authenticator.authenticatorId, {
             password,
@@ -111,7 +112,8 @@ const BasicAuth = ({
           setPassword('');
         }}
       >
-        {isAuthLoading ? <CircularProgress className="sign-in-button-progress" /> : t(keys.login.button)}
+        {t(keys.login.button)}
+        {isAuthLoading && <CircularProgress className="sign-in-button-progress" />}
       </UISignIn.Button>
 
       {showSelfSignUp && (
