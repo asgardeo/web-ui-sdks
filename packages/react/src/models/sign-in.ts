@@ -20,6 +20,7 @@ import {BrandingProps} from '@asgardeo/js-ui-core';
 
 export interface SignInProps {
   brandingProps?: BrandingProps;
+  showSignUp?: boolean;
 }
 
 export type AlertType = {

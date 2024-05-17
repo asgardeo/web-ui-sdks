@@ -56,23 +56,23 @@ import './sign-in.scss';
  *
  * @param {SignInProps} props - Props injected to the component.
  * @param {BrandingProps} props.brandingProps - Branding related props.
+ * @param {boolean} props.showSignUp - Show sign-up.
  *
  * @returns {ReactElement} - React element.
  */
-const SignIn: FC<SignInProps> = (props: SignInProps) => {
-  const {brandingProps} = props;
+const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
+  const {brandingProps, showSignUp} = props;
+
   const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
-  const [isComponentLoading, setIsComponentLoading] = useState(true);
+  const [isComponentLoading, setIsComponentLoading] = useState<boolean>(true);
   const [alert, setAlert] = useState<AlertType>();
-  const [showSelfSignUp, setShowSelfSignUp] = useState(true);
+  const [showSelfSignUp, setShowSelfSignUp] = useState<boolean>(showSignUp);
   const [componentBranding, setComponentBranding] = useState<Branding>();
 
   const {isAuthenticated} = useAuthentication();
-
-  const authContext: AuthContext | undefined = useContext(AsgardeoContext);
-
   const {config} = useConfig();
 
+  const authContext: AuthContext | undefined = useContext(AsgardeoContext);
   const brandingPreference: Branding = useContext(BrandingPreferenceContext);
 
   const {isLoading, t} = useTranslations({
@@ -124,7 +124,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
     });
 
     if (!authParams) {
-      const metaData: Metadata = resp.nextStep.authenticators[0].metadata;
+      const metaData: Metadata = resp.nextStep?.authenticators[0]?.metadata;
       if (metaData.promptType === PromptType.RedirectionPromt) {
         /**
          * Open a popup window to handle redirection prompts
@@ -203,7 +203,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
   };
 
   const renderSignIn = (): ReactElement => {
-    const {authenticators} = authResponse.nextStep;
+    const authenticators: Authenticator[] = authResponse?.nextStep?.authenticators;
 
     if (authenticators) {
       const usernamePasswordAuthenticator: Authenticator = authenticators.find(
@@ -321,15 +321,15 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
                 items={[
                   {
                     children: (
-                      <UISignIn.Link href={componentBranding.preference.urls.termsOfUseURL}>
-                        {t(keys.common.terms.of.service)}
+                      <UISignIn.Link href={componentBranding.preference.urls.privacyPolicyURL}>
+                        {t(keys.common.privacy.policy)}
                       </UISignIn.Link>
                     ),
                   },
                   {
                     children: (
-                      <UISignIn.Link href={componentBranding.preference.urls.privacyPolicyURL}>
-                        {t(keys.common.privacy.policy)}
+                      <UISignIn.Link href={componentBranding.preference.urls.termsOfUseURL}>
+                        {t(keys.common.terms.of.service)}
                       </UISignIn.Link>
                     ),
                   },
