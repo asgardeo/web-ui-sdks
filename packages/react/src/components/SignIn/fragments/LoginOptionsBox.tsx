@@ -41,11 +41,17 @@ const images: {[key: string]: string} = {
  * @param {Function} props.handleOnClick - On click handler.
  * @return {JSX.Element}
  */
-const LoginOptionsBox = ({socialName, displayName, handleOnClick}: LoginOptionsBoxProps): JSX.Element => (
+const LoginOptionsBox = ({
+  isAuthLoading,
+  socialName,
+  displayName,
+  handleOnClick,
+}: LoginOptionsBoxProps): JSX.Element => (
   <UISignIn.Button
     social
     startIcon={<img className="social-login-img" src={images[socialName]} alt={socialName} />}
     onClick={handleOnClick}
+    disabled={isAuthLoading}
   >
     Sign In with {displayName}
   </UISignIn.Button>

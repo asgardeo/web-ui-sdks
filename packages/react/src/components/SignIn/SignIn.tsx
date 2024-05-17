@@ -192,6 +192,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
       const displayName: string = authenticator.idp === 'LOCAL' ? authenticator.authenticator : authenticator.idp;
       LoginOptions.push(
         <LoginOptionsBox
+          isAuthLoading={authContext.isAuthLoading}
           socialName={authenticator.authenticator}
           displayName={displayName}
           handleOnClick={(): Promise<void> => handleAuthenticate(authenticator.authenticatorId)}
