@@ -78,6 +78,14 @@ const generateThemeSignIn: (brandingPreferenceTheme: BrandingPreferenceTheme) =>
           },
         },
       },
+      MuiInputBase: {
+        styleOverrides: {
+          root: {
+            borderRadius: `${brandingTheme?.inputs?.base?.border?.borderRadius} !important`,
+            color: brandingTheme?.inputs?.base?.font?.color,
+          },
+        },
+      },
       MuiInputLabel: {
         styleOverrides: {
           root: {
@@ -99,6 +107,9 @@ const generateThemeSignIn: (brandingPreferenceTheme: BrandingPreferenceTheme) =>
       MuiOutlinedInput: {
         styleOverrides: {
           input: {
+            '&::placeholder': {
+              color: 'var(--oxygen-palette-text-secondary)',
+            },
             padding: '0.67857143em 1em',
           },
         },
