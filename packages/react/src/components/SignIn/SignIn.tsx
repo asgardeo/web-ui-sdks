@@ -189,10 +189,11 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
     const LoginOptions: ReactElement[] = [];
 
     authenticators.forEach((authenticator: Authenticator) => {
+      const displayName: string = authenticator.idp === 'LOCAL' ? authenticator.authenticator : authenticator.idp;
       LoginOptions.push(
         <LoginOptionsBox
           socialName={authenticator.authenticator}
-          displayName={authenticator.idp}
+          displayName={displayName}
           handleOnClick={(): Promise<void> => handleAuthenticate(authenticator.authenticatorId)}
           key={authenticator.authenticatorId}
         />,
