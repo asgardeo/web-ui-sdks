@@ -17,7 +17,7 @@
  */
 
 import {ScreenType, keys} from '@asgardeo/js-ui-core';
-import {Box, CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
+import {Grid, Skeleton} from '@oxygen-ui/react';
 import {useState, ReactElement} from 'react';
 import useTranslations from '../../../hooks/use-translations';
 import TotpProps from '../../../models/totp-props';
@@ -70,7 +70,7 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
 
       {alert && <UISignIn.Alert {...alert?.alertType}>{alert.key}</UISignIn.Alert>}
 
-      <UISignIn.PinInput length={6} onPinChange={setTotp} />
+      <UISignIn.PinInput length={6} onPinChange={setTotp} pinValue={totp} />
 
       <UISignIn.Button
         color="primary"
@@ -78,7 +78,10 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
         className="oxygen-sign-in-cta"
         type="submit"
         fullWidth
-        onClick={(): void => handleAuthenticate(authenticator.authenticatorId, {token: totp})}
+        onClick={(): void => {
+          handleAuthenticate(authenticator.authenticatorId, {token: totp});
+          setTotp('');
+        }}
       >
         {t(keys.totp.continue)}
       </UISignIn.Button>
@@ -88,7 +91,6 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
         <br />
         {t(keys.totp.enroll.message2)}
       </UISignIn.Typography>
-
     </UISignIn.Paper>
   );
 };

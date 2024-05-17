@@ -38,11 +38,12 @@ export type SignInPinInputProps<C extends ElementType = ElementType> = {
   itemProps?: TextFieldProps;
   length: number;
   onPinChange?: (pin: string) => void;
+  pinValue: string;
 } & Omit<BoxProps, 'component'>;
 
 const SignInPinInput: ForwardRefExoticComponent<SignInPinInputProps> & WithWrapperProps = forwardRef(
   <C extends ElementType>(props: SignInPinInputProps<C>, ref: MutableRefObject<HTMLHRElement>): ReactElement => {
-    const {length, onPinChange, className, itemProps, ...rest} = props;
+    const {length, onPinChange, className, itemProps, pinValue, ...rest} = props;
 
     const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
@@ -51,6 +52,14 @@ const SignInPinInput: ForwardRefExoticComponent<SignInPinInputProps> & WithWrapp
     const refs: MutableRefObject<React.RefObject<HTMLInputElement>[]> = useRef(
       totp.map(() => React.createRef<HTMLInputElement>()),
     );
+
+    useEffect(() => {
+      if (pinValue) {
+        setTotp(pinValue.split(''));
+      } else {
+        setTotp(Array(length).fill(''));
+      }
+    }, [length, pinValue]);
 
     useEffect(() => {
       /**
