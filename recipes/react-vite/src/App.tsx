@@ -1,4 +1,12 @@
 import "./App.css";
+// import {
+//   SignIn,
+//   SignedIn,
+//   SignedOut,
+//   SignInButton,
+//   SignOutButton,
+//   useAuthentication,
+// } from "../../../packages/react/src"; // ToDO: temporary
 import {
   SignIn,
   SignedIn,
@@ -6,7 +14,7 @@ import {
   SignInButton,
   SignOutButton,
   useAuthentication,
-} from "../../../packages/react/src"; // ToDO: temporary
+} from "@asgardeo/react-ui";
 
 function App() {
   const {user, accessToken} = useAuthentication();
@@ -15,7 +23,7 @@ function App() {
     <>
       <SignIn />
 
-      {/* <SignedIn fallback={<div>Fallback content</div>}>
+      <SignedIn fallback={<div>Fallback content</div>}>
         <div>Protected content</div>
         <SignOutButton />
         <div style={{textAlign: 'left'}}>
@@ -39,7 +47,7 @@ function App() {
       <SignedOut fallback={<div>signedout fallback</div>}>
         <div>Public content</div>
         <SignInButton/>
-      </SignedOut> */}
+      </SignedOut>
     </>
   );
 }

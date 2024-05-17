@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
-import { AsgardeoProvider, UIAuthConfig } from "../../../packages/react/src"; //TODO: temporary
+//import { AsgardeoProvider, UIAuthConfig } from "../../../packages/react/src"; //TODO: temporary
+import { AsgardeoProvider, UIAuthConfig } from "@asgardeo/react-ui";
 
 const config: UIAuthConfig = {
   baseUrl: "https://localhost:9443",
