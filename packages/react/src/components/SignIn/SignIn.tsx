@@ -61,7 +61,7 @@ import './sign-in.scss';
  * @returns {ReactElement} - React element.
  */
 const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
-  const {brandingProps, showSignUp} = props;
+  const {brandingProps, showFooter = true, showLogo = true, showSignUp} = props;
 
   const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
   const [isComponentLoading, setIsComponentLoading] = useState<boolean>(true);
@@ -313,19 +313,21 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   const imgUrl: string = brandingPreference?.preference?.theme?.LIGHT?.images?.logo?.imgURL;
   let copyrightText: string = t(keys.common.copyright);
 
-  if (copyrightText.includes('{{currentYear}}')) {
+  if (showFooter && copyrightText.includes('{{currentYear}}')) {
     copyrightText = copyrightText.replace('{{currentYear}}', new Date().getFullYear().toString());
   }
 
   return (
     <ThemeProvider theme={generateThemeSignIn(componentBranding?.preference.theme)}>
       <UISignIn className="asgardeo-sign-in">
-        {!(isLoading || isComponentLoading) && <UISignIn.Image className="asgardeo-sign-in-logo" src={imgUrl} />}
+        {showLogo && !(isLoading || isComponentLoading) && (
+          <UISignIn.Image className="asgardeo-sign-in-logo" src={imgUrl} />
+        )}
         {authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
           <>
             {renderSignIn()}
 
-            {!(isLoading || isComponentLoading) && (
+            {showFooter && !(isLoading || isComponentLoading) && (
               <UISignIn.Footer
                 className="asgardeo-sign-in-footer"
                 copyrights={{children: copyrightText}}

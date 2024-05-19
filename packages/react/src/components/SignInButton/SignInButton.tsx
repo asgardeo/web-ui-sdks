@@ -21,6 +21,7 @@ import React, {ReactElement, useContext, useState} from 'react';
 import './sign-in-button.scss';
 import AsgardeoContext from '../../contexts/asgardeo-context';
 import AuthContext from '../../models/auth-context';
+import {SignInButtonProps} from '../../models/sign-in';
 import SignIn from '../SignIn/SignIn';
 
 /**
@@ -30,7 +31,9 @@ import SignIn from '../SignIn/SignIn';
  * @param {ReactElement} props.customComponent - Optional custom component to be rendered.
  * @returns {ReactElement} Rendered SignInButton component.
  */
-const SignInButton = ({customComponent}: {customComponent?: ReactElement}): ReactElement => {
+const SignInButton = (props: SignInButtonProps): ReactElement => {
+  const {customComponent, showFooter = false, showLogo = false, showSignUp = false} = props;
+
   const [modalVisible, setModalVisible] = useState(false);
 
   const authContext: AuthContext | undefined = useContext(AsgardeoContext);
@@ -65,7 +68,7 @@ const SignInButton = ({customComponent}: {customComponent?: ReactElement}): Reac
 
       {modalVisible && (
         <Box className="popup-box">
-          <SignIn />
+          <SignIn showFooter={showFooter} showLogo={showLogo} showSignUp={showSignUp} />
         </Box>
       )}
 
