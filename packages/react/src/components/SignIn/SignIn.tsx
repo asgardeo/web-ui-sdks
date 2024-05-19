@@ -121,6 +121,10 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         authenticatorId,
         params: authParams,
       },
+    }).catch((authnError: Error) => {
+      setAlert({alertType: {error: true}, key: keys.common.error});
+      authContext.setIsAuthLoading(false);
+      throw new AsgardeoUIException('REACT_UI-SIGN_IN-HA-SE03', 'Authentication failed.', authnError.stack);
     });
 
     if (!authParams) {
