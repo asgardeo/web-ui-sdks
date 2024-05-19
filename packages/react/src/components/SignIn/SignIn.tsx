@@ -180,7 +180,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         nextStep: authResponse.nextStep,
       });
 
-      setAlert({alertType: {error: true}, key: keys.login.retry});
+      setAlert({alertType: {error: true}, key: keys.common.error});
     } else {
       setAuthResponse(resp);
       setShowSelfSignUp(false);

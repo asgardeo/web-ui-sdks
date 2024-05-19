@@ -17,8 +17,9 @@
  */
 
 import {ScreenType, keys} from '@asgardeo/js-ui-core';
-import {Grid, Skeleton} from '@oxygen-ui/react';
-import {useState, ReactElement} from 'react';
+import {CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
+import {useState, ReactElement, useContext} from 'react';
+import AsgardeoContext from '../../../contexts/asgardeo-context';
 import useTranslations from '../../../hooks/use-translations';
 import TotpProps from '../../../models/totp-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
@@ -37,6 +38,8 @@ import './totp.scss';
  */
 const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpProps): ReactElement => {
   const [totp, setTotp] = useState<string>();
+
+  const {isAuthLoading} = useContext(AsgardeoContext);
 
   const {isLoading, t} = useTranslations({
     componentLocaleOverride: brandingProps?.locale,
@@ -66,9 +69,13 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
     <UISignIn.Paper>
       <UISignIn.Typography title>{t(keys.totp.heading)}</UISignIn.Typography>
 
-      <UISignIn.Typography subtitle>{t(keys.totp.enter.verification.code.got.by.device)}</UISignIn.Typography>
+      {alert && (
+        <UISignIn.Alert className="asgardeo-totp-alert" {...alert?.alertType}>
+          {t(alert.key)}
+        </UISignIn.Alert>
+      )}
 
-      {alert && <UISignIn.Alert {...alert?.alertType}>{alert.key}</UISignIn.Alert>}
+      <UISignIn.Typography subtitle>{t(keys.totp.enter.verification.code.got.by.device)}</UISignIn.Typography>
 
       <UISignIn.PinInput length={6} onPinChange={setTotp} pinValue={totp} />
 
@@ -78,6 +85,7 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
         className="oxygen-sign-in-cta"
         type="submit"
         fullWidth
+        disabled={!totp}
         onClick={(): void => {
           handleAuthenticate(authenticator.authenticatorId, {token: totp});
           setTotp('');
@@ -85,6 +93,12 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
       >
         {t(keys.totp.continue)}
       </UISignIn.Button>
+
+      {isAuthLoading && (
+        <div className="circular-progress-holder-authn">
+          <CircularProgress className="sign-in-button-progress" />
+        </div>
+      )}
 
       <UISignIn.Typography subtitle>
         {t(keys.totp.enroll.message1)}

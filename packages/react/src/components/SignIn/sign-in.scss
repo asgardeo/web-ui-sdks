@@ -60,3 +60,18 @@ $--min-height: 75vh;
     opacity: 1;
   }
 }
+
+.circular-progress-holder-authn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+
+  .sign-in-button-progress {
+    color: var(--oxygen-palette-primary-main);
+    margin: 0 auto !important;
+    max-height: 25px;
+    max-width: 25px;
+    margin-left: 12px;
+  }
+}
