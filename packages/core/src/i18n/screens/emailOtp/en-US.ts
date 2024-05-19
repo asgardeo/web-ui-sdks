@@ -24,5 +24,6 @@ export const emailOtp: EmailOTP = {
   'email.otp.heading': 'OTP Verification',
   'enter.verification.code.got.by.device': 'Enter the code sent to your email ID.',
   'resend.code': 'Resend code',
-  username: 'Username',
+  'username.label': 'Username',
+  'username.placeholder': 'Enter your username',
 };

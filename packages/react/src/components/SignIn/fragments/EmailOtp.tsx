@@ -41,9 +41,13 @@ const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Ema
    * Temporary i18n mapping.
    * TODO: Remove once the i18n keys are implemented correctly in the API response.
    */
-  const i18nMapping: {[key: string]: {heading: string; inputLabel: string}} = {
+  const i18nMapping: {[key: string]: {heading: string; inputLabel: string; placeholder?: string}} = {
     OTPCode: {heading: keys.emailOtp.email.heading, inputLabel: keys.emailOtp.enter.verification.code.got.by.device},
-    username: {heading: keys.emailOtp.email.otp.heading, inputLabel: keys.emailOtp.username},
+    username: {
+      heading: keys.emailOtp.email.otp.heading,
+      inputLabel: keys.emailOtp.username.label,
+      placeholder: keys.emailOtp.username.placeholder,
+    },
   };
 
   const {isLoading, t} = useTranslations({
@@ -73,6 +77,7 @@ const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Ema
         name="text"
         value={inputValue}
         type={param === 'OTPCode' ? 'password' : undefined}
+        placeholder={param === 'username' ? t(i18nMapping[param].placeholder) : undefined}
         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setInputValue(e.target.value)}
       />
 

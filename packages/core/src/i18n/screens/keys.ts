@@ -62,7 +62,10 @@ interface Keys {
     resend: {
       code: string;
     };
-    username: string;
+    username: {
+      label: string;
+      placeholder: string;
+    };
   };
   login: {
     button: string;
@@ -159,7 +162,10 @@ export const keys: Keys = {
     resend: {
       code: 'emailOtp.resend.code',
     },
-    username: 'emailOtp.username',
+    username: {
+      label: 'emailOtp.username.label',
+      placeholder: 'emailOtp.username.placeholder',
+    },
   },
   login: {
     button: 'login.login.button',

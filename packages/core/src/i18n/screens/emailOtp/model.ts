@@ -25,5 +25,6 @@ export interface EmailOTP {
   'email.otp.heading': string;
   'enter.verification.code.got.by.device': string;
   'resend.code': string;
-  username: string;
+  'username.label': string;
+  'username.placeholder': string;
 }
