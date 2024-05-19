@@ -43,6 +43,7 @@ interface Keys {
   emailOtp: {
     continue: string;
     email: {
+      heading: string;
       otp: {
         heading: string;
       };
@@ -61,6 +62,7 @@ interface Keys {
     resend: {
       code: string;
     };
+    username: string;
   };
   login: {
     button: string;
@@ -138,6 +140,7 @@ export const keys: Keys = {
   emailOtp: {
     continue: 'emailOtp.continue',
     email: {
+      heading: 'emailOtp.email.heading',
       otp: {
         heading: 'emailOtp.email.otp.heading',
       },
@@ -156,6 +159,7 @@ export const keys: Keys = {
     resend: {
       code: 'emailOtp.resend.code',
     },
+    username: 'emailOtp.username',
   },
   login: {
     button: 'login.login.button',

@@ -20,7 +20,9 @@ import {EmailOTP} from './model';
 
 export const emailOtp: EmailOTP = {
   continue: 'Continue',
+  'email.heading': 'Sign In',
   'email.otp.heading': 'OTP Verification',
   'enter.verification.code.got.by.device': 'Enter the code sent to your email ID.',
   'resend.code': 'Resend code',
+  username: 'Username',
 };

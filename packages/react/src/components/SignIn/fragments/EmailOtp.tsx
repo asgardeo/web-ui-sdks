@@ -34,7 +34,17 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
  * @return {ReactElement}
  */
 const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: EmailOtpProps): ReactElement => {
-  const [otp, setOtp] = useState<string>();
+  const [inputValue, setInputValue] = useState<string>();
+
+  const param: string = authenticator?.metadata?.params[0]?.param;
+  /**
+   * Temporary i18n mapping.
+   * TODO: Remove once the i18n keys are implemented correctly in the API response.
+   */
+  const i18nMapping: {[key: string]: {heading: string; inputLabel: string}} = {
+    OTPCode: {heading: keys.emailOtp.email.heading, inputLabel: keys.emailOtp.enter.verification.code.got.by.device},
+    username: {heading: keys.emailOtp.email.otp.heading, inputLabel: keys.emailOtp.username},
+  };
 
   const {isLoading, t} = useTranslations({
     componentLocaleOverride: brandingProps?.locale,
@@ -52,18 +62,18 @@ const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Ema
 
   return (
     <UISignIn.Paper>
-      <UISignIn.Typography title>{t(keys.emailOtp.email.otp.heading)}</UISignIn.Typography>
+      <UISignIn.Typography title>{t(i18nMapping[param].heading)}</UISignIn.Typography>
 
       {alert && <UISignIn.Alert {...alert?.alertType}>{alert.key}</UISignIn.Alert>}
 
       <UISignIn.TextField
         fullWidth
         autoComplete="off"
-        label={t(keys.emailOtp.enter.verification.code.got.by.device)}
+        label={t(i18nMapping[param].inputLabel) ?? param}
         name="text"
-        value={otp}
-        type="password"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setOtp(e.target.value)}
+        value={inputValue}
+        type={param === 'OTPCode' ? 'password' : undefined}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setInputValue(e.target.value)}
       />
 
       <UISignIn.Button
@@ -71,21 +81,23 @@ const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Ema
         variant="contained"
         type="submit"
         onClick={(): void => {
-          handleAuthenticate();
-          setOtp('');
+          handleAuthenticate(authenticator.authenticatorId, {[authenticator.requiredParams[0]]: inputValue});
+          setInputValue('');
         }}
       >
         {t(keys.emailOtp.continue)}
       </UISignIn.Button>
 
-      <UISignIn.Button
-        className="email-otp-resend-button"
-        onClick={(): void => handleAuthenticate(authenticator.authenticatorId)}
-        color="secondary"
-        variant="contained"
-      >
-        {t(keys.emailOtp.resend.code)}
-      </UISignIn.Button>
+      {param === 'OTPCode' && (
+        <UISignIn.Button
+          className="email-otp-resend-button"
+          onClick={(): void => handleAuthenticate(authenticator.authenticatorId)}
+          color="secondary"
+          variant="contained"
+        >
+          {t(keys.emailOtp.resend.code)}
+        </UISignIn.Button>
+      )}
     </UISignIn.Paper>
   );
 };
