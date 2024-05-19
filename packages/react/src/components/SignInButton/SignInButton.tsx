@@ -16,9 +16,11 @@
  * under the License.
  */
 
-import {Box, Button} from '@oxygen-ui/react';
-import React, {ReactElement, useState} from 'react';
+import {Box, Button, CircularProgress} from '@oxygen-ui/react';
+import React, {ReactElement, useContext, useState} from 'react';
 import './sign-in-button.scss';
+import AsgardeoContext from '../../contexts/asgardeo-context';
+import AuthContext from '../../models/auth-context';
 import SignIn from '../SignIn/SignIn';
 
 /**
@@ -31,6 +33,8 @@ import SignIn from '../SignIn/SignIn';
 const SignInButton = ({customComponent}: {customComponent?: ReactElement}): ReactElement => {
   const [modalVisible, setModalVisible] = useState(false);
 
+  const authContext: AuthContext | undefined = useContext(AsgardeoContext);
+
   const openModal = (): void => {
     setModalVisible(true);
   };
@@ -38,6 +42,14 @@ const SignInButton = ({customComponent}: {customComponent?: ReactElement}): Reac
   const closeModal = (): void => {
     setModalVisible(false);
   };
+
+  if (authContext.isBrandingLoading) {
+    return (
+      <Button className="asgardeo-sign-in-button">
+        <CircularProgress />
+      </Button>
+    );
+  }
 
   return (
     <div className="asgardeo" style={{padding: '2rem'}}>
