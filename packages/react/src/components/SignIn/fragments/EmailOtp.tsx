@@ -17,11 +17,13 @@
  */
 
 import {ScreenType, keys} from '@asgardeo/js-ui-core';
-import {CircularProgress} from '@oxygen-ui/react';
-import {ReactElement, useState} from 'react';
+import {CircularProgress, Skeleton} from '@oxygen-ui/react';
+import {ReactElement, useContext, useState} from 'react';
+import AsgardeoContext from '../../../contexts/asgardeo-context';
 import useTranslations from '../../../hooks/use-translations';
 import EmailOtpProps from '../../../models/email-otp-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
+import './email-otp.scss';
 
 /**
  * Email OTP component.
@@ -35,6 +37,10 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
  */
 const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: EmailOtpProps): ReactElement => {
   const [inputValue, setInputValue] = useState<string>();
+  const [isContinueLoading, setIsContinueLoading] = useState<boolean>(false);
+  const [isResendLoading, setIsResendLoading] = useState<boolean>(false);
+
+  const {isAuthLoading} = useContext(AsgardeoContext);
 
   const param: string = authenticator?.metadata?.params[0]?.param;
   /**
@@ -58,14 +64,17 @@ const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Ema
 
   if (isLoading) {
     return (
-      <div className="circular-progress-holder">
-        <CircularProgress className="circular-progress" />
-      </div>
+      <UISignIn.Paper className="asgardeo-email-otp-skeleton">
+        <Skeleton className="skeleton-title" variant="text" width={100} height={55} />
+        <Skeleton className="skeleton-text-field-label" variant="text" width={70} />
+        <Skeleton variant="rectangular" width={300} height={40} />
+        <Skeleton className="skeleton-submit-button" variant="rectangular" width={270} height={40} />
+      </UISignIn.Paper>
     );
   }
 
   return (
-    <UISignIn.Paper>
+    <UISignIn.Paper className="asgardeo-email-otp-paper">
       <UISignIn.Typography title>{t(i18nMapping[param].heading)}</UISignIn.Typography>
 
       {alert && <UISignIn.Alert {...alert?.alertType}>{alert.key}</UISignIn.Alert>}
@@ -85,22 +94,33 @@ const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Ema
         fullWidth
         variant="contained"
         type="submit"
+        disabled={isAuthLoading}
         onClick={(): void => {
           handleAuthenticate(authenticator.authenticatorId, {[authenticator.requiredParams[0]]: inputValue});
           setInputValue('');
+          setIsResendLoading(false);
+          setIsContinueLoading(true);
         }}
       >
         {t(keys.emailOtp.continue)}
+        {isAuthLoading && isContinueLoading && <CircularProgress className="sign-in-button-progress" />}
       </UISignIn.Button>
 
       {param === 'OTPCode' && (
         <UISignIn.Button
           className="email-otp-resend-button"
-          onClick={(): void => handleAuthenticate(authenticator.authenticatorId)}
           color="secondary"
+          disabled={isAuthLoading}
           variant="contained"
+          onClick={(): void => {
+            handleAuthenticate(authenticator.authenticatorId);
+            setInputValue('');
+            setIsContinueLoading(false);
+            setIsResendLoading(true);
+          }}
         >
           {t(keys.emailOtp.resend.code)}
+          {isAuthLoading && isResendLoading && <CircularProgress className="sign-in-button-progress" />}
         </UISignIn.Button>
       )}
     </UISignIn.Paper>
