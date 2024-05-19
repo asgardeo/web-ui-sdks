@@ -17,13 +17,13 @@
  */
 
 import {ScreenType, keys} from '@asgardeo/js-ui-core';
-import {Box, CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
+import {CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
 import {useContext, useState} from 'react';
+import AsgardeoContext from '../../../contexts/asgardeo-context';
 import useTranslations from '../../../hooks/use-translations';
 import BasicAuthProps from '../../../models/basic-auth-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 import './basic-auth.scss';
-import AsgardeoContext from '../../../contexts/asgardeo-context';
 
 /**
  * This component renders the basic authentication form.
@@ -74,7 +74,11 @@ const BasicAuth = ({
     <UISignIn.Paper className="asgardeo-basic-auth-paper">
       <UISignIn.Typography title>{t(keys.login.login.heading)}</UISignIn.Typography>
 
-      {alert && <UISignIn.Alert {...alert?.alertType}>{t(alert.key)}</UISignIn.Alert>}
+      {alert && (
+        <UISignIn.Alert className="asgardeo-basic-auth-alert" {...alert?.alertType}>
+          {t(alert.key)}
+        </UISignIn.Alert>
+      )}
 
       <UISignIn.TextField
         fullWidth
@@ -113,8 +117,13 @@ const BasicAuth = ({
         }}
       >
         {t(keys.login.button)}
-        {isAuthLoading && <CircularProgress className="sign-in-button-progress" />}
       </UISignIn.Button>
+
+      {isAuthLoading && (
+        <div className="circular-progress-holder-authn">
+          <CircularProgress className="sign-in-button-progress" />
+        </div>
+      )}
 
       {showSelfSignUp && (
         <Grid container>

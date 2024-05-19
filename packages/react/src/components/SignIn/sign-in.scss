@@ -29,8 +29,12 @@ $--min-height: 75vh;
     margin: 16px 0 34px;
   }
 
-  .multiple-options-paper {
+  .asgardeo-multiple-options-paper {
     padding-bottom: 64px;
+
+    .asgardeo-sign-in-alert {
+      margin-bottom: 24px;
+    }
   }
 }
 

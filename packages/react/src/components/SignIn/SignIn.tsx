@@ -282,10 +282,15 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
        */
       if (authenticators.length > 1) {
         return (
-          <UISignIn.Paper className="multiple-options-paper">
+          <UISignIn.Paper className="asgardeo-multiple-options-paper">
             <UISignIn.Typography title className="multiple-otions-title">
               Sign In
             </UISignIn.Typography>
+            {!usernamePasswordAuthenticator && alert && (
+              <UISignIn.Alert className="asgardeo-sign-in-alert" {...alert?.alertType}>
+                {t(alert.key)}
+              </UISignIn.Alert>
+            )}
             {renderLoginOptions(authenticators)}
           </UISignIn.Paper>
         );
