@@ -52,7 +52,7 @@ const SignInButton = ({customComponent}: {customComponent?: ReactElement}): Reac
   }
 
   return (
-    <div className="asgardeo" style={{padding: '2rem'}}>
+    <div className="asgardeo">
       {customComponent ? (
         React.cloneElement(customComponent, {
           onClick: openModal,
