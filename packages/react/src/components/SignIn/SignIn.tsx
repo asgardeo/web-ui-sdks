@@ -200,7 +200,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         <LoginOptionsBox
           isAuthLoading={authContext.isAuthLoading}
           socialName={authenticator.authenticator}
-          displayName={displayName}
+          displayName={`${t(keys.common.multiple.options.prefix)} ${displayName}`}
           handleOnClick={(): Promise<void> => handleAuthenticate(authenticator.authenticatorId)}
           key={authenticator.authenticatorId}
         />,
@@ -286,7 +286,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         return (
           <UISignIn.Paper className="asgardeo-multiple-options-paper">
             <UISignIn.Typography title className="multiple-otions-title">
-              Sign In
+              {t(keys.common.common.title)}
             </UISignIn.Typography>
             {!usernamePasswordAuthenticator && alert && (
               <UISignIn.Alert className="asgardeo-sign-in-alert" {...alert?.alertType}>

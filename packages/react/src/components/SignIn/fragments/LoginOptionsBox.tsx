@@ -58,7 +58,7 @@ const LoginOptionsBox = ({
     onClick={handleOnClick}
     disabled={isAuthLoading}
   >
-    Sign In with {displayName}
+    {displayName}
   </UISignIn.Button>
 );
 

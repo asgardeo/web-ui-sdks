@@ -21,8 +21,16 @@
  */
 interface Keys {
   common: {
+    common: {
+      title: string;
+    };
     copyright: string;
     error: string;
+    multiple: {
+      options: {
+        prefix: string;
+      };
+    };
     or: string;
     prefix: {
       register: string;
@@ -121,8 +129,16 @@ interface Keys {
 
 export const keys: Keys = {
   common: {
+    common: {
+      title: 'common.common.title',
+    },
     copyright: 'common.copyright',
     error: 'common.error',
+    multiple: {
+      options: {
+        prefix: 'common.multiple.options.prefix',
+      },
+    },
     or: 'common.or',
     prefix: {
       register: 'common.prefix.register',

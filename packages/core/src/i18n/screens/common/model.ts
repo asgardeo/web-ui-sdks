@@ -20,8 +20,10 @@
  * Interface for the common text.
  */
 export interface Common {
+  'common.title': string;
   copyright: string;
   error: string;
+  'multiple.options.prefix': string;
   or: string;
   'prefix.register': string;
   'privacy.policy': string;
