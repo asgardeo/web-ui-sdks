@@ -21,6 +21,8 @@
  */
 export enum ScreenType {
   Common = 'common',
+  EmailOTP = 'emailOtp',
   Login = 'login',
+  SMSOTP = 'smsOtp',
   TOTP = 'totp',
 }

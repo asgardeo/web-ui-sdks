@@ -18,10 +18,10 @@
 
 import {BrandingProps, Store, UIAuthConfig} from '@asgardeo/js-ui-core';
 
-interface AsgardeProviderProps {
+interface AsgardeoProviderProps {
   branding?: BrandingProps;
   config: UIAuthConfig;
   store?: Store;
 }
 
-export default AsgardeProviderProps;
+export default AsgardeoProviderProps;

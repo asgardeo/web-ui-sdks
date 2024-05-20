@@ -21,7 +21,6 @@ import merge from 'lodash.merge';
 import {TextObject} from './screens/model';
 import getBrandingPreferenceText from '../api/get-branding-preference-text';
 import {AuthClient} from '../auth-client';
-import AsgardeoUIException from '../exception';
 import {UIAuthConfig} from '../models/auth-config';
 import {BrandingPreferenceTypes} from '../models/branding-api-response';
 import {BrandingPreferenceTextAPIResponse} from '../models/branding-text-api-response';
@@ -42,21 +41,21 @@ const getLocalization = async (props: GetLocalizationProps): Promise<TextObject>
 
   const configData: AuthClientConfig<UIAuthConfig> = await AuthClient.getInstance().getDataLayer().getConfigData();
 
+  const DEFAULT_NAME: string = 'carbon.super';
+
   try {
     if (configData.enableConsoleTextBranding ?? true) {
       textFromConsoleBranding = await getBrandingPreferenceText({
         locale,
-        name: configData.name ?? 'carbon.super',
+        name: configData.name ?? DEFAULT_NAME,
         screen,
         type: configData.type ?? BrandingPreferenceTypes.Org,
       });
     }
   } catch (error) {
-    throw new AsgardeoUIException(
-      'JS_UI_CORE-LOCALIZATION-IV',
-      'Error occurred while fetching text from console branding.',
-      error.stack,
-    );
+    /**
+     * If the branding from the console cannot be fetched, proceed with the default branding.
+     */
   }
 
   /**

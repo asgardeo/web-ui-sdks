@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import {BrandingProps} from '@asgardeo/js-ui-core';
+import {Branding} from '@asgardeo/js-ui-core';
 import {Context, createContext} from 'react';
 
-const BrandingPreferenceContext: Context<BrandingProps> = createContext<BrandingProps>(undefined);
+const BrandingPreferenceContext: Context<Branding> = createContext<Branding>(undefined);
 
 export default BrandingPreferenceContext;

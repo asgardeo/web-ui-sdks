@@ -22,9 +22,15 @@
 interface Keys {
   common: {
     copyright: string;
+    error: string;
+    or: string;
+    prefix: {
+      register: string;
+    };
     privacy: {
       policy: string;
     };
+    register: string;
     site: {
       title: string;
     };
@@ -32,6 +38,28 @@ interface Keys {
       of: {
         service: string;
       };
+    };
+  };
+  emailOtp: {
+    continue: string;
+    email: {
+      otp: {
+        heading: string;
+      };
+    };
+    enter: {
+      verification: {
+        code: {
+          got: {
+            by: {
+              device: string;
+            };
+          };
+        };
+      };
+    };
+    resend: {
+      code: string;
     };
   };
   login: {
@@ -49,7 +77,21 @@ interface Keys {
     remember: {
       me: string;
     };
+    retry: string;
     username: string;
+  };
+  smsOtp: {
+    continue: string;
+    resend: {
+      code: string;
+    };
+
+    sms: {
+      otp: {
+        heading: string;
+        subheading: string;
+      };
+    };
   };
   totp: {
     continue: string;
@@ -75,9 +117,15 @@ interface Keys {
 export const keys: Keys = {
   common: {
     copyright: 'common.copyright',
+    error: 'common.error',
+    or: 'common.or',
+    prefix: {
+      register: 'common.prefix.register',
+    },
     privacy: {
       policy: 'common.privacy.policy',
     },
+    register: 'common.register',
     site: {
       title: 'common.site.title',
     },
@@ -85,6 +133,28 @@ export const keys: Keys = {
       of: {
         service: 'common.terms.of.service',
       },
+    },
+  },
+  emailOtp: {
+    continue: 'emailOtp.continue',
+    email: {
+      otp: {
+        heading: 'emailOtp.email.otp.heading',
+      },
+    },
+    enter: {
+      verification: {
+        code: {
+          got: {
+            by: {
+              device: 'emailOtp.enter.verification.code.got.by.device',
+            },
+          },
+        },
+      },
+    },
+    resend: {
+      code: 'emailOtp.resend.code',
     },
   },
   login: {
@@ -102,7 +172,21 @@ export const keys: Keys = {
     remember: {
       me: 'login.remember.me',
     },
+    retry: 'login.retry',
     username: 'login.username',
+  },
+  smsOtp: {
+    continue: 'smsOtp.continue',
+    resend: {
+      code: 'smsOtp.resend.code',
+    },
+
+    sms: {
+      otp: {
+        heading: 'smsOtp.sms.otp.heading',
+        subheading: 'smsOtp.sms.otp.subheading',
+      },
+    },
   },
   totp: {
     continue: 'totp.continue',

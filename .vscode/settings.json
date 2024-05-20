@@ -3,7 +3,8 @@
         "workspace",
         "core",
         "react",
-        "auth-components"
+        "auth-components",
+        "sample-app"
     ],
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"

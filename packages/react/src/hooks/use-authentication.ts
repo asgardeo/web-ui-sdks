@@ -35,9 +35,10 @@ const useAuthentication = (): UseAuthentication => {
   const {user, isAuthenticated, accessToken} = contextValue;
 
   const signOut: () => void = () => {
-    signOutApiCall();
-    sessionStorage.clear();
-    window.location.reload();
+    signOutApiCall().then(() => {
+      sessionStorage.clear();
+      window.location.reload();
+    });
   };
 
   return {accessToken, isAuthenticated, signOut, user};
