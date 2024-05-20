@@ -16,6 +16,7 @@
  * under the License.
  */
 
+import {ReactElement} from 'react';
 import emailSolid from '../../../assets/email-solid.svg';
 import facebook from '../../../assets/social-logins/facebook.svg';
 import github from '../../../assets/social-logins/github.svg';
@@ -39,14 +40,14 @@ const images: {[key: string]: string} = {
  * @param {string} props.socialName - Name of the social login.
  * @param {string} props.displayName - Display name of the social login.
  * @param {Function} props.handleOnClick - On click handler.
- * @return {JSX.Element}
+ * @return {ReactElement}
  */
 const LoginOptionsBox = ({
   isAuthLoading,
   socialName,
   displayName,
   handleOnClick,
-}: LoginOptionsBoxProps): JSX.Element => (
+}: LoginOptionsBoxProps): ReactElement => (
   <UISignIn.Button
     social
     startIcon={<img className="social-login-img" src={images[socialName]} alt={socialName} />}

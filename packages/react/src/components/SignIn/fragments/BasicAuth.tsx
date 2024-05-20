@@ -18,7 +18,7 @@
 
 import {ScreenType, keys} from '@asgardeo/js-ui-core';
 import {CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
-import {useContext, useState} from 'react';
+import {ReactElement, useContext, useState} from 'react';
 import AsgardeoContext from '../../../contexts/asgardeo-context';
 import useTranslations from '../../../hooks/use-translations';
 import BasicAuthProps from '../../../models/basic-auth-props';
@@ -36,7 +36,7 @@ import './basic-auth.scss';
  * @param {ReactElement[]} props.renderLoginOptions - Login options.
  * @param {boolean} props.showSelfSignUp - Show self sign up.
  *
- * @return {JSX.Element}
+ * @return {ReactElement}
  */
 const BasicAuth = ({
   handleAuthenticate,
@@ -45,7 +45,7 @@ const BasicAuth = ({
   brandingProps,
   showSelfSignUp,
   renderLoginOptions,
-}: BasicAuthProps): JSX.Element => {
+}: BasicAuthProps): ReactElement => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
