@@ -46,8 +46,8 @@ const BasicAuth = ({
   showSelfSignUp,
   renderLoginOptions,
 }: BasicAuthProps): JSX.Element => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
   const {isAuthLoading} = useContext(AsgardeoContext);
 

@@ -34,7 +34,7 @@ import SignIn from '../SignIn/SignIn';
 const SignInButton = (props: SignInButtonProps): ReactElement => {
   const {customComponent, showFooter = false, showLogo = false, showSignUp = false} = props;
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const authContext: AuthContext | undefined = useContext(AsgardeoContext);
 

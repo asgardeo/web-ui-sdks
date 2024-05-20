@@ -47,7 +47,7 @@ const SignInPinInput: ForwardRefExoticComponent<SignInPinInputProps> & WithWrapp
 
     const classes: string = clsx(`Oxygen${COMPONENT_NAME}`, className);
 
-    const [totp, setTotp] = useState(Array(length).fill('')); // Initialize a state variable for the TOTP
+    const [totp, setTotp] = useState<string[]>(Array(length).fill('')); // Initialize a state variable for the TOTP
 
     const refs: MutableRefObject<React.RefObject<HTMLInputElement>[]> = useRef(
       totp.map(() => React.createRef<HTMLInputElement>()),
