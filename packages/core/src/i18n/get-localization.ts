@@ -22,7 +22,6 @@ import {TextObject} from './screens/model';
 import getBrandingPreferenceText from '../api/get-branding-preference-text';
 import {AuthClient} from '../auth-client';
 import {UIAuthConfig} from '../models/auth-config';
-import {BrandingPreferenceTypes} from '../models/branding-api-response';
 import {BrandingPreferenceTextAPIResponse} from '../models/branding-text-api-response';
 import GetLocalizationProps from '../models/get-localization-props';
 
@@ -41,15 +40,13 @@ const getLocalization = async (props: GetLocalizationProps): Promise<TextObject>
 
   const configData: AuthClientConfig<UIAuthConfig> = await AuthClient.getInstance().getDataLayer().getConfigData();
 
-  const DEFAULT_NAME: string = 'carbon.super';
-
   try {
-    if (configData.enableConsoleTextBranding ?? true) {
+    if (configData.enableConsoleTextBranding) {
       textFromConsoleBranding = await getBrandingPreferenceText({
         locale,
-        name: configData.name ?? DEFAULT_NAME,
+        name: configData.name,
         screen,
-        type: configData.type ?? BrandingPreferenceTypes.Org,
+        type: configData.type,
       });
     }
   } catch (error) {
