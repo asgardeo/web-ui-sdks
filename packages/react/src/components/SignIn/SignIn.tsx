@@ -85,9 +85,11 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
     getBranding({branding: brandingProps, merged: brandingPreference}).then((response: Branding) => {
       setComponentBranding(response);
     });
+  }, [brandingPreference, brandingProps]);
 
+  useEffect(() => {
     /**
-     * Calling authorize function and initiating the flow
+     * Calling authorize function and initiating the api based authentication flow
      */
     authorize()
       .then((response: AuthApiResponse) => {
@@ -99,7 +101,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         setIsComponentLoading(false);
         throw new AsgardeoUIException('REACT_UI-SIGN_IN-SI-SE01', 'Authorization failed', error.stack);
       });
-  }, [brandingPreference, brandingProps]);
+  }, []);
 
   /**
    * Handles the generalized authentication process.
