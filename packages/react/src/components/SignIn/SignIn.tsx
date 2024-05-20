@@ -314,6 +314,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
 
   const imgUrl: string = brandingPreference?.preference?.theme?.LIGHT?.images?.logo?.imgURL;
   let copyrightText: string = t(keys.common.copyright);
+  const DEFAULT_LOCALE: string = 'en-US';
 
   if (showFooter && copyrightText.includes('{{currentYear}}')) {
     copyrightText = copyrightText.replace('{{currentYear}}', new Date().getFullYear().toString());
@@ -348,7 +349,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
                       </UISignIn.Link>
                     ),
                   },
-                  {children: <UISignIn.Typography>{componentBranding?.locale ?? 'en-US'}</UISignIn.Typography>},
+                  {children: <UISignIn.Typography>{componentBranding?.locale ?? DEFAULT_LOCALE}</UISignIn.Typography>},
                 ]}
               />
             )}
