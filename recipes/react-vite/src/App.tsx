@@ -1,53 +1,21 @@
 import "./App.css";
-// import {
-//   SignIn,
-//   SignedIn,
-//   SignedOut,
-//   SignInButton,
-//   SignOutButton,
-//   useAuthentication,
-// } from "../../../packages/react/src"; // ToDO: temporary
 import {
   SignIn,
   SignedIn,
-  SignedOut,
-  SignInButton,
   SignOutButton,
   useAuthentication,
 } from "@asgardeo/react-ui";
 
 function App() {
-  const {user, accessToken} = useAuthentication();
-  console.log(user);
+  const {user} = useAuthentication();
   return (
     <>
       <SignIn />
 
-      <SignedIn fallback={<div>Fallback content</div>}>
-        <div>Protected content</div>
+      <SignedIn>
+        <h5>Welcome, {user?.userName}</h5>
         <SignOutButton />
-        <div style={{textAlign: 'left'}}>
-          {accessToken}
-          {user && (
-          <>
-            {
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: JSON.stringify(user, null, 2).replace(
-                    /\n/g,
-                    "<br />"
-                  ),
-                }}
-              />
-            }
-          </>
-        )}</div>
       </SignedIn>
-
-      <SignedOut fallback={<div>signedout fallback</div>}>
-        <div>Public content</div>
-        <SignInButton/>
-      </SignedOut>
     </>
   );
 }
