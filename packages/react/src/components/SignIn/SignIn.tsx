@@ -153,7 +153,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
           const {code, state} = event.data;
 
           if (code && state) {
-            handleAuthenticate(resp.nextStep.authenticators[0].authenticatorId, {code, state});
+            handleAuthenticate(resp?.nextStep?.authenticators[0]?.authenticatorId, {code, state});
           }
 
           /**
