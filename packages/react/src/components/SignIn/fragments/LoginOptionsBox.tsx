@@ -18,10 +18,12 @@
 
 import {ReactElement} from 'react';
 import emailSolid from '../../../assets/email-solid.svg';
+import smsIcon from '../../../assets/sms-icon.svg';
 import facebook from '../../../assets/social-logins/facebook.svg';
 import github from '../../../assets/social-logins/github.svg';
 import google from '../../../assets/social-logins/google.svg';
 import microsoft from '../../../assets/social-logins/microsoft.svg';
+import totp from '../../../assets/totp.svg';
 import LoginOptionsBoxProps from '../../../models/login-options-box-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 
@@ -31,6 +33,8 @@ const images: {[key: string]: string} = {
   Github: github,
   Google: google,
   Microsoft: microsoft,
+  'SMS OTP': smsIcon,
+  TOTP: totp,
 };
 
 /**
