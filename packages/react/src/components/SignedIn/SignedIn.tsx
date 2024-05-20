@@ -29,10 +29,10 @@ import SignedProps from '../../models/signed-props';
  * @return {JSX.Element}
  */
 const SignedIn: FC<PropsWithChildren<SignedProps>> = (props: PropsWithChildren<SignedProps>) => {
-  const {fallback, children} = props;
+  const {fallback = null, children} = props;
   const {isAuthenticated} = useAuthentication();
 
-  return isAuthenticated ? children : fallback ?? null;
+  return isAuthenticated ? children : fallback;
 };
 
 export default SignedIn;
