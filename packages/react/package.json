@@ -1,5 +1,5 @@
 {
-  "name": "@asgardeo/react-ui",
+  "name": "@asgardeo/react",
   "version": "0.1.0",
   "description": "React Wrapper to build customizable login UIs for Asgardeo or Identity Server",
   "main": "dist/cjs/index.js",

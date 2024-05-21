@@ -1,7 +1,7 @@
 {
-  "name": "@asgardeo/js-ui-core",
+  "name": "@asgardeo/js",
   "version": "0.1.0",
-  "description": "Framework agnostic JS UI Core for Asgardeo or Identity Server",
+  "description": "Framework agnostic JS for Asgardeo or Identity Server",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "umd": "dist/umd/index.js",
