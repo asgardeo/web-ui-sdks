@@ -16,5 +16,18 @@
  * under the License.
  */
 
-export type {UIAuthConfig} from '@asgardeo/js-ui-core';
-export {Hooks} from './use-on';
+export enum Hooks {
+  SignIn,
+  SignOut,
+}
+
+export interface UseOnProps {
+  /**
+   * The callback to be executed when the event is triggered.
+   */
+  callback: (response?: any) => void | Promise<void>;
+  /**
+   * The event to listen to.
+   */
+  event: Hooks;
+}

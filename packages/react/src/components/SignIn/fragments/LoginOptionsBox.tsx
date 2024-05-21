@@ -29,7 +29,7 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 
 const images: {[key: string]: string} = {
   'Email OTP': emailSolid,
-  Facebook: facebook,
+  facebook: facebook,
   Github: github,
   Google: google,
   Microsoft: microsoft,

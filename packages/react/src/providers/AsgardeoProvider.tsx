@@ -17,7 +17,7 @@
  */
 
 import {AuthClient, CryptoUtils, MeAPIResponse, Store, UIAuthClient, getProfileInformation} from '@asgardeo/js-ui-core';
-import {FC, PropsWithChildren, useCallback, useEffect, useMemo, useState} from 'react';
+import {FC, PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import BrandingPreferenceProvider from './BrandingPreferenceProvider';
 import I18nProvider from './I18nProvider';
 import AsgardeoContext from '../contexts/asgardeo-context';
@@ -52,6 +52,23 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
   const [isTextLoading, setIsTextLoading] = useState<boolean>(true);
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
 
+  const onSignInRef: React.MutableRefObject<Function> = useRef<Function>();
+  const onSignOutRef: React.MutableRefObject<Function> = useRef<Function>();
+
+  const setOnSignIn: (newOnSignIn: Function) => void = useCallback(
+    (newOnSignIn: Function): void => {
+      onSignInRef.current = newOnSignIn;
+    },
+    [], // Add any dependencies here...
+  );
+
+  const setOnSignOut: (newOnSignOut: Function) => void = useCallback(
+    (newOnSignOut: Function): void => {
+      onSignOutRef.current = newOnSignOut;
+    },
+    [], // Add any dependencies here...
+  );
+
   const storeInstance: Store = store || new SessionStore();
 
   const spaUtils: CryptoUtils = new SPACryptoUtils();
@@ -64,14 +81,20 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
   const setAuthentication: () => void = useCallback((): void => {
     authClient.isAuthenticated().then((isAuth: boolean) => {
       setIsAuthenticated(isAuth);
-    });
 
-    authClient.getAccessToken().then((accessTokenFromClient: string) => {
-      if (accessTokenFromClient) {
-        setAccessToken(accessTokenFromClient);
+      if (isAuth) {
+        authClient.getAccessToken().then((accessTokenFromClient: string) => {
+          if (accessTokenFromClient) {
+            setAccessToken(accessTokenFromClient);
 
-        getProfileInformation().then((response: MeAPIResponse) => {
-          setUser(response);
+            getProfileInformation().then((response: MeAPIResponse) => {
+              setUser(response);
+            });
+
+            if (onSignInRef.current) {
+              onSignInRef.current();
+            }
+          }
         });
       }
     });
@@ -105,13 +128,27 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
       isBrandingLoading,
       isGlobalLoading: isBrandingLoading || isTextLoading || isAuthLoading,
       isTextLoading,
+      onSignOutRef,
       setAuthentication,
       setIsAuthLoading,
       setIsBrandingLoading,
       setIsTextLoading,
+      setOnSignIn,
+      setOnSignOut,
       user,
     }),
-    [accessToken, config, isAuthLoading, isAuthenticated, isBrandingLoading, isTextLoading, setAuthentication, user],
+    [
+      accessToken,
+      config,
+      isAuthLoading,
+      isAuthenticated,
+      isBrandingLoading,
+      isTextLoading,
+      setAuthentication,
+      setOnSignIn,
+      setOnSignOut,
+      user,
+    ],
   );
 
   return (

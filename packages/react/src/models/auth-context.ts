@@ -26,10 +26,13 @@ interface AuthContext {
   isBrandingLoading: boolean;
   isGlobalLoading: boolean;
   isTextLoading: boolean;
+  onSignOutRef: React.MutableRefObject<Function>;
   setAuthentication: () => void;
   setIsAuthLoading: (value: boolean) => void;
   setIsBrandingLoading: (value: boolean) => void;
   setIsTextLoading: (value: boolean) => void;
+  setOnSignIn: (response?: any) => void | Promise<void>;
+  setOnSignOut: (response?: any) => void | Promise<void>;
   user: MeAPIResponse;
 }
 

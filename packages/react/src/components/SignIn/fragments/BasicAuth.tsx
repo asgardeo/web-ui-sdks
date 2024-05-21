@@ -72,7 +72,9 @@ const BasicAuth = ({
 
   return (
     <UISignIn.Paper className="asgardeo-basic-auth-paper">
-      <UISignIn.Typography title>{t(keys.login.login.heading)}</UISignIn.Typography>
+      <UISignIn.Typography title className="basic-auth-title">
+        {t(keys.login.login.heading)}
+      </UISignIn.Typography>
 
       {alert && (
         <UISignIn.Alert className="asgardeo-basic-auth-alert" {...alert?.alertType}>
