@@ -18,6 +18,7 @@
 
 import {AsgardeoAuthClient, Store, CryptoUtils, ResponseMode} from '@asgardeo/auth-js';
 import {UIAuthClient, UIAuthConfig} from './models/auth-config';
+import {BrandingPreferenceTypes} from './models/branding-api-response';
 
 /**
  * The `AuthClient` class is a singleton class that provides an instance of the `UIAuthClient`.
@@ -42,9 +43,15 @@ export class AuthClient {
    */
   static getInstance(authClientConfig?: UIAuthConfig, store?: Store, cryptoUtils?: CryptoUtils): UIAuthClient {
     if (!AuthClient.instance) {
+      const DEFAULT_NAME: string = 'carbon.super';
+
       const extendedAuthClientConfig: UIAuthConfig = {
         ...authClientConfig,
+        enableConsoleBranding: authClientConfig?.enableConsoleBranding ?? true,
+        enableConsoleTextBranding: authClientConfig?.enableConsoleTextBranding ?? true,
+        name: authClientConfig?.name ?? DEFAULT_NAME,
         responseMode: ResponseMode.direct,
+        type: authClientConfig?.type ?? BrandingPreferenceTypes.Org,
       };
 
       AuthClient.instance = new AsgardeoAuthClient();

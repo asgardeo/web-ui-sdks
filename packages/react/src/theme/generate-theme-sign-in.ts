@@ -68,19 +68,20 @@ const generateThemeSignIn: (brandingPreferenceTheme: BrandingPreferenceTheme) =>
           },
         },
       },
-      MuiCircularProgress: {
-        styleOverrides: {
-          root: {
-            color: `${brandingTheme?.colors?.primary?.main} !important`,
-          },
-        },
-      },
       MuiFormControl: {
         styleOverrides: {
           root: {
             background: brandingTheme?.inputs?.base?.background?.backgroundColor,
             borderColor: brandingTheme?.inputs?.base?.border?.borderColor,
             borderRadius: brandingTheme?.inputs?.base?.border?.borderRadius,
+            color: brandingTheme?.inputs?.base?.font?.color,
+          },
+        },
+      },
+      MuiInputBase: {
+        styleOverrides: {
+          root: {
+            borderRadius: `${brandingTheme?.inputs?.base?.border?.borderRadius} !important`,
             color: brandingTheme?.inputs?.base?.font?.color,
           },
         },
@@ -106,6 +107,9 @@ const generateThemeSignIn: (brandingPreferenceTheme: BrandingPreferenceTheme) =>
       MuiOutlinedInput: {
         styleOverrides: {
           input: {
+            '&::placeholder': {
+              color: 'var(--oxygen-palette-text-secondary)',
+            },
             padding: '0.67857143em 1em',
           },
         },
@@ -119,8 +123,9 @@ const generateThemeSignIn: (brandingPreferenceTheme: BrandingPreferenceTheme) =>
               color: brandingTheme?.buttons.externalConnection.base.font.color,
             },
             background: brandingTheme?.colors?.background?.surface?.main,
-            borderColor: brandingTheme?.colors?.outlined?.default,
+            borderColor: brandingTheme?.loginBox?.border?.borderColor ?? brandingTheme?.colors?.outlined?.default,
             borderRadius: brandingTheme?.loginBox?.border?.borderRadius,
+            borderWidth: brandingTheme?.loginBox?.border?.borderWidth,
           },
         },
       },

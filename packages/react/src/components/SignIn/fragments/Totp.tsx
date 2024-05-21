@@ -17,11 +17,13 @@
  */
 
 import {ScreenType, keys} from '@asgardeo/js-ui-core';
-import {CircularProgress} from '@oxygen-ui/react';
-import {useState, ReactElement} from 'react';
+import {CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
+import {useState, ReactElement, useContext} from 'react';
+import AsgardeoContext from '../../../contexts/asgardeo-context';
 import useTranslations from '../../../hooks/use-translations';
 import TotpProps from '../../../models/totp-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
+import './totp.scss';
 
 /**
  * This component renders the TOTP authentication screen.
@@ -37,6 +39,8 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpProps): ReactElement => {
   const [totp, setTotp] = useState<string>();
 
+  const {isAuthLoading} = useContext(AsgardeoContext);
+
   const {isLoading, t} = useTranslations({
     componentLocaleOverride: brandingProps?.locale,
     componentTextOverrides: brandingProps?.preference?.text,
@@ -45,21 +49,35 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
 
   if (isLoading) {
     return (
-      <div className="circular-progress-holder">
-        <CircularProgress className="circular-progress" />
-      </div>
+      <UISignIn.Paper className="asgardeo-totp-skeleton">
+        <Skeleton className="skeleton-title" variant="text" width={100} height={55} />
+        <Skeleton className="skeleton-title" variant="text" width={280} height={35} />
+        <Grid container>
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+          <Skeleton className="skeleton-pin-box" variant="rectangular" width={45} height={50} />
+        </Grid>
+
+        <Skeleton className="skeleton-submit-button" variant="rectangular" width={300} height={40} />
+      </UISignIn.Paper>
     );
   }
-
   return (
     <UISignIn.Paper>
       <UISignIn.Typography title>{t(keys.totp.heading)}</UISignIn.Typography>
 
+      {alert && (
+        <UISignIn.Alert className="asgardeo-totp-alert" {...alert?.alertType}>
+          {t(alert.key)}
+        </UISignIn.Alert>
+      )}
+
       <UISignIn.Typography subtitle>{t(keys.totp.enter.verification.code.got.by.device)}</UISignIn.Typography>
 
-      {alert && <UISignIn.Alert {...alert?.alertType}>{alert.key}</UISignIn.Alert>}
-
-      <UISignIn.PinInput length={6} onPinChange={setTotp} />
+      <UISignIn.PinInput length={6} onPinChange={setTotp} pinValue={totp} />
 
       <UISignIn.Button
         color="primary"
@@ -67,18 +85,26 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
         className="oxygen-sign-in-cta"
         type="submit"
         fullWidth
-        onClick={(): void => handleAuthenticate(authenticator.authenticatorId, {token: totp})}
+        disabled={!totp}
+        onClick={(): void => {
+          handleAuthenticate(authenticator.authenticatorId, {token: totp});
+          setTotp('');
+        }}
       >
-        totp.continue
+        {t(keys.totp.continue)}
       </UISignIn.Button>
+
+      {isAuthLoading && (
+        <div className="circular-progress-holder-authn">
+          <CircularProgress className="sign-in-button-progress" />
+        </div>
+      )}
 
       <UISignIn.Typography subtitle>
         {t(keys.totp.enroll.message1)}
         <br />
         {t(keys.totp.enroll.message2)}
       </UISignIn.Typography>
-
-      <UISignIn.Link href="./somewhere">{t(keys.totp.enroll.message2)}</UISignIn.Link>
     </UISignIn.Paper>
   );
 };

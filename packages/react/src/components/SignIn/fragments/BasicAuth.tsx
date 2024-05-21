@@ -17,11 +17,13 @@
  */
 
 import {ScreenType, keys} from '@asgardeo/js-ui-core';
-import {CircularProgress, Grid} from '@oxygen-ui/react';
-import {useState} from 'react';
+import {CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
+import {ReactElement, useContext, useState} from 'react';
+import AsgardeoContext from '../../../contexts/asgardeo-context';
 import useTranslations from '../../../hooks/use-translations';
 import BasicAuthProps from '../../../models/basic-auth-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
+import './basic-auth.scss';
 
 /**
  * This component renders the basic authentication form.
@@ -34,7 +36,7 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
  * @param {ReactElement[]} props.renderLoginOptions - Login options.
  * @param {boolean} props.showSelfSignUp - Show self sign up.
  *
- * @return {JSX.Element}
+ * @return {ReactElement}
  */
 const BasicAuth = ({
   handleAuthenticate,
@@ -43,9 +45,11 @@ const BasicAuth = ({
   brandingProps,
   showSelfSignUp,
   renderLoginOptions,
-}: BasicAuthProps): JSX.Element => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+}: BasicAuthProps): ReactElement => {
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+
+  const {isAuthLoading} = useContext(AsgardeoContext);
 
   const {t, isLoading} = useTranslations({
     componentLocaleOverride: brandingProps?.locale,
@@ -55,17 +59,28 @@ const BasicAuth = ({
 
   if (isLoading) {
     return (
-      <div className="circular-progress-holder">
-        <CircularProgress className="circular-progress" />
-      </div>
+      <UISignIn.Paper className="asgardeo-basic-auth-skeleton">
+        <Skeleton className="skeleton-title" variant="text" width={100} height={55} />
+        <Skeleton className="skeleton-text-field-label" variant="text" width={70} />
+        <Skeleton variant="rectangular" width={300} height={40} />
+        <Skeleton className="skeleton-text-field-label" variant="text" width={70} />
+        <Skeleton variant="rectangular" width={300} height={40} />
+        <Skeleton className="skeleton-submit-button" variant="rectangular" width={270} height={40} />
+      </UISignIn.Paper>
     );
   }
 
   return (
-    <UISignIn.Paper>
-      <UISignIn.Typography title>{t(keys.login.login.heading)}</UISignIn.Typography>
+    <UISignIn.Paper className="asgardeo-basic-auth-paper">
+      <UISignIn.Typography title className="basic-auth-title">
+        {t(keys.login.login.heading)}
+      </UISignIn.Typography>
 
-      {alert && <UISignIn.Alert {...alert?.alertType}>{t(alert.key)}</UISignIn.Alert>}
+      {alert && (
+        <UISignIn.Alert className="asgardeo-basic-auth-alert" {...alert?.alertType}>
+          {t(alert.key)}
+        </UISignIn.Alert>
+      )}
 
       <UISignIn.TextField
         fullWidth
@@ -93,14 +108,24 @@ const BasicAuth = ({
         variant="contained"
         type="submit"
         fullWidth
+        disabled={isAuthLoading}
         onClick={(): void => {
-          handleAuthenticate(authenticator.authenticatorId, {password, username});
+          handleAuthenticate(authenticator.authenticatorId, {
+            password,
+            username,
+          });
           setUsername('');
           setPassword('');
         }}
       >
         {t(keys.login.button)}
       </UISignIn.Button>
+
+      {isAuthLoading && (
+        <div className="circular-progress-holder-authn">
+          <CircularProgress className="sign-in-button-progress" />
+        </div>
+      )}
 
       {showSelfSignUp && (
         <Grid container>

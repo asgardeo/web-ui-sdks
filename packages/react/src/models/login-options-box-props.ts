@@ -19,6 +19,7 @@
 interface LoginOptionsBoxProps {
   displayName: string;
   handleOnClick: () => void;
+  isAuthLoading: boolean;
   socialName: string;
 }
 

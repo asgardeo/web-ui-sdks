@@ -16,20 +16,25 @@
  * under the License.
  */
 
+import {ReactElement} from 'react';
 import emailSolid from '../../../assets/email-solid.svg';
+import smsIcon from '../../../assets/sms-icon.svg';
 import facebook from '../../../assets/social-logins/facebook.svg';
 import github from '../../../assets/social-logins/github.svg';
 import google from '../../../assets/social-logins/google.svg';
 import microsoft from '../../../assets/social-logins/microsoft.svg';
+import totp from '../../../assets/totp.svg';
 import LoginOptionsBoxProps from '../../../models/login-options-box-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 
 const images: {[key: string]: string} = {
   'Email OTP': emailSolid,
-  Facebook: facebook,
+  facebook: facebook,
   Github: github,
   Google: google,
   Microsoft: microsoft,
+  'SMS OTP': smsIcon,
+  TOTP: totp,
 };
 
 /**
@@ -39,15 +44,21 @@ const images: {[key: string]: string} = {
  * @param {string} props.socialName - Name of the social login.
  * @param {string} props.displayName - Display name of the social login.
  * @param {Function} props.handleOnClick - On click handler.
- * @return {JSX.Element}
+ * @return {ReactElement}
  */
-const LoginOptionsBox = ({socialName, displayName, handleOnClick}: LoginOptionsBoxProps): JSX.Element => (
+const LoginOptionsBox = ({
+  isAuthLoading,
+  socialName,
+  displayName,
+  handleOnClick,
+}: LoginOptionsBoxProps): ReactElement => (
   <UISignIn.Button
     social
     startIcon={<img className="social-login-img" src={images[socialName]} alt={socialName} />}
     onClick={handleOnClick}
+    disabled={isAuthLoading}
   >
-    Sign In with {displayName}
+    {displayName}
   </UISignIn.Button>
 );
 

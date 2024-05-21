@@ -21,8 +21,16 @@
  */
 interface Keys {
   common: {
+    common: {
+      title: string;
+    };
     copyright: string;
     error: string;
+    multiple: {
+      options: {
+        prefix: string;
+      };
+    };
     or: string;
     prefix: {
       register: string;
@@ -43,6 +51,7 @@ interface Keys {
   emailOtp: {
     continue: string;
     email: {
+      heading: string;
       otp: {
         heading: string;
       };
@@ -60,6 +69,10 @@ interface Keys {
     };
     resend: {
       code: string;
+    };
+    username: {
+      label: string;
+      placeholder: string;
     };
   };
   login: {
@@ -116,8 +129,16 @@ interface Keys {
 
 export const keys: Keys = {
   common: {
+    common: {
+      title: 'common.common.title',
+    },
     copyright: 'common.copyright',
     error: 'common.error',
+    multiple: {
+      options: {
+        prefix: 'common.multiple.options.prefix',
+      },
+    },
     or: 'common.or',
     prefix: {
       register: 'common.prefix.register',
@@ -138,6 +159,7 @@ export const keys: Keys = {
   emailOtp: {
     continue: 'emailOtp.continue',
     email: {
+      heading: 'emailOtp.email.heading',
       otp: {
         heading: 'emailOtp.email.otp.heading',
       },
@@ -155,6 +177,10 @@ export const keys: Keys = {
     },
     resend: {
       code: 'emailOtp.resend.code',
+    },
+    username: {
+      label: 'emailOtp.username.label',
+      placeholder: 'emailOtp.username.placeholder',
     },
   },
   login: {

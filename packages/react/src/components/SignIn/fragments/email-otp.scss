@@ -16,5 +16,33 @@
  * under the License.
  */
 
-export type {UIAuthConfig} from '@asgardeo/js-ui-core';
-export {Hooks} from './use-on';
+.asgardeo-email-otp-skeleton {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 32px;
+  row-gap: 8px;
+
+  .skeleton-title {
+    margin: 0 auto;
+  }
+
+  .skeleton-text-field-label {
+    margin-top: 12px;
+  }
+
+  .skeleton-submit-button {
+    margin: 20px auto 0;
+    border-radius: 20px;
+  }
+}
+
+.asgardeo-email-otp-paper {
+  opacity: 0.5;
+  animation: fade-in 0.9s ease-in-out forwards;
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}

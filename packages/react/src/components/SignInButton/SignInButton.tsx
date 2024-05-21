@@ -16,9 +16,12 @@
  * under the License.
  */
 
-import {Box, Button} from '@oxygen-ui/react';
-import React, {ReactElement, useState} from 'react';
+import {Box, Button, CircularProgress} from '@oxygen-ui/react';
+import React, {ReactElement, useContext, useState} from 'react';
 import './sign-in-button.scss';
+import AsgardeoContext from '../../contexts/asgardeo-context';
+import AuthContext from '../../models/auth-context';
+import {SignInButtonProps} from '../../models/sign-in';
 import SignIn from '../SignIn/SignIn';
 
 /**
@@ -28,8 +31,12 @@ import SignIn from '../SignIn/SignIn';
  * @param {ReactElement} props.customComponent - Optional custom component to be rendered.
  * @returns {ReactElement} Rendered SignInButton component.
  */
-const SignInButton = ({customComponent}: {customComponent?: ReactElement}): ReactElement => {
-  const [modalVisible, setModalVisible] = useState(false);
+const SignInButton = (props: SignInButtonProps): ReactElement => {
+  const {customComponent, showFooter = false, showLogo = false, showSignUp = false} = props;
+
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  const authContext: AuthContext | undefined = useContext(AsgardeoContext);
 
   const openModal = (): void => {
     setModalVisible(true);
@@ -39,8 +46,16 @@ const SignInButton = ({customComponent}: {customComponent?: ReactElement}): Reac
     setModalVisible(false);
   };
 
+  if (authContext.isBrandingLoading) {
+    return (
+      <Button className="asgardeo-sign-in-button">
+        <CircularProgress />
+      </Button>
+    );
+  }
+
   return (
-    <div className="asgardeo" style={{padding: '2rem'}}>
+    <div className="asgardeo">
       {customComponent ? (
         React.cloneElement(customComponent, {
           onClick: openModal,
@@ -53,7 +68,7 @@ const SignInButton = ({customComponent}: {customComponent?: ReactElement}): Reac
 
       {modalVisible && (
         <Box className="popup-box">
-          <SignIn />
+          <SignIn showFooter={showFooter} showLogo={showLogo} showSignUp={showSignUp} />
         </Box>
       )}
 

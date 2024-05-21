@@ -56,23 +56,23 @@ import './sign-in.scss';
  *
  * @param {SignInProps} props - Props injected to the component.
  * @param {BrandingProps} props.brandingProps - Branding related props.
+ * @param {boolean} props.showSignUp - Show sign-up.
  *
  * @returns {ReactElement} - React element.
  */
-const SignIn: FC<SignInProps> = (props: SignInProps) => {
-  const {brandingProps} = props;
+const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
+  const {brandingProps, showFooter = true, showLogo = true, showSignUp} = props;
+
   const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
-  const [isComponentLoading, setIsComponentLoading] = useState(true);
+  const [isComponentLoading, setIsComponentLoading] = useState<boolean>(true);
   const [alert, setAlert] = useState<AlertType>();
-  const [showSelfSignUp, setShowSelfSignUp] = useState(true);
+  const [showSelfSignUp, setShowSelfSignUp] = useState<boolean>(showSignUp);
   const [componentBranding, setComponentBranding] = useState<Branding>();
 
   const {isAuthenticated} = useAuthentication();
-
-  const authContext: AuthContext | undefined = useContext(AsgardeoContext);
-
   const {config} = useConfig();
 
+  const authContext: AuthContext | undefined = useContext(AsgardeoContext);
   const brandingPreference: Branding = useContext(BrandingPreferenceContext);
 
   const {isLoading, t} = useTranslations({
@@ -85,9 +85,11 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
     getBranding({branding: brandingProps, merged: brandingPreference}).then((response: Branding) => {
       setComponentBranding(response);
     });
+  }, [brandingPreference, brandingProps]);
 
+  useEffect(() => {
     /**
-     * Calling authorize function and initiating the flow
+     * Calling authorize function and initiating the api based authentication flow
      */
     authorize()
       .then((response: AuthApiResponse) => {
@@ -99,7 +101,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
         setIsComponentLoading(false);
         throw new AsgardeoUIException('REACT_UI-SIGN_IN-SI-SE01', 'Authorization failed', error.stack);
       });
-  }, [brandingPreference, brandingProps]);
+  }, []);
 
   /**
    * Handles the generalized authentication process.
@@ -113,7 +115,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
       throw new AsgardeoUIException('REACT_UI-SIGN_IN-HA-IV02', 'Auth response is undefined.');
     }
 
-    setIsComponentLoading(true);
+    authContext.setIsAuthLoading(true);
 
     const resp: AuthApiResponse = await authenticate({
       flowId: authResponse.flowId,
@@ -121,10 +123,14 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
         authenticatorId,
         params: authParams,
       },
+    }).catch((authnError: Error) => {
+      setAlert({alertType: {error: true}, key: keys.common.error});
+      authContext.setIsAuthLoading(false);
+      throw new AsgardeoUIException('REACT_UI-SIGN_IN-HA-SE03', 'Authentication failed.', authnError.stack);
     });
 
     if (!authParams) {
-      const metaData: Metadata = resp.nextStep.authenticators[0].metadata;
+      const metaData: Metadata = resp.nextStep?.authenticators[0]?.metadata;
       if (metaData.promptType === PromptType.RedirectionPromt) {
         /**
          * Open a popup window to handle redirection prompts
@@ -147,7 +153,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
           const {code, state} = event.data;
 
           if (code && state) {
-            handleAuthenticate(resp.nextStep.authenticators[0].authenticatorId, {code, state});
+            handleAuthenticate(resp?.nextStep?.authenticators[0]?.authenticatorId, {code, state});
           }
 
           /**
@@ -176,23 +182,25 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
         nextStep: authResponse.nextStep,
       });
 
-      setAlert({alertType: {error: true}, key: keys.login.retry});
+      setAlert({alertType: {error: true}, key: keys.common.error});
     } else {
       setAuthResponse(resp);
       setShowSelfSignUp(false);
     }
 
-    setIsComponentLoading(false);
+    authContext.setIsAuthLoading(false);
   };
 
   const renderLoginOptions = (authenticators: Authenticator[]): ReactElement[] => {
     const LoginOptions: ReactElement[] = [];
 
     authenticators.forEach((authenticator: Authenticator) => {
+      const displayName: string = authenticator.idp === 'LOCAL' ? authenticator.authenticator : authenticator.idp;
       LoginOptions.push(
         <LoginOptionsBox
+          isAuthLoading={authContext.isAuthLoading}
           socialName={authenticator.authenticator}
-          displayName={authenticator.idp}
+          displayName={`${t(keys.common.multiple.options.prefix)} ${displayName}`}
           handleOnClick={(): Promise<void> => handleAuthenticate(authenticator.authenticatorId)}
           key={authenticator.authenticatorId}
         />,
@@ -203,7 +211,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
   };
 
   const renderSignIn = (): ReactElement => {
-    const {authenticators} = authResponse.nextStep;
+    const authenticators: Authenticator[] = authResponse?.nextStep?.authenticators;
 
     if (authenticators) {
       const usernamePasswordAuthenticator: Authenticator = authenticators.find(
@@ -276,10 +284,15 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
        */
       if (authenticators.length > 1) {
         return (
-          <UISignIn.Paper className="multiple-options-paper">
+          <UISignIn.Paper className="asgardeo-multiple-options-paper">
             <UISignIn.Typography title className="multiple-otions-title">
-              Sign In
+              {t(keys.common.common.title)}
             </UISignIn.Typography>
+            {!usernamePasswordAuthenticator && alert && (
+              <UISignIn.Alert className="asgardeo-sign-in-alert" {...alert?.alertType}>
+                {t(alert.key)}
+              </UISignIn.Alert>
+            )}
             {renderLoginOptions(authenticators)}
           </UISignIn.Paper>
         );
@@ -291,7 +304,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
   /**
    * Renders the circular progress component while the component or text is loading.
    */
-  if (isComponentLoading || isLoading) {
+  if (isComponentLoading || isLoading || authContext.isBrandingLoading) {
     return (
       <div className="circular-progress-holder">
         <CircularProgress className="circular-progress" />
@@ -301,39 +314,45 @@ const SignIn: FC<SignInProps> = (props: SignInProps) => {
 
   const imgUrl: string = brandingPreference?.preference?.theme?.LIGHT?.images?.logo?.imgURL;
   let copyrightText: string = t(keys.common.copyright);
+  const DEFAULT_LOCALE: string = 'en-US';
 
-  if (copyrightText.includes('{{currentYear}}')) {
+  if (showFooter && copyrightText.includes('{{currentYear}}')) {
     copyrightText = copyrightText.replace('{{currentYear}}', new Date().getFullYear().toString());
   }
 
   return (
     <ThemeProvider theme={generateThemeSignIn(componentBranding?.preference.theme)}>
       <UISignIn className="asgardeo-sign-in">
-        <UISignIn.Image src={imgUrl} />
+        {showLogo && !(isLoading || isComponentLoading) && (
+          <UISignIn.Image className="asgardeo-sign-in-logo" src={imgUrl} />
+        )}
         {authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
           <>
             {renderSignIn()}
 
-            <UISignIn.Footer
-              copyrights={{children: copyrightText}}
-              items={[
-                {
-                  children: (
-                    <UISignIn.Link href={componentBranding.preference.urls.termsOfUseURL}>
-                      {t(keys.common.terms.of.service)}
-                    </UISignIn.Link>
-                  ),
-                },
-                {
-                  children: (
-                    <UISignIn.Link href={componentBranding.preference.urls.privacyPolicyURL}>
-                      {t(keys.common.privacy.policy)}
-                    </UISignIn.Link>
-                  ),
-                },
-                {children: <UISignIn.Typography>{componentBranding?.locale ?? 'en-US'}</UISignIn.Typography>},
-              ]}
-            />
+            {showFooter && !(isLoading || isComponentLoading) && (
+              <UISignIn.Footer
+                className="asgardeo-sign-in-footer"
+                copyrights={{children: copyrightText}}
+                items={[
+                  {
+                    children: (
+                      <UISignIn.Link href={componentBranding.preference.urls.privacyPolicyURL}>
+                        {t(keys.common.privacy.policy)}
+                      </UISignIn.Link>
+                    ),
+                  },
+                  {
+                    children: (
+                      <UISignIn.Link href={componentBranding.preference.urls.termsOfUseURL}>
+                        {t(keys.common.terms.of.service)}
+                      </UISignIn.Link>
+                    ),
+                  },
+                  {children: <UISignIn.Typography>{componentBranding?.locale ?? DEFAULT_LOCALE}</UISignIn.Typography>},
+                ]}
+              />
+            )}
           </>
         )}
         {(authResponse?.flowStatus === FlowStatus.SuccessCompleted || isAuthenticated) && (

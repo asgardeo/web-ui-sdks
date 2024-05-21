@@ -19,8 +19,10 @@
 import {Common} from './model';
 
 export const common: Common = {
+  'common.title': 'Sign In',
   copyright: '© {{currentYear}} WSO2 LLC.',
   error: 'Something went wrong. Please try again.',
+  'multiple.options.prefix': 'Sign in with',
   or: 'OR',
   'prefix.register': "Don't have an account?",
   'privacy.policy': 'Privacy Policy',

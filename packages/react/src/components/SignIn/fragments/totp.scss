@@ -16,5 +16,27 @@
  * under the License.
  */
 
-export type {UIAuthConfig} from '@asgardeo/js-ui-core';
-export {Hooks} from './use-on';
+.asgardeo-totp-skeleton {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 32px;
+  row-gap: 8px;
+  min-width: 330px;
+
+  .skeleton-title {
+    margin: 0 auto;
+  }
+
+  .skeleton-pin-box {
+    margin: 0 4px;
+  }
+
+  .skeleton-submit-button {
+    margin: 20px auto 0;
+    border-radius: 20px;
+  }
+}
+
+.asgardeo-totp-alert {
+  margin: 20px 0;
+}

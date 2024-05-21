@@ -17,9 +17,13 @@
  */
 
 import {BrandingProps} from '@asgardeo/js-ui-core';
+import {ReactElement} from 'react';
 
 export interface SignInProps {
   brandingProps?: BrandingProps;
+  showFooter?: boolean;
+  showLogo?: boolean;
+  showSignUp?: boolean;
 }
 
 export type AlertType = {
@@ -29,3 +33,7 @@ export type AlertType = {
     | {error?: never; infor?: never; warning?: boolean};
   key: string;
 };
+
+export interface SignInButtonProps extends SignInProps {
+  customComponent?: ReactElement;
+}

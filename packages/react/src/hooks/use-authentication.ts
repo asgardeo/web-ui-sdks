@@ -37,7 +37,9 @@ const useAuthentication = (): UseAuthentication => {
   const signOut: () => void = () => {
     signOutApiCall().then(() => {
       sessionStorage.clear();
-      window.location.reload();
+      if (contextValue.onSignOutRef.current) {
+        contextValue.onSignOutRef.current();
+      }
     });
   };
 

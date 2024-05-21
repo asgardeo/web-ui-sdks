@@ -21,8 +21,18 @@ import {UIAuthConfig, MeAPIResponse} from '@asgardeo/js-ui-core';
 interface AuthContext {
   accessToken: string;
   config: UIAuthConfig;
+  isAuthLoading: boolean;
   isAuthenticated: boolean | undefined;
+  isBrandingLoading: boolean;
+  isGlobalLoading: boolean;
+  isTextLoading: boolean;
+  onSignOutRef: React.MutableRefObject<Function>;
   setAuthentication: () => void;
+  setIsAuthLoading: (value: boolean) => void;
+  setIsBrandingLoading: (value: boolean) => void;
+  setIsTextLoading: (value: boolean) => void;
+  setOnSignIn: (response?: any) => void | Promise<void>;
+  setOnSignOut: (response?: any) => void | Promise<void>;
   user: MeAPIResponse;
 }
 
