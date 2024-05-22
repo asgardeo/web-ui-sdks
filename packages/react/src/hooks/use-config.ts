@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {UIAuthConfig} from '@asgardeo/js-ui-core';
+import {UIAuthConfig} from '@asgardeo/js';
 import {useContext} from 'react';
 import AsgardeoContext from '../contexts/asgardeo-context';
 import UseConfig from '../models/use-config';

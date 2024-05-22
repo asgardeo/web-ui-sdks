@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {Branding} from '@asgardeo/js-ui-core';
+import {Branding} from '@asgardeo/js';
 import {Context, createContext} from 'react';
 
 const BrandingPreferenceContext: Context<Branding> = createContext<Branding>(undefined);

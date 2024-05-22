@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {ScreenType, keys} from '@asgardeo/js-ui-core';
+import {ScreenType, keys} from '@asgardeo/js';
 import {CircularProgress} from '@oxygen-ui/react';
 import {ReactElement, useState} from 'react';
 import useTranslations from '../../../hooks/use-translations';

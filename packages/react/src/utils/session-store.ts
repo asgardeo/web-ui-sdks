@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {Store} from '@asgardeo/js-ui-core';
+import {Store} from '@asgardeo/js';
 
 export default class SessionStore implements Store {
   private storage: Storage;

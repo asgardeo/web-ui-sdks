@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {BrandingPreferenceTheme, ThemeConfig} from '@asgardeo/js-ui-core';
+import {BrandingPreferenceTheme, ThemeConfig} from '@asgardeo/js';
 import {extendTheme, Theme} from '@oxygen-ui/react';
 
 /**

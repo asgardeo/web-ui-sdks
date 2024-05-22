@@ -20,7 +20,7 @@ import {useContext, useEffect} from 'react';
 import AsgardeoContext from '../contexts/asgardeo-context';
 import AuthContext from '../models/auth-context';
 import {Hooks, UseOnProps} from '../models/use-on';
-import {AsgardeoUIException} from '@asgardeo/js-ui-core';
+import {AsgardeoUIException} from '@asgardeo/js';
 
 const useOn = (props: UseOnProps) => {
   const {callback, event} = props;

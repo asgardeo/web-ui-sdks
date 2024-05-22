@@ -16,5 +16,5 @@
  * under the License.
  */
 
-export type {UIAuthConfig} from '@asgardeo/js-ui-core';
+export type {UIAuthConfig} from '@asgardeo/js';
 export {Hooks} from './use-on';

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AuthClient, CryptoUtils, MeAPIResponse, Store, UIAuthClient, getProfileInformation} from '@asgardeo/js-ui-core';
+import {AuthClient, CryptoUtils, MeAPIResponse, Store, UIAuthClient, getProfileInformation} from '@asgardeo/js';
 import {FC, PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import BrandingPreferenceProvider from './BrandingPreferenceProvider';
 import I18nProvider from './I18nProvider';

@@ -5,10 +5,10 @@ import {
   SignedIn,
   SignOutButton,
   useAuthentication,
-} from "@asgardeo/react-ui";
+} from "@asgardeo/react";
 
 function App() {
-  const {user} = useAuthentication();
+  const { user } = useAuthentication();
   return (
     <>
       <SignIn />
