@@ -1,7 +1,6 @@
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { AsgardeoProvider, UIAuthConfig } from "@asgardeo/react";
-import React from "react";
 
 const envVariables = import.meta.env;
 
