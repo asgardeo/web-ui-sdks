@@ -9,7 +9,9 @@
   "author": "WSO2",
   "license": "Apache-2.0",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "homepage": "https://github.com/asgardeo/web-ui-sdks/tree/main/packages/core#readme",
   "bugs": {
@@ -17,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/asgardeo/web-ui-sdks/web-ui-sdks",
+    "url": "https://github.com/asgardeo/web-ui-sdks",
     "directory": "packages/core"
   },
   "keywords": [

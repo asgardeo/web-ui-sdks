@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "license": "Apache-2.0",
   "scripts": {
+    "build": "nx run-many --target=build --parallel --projects=@asgardeo/js,@asgardeo/react",
+    "changeset": "changeset",
+    "lint": "nx run-many --target=lint --parallel",
     "publish:packages": "changeset publish",
+    "test": "nx run-many --target=test --parallel",
     "version:packages": "changeset version && pnpm install --lockfile-only"
   },
   "private": true,
