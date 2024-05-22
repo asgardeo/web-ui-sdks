@@ -17,7 +17,7 @@
  */
 
 import {Buffer} from 'buffer';
-import {CryptoUtils, JWKInterface, AsgardeoUIException} from '@asgardeo/js-ui-core';
+import {CryptoUtils, JWKInterface, AsgardeoUIException} from '@asgardeo/js';
 import base64url from 'base64url';
 import sha256 from 'fast-sha256';
 import {createLocalJWKSet, jwtVerify} from 'jose';

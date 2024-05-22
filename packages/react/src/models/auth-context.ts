@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {UIAuthConfig, MeAPIResponse} from '@asgardeo/js-ui-core';
+import {UIAuthConfig, MeAPIResponse} from '@asgardeo/js';
 
 interface AuthContext {
   accessToken: string;

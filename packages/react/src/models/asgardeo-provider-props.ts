@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {BrandingProps, Store, UIAuthConfig} from '@asgardeo/js-ui-core';
+import {BrandingProps, Store, UIAuthConfig} from '@asgardeo/js';
 
 interface AsgardeoProviderProps {
   branding?: BrandingProps;

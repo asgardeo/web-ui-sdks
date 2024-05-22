@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {Authenticator, BrandingProps} from '@asgardeo/js-ui-core';
+import {Authenticator, BrandingProps} from '@asgardeo/js';
 import {AlertType} from './sign-in';
 
 interface EmailOtpProps {

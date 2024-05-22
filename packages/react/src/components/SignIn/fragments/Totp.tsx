@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {ScreenType, keys} from '@asgardeo/js-ui-core';
+import {ScreenType, keys} from '@asgardeo/js';
 import {CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
 import {useState, ReactElement, useContext} from 'react';
 import AsgardeoContext from '../../../contexts/asgardeo-context';

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {signOut as signOutApiCall} from '@asgardeo/js-ui-core';
+import {signOut as signOutApiCall} from '@asgardeo/js';
 import {useContext} from 'react';
 import AsgardeoContext from '../contexts/asgardeo-context';
 import AuthContext from '../models/auth-context';

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {UIAuthConfig} from '@asgardeo/js-ui-core';
+import {UIAuthConfig} from '@asgardeo/js';
 
 interface UseConfig {
   config: UIAuthConfig;

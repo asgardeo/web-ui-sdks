@@ -57,7 +57,7 @@
     "typescript": "5.1.6"
   },
   "dependencies": {
-    "@asgardeo/js-ui-core": "*",
+    "@asgardeo/js": "*",
     "@oxygen-ui/react": "^1.11.0",
     "base64url": "^3.0.1",
     "buffer": "^6.0.3",

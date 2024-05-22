@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {Branding, getBranding} from '@asgardeo/js-ui-core';
+import {Branding, getBranding} from '@asgardeo/js';
 import {ThemeProvider} from '@oxygen-ui/react';
 import {FC, PropsWithChildren, useContext, useEffect, useState} from 'react';
 import AsgardeoContext from '../contexts/asgardeo-context';

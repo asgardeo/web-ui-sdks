@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {TextObject, getLocalization} from '@asgardeo/js-ui-core';
+import {TextObject, getLocalization} from '@asgardeo/js';
 import {FC, PropsWithChildren, useCallback, useContext, useMemo, useState} from 'react';
 import AsgardeoContext from '../contexts/asgardeo-context';
 import I18nContext from '../contexts/i18n-context';

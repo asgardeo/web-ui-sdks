@@ -31,7 +31,7 @@ import {
   authorize,
   getBranding,
   keys,
-} from '@asgardeo/js-ui-core';
+} from '@asgardeo/js';
 import {CircularProgress, ThemeProvider} from '@oxygen-ui/react';
 import {FC, ReactElement, useContext, useEffect, useState} from 'react';
 import BasicAuth from './fragments/BasicAuth';

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {BrandingPreferenceTextProps, ScreenType, TextObject} from '@asgardeo/js-ui-core';
+import {BrandingPreferenceTextProps, ScreenType, TextObject} from '@asgardeo/js';
 
 export type I18nLocalization =
   | {

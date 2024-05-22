@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {MeAPIResponse} from '@asgardeo/js-ui-core';
+import {MeAPIResponse} from '@asgardeo/js';
 
 interface UseAuthentication {
   accessToken: string;
