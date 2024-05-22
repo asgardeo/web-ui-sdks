@@ -28,7 +28,9 @@
     "login",
     "customize"
   ],
-  "scripts": {},
+  "scripts": {
+    "build": "rollup -c"
+  },
   "publishConfig": {
     "access": "public"
   },
