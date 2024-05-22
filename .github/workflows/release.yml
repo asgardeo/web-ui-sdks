@@ -3,8 +3,12 @@
 name: 🚀 Release
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
   GH_TOKEN: ${{ secrets.RELEASE_BOT_TOKEN }}
@@ -57,19 +61,3 @@ jobs:
           commit: "[WSO2 Release] [GitHub Action] [Release] [skip ci] update package versions"
         env:
           GITHUB_TOKEN: ${{ env.GH_TOKEN }}
-
-      - name: 🏗️ Build
-        id: build
-        run: pnpm build
-
-      - name: 📢 Release & Publish
-        id: release-and-publish
-        run: |
-          git config user.name "wso2-ui-bot"
-          git config user.email "wso2-ui-bot@wso2.com"
-          echo "//registry.npmjs.org/:_authToken=${{ env.NPM_TOKEN }}" >> ~/.npmrc
-        env:
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ env.GH_TOKEN }}
-
-      

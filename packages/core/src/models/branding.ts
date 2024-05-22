@@ -23,7 +23,7 @@ import {TextPreference} from '../i18n/screens/model';
 /**
  * Interface for the text in the customization object.
  */
-export type BrandingPreferenceText = Record<string, TextPreference>;
+export type BrandingPreferenceText = Record<string, RecursivePartial<TextPreference>>;
 
 export type BrandingPreferenceTextProps = RecursivePartial<BrandingPreferenceText>;
 
