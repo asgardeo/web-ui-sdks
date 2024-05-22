@@ -1,0 +1,75 @@
+# This workflow will release the packages.
+
+name: 🚀 Release
+
+on:
+  workflow_dispatch:
+
+
+env:
+  GH_TOKEN: ${{ secrets.RELEASE_BOT_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+jobs:
+  release:
+    name: 📦 Release
+    if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci')"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [lts/*]
+    steps:
+      - name: ⬇️ Checkout
+        id: checkout
+        uses: actions/checkout@v2.3.3
+        with:
+          fetch-depth: 0
+          token: ${{ env.GH_TOKEN }}
+
+      - name: 🟢 Setup node
+        id: setup-node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: 🥡 Setup pnpm
+        id: setup-pnpm
+        uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+          run_install: false
+
+      - name: 🎈 Get pnpm store directory
+        id: get-pnpm-cache-dir
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+      - name: 🧩 Install Dependencies
+        id: install-dependencies
+        run: pnpm install
+
+      - name: 📣 Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          title: "[Release] [GitHub Action] Update package versions"
+          publish: pnpm publish:packages
+          version: pnpm version:packages
+          commit: "[WSO2 Release] [GitHub Action] [Release] [skip ci] update package versions"
+        env:
+          GITHUB_TOKEN: ${{ env.GH_TOKEN }}
+
+      - name: 🏗️ Build
+        id: build
+        run: pnpm build
+
+      - name: 📢 Release & Publish
+        id: release-and-publish
+        run: |
+          git config user.name "wso2-ui-bot"
+          git config user.email "wso2-ui-bot@wso2.com"
+          echo "//registry.npmjs.org/:_authToken=${{ env.NPM_TOKEN }}" >> ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ env.GH_TOKEN }}
+
+      
