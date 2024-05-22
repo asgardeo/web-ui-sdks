@@ -53,6 +53,7 @@ const LoginOptionsBox = ({
   handleOnClick,
 }: LoginOptionsBoxProps): ReactElement => (
   <UISignIn.Button
+    className={`login-options-btn-${socialName.toLowerCase()}`}
     social
     startIcon={<img className="social-login-img" src={images[socialName]} alt={socialName} />}
     onClick={handleOnClick}
