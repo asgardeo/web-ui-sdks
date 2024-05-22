@@ -306,7 +306,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
    */
   if (isComponentLoading || isLoading || authContext.isBrandingLoading) {
     return (
-      <div className="circular-progress-holder">
+      <div className="Box-circularProgressHolder">
         <CircularProgress className="circular-progress" />
       </div>
     );
@@ -322,7 +322,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
 
   return (
     <ThemeProvider theme={generateThemeSignIn(componentBranding?.preference.theme)}>
-      <UISignIn className="asgardeo-sign-in">
+      <UISignIn className="Box-asgardeoSignIn">
         {showLogo && !(isLoading || isComponentLoading) && (
           <UISignIn.Image className="asgardeo-sign-in-logo" src={imgUrl} />
         )}

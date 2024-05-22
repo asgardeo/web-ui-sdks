@@ -71,8 +71,8 @@ const BasicAuth = ({
   }
 
   return (
-    <UISignIn.Paper className="asgardeo-basic-auth-paper">
-      <UISignIn.Typography title className="basic-auth-title">
+    <UISignIn.Paper className="Paper-basicAuth">
+      <UISignIn.Typography title className="Typography-basicAuthTitle">
         {t(keys.login.login.heading)}
       </UISignIn.Typography>
 
