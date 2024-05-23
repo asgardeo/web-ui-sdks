@@ -22,6 +22,9 @@ hero:
   name: "Asgardeo Web SDKs"
   text: "Official Docs"
   tagline: Welcome to our comprehensive documentation site for Web SDKs for Asgardeo! <br>Here, you'll find everything you need to seamlessly integrate Asgardeo's authentication and identity management solutions into your application.
+  image:
+    src: /public/webuisdk.svg
+    alt: web-ui-sdks
   # actions:
   #   - theme: brand
   #     text: Markdown Examples
