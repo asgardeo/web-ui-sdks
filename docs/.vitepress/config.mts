@@ -52,6 +52,15 @@ export default defineConfig({
               },
             ],
           },
+          {
+            text: "Custom Hooks",
+            items: [
+              {
+                text: "useAuthentication",
+                link: "/react/hooks/use-authentication",
+              },
+            ],
+          },
         ],
       },
     ],
