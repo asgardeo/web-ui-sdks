@@ -26,6 +26,10 @@ First, import the `SignOutButton` component from the Asgardeo React SDK:
 
 ```ts
 import { SignOutButton } from "@asgardeo/auth-react";
+```
 
+Then, you can use it in your component:
+
+```ts
 <SignOutButton />
 ```
