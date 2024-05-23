@@ -34,6 +34,10 @@ export default defineConfig({
                 text: "Asgardeo Provider",
                 link: "/react/components/asgardeo-provider",
               },
+              {
+                text: "SignIn",
+                link: "/react/components/sign-in",
+              },
             ],
           },
         ],
