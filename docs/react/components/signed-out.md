@@ -25,7 +25,7 @@ The `SignedOut` is a control component that renders its children only when the u
 First, import the `SignedOut` component from the Asgardeo React SDK:
 
 ```javascript
-import { SignedOut } from "@asgardeo/auth-react";
+import { SignedOut } from "@asgardeo/react";
 ```
 
 Then, you can use it in your component:

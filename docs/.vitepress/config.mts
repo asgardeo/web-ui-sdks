@@ -59,6 +59,10 @@ export default defineConfig({
                 text: "useAuthentication",
                 link: "/react/hooks/use-authentication",
               },
+              {
+                text: "useOn",
+                link: "/react/hooks/use-on",
+              },
             ],
           },
         ],

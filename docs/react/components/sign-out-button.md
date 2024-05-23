@@ -25,7 +25,7 @@ The `SignOutButton` component renders a sign-out button that, when clicked, init
 First, import the `SignOutButton` component from the Asgardeo React SDK:
 
 ```ts
-import { SignOutButton } from "@asgardeo/auth-react";
+import { SignOutButton } from "@asgardeo/react";
 ```
 
 Then, you can use it in your component:

@@ -25,7 +25,7 @@ The `SignedIn` is a control component that renders its children only when the us
 First, import the `SignedIn` component from the Asgardeo React SDK:
 
 ```javascript
-import { SignedIn } from "@asgardeo/auth-react";
+import { SignedIn } from "@asgardeo/react";
 ```
 
 Then you can use it in your component:

@@ -62,7 +62,7 @@ After installing the Asgardeo React SDK, you need to wrap your application with 
 First, import the AsgardeoProvider from the Asgardeo React SDK:
 
 ```ts
-import { AsgardeoProvider } from "@asgardeo/auth-react";
+import { AsgardeoProvider } from "@asgardeo/react";
 ```
 
 Then, wrap your application with the `AsgardeoProvider` and pass the basic configuration to it:

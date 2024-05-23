@@ -26,7 +26,7 @@ it initiates the sign-in process.
 First, import the `SignIn` component from the Asgardeo React SDK:
 
 ```ts
-import { SignIn } from "@asgardeo/auth-react";
+import { SignIn } from "@asgardeo/react";
 
 <SignIn />
 ```

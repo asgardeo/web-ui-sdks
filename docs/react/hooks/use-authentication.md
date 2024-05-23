@@ -25,7 +25,7 @@
 First, import the `useAuthentication` hook from the Asgardeo React SDK:
 
 ```ts
-import { useAuthentication } from "@asgardeo/auth-react";
+import { useAuthentication } from "@asgardeo/react";
 ```
 
 Then, you can use it in your component:

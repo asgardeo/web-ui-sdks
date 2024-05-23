@@ -25,7 +25,7 @@ The `AsgardeoProvider` is a context provider component provided by the Asgardeo 
 First, import the `AsgardeoProvider` from the Asgardeo React SDK:
 
 ```ts
-import { AsgardeoProvider } from "@asgardeo/auth-react";
+import { AsgardeoProvider } from "@asgardeo/react";
 
 <AsgardeoProvider config={config}>
     <App />
