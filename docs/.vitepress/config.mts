@@ -5,10 +5,17 @@ export default defineConfig({
   title: "Asgardeo Web SDKs",
   description: "Official Documentation for Asgardeo Web SDKs",
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
+    search: {
+      provider: "local",
+    },
+    logo: {
+      light: "/asgardeo-light.svg",
+      dark: "/asgardeo-dark.svg",
+    },
     nav: [
       { text: "Home", link: "/" },
-      { text: "Examples", link: "/markdown-examples" },
+      { text: "JS", link: "/js/introduction" },
+      { text: "React", link: "/react/introduction" },
     ],
 
     sidebar: [
@@ -70,7 +77,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/vuejs/vitepress" },
+      { icon: "github", link: "https://github.com/asgardeo/web-ui-sdks" },
     ],
   },
 });
