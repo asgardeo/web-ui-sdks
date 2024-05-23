@@ -20,9 +20,9 @@
 
 ## UI Components
 
-- [SignIn](/SignIn.md): A component that provides sign-in forms as configured in the login flow of asgardeo.
+- [SignIn](./components/sign-in.md): A component that provides sign-in forms as configured in the login flow of asgardeo.
 
-- [SignOutButton](./SignOutButton.md): A component that provides a sign-out button. When clicked, it initiates the sign-out process.
+- [SignOutButton](./components/sign-out-button.md): A component that provides a sign-out button. When clicked, it initiates the sign-out process.
 
 ## Control Components
 

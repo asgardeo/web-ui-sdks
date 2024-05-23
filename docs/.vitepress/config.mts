@@ -38,6 +38,10 @@ export default defineConfig({
                 text: "SignIn",
                 link: "/react/components/sign-in",
               },
+              {
+                text: "SignOutButton",
+                link: "/react/components/sign-out-button",
+              },
             ],
           },
         ],
