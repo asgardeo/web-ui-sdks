@@ -28,7 +28,7 @@
 
 - [SignedIn](./components/signed-in): A component that renders its children only when the user is signed in.
 
-- [SignedOut](./SignedOut.md): A component that renders its children only when the user is not signed in.
+- [SignedOut](./components/signed-out.md): A component that renders its children only when the user is not signed in.
 
 ## Provider Component
 
