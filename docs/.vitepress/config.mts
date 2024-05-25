@@ -2,6 +2,7 @@ import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: "/web-ui-sdks/",
   title: "Asgardeo Web SDKs",
   description: "Official Documentation for Asgardeo Web SDKs",
   themeConfig: {

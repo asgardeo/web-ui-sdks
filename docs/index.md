@@ -36,17 +36,17 @@ hero:
 
 features:
   - icon:
-      src: /public/js.png
+      src: /js.png
     title: JS
     details: Javascript SDK for asgardeo
     link: js/introduction.md
   - icon:
-      src: /public/react.svg
+      src: /react.svg
     title: React
     details: React SDK for asgardeo
     link: react/introduction.md
   - icon:
-      src: /public/angular.png
+      src: /angular.png
     title: Angular
     details: Angular SDK for asgardeo
 ---
