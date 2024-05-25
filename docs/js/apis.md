@@ -104,15 +104,14 @@ If the authentication request fails for any reason, the function will throw an `
 
 Here's an example of how to handle the returned promise:
 
-````ts
+```ts
 authenticate({
-    /* authentication request body */
+  /* authentication request body */
 })
-    .then(response => {
-        console.log("Authentication successful", response);
-    })
-    .catch(error => {
-        console.error("Authentication failed", error);
-    });
-    ```
-````
+  .then((response) => {
+    console.log("Authentication successful", response);
+  })
+  .catch((error) => {
+    console.error("Authentication failed", error);
+  });
+```
