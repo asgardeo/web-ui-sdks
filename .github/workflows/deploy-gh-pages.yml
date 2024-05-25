@@ -1,0 +1,89 @@
+# -------------------------------------------------------------------------------------
+#
+# Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
+#
+# WSO2 LLC. licenses this file to you under the Apache License,
+# Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+# --------------------------------------------------------------------------------------
+
+# This workflow will publish the documentation to GitHub Pages.
+
+name: ☄️ Deploy Documentation
+
+on: workflow_dispatch
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ secrets.RELEASE_BOT_TOKEN }}
+  DOC_DIR: docs
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: "web-ui-sdks"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [lts/*]
+    steps:
+      - name: ⬇️ Checkout
+        id: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ env.GH_TOKEN }}
+
+      - name: 🟢 Setup node
+        id: setup-node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: ⚙️ Setup Pages
+        id: setup-pages
+        uses: actions/configure-pages@v4
+
+      - name: 🧩 Install Dependencies
+        id: install-dependencies
+        working-directory: ${{ env.DOC_DIR }}
+        run: npm ci
+
+      - name: 🏗️ Build with VitePress
+        id: build
+        working-directory: ${{ env.DOC_DIR }}
+        run: |
+          npm run docs:build
+
+      - name: 🌩 Upload artifact
+        id: upload-artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/website/.vitepress/dist
+
+      - name: 🔥 Deploy to GitHub Pages
+        id: deploy-gh-pages
+        uses: actions/deploy-pages@v4
