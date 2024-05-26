@@ -19,5 +19,9 @@
   "workspaces": [
     "packages/*",
     "recipes/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
+  }
 }
