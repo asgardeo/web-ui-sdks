@@ -15,7 +15,6 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
 hero:
