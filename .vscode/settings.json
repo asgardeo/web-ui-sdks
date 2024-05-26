@@ -4,7 +4,8 @@
         "core",
         "react",
         "auth-components",
-        "sample-app"
+        "sample-app",
+        "docs"
     ],
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"
