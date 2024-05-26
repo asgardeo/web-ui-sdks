@@ -19,8 +19,10 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
+  base: "/web-ui-sdks/",
   title: "Asgardeo Web SDKs",
   description: "Official Documentation for Asgardeo Web SDKs",
+  head: [["link", { rel: "icon", href: "/web-ui-sdks/asgardeo-dark.svg" }]],
   themeConfig: {
     search: {
       provider: "local",
