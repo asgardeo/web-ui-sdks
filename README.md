@@ -35,12 +35,12 @@ This repository contains the source code of the different Web SDKs that can be u
 | [![@asgardeo/react](https://img.shields.io/npm/v/@asgardeo/react?color=%23F7B93E&label=%40asgardeo%2Freact&logo=react)](./packages/react/) | React SDK for building customizable UIs for React applications |
 
 ## Contribute
-Please read [Contributing to the Code Base](http://wso2.github.io/) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [Contributing Guide](CONTRIBUTING.md) for details on how to contribute to Asgardeo web UI SDKs. Refer to [General Contribution Guidelines](http://wso2.github.io/) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ### Reporting issues
-We encourage you to report issues, improvements, and feature requests creating [Github Issues](https://github.com/asgardeo/asgardeo-auth-react-sdk/issues).
+We encourage you to report issues, improvements, and feature requests creating [Github Issues](https://github.com/asgardeo/web-ui-sdks/issues).
 
-Important: And please be advised that security issues must be reported to security@wso2com, not as GitHub issues, in order to reach the proper audience. We strongly advise following the WSO2 Security Vulnerability Reporting Guidelines when reporting the security issues.
+**Important**: Please be advised that security issues MUST be reported to <a href="mailto:security@wso2.com">security@wso2com</a>, not as GitHub issues, in order to reach the proper audience. We strongly advise following the WSO2 Security Vulnerability Reporting Guidelines when reporting the security issues.
 
 ## License
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
