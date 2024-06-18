@@ -1,7 +1,23 @@
 {
-  "name": "web-ui-sdks",
+  "private": true,
+  "name": "@asgardeo/web-ui-sdks",
   "version": "0.1.0",
+  "description": "Web SDKs for building customizable login UIs for Asgardeo & WSO2 Identity Server.",
+  "author": "WSO2",
   "license": "Apache-2.0",
+  "homepage": "https://github.com/asgardeo/web-ui-sdks#readme",
+  "bugs": {
+    "url": "https://github.com/asgardeo/web-ui-sdks/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asgardeo/web-ui-sdks"
+  },
+  "keywords": [
+    "asgardeo",
+    "web-sdks",
+    "api-based-auth"
+  ],
   "scripts": {
     "build": "nx run-many --target=build --parallel --projects=@asgardeo/js,@asgardeo/react",
     "changeset": "changeset",
@@ -10,7 +26,6 @@
     "test": "nx run-many --target=test --parallel",
     "version:packages": "changeset version && pnpm install --lockfile-only"
   },
-  "private": true,
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.3",
@@ -23,5 +38,8 @@
   "engines": {
     "node": ">=18",
     "pnpm": ">=9"
+  },
+  "publishConfig": {
+    "access": "restricted"
   }
 }

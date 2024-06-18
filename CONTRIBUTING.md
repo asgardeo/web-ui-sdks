@@ -1,13 +1,88 @@
-## Contributing to Asgardeo Web UI SDKs
+# Contributing to Asgardeo Web UI SDKs
 
 This guide walks you through setting up the development environment and other important information for contributing to Asgardeo Web UI SDKs.
 
-### Setting up development environment
+## Table of Contents
+- [Prerequisite Software](#prerequisite-software)
+- [Development Tools](#development-tools)
+  - [NX Console](#nx-console)
+  - [React Developer Tools](#react-developer-tools)
+  - [ESLint Plugin](#eslint-plugin)
+  - [Code Spell Checker](#code-spell-checker)
+  - [JSON Sort Order](#json-sort-order)
+- [Setting up the Source Code](#setting-up-the-source-code)
+- [Setting up the Development Environment](#setting-up-the-development-environment)
+- [Contributing to the Documentation](#contributing-to-the-documentation)
+- [Commit Message Guidelines](#commit-message-guidelines)
+  - [Commit Message Header](#commit-header)
+    - [Type](#type)
+    - [Scope](#scope)
+    - [Summary](#summary)
+  - [Commit Message Body](#commit-body)
+  - [Commit Message Footer](#commit-footer)
+  - [Revert commits](#revert-commits)
 
-> Prerequisites:
->
-> Node.js: v18 or higher
-> PNPM: v9 or higher
+## Prerequisite Software
+
+To build and write code, make sure you have the following set of tools on your local environment:
+
+* [Git](https://git-scm.com/downloads) - Open source distributed version control system. For install instructions, refer [this](https://www.atlassian.com/git/tutorials/install-git).
+* [Node.js](https://nodejs.org/en/download/) - JavaScript runtime. (`v18 or higher`)
+* [pnpm](https://pnpm.io/) - Alternate npm client for faster package installs. (`v9 or higher`)
+
+## Development Tools
+
+### NX Console
+
+Editor plugin which wraps NX commands so you don't have to memorize.
+
+- [Install for VS Code](https://marketplace.visualstudio.com/items?itemName=nrwl.angular-console)
+- [Install for VS Web Storm](https://plugins.jetbrains.com/plugin/15000-nx-webstorm)
+
+### React Developer Tools
+
+Browser extension to debug React code.
+
+- [Download for Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
+- [Download for Firefox](https://addons.mozilla.org/en-US/firefox/addon/react-devtools/)
+
+### ESLint Plugin
+
+Static code analysis tool for identifying problematic patterns found in JavaScript/Typescript code.
+
+- [Install for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Install for VS Web Storm](https://www.jetbrains.com/help/webstorm/eslint.html)
+
+### Code Spell Checker
+
+A basic spell checker that works well with code and documents.
+
+- [Install for VS Code](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
+
+### JSON Sort Order
+
+Sorts JSON objects in alphabetical order.
+
+- [Install for VS Code](https://marketplace.visualstudio.com/items?itemName=msyesyan.json-sorter)
+
+## Setting up the Source Code
+
+1. [Fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) the repository.
+2. Clone your fork to the local machine.
+
+Replace `<github username>` with your own username.
+
+```shell
+git clone https://github.com/<github username>/web-ui-sdks.git
+```
+
+3. Set the original repo as the upstream remote.
+
+```shell
+git remote add upstream https://github.com/asgardeo/web-ui-sdks.git
+```
+
+## Setting up the Development Environment
 
 1. Install dependencies.
 
@@ -19,6 +94,23 @@ pnpm install
 
 ```bash
 pnpm build
+```
+
+## Contributing to the Documentation
+
+We use [Vitepress](https://vitepress.dev/) to generate the documentation site. The documentation site is located in the `docs` directory.
+To contribute to the documentation, you can follow the steps below to start the Vitepress server locally.
+
+1. Navigate to the `docs` directory.
+
+```bash
+cd docs
+```
+
+2. Start the Vitepress server.
+
+```bash
+pnpm docs:dev
 ```
 
 ## Commit Message Guidelines
