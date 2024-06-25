@@ -16,10 +16,11 @@
  * under the License.
  */
 
-import {UIAuthConfig, MeAPIResponse} from '@asgardeo/js';
+import {UIAuthConfig, MeAPIResponse, AuthApiResponse} from '@asgardeo/js';
 
 interface AuthContext {
   accessToken: string;
+  authResponse: AuthApiResponse;
   config: UIAuthConfig;
   isAuthLoading: boolean;
   isAuthenticated: boolean | undefined;
@@ -27,6 +28,7 @@ interface AuthContext {
   isGlobalLoading: boolean;
   isTextLoading: boolean;
   onSignOutRef: React.MutableRefObject<Function>;
+  setAuthResponse: (response: AuthApiResponse) => void;
   setAuthentication: () => void;
   setIsAuthLoading: (value: boolean) => void;
   setIsBrandingLoading: (value: boolean) => void;

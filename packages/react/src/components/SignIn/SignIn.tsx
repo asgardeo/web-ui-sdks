@@ -50,6 +50,7 @@ import {SignIn as UISignIn} from '../../oxygen-ui-react-auth-components';
 import generateThemeSignIn from '../../theme/generate-theme-sign-in';
 import SPACryptoUtils from '../../utils/crypto-utils';
 import './sign-in.scss';
+import IdentifierFirst from './fragments/IdentifierFirst';
 
 /**
  * This component provides the sign-in functionality.
@@ -63,7 +64,6 @@ import './sign-in.scss';
 const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   const {brandingProps, showFooter = true, showLogo = true, showSignUp} = props;
 
-  const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
   const [isComponentLoading, setIsComponentLoading] = useState<boolean>(true);
   const [alert, setAlert] = useState<AlertType>();
   const [showSelfSignUp, setShowSelfSignUp] = useState<boolean>(showSignUp);
@@ -93,7 +93,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
      */
     authorize()
       .then((response: AuthApiResponse) => {
-        setAuthResponse(response);
+        authContext?.setAuthResponse(response);
         setIsComponentLoading(false);
       })
       .catch((error: Error) => {
@@ -111,14 +111,14 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   const handleAuthenticate = async (authenticatorId: string, authParams?: {[key: string]: string}): Promise<void> => {
     setAlert(undefined);
 
-    if (authResponse === undefined) {
+    if (authContext?.authResponse === undefined) {
       throw new AsgardeoUIException('REACT_UI-SIGN_IN-HA-IV02', 'Auth response is undefined.');
     }
 
     authContext.setIsAuthLoading(true);
 
     const resp: AuthApiResponse = await authenticate({
-      flowId: authResponse.flowId,
+      flowId: authContext?.authResponse.flowId,
       selectedAuthenticator: {
         authenticatorId,
         params: authParams,
@@ -162,13 +162,13 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
           window.removeEventListener('message', messageEventHandler);
         });
       } else if (metaData.promptType === PromptType.UserPrompt) {
-        setAuthResponse(resp);
+        authContext?.setAuthResponse(resp);
       }
     } else if (resp.flowStatus === FlowStatus.SuccessCompleted && resp.authData) {
       /**
        * when the authentication is successful, generate the token
        */
-      setAuthResponse(resp);
+      authContext?.setAuthResponse(resp);
 
       const authInstance: UIAuthClient = AuthClient.getInstance();
       const state: string = (await authInstance.getDataLayer().getTemporaryDataParameter('state')).toString();
@@ -177,14 +177,14 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
 
       authContext.setAuthentication();
     } else if (resp.flowStatus === FlowStatus.FailIncomplete) {
-      setAuthResponse({
+      authContext?.setAuthResponse({
         ...resp,
-        nextStep: authResponse.nextStep,
+        nextStep: authContext?.authResponse.nextStep,
       });
 
       setAlert({alertType: {error: true}, key: keys.common.error});
     } else {
-      setAuthResponse(resp);
+      authContext?.setAuthResponse(resp);
       setShowSelfSignUp(false);
     }
 
@@ -211,7 +211,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   };
 
   const renderSignIn = (): ReactElement => {
-    const authenticators: Authenticator[] = authResponse?.nextStep?.authenticators;
+    const authenticators: Authenticator[] = authContext?.authResponse?.nextStep?.authenticators;    
 
     if (authenticators) {
       const usernamePasswordAuthenticator: Authenticator = authenticators.find(
@@ -235,6 +235,27 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         );
       }
 
+      const identifierFirstAuthenticator: Authenticator = authenticators.find(
+        (authenticator: Authenticator) => authenticator.authenticator === 'Identifier First',
+      );
+
+      if (identifierFirstAuthenticator) {
+        return (
+          <IdentifierFirst
+            brandingProps={brandingProps}
+            authenticator={identifierFirstAuthenticator}
+            handleAuthenticate={handleAuthenticate}
+            showSelfSignUp={showSelfSignUp}
+            alert={alert}
+            renderLoginOptions={renderLoginOptions(
+              authenticators.filter(
+                (auth: Authenticator) => auth.authenticatorId !== identifierFirstAuthenticator.authenticatorId,
+              ),
+            )}
+          />
+        );
+      }
+
       if (authenticators.length === 1) {
         if (authenticators[0].authenticator === 'TOTP') {
           return (
@@ -249,7 +270,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         if (
           // TODO: change after api based auth gets fixed
           new SPACryptoUtils()
-            .base64URLDecode(authResponse.nextStep.authenticators[0].authenticatorId)
+            .base64URLDecode(authContext?.authResponse.nextStep.authenticators[0].authenticatorId)
             .split(':')[0] === 'email-otp-authenticator'
         ) {
           return (
@@ -265,7 +286,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         if (
           // TODO: change after api based auth gets fixed
           new SPACryptoUtils()
-            .base64URLDecode(authResponse.nextStep.authenticators[0].authenticatorId)
+            .base64URLDecode(authContext?.authResponse.nextStep.authenticators[0].authenticatorId)
             .split(':')[0] === 'sms-otp-authenticator'
         ) {
           return (
@@ -326,7 +347,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         {showLogo && !(isLoading || isComponentLoading) && (
           <UISignIn.Image className="asgardeo-sign-in-logo" src={imgUrl} />
         )}
-        {authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
+        {authContext?.authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
           <>
             {renderSignIn()}
 
@@ -355,7 +376,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
             )}
           </>
         )}
-        {(authResponse?.flowStatus === FlowStatus.SuccessCompleted || isAuthenticated) && (
+        {(authContext?.authResponse?.flowStatus === FlowStatus.SuccessCompleted || isAuthenticated) && (
           <div style={{backgroundColor: 'white', padding: '1rem'}}>Successfully Authenticated</div>
         )}
       </UISignIn>

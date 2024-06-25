@@ -16,7 +16,15 @@
  * under the License.
  */
 
-import {AuthClient, CryptoUtils, MeAPIResponse, Store, UIAuthClient, getProfileInformation} from '@asgardeo/js';
+import {
+  AuthApiResponse,
+  AuthClient,
+  CryptoUtils,
+  MeAPIResponse,
+  Store,
+  UIAuthClient,
+  getProfileInformation,
+} from '@asgardeo/js';
 import {FC, PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import BrandingPreferenceProvider from './BrandingPreferenceProvider';
 import I18nProvider from './I18nProvider';
@@ -51,6 +59,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
   const [isBrandingLoading, setIsBrandingLoading] = useState<boolean>(true);
   const [isTextLoading, setIsTextLoading] = useState<boolean>(true);
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
+  const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
 
   const onSignInRef: React.MutableRefObject<Function> = useRef<Function>();
   const onSignOutRef: React.MutableRefObject<Function> = useRef<Function>();
@@ -122,6 +131,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
   const value: AuthContext = useMemo(
     () => ({
       accessToken,
+      authResponse,
       config,
       isAuthLoading,
       isAuthenticated,
@@ -129,6 +139,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
       isGlobalLoading: isBrandingLoading || isTextLoading || isAuthLoading,
       isTextLoading,
       onSignOutRef,
+      setAuthResponse,
       setAuthentication,
       setIsAuthLoading,
       setIsBrandingLoading,
@@ -139,11 +150,13 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
     }),
     [
       accessToken,
+      authResponse,
       config,
       isAuthLoading,
       isAuthenticated,
       isBrandingLoading,
       isTextLoading,
+      setAuthResponse,
       setAuthentication,
       setOnSignIn,
       setOnSignOut,

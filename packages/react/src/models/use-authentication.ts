@@ -16,10 +16,11 @@
  * under the License.
  */
 
-import {MeAPIResponse} from '@asgardeo/js';
+import {AuthApiResponse, MeAPIResponse} from '@asgardeo/js';
 
 interface UseAuthentication {
   accessToken: string;
+  authResponse: AuthApiResponse;
   isAuthenticated: Promise<boolean> | boolean;
   signOut: () => void;
   user: MeAPIResponse;
