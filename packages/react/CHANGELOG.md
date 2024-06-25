@@ -1,5 +1,13 @@
 # @asgardeo/react
 
+## 0.2.0
+
+### Minor Changes
+
+- [#31](https://github.com/asgardeo/web-ui-sdks/pull/31)
+  [`084d8e9`](https://github.com/asgardeo/web-ui-sdks/commit/084d8e9cc66a1b36033f82bf7659b9c3a1ac3627) Thanks
+  [@DonOmalVindula](https://github.com/DonOmalVindula)! - Implement support for identifier first authenticator
+
 ## 0.1.1
 
 ### Patch Changes
