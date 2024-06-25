@@ -211,7 +211,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   };
 
   const renderSignIn = (): ReactElement => {
-    const authenticators: Authenticator[] = authContext?.authResponse?.nextStep?.authenticators;    
+    const authenticators: Authenticator[] = authContext?.authResponse?.nextStep?.authenticators;
 
     if (authenticators) {
       const usernamePasswordAuthenticator: Authenticator = authenticators.find(
