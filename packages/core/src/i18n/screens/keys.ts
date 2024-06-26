@@ -75,6 +75,23 @@ interface Keys {
       placeholder: string;
     };
   };
+  identifierFirst: {
+    button: string;
+    continue: string;
+    enter: {
+      your: {
+        username: string;
+      };
+    };
+    login: {
+      heading: string;
+    };
+    remember: {
+      me: string;
+    };
+    retry: string;
+    username: string;
+  };
   login: {
     button: string;
     enter: {
@@ -182,6 +199,23 @@ export const keys: Keys = {
       label: 'emailOtp.username.label',
       placeholder: 'emailOtp.username.placeholder',
     },
+  },
+  identifierFirst: {
+    button: 'identifierFirst.button',
+    continue: 'identifierFirst.continue',
+    enter: {
+      your: {
+        username: 'identifierFirst.enter.your.username',
+      },
+    },
+    login: {
+      heading: 'identifierFirst.login.heading',
+    },
+    remember: {
+      me: 'identifierFirst.remember.me',
+    },
+    retry: 'identifierFirst.retry',
+    username: 'identifierFirst.username',
   },
   login: {
     button: 'login.login.button',

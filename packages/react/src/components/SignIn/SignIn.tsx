@@ -62,7 +62,17 @@ import IdentifierFirst from './fragments/IdentifierFirst';
  * @returns {ReactElement} - React element.
  */
 const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
-  const {brandingProps, showFooter = true, showLogo = true, showSignUp} = props;
+  const {
+    basicAuthChildren,
+    brandingProps,
+    emailOtpChildren,
+    identifierFirstChildren,
+    showFooter = true,
+    showLogo = true,
+    showSignUp,
+    smsOtpChildren,
+    totpChildren,
+  } = props;
 
   const [isComponentLoading, setIsComponentLoading] = useState<boolean>(true);
   const [alert, setAlert] = useState<AlertType>();
@@ -231,7 +241,9 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
                 (auth: Authenticator) => auth.authenticatorId !== usernamePasswordAuthenticator.authenticatorId,
               ),
             )}
-          />
+          >
+            {basicAuthChildren}
+          </BasicAuth>
         );
       }
 
@@ -252,7 +264,9 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
                 (auth: Authenticator) => auth.authenticatorId !== identifierFirstAuthenticator.authenticatorId,
               ),
             )}
-          />
+          >
+            {identifierFirstChildren}
+          </IdentifierFirst>
         );
       }
 
@@ -264,7 +278,9 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
               authenticator={authenticators[0]}
               alert={alert}
               handleAuthenticate={handleAuthenticate}
-            />
+            >
+              {totpChildren}
+            </Totp>
           );
         }
         if (
@@ -279,7 +295,9 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
               brandingProps={brandingProps}
               authenticator={authenticators[0]}
               handleAuthenticate={handleAuthenticate}
-            />
+            >
+              {emailOtpChildren}
+            </EmailOtp>
           );
         }
 
@@ -295,7 +313,9 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
               brandingProps={brandingProps}
               authenticator={authenticators[0]}
               handleAuthenticate={handleAuthenticate}
-            />
+            >
+              {smsOtpChildren}
+            </SmsOtp>
           );
         }
       }

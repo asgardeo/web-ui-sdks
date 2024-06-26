@@ -16,41 +16,14 @@
  * under the License.
  */
 
-.asgardeo-basic-auth-skeleton {
-  display: flex;
-  flex-flow: column nowrap;
-  padding: 32px;
-  row-gap: 8px;
+import {IdentifierFirst} from './model';
 
-  .skeleton-title {
-    margin: 0 auto;
-  }
-
-  .skeleton-text-field-label {
-    margin-top: 12px;
-  }
-
-  .skeleton-submit-button {
-    margin: 20px auto 0;
-    border-radius: 20px;
-  }
-}
-
-.Paper-basicAuth {
-  opacity: 0.5;
-  animation: fade-in 0.9s ease-in-out forwards;
-
-  .asgardeo-basic-auth-alert {
-    margin-top: 12px;
-  }
-}
-
-.asgardeo-register-link {
-  margin-left: 3px;
-}
-
-@keyframes fade-in {
-  to {
-    opacity: 1;
-  }
-}
+export const identifierFirst: IdentifierFirst = {
+  continue: 'Continuer',
+  'enter.your.username': "Entrez votre nom d'utilisateur",
+  'login.button': 'Se connecter',
+  'login.heading': 'Se connecter',
+  'remember.me': 'Se souvenir de moi sur cet ordinateur',
+  retry: "Échec de la connexion! Veuillez vérifier votre nom d'utilisateur et votre mot de passe et réessayer.",
+  username: "Nom d'utilisateur",
+};

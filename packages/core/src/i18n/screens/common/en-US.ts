@@ -28,5 +28,5 @@ export const common: Common = {
   'privacy.policy': 'Privacy Policy',
   register: 'Register',
   'site.title': 'WSO2 Identity Server',
-  'terms.of.service': 'Terms of Servicet',
+  'terms.of.service': 'Terms of Service',
 };

@@ -16,41 +16,15 @@
  * under the License.
  */
 
-.asgardeo-basic-auth-skeleton {
-  display: flex;
-  flex-flow: column nowrap;
-  padding: 32px;
-  row-gap: 8px;
-
-  .skeleton-title {
-    margin: 0 auto;
-  }
-
-  .skeleton-text-field-label {
-    margin-top: 12px;
-  }
-
-  .skeleton-submit-button {
-    margin: 20px auto 0;
-    border-radius: 20px;
-  }
-}
-
-.Paper-basicAuth {
-  opacity: 0.5;
-  animation: fade-in 0.9s ease-in-out forwards;
-
-  .asgardeo-basic-auth-alert {
-    margin-top: 12px;
-  }
-}
-
-.asgardeo-register-link {
-  margin-left: 3px;
-}
-
-@keyframes fade-in {
-  to {
-    opacity: 1;
-  }
+/**
+ * Interface for the IdentifierFirst text.
+ */
+export interface IdentifierFirst {
+  continue: string;
+  'enter.your.username': string;
+  'login.button': string;
+  'login.heading': string;
+  'remember.me': string;
+  retry: string;
+  username: string;
 }

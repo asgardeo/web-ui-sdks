@@ -17,6 +17,7 @@
  */
 
 import {ReactElement} from 'react';
+import buildingIcon from '../../../assets/building-icon.svg';
 import emailSolid from '../../../assets/email-solid.svg';
 import smsIcon from '../../../assets/sms-icon.svg';
 import facebook from '../../../assets/social-logins/facebook.svg';
@@ -55,7 +56,7 @@ const LoginOptionsBox = ({
   <UISignIn.Button
     className={`Button-${socialName.toLowerCase()}`}
     social
-    startIcon={<img className="social-login-img" src={images[socialName]} alt={socialName} />}
+    startIcon={<img className="social-login-img" src={images[socialName] ?? buildingIcon} alt={socialName} />}
     onClick={handleOnClick}
     disabled={isAuthLoading}
   >

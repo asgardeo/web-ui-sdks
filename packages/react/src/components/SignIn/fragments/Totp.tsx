@@ -18,7 +18,7 @@
 
 import {ScreenType, keys} from '@asgardeo/js';
 import {CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
-import {useState, ReactElement, useContext} from 'react';
+import {useState, ReactElement, useContext, PropsWithChildren} from 'react';
 import AsgardeoContext from '../../../contexts/asgardeo-context';
 import useTranslations from '../../../hooks/use-translations';
 import TotpProps from '../../../models/totp-props';
@@ -36,7 +36,13 @@ import './totp.scss';
  *
  * @return {ReactElement}
  */
-const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpProps): ReactElement => {
+const Totp = ({
+  brandingProps,
+  authenticator,
+  children,
+  handleAuthenticate,
+  alert,
+}: PropsWithChildren<TotpProps>): ReactElement => {
   const [totp, setTotp] = useState<string>();
 
   const {isAuthLoading} = useContext(AsgardeoContext);
@@ -78,6 +84,8 @@ const Totp = ({brandingProps, authenticator, handleAuthenticate, alert}: TotpPro
       <UISignIn.Typography subtitle>{t(keys.totp.enter.verification.code.got.by.device)}</UISignIn.Typography>
 
       <UISignIn.PinInput length={6} onPinChange={setTotp} pinValue={totp} />
+
+      {children}
 
       <UISignIn.Button
         color="primary"

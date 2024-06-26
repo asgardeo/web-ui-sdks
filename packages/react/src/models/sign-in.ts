@@ -20,10 +20,15 @@ import {BrandingProps} from '@asgardeo/js';
 import {ReactElement} from 'react';
 
 export interface SignInProps {
+  basicAuthChildren?: ReactElement;
   brandingProps?: BrandingProps;
+  emailOtpChildren?: ReactElement;
+  identifierFirstChildren?: ReactElement;
   showFooter?: boolean;
   showLogo?: boolean;
   showSignUp?: boolean;
+  smsOtpChildren?: ReactElement;
+  totpChildren?: ReactElement;
 }
 
 export type AlertType = {
