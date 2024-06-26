@@ -1,5 +1,14 @@
 # @asgardeo/js
 
+## 0.1.2
+
+### Patch Changes
+
+- [#34](https://github.com/asgardeo/web-ui-sdks/pull/34)
+  [`4344408`](https://github.com/asgardeo/web-ui-sdks/commit/43444087466db1c12fdb97e283192d5e2ccc00f1) Thanks
+  [@DonOmalVindula](https://github.com/DonOmalVindula)! - Improvements to Identifier first authenticator in the React
+  SDK
+
 ## 0.1.1
 
 ### Patch Changes
