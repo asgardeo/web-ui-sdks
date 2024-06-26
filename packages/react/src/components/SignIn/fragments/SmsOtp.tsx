@@ -18,12 +18,18 @@
 
 import {ScreenType, keys} from '@asgardeo/js';
 import {CircularProgress} from '@oxygen-ui/react';
-import {ReactElement, useState} from 'react';
+import {PropsWithChildren, ReactElement, useState} from 'react';
 import useTranslations from '../../../hooks/use-translations';
 import EmailOtpProps from '../../../models/email-otp-props';
 import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 
-const SmsOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: EmailOtpProps): ReactElement => {
+const SmsOtp = ({
+  alert,
+  brandingProps,
+  authenticator,
+  children,
+  handleAuthenticate,
+}: PropsWithChildren<EmailOtpProps>): ReactElement => {
   const [otp, setOtp] = useState<string>();
 
   const {isLoading, t} = useTranslations({
@@ -49,6 +55,8 @@ const SmsOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Email
       {alert && <UISignIn.Alert {...alert?.alertType}>{alert.key}</UISignIn.Alert>}
 
       <UISignIn.PinInput length={6} onPinChange={setOtp} />
+
+      {children}
 
       <UISignIn.Button
         fullWidth

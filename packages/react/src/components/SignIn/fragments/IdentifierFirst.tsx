@@ -18,7 +18,7 @@
 
 import {ScreenType, keys} from '@asgardeo/js';
 import {CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
-import {ReactElement, useContext, useState} from 'react';
+import {PropsWithChildren, ReactElement, useContext, useState} from 'react';
 import AsgardeoContext from '../../../contexts/asgardeo-context';
 import useTranslations from '../../../hooks/use-translations';
 import BasicAuthProps from '../../../models/basic-auth-props';
@@ -43,9 +43,10 @@ const IdentifierFirst = ({
   authenticator,
   alert,
   brandingProps,
+  children,
   showSelfSignUp,
   renderLoginOptions,
-}: BasicAuthProps): ReactElement => {
+}: PropsWithChildren<BasicAuthProps>): ReactElement => {
   const {isAuthLoading, username, setUsername} = useContext(AsgardeoContext);
 
   const {t, isLoading} = useTranslations({
@@ -88,6 +89,8 @@ const IdentifierFirst = ({
         placeholder={t(keys.login.enter.your.username)}
         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setUsername(e.target.value)}
       />
+
+      {children}
 
       <UISignIn.Button
         color="primary"

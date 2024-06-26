@@ -18,7 +18,7 @@
 
 import {ScreenType, keys} from '@asgardeo/js';
 import {CircularProgress, Skeleton} from '@oxygen-ui/react';
-import {ReactElement, useContext, useState} from 'react';
+import {PropsWithChildren, ReactElement, useContext, useState} from 'react';
 import AsgardeoContext from '../../../contexts/asgardeo-context';
 import useTranslations from '../../../hooks/use-translations';
 import EmailOtpProps from '../../../models/email-otp-props';
@@ -35,7 +35,7 @@ import './email-otp.scss';
  * @param {AlertType} props.alert - Alert type.
  * @return {ReactElement}
  */
-const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: EmailOtpProps): ReactElement => {
+const EmailOtp = ({alert, brandingProps, authenticator, children, handleAuthenticate}: PropsWithChildren<EmailOtpProps>): ReactElement => {
   const [inputValue, setInputValue] = useState<string>();
   const [isContinueLoading, setIsContinueLoading] = useState<boolean>(false);
   const [isResendLoading, setIsResendLoading] = useState<boolean>(false);
@@ -89,6 +89,8 @@ const EmailOtp = ({alert, brandingProps, authenticator, handleAuthenticate}: Ema
         placeholder={param === 'username' ? t(i18nMapping[param].placeholder) : undefined}
         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setInputValue(e.target.value)}
       />
+
+      { children }
 
       <UISignIn.Button
         fullWidth
