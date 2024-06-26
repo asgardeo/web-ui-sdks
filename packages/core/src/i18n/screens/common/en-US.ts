@@ -24,7 +24,7 @@ export const common: Common = {
   error: 'Something went wrong. Please try again.',
   'multiple.options.prefix': 'Sign in with',
   or: 'OR',
-  'prefix.register': "Don't have an account? ",
+  'prefix.register': "Don't have an account?",
   'privacy.policy': 'Privacy Policy',
   register: 'Register',
   'site.title': 'WSO2 Identity Server',
