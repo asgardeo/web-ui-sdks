@@ -46,10 +46,9 @@ const BasicAuth = ({
   showSelfSignUp,
   renderLoginOptions,
 }: BasicAuthProps): ReactElement => {
-  const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const {isAuthLoading} = useContext(AsgardeoContext);
+  const {isAuthLoading, username, setUsername} = useContext(AsgardeoContext);
 
   const {t, isLoading} = useTranslations({
     componentLocaleOverride: brandingProps?.locale,
@@ -114,8 +113,6 @@ const BasicAuth = ({
             password,
             username,
           });
-          setUsername('');
-          setPassword('');
         }}
       >
         {t(keys.login.button)}

@@ -16,17 +16,14 @@
  * under the License.
  */
 
-import {Common} from './model';
+import {IdentifierFirst} from './model';
 
-export const common: Common = {
-  'common.title': 'Sign In',
-  copyright: '© {{currentYear}} WSO2 LLC.',
-  error: 'Something went wrong. Please try again.',
-  'multiple.options.prefix': 'Sign in with',
-  or: 'OR',
-  'prefix.register': "Don't have an account? ",
-  'privacy.policy': 'Privacy Policy',
-  register: 'Register',
-  'site.title': 'WSO2 Identity Server',
-  'terms.of.service': 'Terms of Service',
+export const identifierFirst: IdentifierFirst = {
+  continue: 'Continuer',
+  'enter.your.username': "Entrez votre nom d'utilisateur",
+  'login.button': 'Se connecter',
+  'login.heading': 'Se connecter',
+  'remember.me': 'Se souvenir de moi sur cet ordinateur',
+  retry: "Échec de la connexion! Veuillez vérifier votre nom d'utilisateur et votre mot de passe et réessayer.",
+  username: "Nom d'utilisateur",
 };

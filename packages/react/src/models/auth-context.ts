@@ -35,7 +35,9 @@ interface AuthContext {
   setIsTextLoading: (value: boolean) => void;
   setOnSignIn: (response?: any) => void | Promise<void>;
   setOnSignOut: (response?: any) => void | Promise<void>;
+  setUsername: (username: string) => void;
   user: MeAPIResponse;
+  username: string;
 }
 
 export default AuthContext;

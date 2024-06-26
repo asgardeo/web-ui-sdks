@@ -17,6 +17,7 @@
  */
 
 import {Common} from './common/model';
+import {IdentifierFirst} from './identifierFirst/model';
 import {Login} from './login/model';
 import {TOTP} from './totp/model';
 
@@ -25,6 +26,7 @@ import {TOTP} from './totp/model';
  */
 export interface TextPreference {
   common: Common;
+  identifierFirst: IdentifierFirst;
   login: Login;
   totp: TOTP;
 }
@@ -32,4 +34,4 @@ export interface TextPreference {
 /**
  * Interface for the return type of the getLocalization function.
  */
-export type TextObject = Login | TOTP | Common;
+export type TextObject = Login | TOTP | Common | IdentifierFirst;

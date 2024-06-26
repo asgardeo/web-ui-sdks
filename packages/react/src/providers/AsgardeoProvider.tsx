@@ -60,6 +60,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
   const [isTextLoading, setIsTextLoading] = useState<boolean>(true);
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
   const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
+  const [username, setUsername] = useState<string>('');
 
   const onSignInRef: React.MutableRefObject<Function> = useRef<Function>();
   const onSignOutRef: React.MutableRefObject<Function> = useRef<Function>();
@@ -146,7 +147,9 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
       setIsTextLoading,
       setOnSignIn,
       setOnSignOut,
+      setUsername,
       user,
+      username,
     }),
     [
       accessToken,
@@ -160,7 +163,9 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
       setAuthentication,
       setOnSignIn,
       setOnSignOut,
+      setUsername,
       user,
+      username,
     ],
   );
 

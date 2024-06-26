@@ -46,9 +46,7 @@ const IdentifierFirst = ({
   showSelfSignUp,
   renderLoginOptions,
 }: BasicAuthProps): ReactElement => {
-  const [username, setUsername] = useState<string>('');
-
-  const {isAuthLoading} = useContext(AsgardeoContext);
+  const {isAuthLoading, username, setUsername} = useContext(AsgardeoContext);
 
   const {t, isLoading} = useTranslations({
     componentLocaleOverride: brandingProps?.locale,
@@ -101,7 +99,6 @@ const IdentifierFirst = ({
           handleAuthenticate(authenticator.authenticatorId, {
             username,
           });
-          setUsername('');
         }}
       >
         {t(keys.login.button)}
