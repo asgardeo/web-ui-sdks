@@ -22,6 +22,7 @@ interface UseAuthentication {
   accessToken: string;
   authResponse: AuthApiResponse;
   isAuthenticated: Promise<boolean> | boolean;
+  isGlobalLoading: boolean;
   setUsername: (username: string) => void;
   signOut: () => void;
   user: MeAPIResponse;

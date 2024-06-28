@@ -32,7 +32,7 @@ import UseAuthentication from '../models/use-authentication';
 const useAuthentication = (): UseAuthentication => {
   const contextValue: AuthContext = useContext(AsgardeoContext);
 
-  const {accessToken, authResponse, isAuthenticated, setUsername, user, username} = contextValue;
+  const {accessToken, authResponse, isAuthenticated, isGlobalLoading, setUsername, user, username} = contextValue;
 
   const signOut: () => void = () => {
     signOutApiCall().then(() => {
@@ -47,6 +47,7 @@ const useAuthentication = (): UseAuthentication => {
     accessToken,
     authResponse,
     isAuthenticated,
+    isGlobalLoading,
     setUsername,
     signOut,
     user,
