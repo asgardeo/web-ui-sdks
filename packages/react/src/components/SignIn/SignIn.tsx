@@ -74,7 +74,6 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
     totpChildren,
   } = props;
 
-  const [isComponentLoading, setIsComponentLoading] = useState<boolean>(true);
   const [alert, setAlert] = useState<AlertType>();
   const [showSelfSignUp, setShowSelfSignUp] = useState<boolean>(showSignUp);
   const [componentBranding, setComponentBranding] = useState<Branding>();
@@ -104,12 +103,13 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
     authorize()
       .then((response: AuthApiResponse) => {
         authContext?.setAuthResponse(response);
-        setIsComponentLoading(false);
       })
       .catch((error: Error) => {
         setAlert({alertType: {error: true}, key: keys.common.error});
-        setIsComponentLoading(false);
         throw new AsgardeoUIException('REACT_UI-SIGN_IN-SI-SE01', 'Authorization failed', error.stack);
+      })
+      .finally(() => {
+        authContext.setIsComponentLoading(false);
       });
   }, []);
 
@@ -345,7 +345,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   /**
    * Renders the circular progress component while the component or text is loading.
    */
-  if (isComponentLoading || isLoading || authContext.isBrandingLoading) {
+  if (authContext.isComponentLoading || isLoading || authContext.isBrandingLoading) {
     return (
       <div className="Box-circularProgressHolder">
         <CircularProgress className="circular-progress" />
@@ -364,14 +364,14 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   return (
     <ThemeProvider theme={generateThemeSignIn(componentBranding?.preference.theme)}>
       <UISignIn className="Box-asgardeoSignIn">
-        {showLogo && !(isLoading || isComponentLoading) && (
+        {showLogo && !(isLoading || authContext.isComponentLoading) && (
           <UISignIn.Image className="asgardeo-sign-in-logo" src={imgUrl} />
         )}
         {authContext?.authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
           <>
             {renderSignIn()}
 
-            {showFooter && !(isLoading || isComponentLoading) && (
+            {showFooter && !(isLoading || authContext.isComponentLoading) && (
               <UISignIn.Footer
                 className="asgardeo-sign-in-footer"
                 copyrights={{children: copyrightText}}

@@ -25,6 +25,7 @@ interface AuthContext {
   isAuthLoading: boolean;
   isAuthenticated: boolean | undefined;
   isBrandingLoading: boolean;
+  isComponentLoading: boolean;
   isGlobalLoading: boolean;
   isTextLoading: boolean;
   onSignOutRef: React.MutableRefObject<Function>;
@@ -32,6 +33,7 @@ interface AuthContext {
   setAuthentication: () => void;
   setIsAuthLoading: (value: boolean) => void;
   setIsBrandingLoading: (value: boolean) => void;
+  setIsComponentLoading: (value: boolean) => void;
   setIsTextLoading: (value: boolean) => void;
   setOnSignIn: (response?: any) => void | Promise<void>;
   setOnSignOut: (response?: any) => void | Promise<void>;
