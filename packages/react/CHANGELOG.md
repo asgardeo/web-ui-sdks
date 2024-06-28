@@ -1,5 +1,13 @@
 # @asgardeo/react
 
+## 0.2.2
+
+### Patch Changes
+
+- [#36](https://github.com/asgardeo/web-ui-sdks/pull/36)
+  [`39b7402`](https://github.com/asgardeo/web-ui-sdks/commit/39b74025195a74fde8d7a723855c3b3d7100bb9f) Thanks
+  [@DonOmalVindula](https://github.com/DonOmalVindula)! - Expose global loading state from the react SDK
+
 ## 0.2.1
 
 ### Patch Changes
