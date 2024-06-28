@@ -109,7 +109,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         throw new AsgardeoUIException('REACT_UI-SIGN_IN-SI-SE01', 'Authorization failed', error.stack);
       })
       .finally(() => {
-        authContext.setIsComponentLoading(false);
+        authContext?.setIsComponentLoading(false);
       });
   }, []);
 
@@ -125,7 +125,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
       throw new AsgardeoUIException('REACT_UI-SIGN_IN-HA-IV02', 'Auth response is undefined.');
     }
 
-    authContext.setIsAuthLoading(true);
+    authContext?.setIsAuthLoading(true);
 
     const resp: AuthApiResponse = await authenticate({
       flowId: authContext?.authResponse.flowId,
@@ -135,7 +135,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
       },
     }).catch((authnError: Error) => {
       setAlert({alertType: {error: true}, key: keys.common.error});
-      authContext.setIsAuthLoading(false);
+      authContext?.setIsAuthLoading(false);
       throw new AsgardeoUIException('REACT_UI-SIGN_IN-HA-SE03', 'Authentication failed.', authnError.stack);
     });
 
@@ -185,7 +185,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
 
       await authInstance.requestAccessToken(resp.authData.code, resp.authData.session_state, state);
 
-      authContext.setAuthentication();
+      authContext?.setAuthentication();
     } else if (resp.flowStatus === FlowStatus.FailIncomplete) {
       authContext?.setAuthResponse({
         ...resp,
@@ -198,7 +198,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
       setShowSelfSignUp(false);
     }
 
-    authContext.setIsAuthLoading(false);
+    authContext?.setIsAuthLoading(false);
   };
 
   const renderLoginOptions = (authenticators: Authenticator[]): ReactElement[] => {
@@ -208,7 +208,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
       const displayName: string = authenticator.idp === 'LOCAL' ? authenticator.authenticator : authenticator.idp;
       LoginOptions.push(
         <LoginOptionsBox
-          isAuthLoading={authContext.isAuthLoading}
+          isAuthLoading={authContext?.isAuthLoading}
           socialName={authenticator.authenticator}
           displayName={`${t(keys.common.multiple.options.prefix)} ${displayName}`}
           handleOnClick={(): Promise<void> => handleAuthenticate(authenticator.authenticatorId)}
@@ -345,7 +345,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   /**
    * Renders the circular progress component while the component or text is loading.
    */
-  if (authContext.isComponentLoading || isLoading || authContext.isBrandingLoading) {
+  if (authContext?.isComponentLoading || isLoading || authContext?.isBrandingLoading) {
     return (
       <div className="Box-circularProgressHolder">
         <CircularProgress className="circular-progress" />
@@ -364,14 +364,14 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   return (
     <ThemeProvider theme={generateThemeSignIn(componentBranding?.preference.theme)}>
       <UISignIn className="Box-asgardeoSignIn">
-        {showLogo && !(isLoading || authContext.isComponentLoading) && (
+        {showLogo && !(isLoading || authContext?.isComponentLoading) && (
           <UISignIn.Image className="asgardeo-sign-in-logo" src={imgUrl} />
         )}
         {authContext?.authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
           <>
             {renderSignIn()}
 
-            {showFooter && !(isLoading || authContext.isComponentLoading) && (
+            {showFooter && !(isLoading || authContext?.isComponentLoading) && (
               <UISignIn.Footer
                 className="asgardeo-sign-in-footer"
                 copyrights={{children: copyrightText}}
