@@ -1,5 +1,13 @@
 # @asgardeo/react
 
+## 0.2.3
+
+### Patch Changes
+
+- [#38](https://github.com/asgardeo/web-ui-sdks/pull/38)
+  [`9d577ed`](https://github.com/asgardeo/web-ui-sdks/commit/9d577ed83b3ba138b884d2a2aa0f51f4dc2d7d79) Thanks
+  [@DonOmalVindula](https://github.com/DonOmalVindula)! - Fix loading state issues in the React SDK
+
 ## 0.2.2
 
 ### Patch Changes
