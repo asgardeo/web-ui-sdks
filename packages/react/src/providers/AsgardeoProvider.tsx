@@ -55,10 +55,10 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
   const [accessToken, setAccessToken] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
   const [user, setUser] = useState<MeAPIResponse>();
-
   const [isBrandingLoading, setIsBrandingLoading] = useState<boolean>(true);
   const [isTextLoading, setIsTextLoading] = useState<boolean>(true);
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
+  const [isComponentLoading, setIsComponentLoading] = useState<boolean>(true);
   const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
   const [username, setUsername] = useState<string>('');
 
@@ -137,13 +137,15 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
       isAuthLoading,
       isAuthenticated,
       isBrandingLoading,
-      isGlobalLoading: isBrandingLoading || isTextLoading || isAuthLoading,
+      isComponentLoading,
+      isGlobalLoading: isAuthLoading || isBrandingLoading || isComponentLoading || isTextLoading,
       isTextLoading,
       onSignOutRef,
       setAuthResponse,
       setAuthentication,
       setIsAuthLoading,
       setIsBrandingLoading,
+      setIsComponentLoading,
       setIsTextLoading,
       setOnSignIn,
       setOnSignOut,
@@ -158,9 +160,11 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
       isAuthLoading,
       isAuthenticated,
       isBrandingLoading,
+      isComponentLoading,
       isTextLoading,
       setAuthResponse,
       setAuthentication,
+      setIsComponentLoading,
       setOnSignIn,
       setOnSignOut,
       setUsername,

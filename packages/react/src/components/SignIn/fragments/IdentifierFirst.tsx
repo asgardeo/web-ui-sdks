@@ -18,7 +18,7 @@
 
 import {ScreenType, keys} from '@asgardeo/js';
 import {CircularProgress, Grid, Skeleton} from '@oxygen-ui/react';
-import {PropsWithChildren, ReactElement, useContext, useState} from 'react';
+import {PropsWithChildren, ReactElement, useContext} from 'react';
 import AsgardeoContext from '../../../contexts/asgardeo-context';
 import useTranslations from '../../../hooks/use-translations';
 import BasicAuthProps from '../../../models/basic-auth-props';
