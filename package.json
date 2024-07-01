@@ -24,6 +24,7 @@
     "lint": "nx run-many --target=lint --parallel",
     "publish:packages": "changeset publish",
     "test": "nx run-many --target=test --parallel",
+    "typecheck": "nx run-many --target=typecheck --parallel",
     "version:packages": "changeset version && pnpm install --lockfile-only"
   },
   "devDependencies": {
