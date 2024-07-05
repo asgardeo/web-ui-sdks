@@ -16,13 +16,13 @@
  * under the License.
  */
 
+import {AsgardeoUIException} from '@asgardeo/js';
 import {useContext, useEffect} from 'react';
 import AsgardeoContext from '../contexts/asgardeo-context';
 import AuthContext from '../models/auth-context';
 import {Hooks, UseOnProps} from '../models/use-on';
-import {AsgardeoUIException} from '@asgardeo/js';
 
-const useOn = (props: UseOnProps) => {
+const useOn = (props: UseOnProps): void => {
   const {callback, event} = props;
 
   const contextValue: AuthContext = useContext(AsgardeoContext);

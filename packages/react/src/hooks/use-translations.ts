@@ -17,10 +17,10 @@
  */
 
 import {useContext, useEffect, useState} from 'react';
+import AsgardeoContext from '../contexts/asgardeo-context';
 import I18nContext from '../contexts/i18n-context';
 import {I18n, SetTranslationsProps} from '../models/i18n';
 import UseTranslations from '../models/use-translations';
-import AsgardeoContext from '../contexts/asgardeo-context';
 
 /**
  * `useTranslations` is a custom hook that fetches translations.
@@ -40,7 +40,7 @@ const useTranslations = (props: SetTranslationsProps): UseTranslations => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const {setIsTextLoading} = useContext(AsgardeoContext);
-  
+
   const contextValue: I18n = useContext(I18nContext);
   const {text, setTranslations} = contextValue;
 

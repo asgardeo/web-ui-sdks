@@ -36,6 +36,7 @@ import {CircularProgress, ThemeProvider} from '@oxygen-ui/react';
 import {FC, ReactElement, useContext, useEffect, useState} from 'react';
 import BasicAuth from './fragments/BasicAuth';
 import EmailOtp from './fragments/EmailOtp';
+import IdentifierFirst from './fragments/IdentifierFirst';
 import LoginOptionsBox from './fragments/LoginOptionsBox';
 import SmsOtp from './fragments/SmsOtp';
 import Totp from './fragments/Totp';
@@ -50,7 +51,6 @@ import {SignIn as UISignIn} from '../../oxygen-ui-react-auth-components';
 import generateThemeSignIn from '../../theme/generate-theme-sign-in';
 import SPACryptoUtils from '../../utils/crypto-utils';
 import './sign-in.scss';
-import IdentifierFirst from './fragments/IdentifierFirst';
 
 /**
  * This component provides the sign-in functionality.

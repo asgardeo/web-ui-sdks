@@ -70,44 +70,48 @@ const SignInPinInput: ForwardRefExoticComponent<SignInPinInputProps> & WithWrapp
       }
     }, [totp, onPinChange]);
 
-    const handleChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newTotp: string[] = [...totp];
-      newTotp[index] = event.target.value;
-      setTotp(newTotp);
-
-      /**
-       * If a character is entered and there's a next TextField, focus it
-       */
-      if (event.target.value && index < totp.length - 1) {
-        refs.current[index + 1].current?.focus();
-      }
-    };
-
-    const handleKeyDown = (index: number) => (event: React.KeyboardEvent<HTMLInputElement>) => {
-      /**
-       * If the backspace key is pressed and the current field is empty
-       */
-      if (event.key === 'Backspace' && totp[index] === '') {
-        /**
-         * Prevent the default action to stop deleting characters in the previous field
-         */
-        event.preventDefault();
+    const handleChange =
+      (index: number) =>
+      (event: React.ChangeEvent<HTMLInputElement>): void => {
+        const newTotp: string[] = [...totp];
+        newTotp[index] = event.target.value;
+        setTotp(newTotp);
 
         /**
-         * If there's a previous field, focus it
+         * If a character is entered and there's a next TextField, focus it
          */
-        if (index > 0) {
-          refs.current[index - 1].current?.focus();
+        if (event.target.value && index < totp.length - 1) {
+          refs.current[index + 1].current?.focus();
+        }
+      };
+
+    const handleKeyDown =
+      (index: number) =>
+      (event: React.KeyboardEvent<HTMLInputElement>): void => {
+        /**
+         * If the backspace key is pressed and the current field is empty
+         */
+        if (event.key === 'Backspace' && totp[index] === '') {
+          /**
+           * Prevent the default action to stop deleting characters in the previous field
+           */
+          event.preventDefault();
 
           /**
-           * Clear the value of the previous field
+           * If there's a previous field, focus it
            */
-          const newTotp: string[] = [...totp];
-          newTotp[index - 1] = '';
-          setTotp(newTotp);
+          if (index > 0) {
+            refs.current[index - 1].current?.focus();
+
+            /**
+             * Clear the value of the previous field
+             */
+            const newTotp: string[] = [...totp];
+            newTotp[index - 1] = '';
+            setTotp(newTotp);
+          }
         }
-      }
-    };
+      };
 
     return (
       <Box className={classes} ref={ref} {...rest}>

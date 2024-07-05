@@ -35,7 +35,13 @@ import './email-otp.scss';
  * @param {AlertType} props.alert - Alert type.
  * @return {ReactElement}
  */
-const EmailOtp = ({alert, brandingProps, authenticator, children, handleAuthenticate}: PropsWithChildren<EmailOtpProps>): ReactElement => {
+const EmailOtp = ({
+  alert,
+  brandingProps,
+  authenticator,
+  children,
+  handleAuthenticate,
+}: PropsWithChildren<EmailOtpProps>): ReactElement => {
   const [inputValue, setInputValue] = useState<string>();
   const [isContinueLoading, setIsContinueLoading] = useState<boolean>(false);
   const [isResendLoading, setIsResendLoading] = useState<boolean>(false);
@@ -90,7 +96,7 @@ const EmailOtp = ({alert, brandingProps, authenticator, children, handleAuthenti
         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setInputValue(e.target.value)}
       />
 
-      { children }
+      {children}
 
       <UISignIn.Button
         fullWidth
