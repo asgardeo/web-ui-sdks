@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "dist",
+    "types": ["jest", "node"]
+  },
+  "extends": "./tsconfig.json",
+  "include": [
+    "test-configs/**/*",
+    "jest.config.js",
+    "jest.config.ts",
+    "**/*.test.js",
+    "**/*.test.ts",
+    "**/*.spec.js",
+    "**/*.spec.ts",
+    "**/*.test.d.ts",
+    "**/*.spec.d.ts"
+  ]
+}

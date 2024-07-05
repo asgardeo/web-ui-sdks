@@ -33,16 +33,24 @@
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "pnpm jest --passWithNoTests",
+    "test:ci": "pnpm jest --passWithNoTests --coverage"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@jest/types": "^29.6.3",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-image": "^3.0.3",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@testing-library/dom": "^10.3.0",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@types/jest": "^29.5.12",
     "@types/node": "^20.12.7",
     "@types/randombytes": "^2.0.3",
     "@types/react": "^18.2.79",
@@ -51,6 +59,8 @@
     "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?fa0b844715320a3953d6d055997c0770f8695082",
     "@wso2/stylelint-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/stylelint-config?fa0b844715320a3953d6d055997c0770f8695082",
     "eslint": "~8.57.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -60,6 +70,7 @@
     "rollup-plugin-styles": "^4.0.0",
     "sass": "^1.75.0",
     "stylelint": "15.1.0",
+    "ts-jest": "^29.1.5",
     "tslib": "^2.6.2",
     "typescript": "5.1.6"
   },
