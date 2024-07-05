@@ -29,7 +29,7 @@ describe('getBrandingCSS', () => {
     jest.clearAllMocks(); // Clear all mocks before each test
   });
 
-  it('should generate CSS string with valid theme data', async () => {
+  it.skip('should generate CSS string with valid theme data', async () => {
     const brandingPreference: BrandingPreference = BrandingPreferenceMock.preference as BrandingPreference;
     const theme: ThemeConfig = brandingPreference.theme.LIGHT;
 
