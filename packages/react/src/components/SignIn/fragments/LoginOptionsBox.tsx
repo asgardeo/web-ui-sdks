@@ -30,12 +30,12 @@ import {SignIn as UISignIn} from '../../../oxygen-ui-react-auth-components';
 
 const images: {[key: string]: string} = {
   'Email OTP': emailSolid,
-  facebook: facebook,
   Github: github,
   Google: google,
   Microsoft: microsoft,
   'SMS OTP': smsIcon,
   TOTP: totp,
+  facebook,
 };
 
 /**

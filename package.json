@@ -30,7 +30,11 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.3",
-    "nx": "18.2.4"
+    "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?fa0b844715320a3953d6d055997c0770f8695082",
+    "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?fa0b844715320a3953d6d055997c0770f8695082",
+    "eslint": "~8.57.0",
+    "nx": "18.2.4",
+    "prettier": "^3.2.5"
   },
   "workspaces": [
     "packages/*",

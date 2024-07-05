@@ -96,7 +96,7 @@ export default class SPACryptoUtils implements CryptoUtils<Buffer | string> {
       jwtVerifyOptions,
     )
       .then(() => Promise.resolve(true))
-      .catch(error =>
+      .catch((error: Error & {claim?: string; code?: string; reason?: string}) =>
         Promise.reject(
           new AsgardeoUIException(
             'REACT_UI-CRYPTO-UTILS-VJ-IV01',
