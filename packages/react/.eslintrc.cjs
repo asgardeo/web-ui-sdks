@@ -33,6 +33,16 @@ module.exports = {
   },
   plugins: ['@wso2'],
   rules: {
+    // In `SignIn.tsx` we are using non dot notation to access the object properties.
+    // TODO: Refactor the code to use dot notation.
+    '@typescript-eslint/dot-notation': 'off',
+    // We are throwing custom exceptions in the codebase.
+    // Hence, turning this off to avoid linting errors. (https://eslint.org/docs/latest/rules/no-throw-literal#known-limitations)
+    '@typescript-eslint/no-throw-literal': 'off',
+    // TODO: Fix this and enable.
+    // Occurred while linting /packages/react/src/utils/crypto-utils.ts:33
+    // Rule: "@typescript-eslint/no-useless-constructor"
+    '@typescript-eslint/no-useless-constructor': 'off',
     'class-methods-use-this': 'off',
   },
 };

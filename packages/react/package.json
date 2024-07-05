@@ -31,7 +31,9 @@
     "customize"
   ],
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "publishConfig": {
     "access": "public"

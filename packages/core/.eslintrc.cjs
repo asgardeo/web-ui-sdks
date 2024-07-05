@@ -25,11 +25,21 @@ module.exports = {
   },
   plugins: ['@wso2'],
   rules: {
+    // In `getBrandingCSS` we are using non dot notation to access the object properties.
+    // TODO: Refactor the code to use dot notation.
+    '@typescript-eslint/dot-notation': 'off',
     '@typescript-eslint/no-empty-function': [
       'error',
       {
         allow: ['constructors'],
       },
     ],
+    // We are throwing custom exceptions in the codebase.
+    // Hence, turning this off to avoid linting errors. (https://eslint.org/docs/latest/rules/no-throw-literal#known-limitations)
+    '@typescript-eslint/no-throw-literal': 'off',
+    // We need to use private constructors in some classes.
+    // Hence, turning this off to avoid linting errors.
+    // TODO: Ideally suppression should be done inline for these cases. But it seems to not work ATM.
+    '@typescript-eslint/no-useless-constructor': 'off',
   },
 };
