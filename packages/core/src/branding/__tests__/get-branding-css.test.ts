@@ -19,7 +19,7 @@
 import BrandingPreferenceMock from './__mocks__/branding-preference.json';
 import {BrandingPreference, ThemeConfig} from '../../models/branding-api-response';
 import GetBrandingProps from '../../models/get-branding-props';
-import getBranding from '../get-branding'; // Import the function that getBrandingCSS depends on
+import getBranding from '../get-branding';
 import getBrandingCSS from '../get-branding-css';
 
 jest.mock('../get-branding', () => jest.fn());
