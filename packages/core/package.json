@@ -49,6 +49,7 @@
     "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?fa0b844715320a3953d6d055997c0770f8695082",
     "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?fa0b844715320a3953d6d055997c0770f8695082",
     "eslint": "~8.57.0",
+    "jest": "^29.7.0",
     "prettier": "^3.2.5",
     "rollup": "^4.17.2",
     "rollup-plugin-dts": "^6.1.0",
