@@ -181,6 +181,15 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           files: ./packages/core/coverage/coverage-final.json
+          flags: '@asgardeo/js'
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload `@asgardeo/react` coverage reports to Codecov
+        id: upload-asgardeo-react-coverage
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          files: ./packages/core/coverage/coverage-final.json
+          flags: '@asgardeo/react'
           token: ${{ secrets.CODECOV_TOKEN }}
 
   build:
