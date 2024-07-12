@@ -24,14 +24,35 @@ codecov:
   require_ci_to_pass: yes
   notify:
     wait_for_ci: yes
+
 coverage:
   status:
     project:
       default:
-        enabled: yes
-        threshold: null
-        target: auto
-    patch:
-      default:
-        target: 80%
-        threshold: 40%
+        target: 50%
+      '@asgardeo/js':
+        target: 50%
+        flags:
+          - '@asgardeo/js'
+      '@asgardeo/react':
+        target: 50%
+        flags:
+          - '@asgardeo/react'
+
+comment:
+  layout:  "diff, flags, files"
+  behavior: default
+  require_changes: false
+  require_base: yes
+  require_head: yes
+  branches: null
+
+flags:
+  '@asgardeo/js':
+    paths:
+      - packages/core/src/**/*.ts
+    carryforward: false
+  '@asgardeo/react':
+    paths:
+      - packages/react/src/**/*.ts
+    carryforward: false
