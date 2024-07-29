@@ -49,11 +49,11 @@ const useTranslations = (props: SetTranslationsProps): UseTranslations => {
       setIsLoading(!response);
       setIsTextLoading(!response);
     });
-  }, [componentLocaleOverride, componentTextOverrides, screen, setTranslations]);
+  }, [componentLocaleOverride, componentTextOverrides, screen, setIsTextLoading, setTranslations]);
 
   useEffect(() => {
     setIsTextLoading(isLoading);
-  }, [isLoading]);
+  }, [isLoading, setIsTextLoading]);
 
   /**
    * `t` is a function that retrieves a specific translation from the fetched translations.
