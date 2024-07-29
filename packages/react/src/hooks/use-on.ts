@@ -38,7 +38,7 @@ const useOn = (props: UseOnProps): void => {
       default:
         throw new AsgardeoUIException('REACT-USE_ON-UO-IV-01', 'Invalid event type provided.');
     }
-  }, []);
+  }, [callback, contextValue, event]);
 };
 
 export default useOn;

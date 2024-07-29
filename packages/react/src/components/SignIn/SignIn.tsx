@@ -82,6 +82,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   const {config} = useConfig();
 
   const authContext: AuthContext | undefined = useContext(AsgardeoContext);
+  const {setAuthResponse, setIsComponentLoading} = authContext;
   const brandingPreference: Branding = useContext(BrandingPreferenceContext);
 
   const {isLoading, t} = useTranslations({
@@ -102,16 +103,16 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
      */
     authorize()
       .then((response: AuthApiResponse) => {
-        authContext?.setAuthResponse(response);
+        setAuthResponse(response);
       })
       .catch((error: Error) => {
         setAlert({alertType: {error: true}, key: keys.common.error});
         throw new AsgardeoUIException('REACT_UI-SIGN_IN-SI-SE01', 'Authorization failed', error.stack);
       })
       .finally(() => {
-        authContext?.setIsComponentLoading(false);
+        setIsComponentLoading(false);
       });
-  }, []);
+  }, [setAuthResponse, setIsComponentLoading]);
 
   /**
    * Handles the generalized authentication process.
