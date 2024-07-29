@@ -1,35 +1,42 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-      "jsx": "react-jsx",
-      "target": "es2016",
-      "module": "ESNext",
-      "emitDecoratorMetadata": true,
-      "esModuleInterop": true,
-      "experimentalDecorators": true,
-      "forceConsistentCasingInFileNames": true,
-      "strict": false,
-      "skipLibCheck": true,
-      "skipDefaultLibCheck": true,
-      "allowJs": true,
-      "allowSyntheticDefaultImports": true,
-      "declaration": true,
-      "declarationDir": "dist/types",
-      "outDir": "dist",
-      "moduleResolution": "node",
-      "importHelpers": true,
-      "resolveJsonModule": true,
-      "noImplicitOverride": true,
-      "noPropertyAccessFromIndexSignature": true,
-      "noImplicitReturns": true,
-      "noFallthroughCasesInSwitch": true,
+  "compileOnSave": false,
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "target": "es2016",
+    "module": "ESNext",
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationDir": "dist/types",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@unit-testing": ["./test-configs/utils.tsx"]
+    }
   },
-    "include": [],
-    "files": [],
-    "exclude": ["node_modules", "tmp"],
-    "references": [
-        {
-          "path": "./tsconfig.lib.json"
-        }
+  "include": [],
+  "files": [],
+  "exclude": ["node_modules", "tmp", "dist"],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
   ]
 }

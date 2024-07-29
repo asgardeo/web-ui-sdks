@@ -10,6 +10,11 @@ on:
       - "LICENSE"
   workflow_dispatch:
 
+# Avoid running multiple builds for the same PR.
+concurrency:
+  group: pr-builder-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -169,7 +174,23 @@ jobs:
 
       - name: 🃏 Run Jest & Collect Coverage
         id: run-jest-test-and-coverage
-        run: pnpm test
+        run: pnpm test:ci
+
+      - name: Upload `@asgardeo/js` coverage reports to Codecov
+        id: upload-asgardeo-js-coverage
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          files: ./packages/core/coverage/coverage-final.json
+          flags: '@asgardeo/js'
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload `@asgardeo/react` coverage reports to Codecov
+        id: upload-asgardeo-react-coverage
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          files: ./packages/core/coverage/coverage-final.json
+          flags: '@asgardeo/react'
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     name: 🚧 Build

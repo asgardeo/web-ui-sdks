@@ -25,6 +25,7 @@
     "publish:packages": "changeset publish",
     "test": "nx run-many --target=test --parallel",
     "typecheck": "nx run-many --target=typecheck --parallel",
+    "test:ci": "nx run-many --target=test:ci --parallel",
     "version:packages": "changeset version && pnpm install --lockfile-only"
   },
   "devDependencies": {
