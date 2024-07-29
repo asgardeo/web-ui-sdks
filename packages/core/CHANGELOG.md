@@ -1,5 +1,13 @@
 # @asgardeo/js
 
+## 0.1.3
+
+### Patch Changes
+
+- [#47](https://github.com/asgardeo/web-ui-sdks/pull/47)
+  [`3d3af92`](https://github.com/asgardeo/web-ui-sdks/commit/3d3af92338dec2d4b8aff09f9ba9da7d68781108) Thanks
+  [@dasuni-30](https://github.com/dasuni-30)! - Add support to esm in core package
+
 ## 0.1.2
 
 ### Patch Changes

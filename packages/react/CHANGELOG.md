@@ -1,5 +1,21 @@
 # @asgardeo/react
 
+## 0.2.4
+
+### Patch Changes
+
+- [#44](https://github.com/asgardeo/web-ui-sdks/pull/44)
+  [`355234c`](https://github.com/asgardeo/web-ui-sdks/commit/355234c5da7f873675f0dde8ac34fe18946c85c5) Thanks
+  [@dasuni-30](https://github.com/dasuni-30)! - Update package.json to support ESM modules
+
+- [#48](https://github.com/asgardeo/web-ui-sdks/pull/48)
+  [`f0bbb30`](https://github.com/asgardeo/web-ui-sdks/commit/f0bbb300f5ca7e27bab3ce90cb1bae9dc550aa98) Thanks
+  [@dasuni-30](https://github.com/dasuni-30)! - Fix EsLint issues in the PR build failure
+
+- Updated dependencies
+  [[`3d3af92`](https://github.com/asgardeo/web-ui-sdks/commit/3d3af92338dec2d4b8aff09f9ba9da7d68781108)]:
+  - @asgardeo/js@0.1.3
+
 ## 0.2.3
 
 ### Patch Changes
