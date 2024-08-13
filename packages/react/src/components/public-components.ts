@@ -17,6 +17,7 @@
  */
 
 export {default as SignIn} from './SignIn/SignIn';
+export {default as SignInGeneric} from './SignIn/SignInGeneric';
 export {default as SignedIn} from './SignedIn/SignedIn';
 export {default as SignedOut} from './SignedOut/SignedOut';
 export {default as SignInButton} from './SignInButton/SignInButton';

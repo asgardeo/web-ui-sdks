@@ -37,23 +37,23 @@ import UseTranslations from '../models/use-translations';
 const useTranslations = (props: SetTranslationsProps): UseTranslations => {
   const {componentLocaleOverride, componentTextOverrides, screen} = props;
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {setIsTextLoading} = useContext(AsgardeoContext);
 
   const contextValue: I18n = useContext(I18nContext);
   const {text, setTranslations} = contextValue;
 
-  useEffect(() => {
-    setTranslations({componentLocaleOverride, componentTextOverrides, screen}).then((response: boolean) => {
-      setIsLoading(!response);
-      setIsTextLoading(!response);
-    });
-  }, [componentLocaleOverride, componentTextOverrides, screen, setTranslations]);
+  // useEffect(() => {
+  //   setTranslations({componentLocaleOverride, componentTextOverrides, screen}).then((response: boolean) => {
+  //     setIsLoading(!response);
+  //     setIsTextLoading(!response);
+  //   });
+  // }, [componentLocaleOverride, componentTextOverrides, screen, setIsTextLoading, setTranslations]);
 
-  useEffect(() => {
-    setIsTextLoading(isLoading);
-  }, [isLoading]);
+  // useEffect(() => {
+  //   setIsTextLoading(isLoading);
+  // }, [isLoading, setIsTextLoading]);
 
   /**
    * `t` is a function that retrieves a specific translation from the fetched translations.

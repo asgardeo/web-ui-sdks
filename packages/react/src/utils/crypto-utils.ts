@@ -73,7 +73,7 @@ export default class SPACryptoUtils implements CryptoUtils<Buffer | string> {
     clientID: string,
     issuer: string,
     subject: string,
-    clockTolerance?: number,
+    clockTolerance?: any,
     validateJwtIssuer?: boolean,
   ): Promise<boolean> {
     const jwtVerifyOptions: JwtVerifyOptions = {

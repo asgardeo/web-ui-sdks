@@ -16,14 +16,17 @@
  * under the License.
  */
 
-import {BrandingProps} from '@asgardeo/js';
+import {AuthApiResponse, Branding, BrandingProps} from '@asgardeo/js';
 import {ReactElement} from 'react';
 
 export interface SignInProps {
+  authResponse?: AuthApiResponse;
   basicAuthChildren?: ReactElement;
+  brandingPreference?: Branding;
   brandingProps?: BrandingProps;
   emailOtpChildren?: ReactElement;
   identifierFirstChildren?: ReactElement;
+  isComponentLoading?: boolean;
   showFooter?: boolean;
   showLogo?: boolean;
   showSignUp?: boolean;

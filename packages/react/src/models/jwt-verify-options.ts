@@ -19,7 +19,7 @@
 interface JwtVerifyOptions {
   algorithms: string[];
   audience: string;
-  clockTolerance: number;
+  clockTolerance: any;
   issuer: string;
   subject: string;
 }
