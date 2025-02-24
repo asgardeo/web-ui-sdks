@@ -24,10 +24,10 @@ module.exports = {
     // 'plugin:@wso2/vue',
     'plugin:@wso2/strict',
     'plugin:@wso2/internal',
-    'plugin:@wso2/prettier'
+    'plugin:@wso2/prettier',
   ],
   parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.json')],
+    project: [path.resolve(__dirname, 'tsconfig.json'), path.resolve(__dirname, 'tsconfig.eslint.json')],
   },
-  plugins: ['@wso2']
+  plugins: ['@wso2'],
 };

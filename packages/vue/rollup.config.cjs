@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) {{year}}, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 const commonjs = require('@rollup/plugin-commonjs');
 const image = require('@rollup/plugin-image');
 const nodeResolve = require('@rollup/plugin-node-resolve');
@@ -54,7 +55,7 @@ module.exports = [
         preferBuiltins: true,
       }),
       commonjs(),
-      typescript({ tsconfig: './tsconfig.lib.json' }),
+      typescript({tsconfig: './tsconfig.lib.json'}),
       styles({
         mode: 'inject',
       }),
@@ -65,7 +66,7 @@ module.exports = [
     cache: false,
     external: [/\.(sass|scss|css)$/] /* ignore style files */,
     input: 'dist/esm/types/index.d.ts',
-    output: [{ file: 'dist/index.d.ts', format: 'esm' }],
+    output: [{file: 'dist/index.d.ts', format: 'esm'}],
     plugins: [dts.default()],
   },
 ];
