@@ -1,7 +1,7 @@
 {
-  "name": "@asgardeo/react",
-  "version": "0.2.4",
-  "description": "React Wrapper to build customizable login UIs for Asgardeo or Identity Server",
+  "name": "@asgardeo/vue",
+  "version": "0.0.0",
+  "description": "Vue SDK for Asgardeo - Authentication and Identity Management",
   "main": "dist/esm/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
@@ -13,27 +13,35 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/asgardeo/web-ui-sdks/tree/main/packages/react#readme",
+  "homepage": "https://github.com/asgardeo/web-ui-sdks/tree/main/packages/vue#readme",
   "bugs": {
     "url": "https://github.com/asgardeo/web-ui-sdks/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/asgardeo/web-ui-sdks",
-    "directory": "packages/react"
+    "directory": "packages/vue"
   },
   "keywords": [
     "asgardeo",
+    "authentication",
     "identity",
-    "ui",
-    "react",
+    "oauth",
+    "oidc",
+    "vue",
+    "vue3",
     "login",
-    "customize"
+    "sso",
+    "identity-management"
   ],
   "scripts": {
     "build": "rollup -c",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "dev": "rollup -c -w",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
+    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "type-check": "vue-tsc --noEmit",
+    "test": "vitest --passWithNoTests",
+    "prepublishOnly": "npm run build"
   },
   "publishConfig": {
     "access": "public"
@@ -44,16 +52,15 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/node": "^20.12.7",
-    "@types/randombytes": "^2.0.3",
-    "@types/react": "^18.2.79",
-    "@types/react-dom": "^18.2.25",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/eslint-config-prettier": "^8.0.0",
+    "@vue/eslint-config-typescript": "^12.0.0",
+    "@vue/test-utils": "^2.4.6",
     "@wso2/eslint-plugin": "catalog:",
     "@wso2/prettier-config": "catalog:",
     "@wso2/stylelint-config": "catalog:",
     "eslint": "~8.57.0",
     "prettier": "^3.2.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "rollup": "^4.17.2",
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-polyfill-node": "^0.13.0",
@@ -61,11 +68,13 @@
     "sass": "^1.75.0",
     "stylelint": "15.1.0",
     "tslib": "^2.6.2",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "vitest": "^3.0.6",
+    "vue-tsc": "^2.2.2"
   },
   "dependencies": {
+    "@asgardeo/auth-spa": "^3.1.4",
     "@asgardeo/js": "*",
-    "@oxygen-ui/react": "^1.11.0",
     "base64url": "^3.0.1",
     "buffer": "^6.0.3",
     "clsx": "^2.1.1",
@@ -74,7 +83,11 @@
     "randombytes": "^2.1.0"
   },
   "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0"
+    "vue": ">=3.5.13"
+  },
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "types": "./dist/index.d.ts"
   }
 }
