@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "outDir": "dist",
+    "declarationDir": "types",
+    "types": ["node"],
+    "emitDeclarationOnly": true
+  },
+  "exclude": [
+    "test-configs",
+    "vitest.config.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.js",
+    "**/*.test.js",
+    "**/*.spec.vue",
+    "**/*.test.vue",
+    "scripts",
+    "dist"
+  ],
+  "include": ["**/*.js", "**/*.ts", "**/*.vue", "rollup.config.cjs", "declarations.d.ts"]
+}
