@@ -1,45 +1,105 @@
-# vue-vite
+# Asgardeo Auth Vue.js SDK Usage Example (Single Page Application)
 
-This template should help get you started developing with Vue 3 in Vite.
+This sample is developed to demonstrate the basic usage of the Asgardeo Auth Vue.js SDK.
 
-## Recommended IDE Setup
+## Getting Started
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+### Prerequisites
+- `Node.js` (version 10 or above).
 
-## Type Support for `.vue` Imports in TS
+### Register an Application
+//TODO
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+Make sure to add `http://localhost:5173` as a Redirect URL and also add it under allowed origins.
 
-## Customize configuration
+### Download the Sample
+//TODO
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### Configure the Sample
 
-## Project Setup
+Update the authentication configuration in your `main.ts` file with your registered app details.
 
-```sh
-npm install
+**Note:** You will need to paste in the `client ID` generated for the application you registered.
+
+```typescript
+import "./assets/main.css";
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
+import { asgardeoPlugin } from "./auth/authprovider";
+
+const app = createApp(App);
+
+app.use(router);
+app.use(asgardeoPlugin, {
+  signInRedirectURL: "http://localhost:5173/",
+  signOutRedirectURL: "http://localhost:5173/",
+  clientID: "<ADD_CLIENT_ID_HERE>",
+  baseUrl: "https://api.asgardeo.io/t/<org_name>",
+});
+
+app.mount("#app");
 ```
 
-### Compile and Hot-Reload for Development
+### Run the Application
 
-```sh
-npm run dev
+```bash
+npm install && npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+The app should open at [`http://localhost:5173`](http://localhost:5173)
 
-```sh
-npm run build
+### Change the Application's Development Server Port
+
+By default, the Vite development server runs on port `5173`. In case you wish to change this to something else, follow the steps below.
+
+1. Update the port in your Vite configuration file (`vite.config.js` or `vite.config.ts`):
+   ```javascript
+   export default defineConfig({
+     // Other config options...
+     server: {
+       port: YOUR_PREFERRED_PORT
+     }
+   })
+   ```
+
+2. Update the `signInRedirectURL` & `signOutRedirectURL` in `main.ts` to match your new port.
+
+3. Go to the Asgardeo Console and navigate to the protocol tab of your application:
+   - Update the Authorized Redirect URL.
+   - Update the Allowed Origins.
+
+## Using the Auth Plugin
+
+The Asgardeo Auth plugin is available throughout your Vue application. Here's how to use it in your components:
+
+```vue
+<script setup>
+import { useAsgardeo } from '@asgardeo/vue';
+
+const { isAuthenticated, signIn, signOut, getBasicUserInfo } = useAsgardeo();
+</script>
+
+<template>
+  <div>
+    <button v-if="!isAuthenticated" @click="signIn">Login</button>
+    <button v-else @click="signOut">Logout</button>
+  </div>
+</template>
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+//TODO
 
-```sh
-npm run test:unit
-```
+## Contribute
 
-### Lint with [ESLint](https://eslint.org/)
+Please read [Contributing to the Code Base](http://wso2.github.io/) for details on our code of conduct, and the process for submitting pull requests to us.
 
-```sh
-npm run lint
-```
+### Reporting Issues
+
+We encourage you to report issues, improvements, and feature requests by creating [Github Issues](https://github.com/asgardeo/asgardeo-auth-vue-sdk/issues).
+
+Important: Please be advised that security issues must be reported to security@wso2.com, not as GitHub issues, in order to reach the proper audience. We strongly advise following the WSO2 Security Vulnerability Reporting Guidelines when reporting security issues.
+
+## License
+
+This project is licensed under the Apache License 2.0. See the [LICENSE](../../LICENSE) file for details.
