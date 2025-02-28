@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoSPAClient, type BasicUserInfo} from '@asgardeo/auth-spa';
+import {AsgardeoSPAClient, SPAUtils, type BasicUserInfo} from '@asgardeo/auth-spa';
 import {AuthSPAClientConfig} from '@asgardeo/auth-spa';
 import type {Plugin, Ref, App} from 'vue';
 import {ref, computed} from 'vue';
@@ -49,12 +49,32 @@ export const asgardeoPlugin: Plugin = {
       await auth?.initialize(options);
       isInitialized.value = true;
 
-      isAuthenticated.value = (await auth?.isAuthenticated()) ?? false;
+      const urlParams = new URLSearchParams(window.location.search);
+      const authorizationCode = urlParams.get('code');
+      const state = urlParams.get('state');
+      const sessionState = urlParams.get('session_state');
 
-      if (isAuthenticated.value) {
-        user.value = (await auth?.getBasicUserInfo()) ?? null;
+      if (authorizationCode && sessionState && state) {
+        try {
+          const result = await auth?.signIn({callOnlyOnRedirect: true}, authorizationCode, sessionState, state);
+          if (result) {
+            user.value = result;
+            
+            isAuthenticated.value = true;
+          }
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (error) {
+          console.error('Sign in failed during initialization', error);
+        }
+      } else {
+        isAuthenticated.value = (await auth?.isAuthenticated()) ?? false;
+
+        if (isAuthenticated.value) {
+          user.value = (await auth?.getBasicUserInfo()) ?? null;
+        }
       }
     };
+
     initialize();
 
     const authContext: AsgardeoAuthContext = {
@@ -63,8 +83,27 @@ export const asgardeoPlugin: Plugin = {
       getBasicUserInfo: (): Promise<BasicUserInfo> => auth?.getBasicUserInfo(),
       isAuthenticated: computed(() => isAuthenticated.value),
       isInitialized: computed(() => isInitialized.value),
-      signIn: (): Promise<BasicUserInfo | undefined> => auth?.signIn(),
-      signOut: (): Promise<Boolean> => auth?.signOut(),
+      signIn: async (): Promise<BasicUserInfo | undefined> => {
+        try {
+          const result = await auth?.signIn();
+          if (result) {
+            user.value = result;
+            isAuthenticated.value = true;
+          }
+          return result;
+        } catch (error) {
+          console.error('Sign in failed', error);
+          throw error;
+        }
+      },
+      signOut: async (): Promise<Boolean> => {
+        const result = await auth?.signOut();
+        if (result) {
+          user.value = null;
+          isAuthenticated.value = false;
+        }
+        return result;
+      },
       user: computed(() => user.value),
     };
 
