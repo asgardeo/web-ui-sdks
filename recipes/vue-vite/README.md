@@ -5,7 +5,7 @@ This sample is developed to demonstrate the basic usage of the Asgardeo Auth Vue
 ## Getting Started
 
 ### Prerequisites
-- `Node.js` (version 10 or above).
+- `Node.js` (version 20 or above).
 
 ### Register an Application
 //TODO
@@ -92,11 +92,11 @@ const { isAuthenticated, signIn, signOut, getBasicUserInfo } = useAsgardeo();
 
 ## Contribute
 
-Please read [Contributing to the Code Base](http://wso2.github.io/) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [Contributing to the Code Base](../../CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ### Reporting Issues
 
-We encourage you to report issues, improvements, and feature requests by creating [Github Issues](https://github.com/asgardeo/asgardeo-auth-vue-sdk/issues).
+We encourage you to report issues, improvements, and feature requests by creating [Github Issues](https://github.com/asgardeo/web-ui-sdks/issues).
 
 Important: Please be advised that security issues must be reported to security@wso2.com, not as GitHub issues, in order to reach the proper audience. We strongly advise following the WSO2 Security Vulnerability Reporting Guidelines when reporting security issues.
 
