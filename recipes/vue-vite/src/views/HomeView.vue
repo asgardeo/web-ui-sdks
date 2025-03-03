@@ -1,27 +1,69 @@
-<!--
- * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
- *
- * WSO2 LLC. licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- -->
-
 <script setup lang="ts">
-import AuthLayout from '../components/AuthLayout.vue'
+import { ref, onMounted } from 'vue'
+import { type SignInConfig, type BasicUserInfo } from '@asgardeo/vue'
+import { useAsgardeoContext } from '@asgardeo/vue'
+
+const config: SignInConfig = {
+  signInRedirectURL: 'http://localhost:5173/',
+  signOutRedirectURL: 'http://localhost:5173/',
+  clientID: 'DlhbfqNZEP0CGRN2933Aa1cwoAMa',
+  baseUrl: 'https://api.asgardeo.io/t/thineth6424',
+  scope: 'openid profile',
+}
+
+const auth = useAsgardeoContext()
+const { signIn } = useAsgardeoContext()
+const userInfo = ref<BasicUserInfo | null>(null)
+
+const getUser = async () => {
+  try {
+    const user = await auth?.getBasicUserInfo()
+    console.log(user)
+    if (user) {
+      userInfo.value = user
+    }
+  } catch (error) {
+    console.error('Error fetching user info', error)
+  }
+}
+const login = async () => {
+  try {
+    await signIn()
+  } catch (error) {
+    console.error('Sign in failed', error)
+  }
+}
+
+// onMounted(async () => {
+
+//   const urlParams = new URLSearchParams(window.location.search);
+//   const authorizationCode = urlParams.get("code");
+//   const state = urlParams.get("state");
+//   const sessionState = urlParams.get("session_state");
+
+//   if (authorizationCode && sessionState && state) {
+//     try {
+//       const result = await auth?.signIn(
+//         config,
+//         authorizationCode,
+//         sessionState,
+//         state
+//       );
+//       if (result) {
+//         userInfo.value = result;
+//       }
+//       window.history.replaceState({}, document.title, window.location.pathname);
+//     } catch (error) {
+//       console.error("Sign in failed", error);
+//     }
+//   }
+// });
 </script>
 
 <template>
   <main>
-    <AuthLayout />
+    <button @click="login">Login</button>
+    <button @click="getUser">User</button>
+    <h2>{{ userInfo }}</h2>
   </main>
 </template>
