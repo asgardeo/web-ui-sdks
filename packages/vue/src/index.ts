@@ -18,4 +18,6 @@
 
 export * from './plugins/AsgardeoPlugin';
 export * from '@asgardeo/auth-spa';
+export * from './composables/useAsgardeo';
 export * from './composables/useAsgardeoContext';
+export * from './types';
