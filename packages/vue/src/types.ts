@@ -141,6 +141,6 @@ export interface AuthContextInterface {
   on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): void;
   on(hook: Hooks, callback: (response?: any) => void, id?: string): void;
 
-  // state: AuthStateInterface;
+  state: AuthStateInterface;
   // error: AsgardeoAuthException;
 }

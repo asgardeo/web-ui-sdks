@@ -17,6 +17,7 @@
  */
 
 import {
+  AsgardeoAuthException,
   AsgardeoSPAClient,
   AuthClientConfig,
   Config,
@@ -33,7 +34,7 @@ import {
 } from '@asgardeo/auth-spa';
 import type {Plugin, Ref, App} from 'vue';
 import {ref, computed} from 'vue';
-import type {AuthContextInterface, AuthVueConfig} from '../types';
+import type {AuthContextInterface, AuthStateInterface, AuthVueConfig} from '../types';
 
 export type AsgardeoPluginOptions = AuthVueConfig;
 
@@ -45,7 +46,7 @@ export const asgardeoPlugin: Plugin = {
     const isInitialized: Ref<boolean> = ref(false);
     const isAuthenticated: Ref<boolean> = ref(false);
     const user: Ref<BasicUserInfo | null> = ref<BasicUserInfo | null>(null);
-    const error: Ref<any> = ref<any>(null);
+    const error: Ref<AsgardeoAuthException | null> = ref(null);
     const isLoading: Ref<boolean> = ref(true);
     const initializationAttempted: Ref<boolean> = ref(false);
 
@@ -210,9 +211,8 @@ export const asgardeoPlugin: Plugin = {
         }
       },
 
-      // user: computed(() => user.value),
-      // state: {} as AuthStateInterface,
-      // error: computed(() => error.value),
+      state: {} as AuthStateInterface,
+      // error: computed(() => error.value as AsgardeoAuthException | null),
       isAuthenticated: (): Ref<boolean> => isAuthenticated,
       on: (hook: Hooks, callback: (response?: any) => void, id?: string): void => {
         if (hook === Hooks.CustomGrant && id) {
