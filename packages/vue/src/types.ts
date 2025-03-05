@@ -32,7 +32,7 @@ import {
   OIDCEndpoints,
   SignInConfig,
 } from '@asgardeo/auth-spa';
-import { Ref } from 'vue';
+import {Ref} from 'vue';
 
 export interface VueConfig {
   /**
@@ -103,6 +103,27 @@ export interface AuthStateInterface {
 }
 
 export interface AuthContextInterface {
+  disableHttpHandler(): Promise<boolean>;
+  enableHttpHandler(): Promise<boolean>;
+  error: AsgardeoAuthException;
+  getAccessToken(): Promise<string>;
+  getBasicUserInfo(): Promise<BasicUserInfo>;
+  getDecodedIDToken(): Promise<DecodedIDTokenPayload>;
+  getHttpClient(): Promise<HttpClientInstance>;
+  getIDToken(): Promise<string>;
+  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
+  httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
+  httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
+  isAuthenticated(): Ref<boolean>; // Kept Ref<> from original
+  on(hook: Hooks.CustomGrant, callback: (response?: any) => void, id: string): void;
+  on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): void;
+  on(hook: Hooks, callback: (response?: any) => void, id?: string): void;
+  refreshAccessToken(): Promise<BasicUserInfo>;
+  requestCustomGrant(
+    config: CustomGrantConfig,
+    callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
+  ): void;
+  revokeAccessToken(): Promise<boolean>;
   signIn: (
     config?: SignInConfig,
     authorizationCode?: string,
@@ -114,33 +135,10 @@ export interface AuthContextInterface {
     },
   ) => Promise<BasicUserInfo>;
   signOut: (callback?: (response: boolean) => void) => Promise<boolean>;
-  getBasicUserInfo(): Promise<BasicUserInfo>;
-  httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
-  httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
-  requestCustomGrant(
-    config: CustomGrantConfig,
-    callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
-  ): void;
-  revokeAccessToken(): Promise<boolean>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
-  getHttpClient(): Promise<HttpClientInstance>;
-  getDecodedIDToken(): Promise<DecodedIDTokenPayload>;
-  getIDToken(): Promise<string>;
-  getAccessToken(): Promise<string>;
-  refreshAccessToken(): Promise<BasicUserInfo>;
-  isAuthenticated(): Ref<boolean>;
-  enableHttpHandler(): Promise<boolean>;
-  disableHttpHandler(): Promise<boolean>;
-  updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void>;
+  state: AuthStateInterface;
   trySignInSilently: (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ) => Promise<boolean | BasicUserInfo>;
-
-  on(hook: Hooks.CustomGrant, callback: (response?: any) => void, id: string): void;
-  on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): void;
-  on(hook: Hooks, callback: (response?: any) => void, id?: string): void;
-
-  state: AuthStateInterface;
-  // error: AsgardeoAuthException;
+  updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void>;
 }
