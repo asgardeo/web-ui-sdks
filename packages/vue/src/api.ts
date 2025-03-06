@@ -17,6 +17,7 @@
  */
 
 import {
+  AsgardeoAuthException,
   AsgardeoSPAClient,
   AuthClientConfig,
   BasicUserInfo,
@@ -123,16 +124,15 @@ class AuthAPI {
    * @returns {Promise<boolean>} A promise resolving to `true` if sign-out is successful.
    */
   public async signOut(callback?: (response?: boolean) => void): Promise<boolean> {
-    try {
-      const response = await this._client.signOut();
-      if (callback) {
-        callback(response);
-      }
-      Object.assign(this._authState, {...AuthAPI.DEFAULT_STATE, isLoading: false});
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return this._client
+      .signOut()
+      .then((response: boolean) => {
+        if (callback) {
+          callback(response);
+        }
+        return response;
+      })
+      .catch((error: AsgardeoAuthException) => Promise.reject(error));
   }
 
   /**
@@ -204,7 +204,7 @@ class AuthAPI {
         }
         return response;
       })
-      .catch((error: Error) => Promise.reject(error));
+      .catch((error: AsgardeoAuthException) => Promise.reject(error));
   }
 
   /**
@@ -213,13 +213,13 @@ class AuthAPI {
    * @return {Promise<boolean>} - A promise that resolves with `true` if the process is successful.
    */
   public async revokeAccessToken(): Promise<boolean> {
-    try {
-      await this._client.revokeAccessToken();
-      this._authState = {...AuthAPI.DEFAULT_STATE, isLoading: false};
-      return true;
-    } catch (error: unknown) {
-      return Promise.reject(error);
-    }
+    return this._client
+      .revokeAccessToken()
+      .then(() => {
+        this._authState = {...AuthAPI.DEFAULT_STATE, isLoading: false};
+        return true;
+      })
+      .catch((error: AsgardeoAuthException) => Promise.reject(error));
   }
 
   /**
@@ -405,7 +405,7 @@ class AuthAPI {
         }
         return response;
       })
-      .catch((error: Error) => Promise.reject(error));
+      .catch((error: AsgardeoAuthException) => Promise.reject(error));
   }
 }
 
