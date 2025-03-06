@@ -75,22 +75,22 @@ class AuthAPI {
    * and updating the authentication state if the user is authenticated.
    *
    * @param {SignInConfig} config - The sign-in configuration containing client-specific settings.
-   * @param {string} authorizationcode - The authorization code received from the authentication provider.
+   * @param {string} authorizationCode - The authorization code received from the authentication provider.
    * @param {string} sessionState - The session state value to track the authentication session.
    * @param {string} [authState] - An optional authentication state parameter for additional tracking.
    * @param {{ params: Record<string, unknown> }} [tokenRequestConfig] - Optional token request parameters.
    * @returns {Promise<BasicUserInfo>} A promise resolving to the authenticated user's basic information.
    */
   public async signIn(
-    config: SignInConfig,
-    authorizationcode: string,
-    sessionState: string,
+    config?: SignInConfig,
+    authorizationCode?: string,
+    sessionState?: string,
     authState?: string,
     callback?: (response: BasicUserInfo) => void,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ): Promise<BasicUserInfo> {
     return this._client
-      .signIn(config, authorizationcode, sessionState, authState, tokenRequestConfig)
+      .signIn(config, authorizationCode, sessionState, authState, tokenRequestConfig)
       .then(async (response: BasicUserInfo) => {
         if (!response) {
           return response;
@@ -123,16 +123,16 @@ class AuthAPI {
    * @returns {Promise<boolean>} A promise resolving to `true` if sign-out is successful.
    */
   public async signOut(callback?: (response?: boolean) => void): Promise<boolean> {
-    return this._client
-      .signOut()
-      .then((response: boolean) => {
-        if (callback) {
-          callback(response);
-        }
-        Object.assign(this._authState, {...AuthAPI.DEFAULT_STATE, isLoading: false});
-        return response;
-      })
-      .catch((error: Error) => Promise.reject(error));
+    try {
+      const response = await this._client.signOut();
+      if (callback) {
+        callback(response);
+      }
+      Object.assign(this._authState, {...AuthAPI.DEFAULT_STATE, isLoading: false});
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**
@@ -295,7 +295,7 @@ class AuthAPI {
   /**
    * This method refreshes the access token.
    *
-   * @return {TokenResponseInterface} - A Promise that resolves with an object containing
+   * @return {BasicUserInfo} - A Promise that resolves with an object containing
    * information about the refreshed access token.
    */
   public async refreshAccessToken(): Promise<BasicUserInfo> {

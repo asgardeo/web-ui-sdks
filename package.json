@@ -34,7 +34,8 @@
     "@wso2/prettier-config": "catalog:",
     "eslint": "~8.57.0",
     "nx": "18.2.4",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "typescript": "5.1.6"
   },
   "workspaces": [
     "packages/*",
