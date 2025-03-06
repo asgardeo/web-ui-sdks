@@ -18,7 +18,6 @@
 
 import {
   AsgardeoAuthException,
-  AsgardeoSPAClient,
   AuthClientConfig,
   Config,
   CustomGrantConfig,
@@ -30,37 +29,46 @@ import {
   HttpResponse,
   OIDCEndpoints,
   SignInConfig,
+  SPAUtils,
   type BasicUserInfo,
 } from '@asgardeo/auth-spa';
 import type {Plugin, Ref, App} from 'vue';
-import {ref, computed} from 'vue';
-import type {AuthContextInterface, AuthStateInterface, AuthVueConfig} from '../types';
+import {ref} from 'vue';
+import type {AuthContextInterface, AuthParams, AuthStateInterface, AuthVueConfig} from '../types';
+import AuthAPI from '../api';
 
 export type AsgardeoPluginOptions = AuthVueConfig;
+
+/**
+ * Default `AuthVueConfig` config.
+ */
+const defaultConfig: Partial<AuthVueConfig> = {
+  disableAutoSignIn: true,
+  disableTrySignInSilently: true,
+};
 
 export const ASGARDEO_INJECTION_KEY: symbol = Symbol('asgardeo');
 
 export const asgardeoPlugin: Plugin = {
   install(app: App, options: AsgardeoPluginOptions): void {
-    const auth: AsgardeoSPAClient = AsgardeoSPAClient.getInstance();
+    const authClient: AuthAPI = new AuthAPI();
     const isInitialized: Ref<boolean> = ref(false);
     const isAuthenticated: Ref<boolean> = ref(false);
     const user: Ref<BasicUserInfo | null> = ref<BasicUserInfo | null>(null);
     const error: Ref<AsgardeoAuthException | null> = ref(null);
     const isLoading: Ref<boolean> = ref(true);
-    const initializationAttempted: Ref<boolean> = ref(false);
 
     const initialize = async (): Promise<void> => {
-      if (initializationAttempted.value || isInitialized.value) return;
-      initializationAttempted.value = true;
+      if (isInitialized.value) return;
       isLoading.value = true;
 
       try {
-        await auth.initialize(options);
+        const config: AuthVueConfig = {...defaultConfig, ...options} as AuthVueConfig;
+        await authClient.init(config);
         isInitialized.value = true;
 
-        let isSignedOut = false;
-        auth.on(Hooks.SignOut, () => {
+        let isSignedOut: boolean = false;
+        authClient.on(Hooks.SignOut, () => {
           isSignedOut = true;
           isAuthenticated.value = false;
           user.value = null;
@@ -71,48 +79,45 @@ export const asgardeoPlugin: Plugin = {
           return;
         }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const authorizationCode = urlParams.get('code');
-        const state = urlParams.get('state');
-        const sessionState = urlParams.get('session_state');
-        const errorParam = urlParams.get('error');
+        if (!config.skipRedirectCallback) {
+          const authParams: AuthParams = null;
 
-        if (errorParam) {
-          error.value = {code: errorParam, message: urlParams.get('error_description')};
-          window.history.replaceState({}, document.title, window.location.pathname);
-          isLoading.value = false;
-          return;
+          const url: URL = new URL(location.href);
+
+          if (
+            (SPAUtils.hasAuthSearchParamsInURL() &&
+              new URL(url.origin + url.pathname).toString() === new URL(config?.signInRedirectURL).toString()) ||
+            authParams?.authorizationCode ||
+            url.searchParams.get('error')
+          ) {
+            try {
+              await authClient.signIn(
+                {callOnlyOnRedirect: true},
+                authParams?.authorizationCode,
+                authParams?.sessionState,
+                authParams?.state,
+              );
+              SPAUtils.removeAuthorizationCode();
+            } catch (err) {
+              error.value = err;
+            } finally {
+              isLoading.value = false;
+            }
+            return;
+          }
         }
 
-        if (authorizationCode && sessionState && state) {
+        if (!config.disableAutoSignIn && (await authClient.isSessionActive())) {
           try {
-            const result = await auth.signIn({callOnlyOnRedirect: true}, authorizationCode, sessionState, state);
-
-            if (result) {
-              user.value = result;
-              isAuthenticated.value = true;
-              error.value = null;
-            }
-            window.history.replaceState({}, document.title, window.location.pathname);
+            await authClient.signIn();
           } catch (err) {
             error.value = err;
-          } finally {
-            isLoading.value = false;
           }
-          return;
         }
 
-        // if (!options.disableAutoSignIn && (await auth.isSessionActive())) {
-        //   try {
-        //     await auth.signIn();
-        //   } catch (err) {
-        //     error.value = err;
-        //   }
-        // }
-
-        if (!options.disableTrySignInSilently && !isSignedOut) {
+        if (!config.disableTrySignInSilently && !isSignedOut) {
           try {
-            await auth.trySignInSilently();
+            await authClient.trySignInSilently();
             error.value = null;
           } catch (err) {
             if (err?.code) {
@@ -120,9 +125,9 @@ export const asgardeoPlugin: Plugin = {
             }
           }
         }
-      } catch (error) {
+      } catch (err) {
         console.error('Initialization failed', error);
-        error.value = error;
+        error.value = err;
       } finally {
         isLoading.value = false;
       }
@@ -131,40 +136,43 @@ export const asgardeoPlugin: Plugin = {
     initialize();
 
     const authContext: AuthContextInterface = {
-      getAccessToken: (): Promise<string> => auth.getAccessToken(),
-      getBasicUserInfo: (): Promise<BasicUserInfo> => auth.getBasicUserInfo(),
-      httpRequest: (config: HttpRequestConfig): Promise<HttpResponse<any>> => auth.httpRequest(config),
-      httpRequestAll: (configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> => auth.httpRequestAll(configs),
+      error: error.value,
+      getAccessToken: (): Promise<string> => authClient.getAccessToken(),
+      getBasicUserInfo: (): Promise<BasicUserInfo> => authClient.getBasicUserInfo(),
+      httpRequest: (config: HttpRequestConfig): Promise<HttpResponse<any>> => authClient.httpRequest(config),
+      httpRequestAll: (configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> =>
+        authClient.httpRequestAll(configs),
       requestCustomGrant: async (
         config: CustomGrantConfig,
         callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
       ): Promise<BasicUserInfo | FetchResponse<any>> => {
         try {
-          const response_1 = await auth
-            .requestCustomGrant(config);
-          callback?.(response_1);
-          return response_1;
+          const response: BasicUserInfo | FetchResponse<any> = await authClient.requestCustomGrant(config);
+          callback?.(response);
+          return response;
         } catch (err) {
           error.value = err;
           throw err;
         }
       },
-      getHttpClient: (): Promise<HttpClientInstance> => Promise.resolve(auth.getHttpClient()),
-      revokeAccessToken: (): Promise<boolean> => auth.revokeAccessToken(),
-      getOIDCServiceEndpoints: (): Promise<OIDCEndpoints> => auth.getOIDCServiceEndpoints(),
-      getDecodedIDToken: (): Promise<DecodedIDTokenPayload> => auth.getDecodedIDToken(),
-      getIDToken: (): Promise<string> => auth.getIDToken(),
-      refreshAccessToken: (): Promise<BasicUserInfo> => auth.refreshAccessToken(),
-      enableHttpHandler: (): Promise<boolean> => auth.enableHttpHandler(),
-      disableHttpHandler: (): Promise<boolean> => auth.disableHttpHandler(),
-      updateConfig: (config: Partial<AuthClientConfig<Config>>): Promise<void> => auth.updateConfig(config),
+      getHttpClient: (): Promise<HttpClientInstance> => Promise.resolve(authClient.getHttpClient()),
+      revokeAccessToken: (): Promise<boolean> => authClient.revokeAccessToken(),
+      getOIDCServiceEndpoints: (): Promise<OIDCEndpoints> => authClient.getOIDCServiceEndpoints(),
+      getDecodedIDToken: (): Promise<DecodedIDTokenPayload> => authClient.getDecodedIDToken(),
+      getIDToken: (): Promise<string> => authClient.getIDToken(),
+      refreshAccessToken: (): Promise<BasicUserInfo> => authClient.refreshAccessToken(),
+      enableHttpHandler: (): Promise<boolean> => authClient.enableHttpHandler(),
+      disableHttpHandler: (): Promise<boolean> => authClient.disableHttpHandler(),
+      updateConfig: (config: Partial<AuthClientConfig<Config>>): Promise<void> => authClient.updateConfig(config),
       trySignInSilently: async (
         additionalParams?: Record<string, string | boolean>,
         tokenRequestConfig?: {params: Record<string, unknown>},
       ): Promise<boolean | BasicUserInfo> => {
         try {
-          const response = await auth
-            .trySignInSilently(additionalParams, tokenRequestConfig);
+          const response: boolean | BasicUserInfo = await authClient.trySignInSilently(
+            additionalParams,
+            tokenRequestConfig,
+          );
           if (typeof response !== 'boolean') {
             user.value = response;
             isAuthenticated.value = true;
@@ -184,7 +192,14 @@ export const asgardeoPlugin: Plugin = {
         tokenRequestConfig?: {params: Record<string, unknown>},
       ): Promise<BasicUserInfo> => {
         try {
-          const result = await auth.signIn(config, authorizationCode, sessionState, state, tokenRequestConfig);
+          const result: BasicUserInfo = await authClient.signIn(
+            config,
+            authorizationCode,
+            sessionState,
+            state,
+            callback,
+            tokenRequestConfig,
+          );
 
           if (result) {
             user.value = result;
@@ -200,7 +215,7 @@ export const asgardeoPlugin: Plugin = {
       },
       signOut: async (callback?: (response: boolean) => void): Promise<boolean> => {
         try {
-          const result = await auth.signOut();
+          const result: boolean = await authClient.signOut();
           user.value = null;
           isAuthenticated.value = false;
           callback?.(result);
@@ -216,9 +231,9 @@ export const asgardeoPlugin: Plugin = {
       isAuthenticated: (): Ref<boolean> => isAuthenticated,
       on: (hook: Hooks, callback: (response?: any) => void, id?: string): void => {
         if (hook === Hooks.CustomGrant && id) {
-          auth.on(hook, callback, id);
+          authClient.on(hook, callback, id);
         } else {
-          auth.on(hook as Exclude<Hooks, Hooks.CustomGrant>, callback);
+          authClient.on(hook as Exclude<Hooks, Hooks.CustomGrant>, callback);
         }
       },
     };

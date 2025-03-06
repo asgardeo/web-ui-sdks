@@ -142,3 +142,12 @@ export interface AuthContextInterface {
   ) => Promise<boolean | BasicUserInfo>;
   updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void>;
 }
+
+/**
+ * The model of the object returned by the `getAuthParams` prop method of the `AuthProvider`.
+ */
+export interface AuthParams {
+  authorizationCode?: string;
+  sessionState?: string;
+  state?: string;
+}
