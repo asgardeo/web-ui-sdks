@@ -16,8 +16,7 @@
  * under the License.
  */
 
-export * from './plugins/AsgardeoPlugin';
-export * from '@asgardeo/auth-spa';
-export * from './composables/useAsgardeo';
-export * from './composables/useAsgardeoContext';
+export * from './public-api'
 export * from './types';
+
+export * from '@asgardeo/auth-spa';

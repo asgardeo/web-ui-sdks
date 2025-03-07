@@ -15,3 +15,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+export {asgardeoPlugin} from './plugins/AsgardeoPlugin';
+export {useAsgardeo} from './composables/useAsgardeo';

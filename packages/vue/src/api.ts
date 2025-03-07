@@ -389,7 +389,7 @@ class AuthAPI {
       .trySignInSilently(additionalParams, tokenRequestConfig)
       .then(async (response: BasicUserInfo | boolean) => {
         if (!response) {
-          Object.assign(this._authState, {...this._authState, isLoading: false});
+          Object.assign(this._authState, {isLoading: false});
           return false;
         }
 
