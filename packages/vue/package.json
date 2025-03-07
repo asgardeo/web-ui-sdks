@@ -59,7 +59,7 @@
     "@wso2/eslint-plugin": "catalog:",
     "@wso2/prettier-config": "catalog:",
     "@wso2/stylelint-config": "catalog:",
-    "eslint": "~8.57.0",
+    "eslint": "catalog:",
     "prettier": "^3.2.5",
     "rollup": "^4.17.2",
     "rollup-plugin-dts": "^6.1.0",
