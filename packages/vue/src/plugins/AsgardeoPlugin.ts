@@ -53,8 +53,6 @@ export const asgardeoPlugin: Plugin = {
   install(app: App, options: AsgardeoPluginOptions): void {
     const authClient: AuthAPI = new AuthAPI();
     const isInitialized: Ref<boolean> = ref(false);
-    const isAuthenticated: Ref<boolean> = ref(false);
-    const user: Ref<BasicUserInfo | null> = ref<BasicUserInfo | null>(null);
     const error: Ref<AsgardeoAuthException | null> = ref(null);
     const isLoading: Ref<boolean> = ref(true);
 
@@ -70,11 +68,9 @@ export const asgardeoPlugin: Plugin = {
         let isSignedOut: boolean = false;
         authClient.on(Hooks.SignOut, () => {
           isSignedOut = true;
-          isAuthenticated.value = false;
-          user.value = null;
         });
 
-        if (isAuthenticated.value) {
+        if (authClient.getState().isAuthenticated) {
           isLoading.value = false;
           return;
         }
@@ -147,7 +143,7 @@ export const asgardeoPlugin: Plugin = {
       httpRequest: (config: HttpRequestConfig): Promise<HttpResponse<any>> => authClient.httpRequest(config),
       httpRequestAll: (configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> =>
         authClient.httpRequestAll(configs),
-      isAuthenticated: (): Ref<boolean> => isAuthenticated,
+      isAuthenticated: (): Promise<boolean> => authClient.isAuthenticated(),
       on: (hook: Hooks, callback: (response?: any) => void, id?: string): void => {
         if (hook === Hooks.CustomGrant && id) {
           authClient.on(hook, callback, id);
@@ -189,8 +185,6 @@ export const asgardeoPlugin: Plugin = {
           );
 
           if (result) {
-            user.value = result;
-            isAuthenticated.value = true;
             error.value = null;
             callback?.(result);
           }
@@ -203,8 +197,6 @@ export const asgardeoPlugin: Plugin = {
       signOut: async (callback?: (response: boolean) => void): Promise<boolean> => {
         try {
           const result: boolean = await authClient.signOut();
-          user.value = null;
-          isAuthenticated.value = false;
           callback?.(result);
           return result;
         } catch (err) {
@@ -222,10 +214,6 @@ export const asgardeoPlugin: Plugin = {
             additionalParams,
             tokenRequestConfig,
           );
-          if (typeof response !== 'boolean') {
-            user.value = response;
-            isAuthenticated.value = true;
-          }
           return response;
         } catch (err) {
           error.value = err;
