@@ -16,21 +16,16 @@
  * under the License.
  */
 
-const path = require('path');
+import {type AsgardeoSPAClient} from '@asgardeo/auth-spa';
+import {inject} from 'vue';
+import {ASGARDEO_INJECTION_KEY} from '../plugins/AsgardeoPlugin';
 
-module.exports = {
-  extends: [
-    'plugin:@wso2/typescript',
-    // 'plugin:@wso2/vue',
-    'plugin:@wso2/strict',
-    'plugin:@wso2/internal',
-    'plugin:@wso2/prettier',
-  ],
-  parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.json'), path.resolve(__dirname, 'tsconfig.eslint.json')],
-  },
-  plugins: ['@wso2'],
-  rules: {
-    'no-underscore-dangle': ['error', {allow: ['_client', '_authState']}],
-  },
-};
+export function useAsgardeoContext(): AsgardeoSPAClient {
+  const ctx: AsgardeoSPAClient = inject(ASGARDEO_INJECTION_KEY);
+
+  if (!ctx) {
+    throw new Error('This can be only used when vue plugin is installed');
+  }
+
+  return ctx;
+}

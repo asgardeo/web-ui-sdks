@@ -2,7 +2,7 @@
   "name": "@asgardeo/vue",
   "version": "0.0.0",
   "description": "Vue SDK for Asgardeo - Authentication and Identity Management",
-  "main": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -56,9 +56,9 @@
     "@vue/eslint-config-prettier": "^8.0.0",
     "@vue/eslint-config-typescript": "^12.0.0",
     "@vue/test-utils": "^2.4.6",
-    "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?21281faa4f8354491747075f40f58b497d0c4730",
-    "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?fa0b844715320a3953d6d055997c0770f8695082",
-    "@wso2/stylelint-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/stylelint-config?fa0b844715320a3953d6d055997c0770f8695082",
+    "@wso2/eslint-plugin": "catalog:",
+    "@wso2/prettier-config": "catalog:",
+    "@wso2/stylelint-config": "catalog:",
     "eslint": "~8.57.0",
     "prettier": "^3.2.5",
     "rollup": "^4.17.2",
@@ -84,5 +84,10 @@
   },
   "peerDependencies": {
     "vue": ">=3.5.13"
+  },
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "types": "./dist/index.d.ts"
   }
 }

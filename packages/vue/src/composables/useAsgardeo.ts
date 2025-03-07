@@ -16,21 +16,10 @@
  * under the License.
  */
 
-const path = require('path');
+import {AsgardeoSPAClient} from '@asgardeo/auth-spa';
+import {useAsgardeoContext} from './useAsgardeoContext';
 
-module.exports = {
-  extends: [
-    'plugin:@wso2/typescript',
-    // 'plugin:@wso2/vue',
-    'plugin:@wso2/strict',
-    'plugin:@wso2/internal',
-    'plugin:@wso2/prettier',
-  ],
-  parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.json'), path.resolve(__dirname, 'tsconfig.eslint.json')],
-  },
-  plugins: ['@wso2'],
-  rules: {
-    'no-underscore-dangle': ['error', {allow: ['_client', '_authState']}],
-  },
-};
+export function useAsgardeo(): AsgardeoSPAClient {
+  const asgardeo: AsgardeoSPAClient = useAsgardeoContext();
+  return asgardeo;
+}

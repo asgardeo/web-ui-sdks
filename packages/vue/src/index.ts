@@ -16,21 +16,7 @@
  * under the License.
  */
 
-const path = require('path');
+export * from './public-api'
+export * from './types';
 
-module.exports = {
-  extends: [
-    'plugin:@wso2/typescript',
-    // 'plugin:@wso2/vue',
-    'plugin:@wso2/strict',
-    'plugin:@wso2/internal',
-    'plugin:@wso2/prettier',
-  ],
-  parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.json'), path.resolve(__dirname, 'tsconfig.eslint.json')],
-  },
-  plugins: ['@wso2'],
-  rules: {
-    'no-underscore-dangle': ['error', {allow: ['_client', '_authState']}],
-  },
-};
+export * from '@asgardeo/auth-spa';
