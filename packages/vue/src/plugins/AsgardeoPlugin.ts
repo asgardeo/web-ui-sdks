@@ -53,12 +53,10 @@ export const asgardeoPlugin: Plugin = {
   install(app: App, options: AsgardeoPluginOptions): void {
     const authClient: AuthAPI = new AuthAPI();
     const isInitialized: Ref<boolean> = ref(false);
-    const error: Ref<AsgardeoAuthException | null> = ref(null);
-    const isLoading: Ref<boolean> = ref(true);
+    const error = ref<AsgardeoAuthException | null>(null);
 
     const initialize = async (): Promise<void> => {
       if (isInitialized.value) return;
-      isLoading.value = true;
 
       try {
         const config: AuthVueConfig = {...defaultConfig, ...options} as AuthVueConfig;
@@ -71,7 +69,6 @@ export const asgardeoPlugin: Plugin = {
         });
 
         if (authClient.getState().isAuthenticated) {
-          isLoading.value = false;
           return;
         }
 
@@ -96,8 +93,6 @@ export const asgardeoPlugin: Plugin = {
               SPAUtils.removeAuthorizationCode();
             } catch (err) {
               error.value = err;
-            } finally {
-              isLoading.value = false;
             }
             return;
           }
@@ -123,8 +118,6 @@ export const asgardeoPlugin: Plugin = {
         }
       } catch (err) {
         error.value = err;
-      } finally {
-        isLoading.value = false;
       }
     };
 
