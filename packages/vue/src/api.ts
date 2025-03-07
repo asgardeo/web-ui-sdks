@@ -252,6 +252,8 @@ class AuthAPI {
 
   /**
    * This method decodes the payload of the idp id token and returns it.
+   * @remarks
+   * This method is intended for retrieving the IdP ID token when extending a plugin.
    *
    * @return {Promise<DecodedIDTokenPayloadInterface>} - A Promise that resolves with
    * the decoded payload of the idp id token.
