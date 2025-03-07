@@ -114,7 +114,7 @@ export interface AuthContextInterface {
   getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
   httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
-  isAuthenticated(): Ref<boolean>; // Kept Ref<> from original
+  isAuthenticated(): Promise<boolean>;
   on(hook: Hooks.CustomGrant, callback: (response?: any) => void, id: string): void;
   on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): void;
   on(hook: Hooks, callback: (response?: any) => void, id?: string): void;

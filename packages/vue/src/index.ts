@@ -16,7 +16,7 @@
  * under the License.
  */
 
-export * from './public-api'
+export * from './public-api';
 export * from './types';
 
 export * from '@asgardeo/auth-spa';
