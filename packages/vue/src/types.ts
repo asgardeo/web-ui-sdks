@@ -32,7 +32,6 @@ import {
   OIDCEndpoints,
   SignInConfig,
 } from '@asgardeo/auth-spa';
-import {Ref} from 'vue';
 
 export interface VueConfig {
   /**
