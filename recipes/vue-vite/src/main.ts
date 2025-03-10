@@ -31,6 +31,7 @@ app.use(asgardeoPlugin, {
   signOutRedirectURL: 'http://localhost:5173/',
   clientID: 'DlhbfqNZEP0CGRN2933Aa1cwoAMa',
   baseUrl: 'https://api.asgardeo.io/t/thineth6424',
+  scope: ["openid", "profile"],
 })
 
 app.mount('#app')
