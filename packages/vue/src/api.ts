@@ -136,6 +136,15 @@ class AuthAPI {
   }
 
   /**
+   * Method to update Auth Client instance authentication state.
+   *
+   * @param {AuthStateInterface} state - State values to update in authentication state.
+   */
+  public updateState(state: AuthStateInterface): void {
+    this._authState = {...this._authState, ...state};
+  }
+
+  /**
    * This method returns a Promise that resolves with the basic user information obtained from the ID token.
    *
    * @return {Promise<BasicUserInfo>} - A promise that resolves with the user information.

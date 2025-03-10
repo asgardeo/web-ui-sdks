@@ -32,8 +32,8 @@ import {
   SPAUtils,
   type BasicUserInfo,
 } from '@asgardeo/auth-spa';
-import type {Plugin, Ref, App} from 'vue';
-import {ref} from 'vue';
+import type {Plugin, Ref, App, Reactive} from 'vue';
+import {reactive, ref} from 'vue';
 import AuthAPI from '../api';
 import type {AuthContextInterface, AuthParams, AuthStateInterface, AuthVueConfig} from '../types';
 
@@ -51,24 +51,69 @@ export const ASGARDEO_INJECTION_KEY: symbol = Symbol('asgardeo');
 
 export const asgardeoPlugin: Plugin = {
   install(app: App, options: AsgardeoPluginOptions): void {
-    const authClient: AuthAPI = new AuthAPI();
+    const AuthClient: AuthAPI = new AuthAPI();
     const isInitialized: Ref<boolean> = ref(false);
-    const error = ref<AsgardeoAuthException | null>(null);
+    const error: Ref<AsgardeoAuthException | null> = ref<AsgardeoAuthException | null>(null);
+
+    const state: Reactive<AuthStateInterface> = reactive<AuthStateInterface>({...AuthClient.getState()});
+
+    // This is for updating the state object with the latest values like dispatch in react
+    const syncState = (): void => {
+      const currentState: AuthStateInterface = AuthClient.getState();
+      Object.assign(state, currentState);
+    };
+
+    const trySignInSilently = async (
+      additionalParams?: Record<string, string | boolean>,
+      tokenRequestConfig?: {params: Record<string, unknown>},
+    ): Promise<boolean | BasicUserInfo> => {
+      const result: boolean | BasicUserInfo = await AuthClient.trySignInSilently(additionalParams, tokenRequestConfig);
+      syncState();
+      return result;
+    };
+
+    const checkIsAuthenticated = async (): Promise<void> => {
+      const isAuthenticatedState: boolean = await AuthClient.isAuthenticated();
+
+      if (!isAuthenticatedState) {
+        AuthClient.updateState({...state, isAuthenticated: false, isLoading: false});
+        syncState();
+        return;
+      }
+
+      const response: BasicUserInfo = await AuthClient.getBasicUserInfo();
+
+      const stateToUpdate: AuthStateInterface = response
+        ? {
+            allowedScopes: response.allowedScopes,
+            displayName: response.displayName,
+            email: response.email,
+            isAuthenticated: true,
+            isLoading: false,
+            sub: response.sub,
+            username: response.username,
+          }
+        : {...state, isAuthenticated: isAuthenticatedState, isLoading: false};
+      AuthClient.updateState(stateToUpdate);
+      syncState();
+    };
 
     const initialize = async (): Promise<void> => {
       if (isInitialized.value) return;
 
       try {
         const config: AuthVueConfig = {...defaultConfig, ...options} as AuthVueConfig;
-        await authClient.init(config);
+        await AuthClient.init(config);
+        syncState();
         isInitialized.value = true;
 
         let isSignedOut: boolean = false;
-        authClient.on(Hooks.SignOut, () => {
+        AuthClient.on(Hooks.SignOut, () => {
           isSignedOut = true;
+          syncState();
         });
 
-        if (authClient.getState().isAuthenticated) {
+        if (state.isAuthenticated) {
           return;
         }
 
@@ -84,13 +129,14 @@ export const asgardeoPlugin: Plugin = {
             url.searchParams.get('error')
           ) {
             try {
-              await authClient.signIn(
+              await AuthClient.signIn(
                 {callOnlyOnRedirect: true},
                 authParams?.authorizationCode,
                 authParams?.sessionState,
                 authParams?.state,
               );
               SPAUtils.removeAuthorizationCode();
+              syncState();
             } catch (err) {
               error.value = err;
             }
@@ -98,17 +144,25 @@ export const asgardeoPlugin: Plugin = {
           }
         }
 
-        if (!config.disableAutoSignIn && (await authClient.isSessionActive())) {
+        if (!config.disableAutoSignIn && (await AuthClient.isSessionActive())) {
           try {
-            await authClient.signIn();
+            await AuthClient.signIn();
+            syncState();
           } catch (err) {
             error.value = err;
           }
         }
 
+        await checkIsAuthenticated();
+
+        if (state.isAuthenticated) {
+          return;
+        }
+
         if (!config.disableTrySignInSilently && !isSignedOut) {
           try {
-            await authClient.trySignInSilently();
+            await AuthClient.trySignInSilently();
+            syncState();
             error.value = null;
           } catch (err) {
             if (err?.code) {
@@ -124,33 +178,42 @@ export const asgardeoPlugin: Plugin = {
     initialize();
 
     const authContext: AuthContextInterface = {
-      disableHttpHandler: (): Promise<boolean> => authClient.disableHttpHandler(),
-      enableHttpHandler: (): Promise<boolean> => authClient.enableHttpHandler(),
+      disableHttpHandler: async (): Promise<boolean> => {
+        const result: boolean = await AuthClient.disableHttpHandler();
+        return result;
+      },
+      enableHttpHandler: async (): Promise<boolean> => {
+        const result: boolean = await AuthClient.enableHttpHandler();
+        return result;
+      },
       error: error.value,
-      getAccessToken: (): Promise<string> => authClient.getAccessToken(),
-      getBasicUserInfo: (): Promise<BasicUserInfo> => authClient.getBasicUserInfo(),
-      getDecodedIDToken: (): Promise<DecodedIDTokenPayload> => authClient.getDecodedIDToken(),
-      getHttpClient: (): Promise<HttpClientInstance> => Promise.resolve(authClient.getHttpClient()),
-      getIDToken: (): Promise<string> => authClient.getIDToken(),
-      getOIDCServiceEndpoints: (): Promise<OIDCEndpoints> => authClient.getOIDCServiceEndpoints(),
-      httpRequest: (config: HttpRequestConfig): Promise<HttpResponse<any>> => authClient.httpRequest(config),
+      getAccessToken: (): Promise<string> => AuthClient.getAccessToken(),
+      getBasicUserInfo: (): Promise<BasicUserInfo> => AuthClient.getBasicUserInfo(),
+      getDecodedIDToken: (): Promise<DecodedIDTokenPayload> => AuthClient.getDecodedIDToken(),
+      getHttpClient: (): Promise<HttpClientInstance> => Promise.resolve(AuthClient.getHttpClient()),
+      getIDToken: (): Promise<string> => AuthClient.getIDToken(),
+      getOIDCServiceEndpoints: (): Promise<OIDCEndpoints> => AuthClient.getOIDCServiceEndpoints(),
+      httpRequest: (config: HttpRequestConfig): Promise<HttpResponse<any>> => AuthClient.httpRequest(config),
       httpRequestAll: (configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> =>
-        authClient.httpRequestAll(configs),
-      isAuthenticated: (): Promise<boolean> => authClient.isAuthenticated(),
+        AuthClient.httpRequestAll(configs),
+      isAuthenticated: (): Promise<boolean> => AuthClient.isAuthenticated(),
       on: (hook: Hooks, callback: (response?: any) => void, id?: string): void => {
         if (hook === Hooks.CustomGrant && id) {
-          authClient.on(hook, callback, id);
+          AuthClient.on(hook, callback, id);
         } else {
-          authClient.on(hook as Exclude<Hooks, Hooks.CustomGrant>, callback);
+          AuthClient.on(hook as Exclude<Hooks, Hooks.CustomGrant>, callback);
         }
       },
-      refreshAccessToken: (): Promise<BasicUserInfo> => authClient.refreshAccessToken(),
+      refreshAccessToken: async (): Promise<BasicUserInfo> => {
+        const result: BasicUserInfo = await AuthClient.refreshAccessToken();
+        return result;
+      },
       requestCustomGrant: async (
         config: CustomGrantConfig,
         callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
       ): Promise<BasicUserInfo | FetchResponse<any>> => {
         try {
-          const response: BasicUserInfo | FetchResponse<any> = await authClient.requestCustomGrant(config);
+          const response: BasicUserInfo | FetchResponse<any> = await AuthClient.requestCustomGrant(config);
           callback?.(response);
           return response;
         } catch (err) {
@@ -158,24 +221,29 @@ export const asgardeoPlugin: Plugin = {
           throw err;
         }
       },
-      revokeAccessToken: (): Promise<boolean> => authClient.revokeAccessToken(),
+      revokeAccessToken: async (): Promise<boolean> => {
+        const result: boolean = await AuthClient.revokeAccessToken();
+        return result;
+      },
       signIn: async (
         config?: SignInConfig,
         authorizationCode?: string,
         sessionState?: string,
-        state?: string,
+        authState?: string,
         callback?: (response: BasicUserInfo) => void,
         tokenRequestConfig?: {params: Record<string, unknown>},
       ): Promise<BasicUserInfo> => {
         try {
-          const result: BasicUserInfo = await authClient.signIn(
+          const result: BasicUserInfo = await AuthClient.signIn(
             config,
             authorizationCode,
             sessionState,
-            state,
+            authState,
             callback,
             tokenRequestConfig,
           );
+
+          syncState();
 
           if (result) {
             error.value = null;
@@ -189,7 +257,8 @@ export const asgardeoPlugin: Plugin = {
       },
       signOut: async (callback?: (response: boolean) => void): Promise<boolean> => {
         try {
-          const result: boolean = await authClient.signOut();
+          const result: boolean = await AuthClient.signOut();
+          syncState();
           callback?.(result);
           return result;
         } catch (err) {
@@ -197,23 +266,12 @@ export const asgardeoPlugin: Plugin = {
           throw err;
         }
       },
-      state: {} as AuthStateInterface,
-      trySignInSilently: async (
-        additionalParams?: Record<string, string | boolean>,
-        tokenRequestConfig?: {params: Record<string, unknown>},
-      ): Promise<boolean | BasicUserInfo> => {
-        try {
-          const response: boolean | BasicUserInfo = await authClient.trySignInSilently(
-            additionalParams,
-            tokenRequestConfig,
-          );
-          return response;
-        } catch (err) {
-          error.value = err;
-          throw err;
-        }
+      state,
+      trySignInSilently,
+      updateConfig: async (config: Partial<AuthClientConfig<Config>>): Promise<void> => {
+        await AuthClient.updateConfig(config);
+        syncState();
       },
-      updateConfig: (config: Partial<AuthClientConfig<Config>>): Promise<void> => authClient.updateConfig(config),
     };
 
     app.provide(ASGARDEO_INJECTION_KEY, authContext);
