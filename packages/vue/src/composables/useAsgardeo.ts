@@ -16,10 +16,10 @@
  * under the License.
  */
 
-import {AsgardeoSPAClient} from '@asgardeo/auth-spa';
 import {useAsgardeoContext} from './useAsgardeoContext';
+import {AuthContextInterface} from '../types';
 
-export function useAsgardeo(): AsgardeoSPAClient {
-  const asgardeo: AsgardeoSPAClient = useAsgardeoContext();
+export function useAsgardeo(): AuthContextInterface {
+  const asgardeo: AuthContextInterface = useAsgardeoContext();
   return asgardeo;
 }

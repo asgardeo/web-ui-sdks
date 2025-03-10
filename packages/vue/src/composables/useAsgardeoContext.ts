@@ -16,12 +16,12 @@
  * under the License.
  */
 
-import {type AsgardeoSPAClient} from '@asgardeo/auth-spa';
 import {inject} from 'vue';
 import {ASGARDEO_INJECTION_KEY} from '../plugins/AsgardeoPlugin';
+import {AuthContextInterface} from '../types';
 
-export function useAsgardeoContext(): AsgardeoSPAClient {
-  const ctx: AsgardeoSPAClient = inject(ASGARDEO_INJECTION_KEY);
+export function useAsgardeoContext(): AuthContextInterface {
+  const ctx: AuthContextInterface = inject(ASGARDEO_INJECTION_KEY);
 
   if (!ctx) {
     throw new Error('This can be only used when vue plugin is installed');
