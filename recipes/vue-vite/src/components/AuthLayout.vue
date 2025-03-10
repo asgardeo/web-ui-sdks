@@ -18,40 +18,136 @@
 
 <script setup lang="ts">
 import footerImage from '@/images/footer.png'
-const handleLogin = () => {
-  console.log('Login button clicked')
+import { useAsgardeo, type BasicUserInfo } from '@asgardeo/vue'
+import { ref, onMounted, watch } from 'vue'
+
+const auth = useAsgardeo()
+const { signIn, signOut, getBasicUserInfo, getAccessToken, state } = auth
+
+const userInfo = ref<BasicUserInfo | null>(null)
+const tokenInfo = ref('')
+const showTokenInfo = ref(false)
+
+const fetchUserInfo = async () => {
+  try {
+    console.log('Fetching user info...')
+    const user = await getBasicUserInfo()
+    console.log('User info received:', user)
+    userInfo.value = user
+  } catch (error) {
+    console.error('Error fetching user info', error)
+  }
+}
+
+watch(
+  () => state.isAuthenticated,
+  async (isAuthenticated) => {
+    if (isAuthenticated) {
+      await fetchUserInfo()
+    }
+  },
+  { immediate: true },
+)
+
+onMounted(async () => {
+  try {
+    if (state.isAuthenticated) {
+      await fetchUserInfo()
+    }
+  } catch (error) {
+    console.error('Error during initialization', error)
+  }
+})
+
+const login = async () => {
+  try {
+    await signIn()
+  } catch (error) {
+    console.error('Sign in failed', error)
+  }
+}
+
+const logout = async () => {
+  try {
+    await signOut()
+    userInfo.value = null
+    tokenInfo.value = ''
+    showTokenInfo.value = false
+  } catch (error) {
+    console.error('Sign out failed', error)
+  }
+}
+
+const viewAccessToken = async () => {
+  try {
+    tokenInfo.value = await getAccessToken()
+    showTokenInfo.value = true
+  } catch (error) {
+    console.error('Error fetching access token', error)
+  }
+}
+
+const hideToken = () => {
+  showTokenInfo.value = false
 }
 </script>
 
 <template>
   <div class="container">
     <div class="auth-card">
-      <!-- Header -->
       <div class="header">
-        <h1>Vue SPA Authentication Sample</h1>
+        <h1>Asgardeo Authentication Demo</h1>
       </div>
 
-      <!-- Content -->
       <div class="content">
-        <!-- Vue Logo -->
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg"
           alt="Vue Logo"
           class="logo"
         />
 
-        <!-- Description -->
         <p class="description">
-          Sample demo to showcase authentication for a Single Page Application via the OpenID
-          Connect Authorization Code flow, which is integrated using the
-          <a href="#" class="sdk-link">Asgardeo Auth Vue SDK</a>.
+          Practical demonstration of authentication for Single Page Applications using the OpenID
+          Connect Authorization Code flow with the
+          <a href="https://wso2.com/asgardeo/" target="_blank" class="sdk-link"
+            >Asgardeo Auth Vue SDK</a
+          >.
         </p>
 
-        <!-- Login Button -->
-        <button @click="handleLogin" class="login-button">Login</button>
+        <div v-if="state.isLoading" class="status-message">
+          <p>Checking authentication status...</p>
+        </div>
+
+        <div v-else-if="state.isAuthenticated" class="user-info">
+          <h2 v-if="userInfo">Welcome, {{ state.displayName }}</h2>
+          <h2 v-else>Welcome, loading user data...</h2>
+          <p v-if="userInfo?.email" class="user-email">{{ userInfo.email }}</p>
+
+          <div class="action-buttons">
+            <button @click="viewAccessToken" class="action-button" :disabled="state.isLoading">
+              View Access Token
+            </button>
+            <button @click="logout" class="logout-button" :disabled="state.isLoading">
+              Logout
+            </button>
+          </div>
+
+          <div v-if="showTokenInfo" class="token-info">
+            <h3>Access Token</h3>
+            <div class="token-container">
+              <p class="token-text">{{ tokenInfo }}</p>
+            </div>
+            <button @click="hideToken" class="hide-button">Hide Token</button>
+          </div>
+        </div>
+
+        <div v-else class="login-container">
+          <button @click="login" class="login-button" :disabled="state.isLoading">
+            Login with Asgardeo
+          </button>
+        </div>
       </div>
 
-      <!-- Footer -->
       <div class="footer">
         <img :src="footerImage" alt="WSO2 Logo" class="wso2-logo" />
       </div>
@@ -144,6 +240,121 @@ const handleLogin = () => {
   background-color: #111827;
 }
 
+.login-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.user-info {
+  width: 100%;
+  max-width: 32rem;
+  text-align: center;
+}
+
+.user-info h2 {
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+.user-email {
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.action-button {
+  background-color: #1f2937;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.action-button:hover {
+  background-color: #111827;
+}
+
+.action-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.logout-button {
+  background-color: #ef4444;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background-color: #dc2626;
+}
+
+.logout-button:disabled {
+  background-color: #f87171;
+  cursor: not-allowed;
+}
+
+.token-info {
+  margin-top: 1rem;
+  width: 100%;
+  text-align: left;
+}
+
+.token-info h3 {
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.token-container {
+  background-color: #f3f4f6;
+  border-radius: 0.25rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  max-height: 5rem;
+  overflow-y: auto;
+}
+
+.token-text {
+  word-break: break-all;
+  font-family: monospace;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.hide-button {
+  background-color: #9ca3af;
+  color: white;
+  padding: 0.25rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.hide-button:hover {
+  background-color: #6b7280;
+}
+
+.status-message {
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
 .footer {
   padding-bottom: 1rem;
   text-align: center;
@@ -154,7 +365,6 @@ const handleLogin = () => {
   opacity: 0.5;
 }
 
-/* Add these styles to your CSS */
 html,
 body {
   margin: 0;
