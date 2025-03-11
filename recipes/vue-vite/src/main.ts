@@ -32,6 +32,7 @@ app.use(asgardeoPlugin, {
   clientID: 'DlhbfqNZEP0CGRN2933Aa1cwoAMa',
   baseUrl: 'https://api.asgardeo.io/t/thineth6424',
   scope: ["openid", "profile"],
+  disableTrySignInSilently: false,
 })
 
 app.mount('#app')

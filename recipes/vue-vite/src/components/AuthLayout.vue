@@ -18,46 +18,14 @@
 
 <script setup lang="ts">
 import footerImage from '@/images/footer.png'
-import { useAsgardeo, type BasicUserInfo } from '@asgardeo/vue'
-import { ref, onMounted, watch } from 'vue'
+import { useAsgardeo } from '@asgardeo/vue'
+import { ref } from 'vue'
 
 const auth = useAsgardeo()
-const { signIn, signOut, getBasicUserInfo, getAccessToken, state } = auth
+const { signIn, signOut, getAccessToken, state } = auth
 
-const userInfo = ref<BasicUserInfo | null>(null)
 const tokenInfo = ref('')
 const showTokenInfo = ref(false)
-
-const fetchUserInfo = async () => {
-  try {
-    console.log('Fetching user info...')
-    const user = await getBasicUserInfo()
-    console.log('User info received:', user)
-    userInfo.value = user
-  } catch (error) {
-    console.error('Error fetching user info', error)
-  }
-}
-
-watch(
-  () => state.isAuthenticated,
-  async (isAuthenticated) => {
-    if (isAuthenticated) {
-      await fetchUserInfo()
-    }
-  },
-  { immediate: true },
-)
-
-onMounted(async () => {
-  try {
-    if (state.isAuthenticated) {
-      await fetchUserInfo()
-    }
-  } catch (error) {
-    console.error('Error during initialization', error)
-  }
-})
 
 const login = async () => {
   try {
@@ -70,7 +38,6 @@ const login = async () => {
 const logout = async () => {
   try {
     await signOut()
-    userInfo.value = null
     tokenInfo.value = ''
     showTokenInfo.value = false
   } catch (error) {
@@ -109,7 +76,10 @@ const hideToken = () => {
         <p class="description">
           Practical demonstration of authentication for Single Page Applications using the OpenID
           Connect Authorization Code flow with the
-          <a href="https://wso2.com/asgardeo/" target="_blank" class="sdk-link"
+          <a
+            href="https://github.com/asgardeo/web-ui-sdks/tree/main/packages/vue"
+            target="_blank"
+            class="sdk-link"
             >Asgardeo Auth Vue SDK</a
           >.
         </p>
@@ -119,9 +89,9 @@ const hideToken = () => {
         </div>
 
         <div v-else-if="state.isAuthenticated" class="user-info">
-          <h2 v-if="userInfo">Welcome, {{ state.displayName }}</h2>
+          <h2 v-if="state.isAuthenticated">Welcome, {{ state.displayName }}</h2>
           <h2 v-else>Welcome, loading user data...</h2>
-          <p v-if="userInfo?.email" class="user-email">{{ userInfo.email }}</p>
+          <p v-if="state.email" class="user-email">{{ state.email }}</p>
 
           <div class="action-buttons">
             <button @click="viewAccessToken" class="action-button" :disabled="state.isLoading">
