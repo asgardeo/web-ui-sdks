@@ -107,9 +107,7 @@ export const asgardeoPlugin: Plugin = {
         syncState();
         isInitialized.value = true;
 
-        let isSignedOut: boolean = false;
         AuthClient.on(Hooks.SignOut, () => {
-          isSignedOut = true;
           syncState();
         });
 
@@ -159,9 +157,9 @@ export const asgardeoPlugin: Plugin = {
           return;
         }
 
-        if (!config.disableTrySignInSilently && !isSignedOut) {
+        if (!config.disableTrySignInSilently) {
           try {
-            await AuthClient.trySignInSilently();
+            await trySignInSilently();
             syncState();
             error.value = null;
           } catch (err) {
@@ -178,19 +176,13 @@ export const asgardeoPlugin: Plugin = {
     initialize();
 
     const authContext: AuthContextInterface = {
-      disableHttpHandler: async (): Promise<boolean> => {
-        const result: boolean = await AuthClient.disableHttpHandler();
-        return result;
-      },
-      enableHttpHandler: async (): Promise<boolean> => {
-        const result: boolean = await AuthClient.enableHttpHandler();
-        return result;
-      },
+      disableHttpHandler: (): Promise<boolean> => AuthClient.disableHttpHandler(),
+      enableHttpHandler: (): Promise<boolean> => AuthClient.enableHttpHandler(),
       error: error.value,
       getAccessToken: (): Promise<string> => AuthClient.getAccessToken(),
       getBasicUserInfo: (): Promise<BasicUserInfo> => AuthClient.getBasicUserInfo(),
       getDecodedIDToken: (): Promise<DecodedIDTokenPayload> => AuthClient.getDecodedIDToken(),
-      getHttpClient: (): Promise<HttpClientInstance> => Promise.resolve(AuthClient.getHttpClient()),
+      getHttpClient: (): Promise<HttpClientInstance> => AuthClient.getHttpClient(),
       getIDToken: (): Promise<string> => AuthClient.getIDToken(),
       getOIDCServiceEndpoints: (): Promise<OIDCEndpoints> => AuthClient.getOIDCServiceEndpoints(),
       httpRequest: (config: HttpRequestConfig): Promise<HttpResponse<any>> => AuthClient.httpRequest(config),
@@ -204,10 +196,7 @@ export const asgardeoPlugin: Plugin = {
           AuthClient.on(hook as Exclude<Hooks, Hooks.CustomGrant>, callback);
         }
       },
-      refreshAccessToken: async (): Promise<BasicUserInfo> => {
-        const result: BasicUserInfo = await AuthClient.refreshAccessToken();
-        return result;
-      },
+      refreshAccessToken: (): Promise<BasicUserInfo> => AuthClient.refreshAccessToken(),
       requestCustomGrant: async (
         config: CustomGrantConfig,
         callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
@@ -221,10 +210,7 @@ export const asgardeoPlugin: Plugin = {
           throw err;
         }
       },
-      revokeAccessToken: async (): Promise<boolean> => {
-        const result: boolean = await AuthClient.revokeAccessToken();
-        return result;
-      },
+      revokeAccessToken: (): Promise<boolean> => AuthClient.revokeAccessToken(),
       signIn: async (
         config?: SignInConfig,
         authorizationCode?: string,
