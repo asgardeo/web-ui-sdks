@@ -1,19 +1,11 @@
-// src/tests/useAsgardeoContext.test.ts
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { inject } from 'vue';
+import { useAsgardeoContext } from '../composables/useAsgardeoContext';
+import { ASGARDEO_INJECTION_KEY } from '../plugins/AsgardeoPlugin';
 
-// Create mock functions
-const injectMock = vi.fn();
-const INJECTION_KEY = 'asgardeo-key';
-
-function useAsgardeoContextMock() {
-  const ctx = injectMock(INJECTION_KEY);
-  
-  if (!ctx) {
-    throw new Error('This can be only used when vue plugin is installed');
-  }
-  
-  return ctx;
-}
+vi.mock('vue', () => ({
+  inject: vi.fn()
+}));
 
 describe('useAsgardeoContext', () => {
   const mockAuthContext = {
@@ -30,25 +22,20 @@ describe('useAsgardeoContext', () => {
   });
 
   it('should return the injected auth context when it exists', () => {
-    // Setup
-    injectMock.mockReturnValue(mockAuthContext);
+    (inject as Mock).mockReturnValue(mockAuthContext);
     
-    // Act
-    const result = useAsgardeoContextMock();
+    const result = useAsgardeoContext();
     
-    // Assert
-    expect(injectMock).toHaveBeenCalledWith(INJECTION_KEY);
+    expect(inject).toHaveBeenCalledWith(ASGARDEO_INJECTION_KEY);
     expect(result).toBe(mockAuthContext);
   });
 
   it('should throw an error when the auth context is not injected', () => {
-    // Setup
-    injectMock.mockReturnValue(null);
+    (inject as Mock).mockReturnValue(null);
     
-    // Act & Assert
-    expect(() => useAsgardeoContextMock()).toThrow(
+    expect(() => useAsgardeoContext()).toThrow(
       'This can be only used when vue plugin is installed'
     );
-    expect(injectMock).toHaveBeenCalledWith(INJECTION_KEY);
+    expect(inject).toHaveBeenCalledWith(ASGARDEO_INJECTION_KEY);
   });
 });
