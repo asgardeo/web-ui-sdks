@@ -1,0 +1,381 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import {
+  AuthClientConfig,
+  BasicUserInfo,
+  Config,
+  DecodedIDTokenPayload,
+  FetchResponse,
+  Hooks,
+  HttpClientInstance,
+  SPACustomGrantConfig,
+} from '@asgardeo/auth-spa';
+import {describe, it, expect, beforeEach, vi, Mock} from 'vitest';
+import {createApp} from 'vue';
+import AuthAPI from '../api';
+import {asgardeoPlugin, ASGARDEO_INJECTION_KEY} from '../plugins/AsgardeoPlugin';
+import {AuthContextInterface, AuthStateInterface, type AuthVueConfig} from '../types';
+
+vi.mock('../api');
+vi.mock('@asgardeo/auth-spa');
+
+const mockState: AuthStateInterface = {
+  allowedScopes: '',
+  displayName: '',
+  email: '',
+  isAuthenticated: false,
+  isLoading: true,
+  sub: '',
+  username: '',
+};
+
+// Simple version
+type MockAuthAPI = {
+  disableHttpHandler: Mock;
+  enableHttpHandler: Mock;
+  getAccessToken: Mock;
+  getBasicUserInfo: Mock;
+  getDecodedIDToken: Mock;
+  getHttpClient: Mock;
+  getIDToken: Mock;
+  getOIDCServiceEndpoints: Mock;
+  getState: Mock;
+  httpRequest: Mock;
+  httpRequestAll: Mock;
+  init: Mock;
+  isAuthenticated: Mock;
+  isSessionActive: Mock;
+  on: Mock;
+  refreshAccessToken: Mock;
+  requestCustomGrant: Mock;
+  revokeAccessToken: Mock;
+  signIn: Mock;
+  signOut: Mock;
+  trySignInSilently: Mock;
+  updateConfig: Mock;
+  updateState: Mock;
+};
+
+const mockAuthAPI: MockAuthAPI = {
+  disableHttpHandler: vi.fn().mockResolvedValue(true),
+  enableHttpHandler: vi.fn().mockResolvedValue(true),
+  getAccessToken: vi.fn().mockResolvedValue('mock-access-token'),
+  getBasicUserInfo: vi.fn().mockResolvedValue({
+    allowedScopes: 'openid profile',
+    displayName: 'Test User',
+    email: 'test@example.com',
+    sub: 'user-id-123',
+    username: 'testUser',
+  }),
+  getDecodedIDToken: vi.fn().mockResolvedValue({aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'}),
+  getHttpClient: vi.fn().mockResolvedValue({}),
+  getIDToken: vi.fn().mockResolvedValue('mock-id-token'),
+  getOIDCServiceEndpoints: vi.fn().mockResolvedValue({}),
+  getState: vi.fn().mockReturnValue(mockState),
+  httpRequest: vi.fn().mockResolvedValue({data: {}, status: 200}),
+  httpRequestAll: vi.fn().mockResolvedValue([{data: {}, status: 200}]),
+  init: vi.fn().mockResolvedValue(true),
+  isAuthenticated: vi.fn().mockResolvedValue(true),
+  isSessionActive: vi.fn().mockResolvedValue(true),
+  on: vi.fn(),
+  refreshAccessToken: vi.fn().mockResolvedValue({
+    displayName: 'Test User',
+    email: 'test@example.com',
+    username: 'testUser',
+  }),
+  requestCustomGrant: vi.fn().mockResolvedValue({
+    displayName: 'Test User',
+    email: 'test@example.com',
+    username: 'testUser',
+  } as BasicUserInfo),
+  revokeAccessToken: vi.fn().mockResolvedValue(true),
+  signIn: vi.fn().mockResolvedValue({
+    allowedScopes: 'openid profile',
+    displayName: 'Test User',
+    email: 'test@example.com',
+    sub: 'user-id-123',
+    username: 'testUser',
+  }),
+  signOut: vi.fn().mockResolvedValue(true),
+  trySignInSilently: vi.fn().mockResolvedValue(false),
+  updateConfig: vi.fn().mockResolvedValue(undefined),
+  updateState: vi.fn().mockImplementation((newState: AuthStateInterface) => {
+    Object.assign(mockState, newState);
+  }),
+};
+
+vi.mocked(AuthAPI).mockImplementation(() => mockAuthAPI as unknown as AuthAPI);
+
+describe('asgardeoPlugin', () => {
+  let app: ReturnType<typeof createApp>;
+  let config: AuthVueConfig;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Reset the state
+    Object.assign(mockState, {
+      allowedScopes: '',
+      displayName: '',
+      email: '',
+      isAuthenticated: false,
+      isLoading: true,
+      sub: '',
+      username: '',
+    });
+
+    app = createApp({});
+
+    config = {
+      baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
+      clientID: 'mock-client-id',
+      signInRedirectURL: 'http://localhost:5173/',
+      signOutRedirectURL: 'http://localhost:5173/',
+    };
+
+    app.use(asgardeoPlugin, config);
+  });
+
+  it('should provide the authentication context', () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+    expect(authContext).toBeDefined();
+    expect(authContext.state.isAuthenticated).toBe(false);
+  });
+
+  it('should call AuthAPI init on install', async () => {
+    expect(mockAuthAPI.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
+        clientID: 'mock-client-id',
+        disableAutoSignIn: true,
+        disableTrySignInSilently: true,
+        signInRedirectURL: 'http://localhost:5173/',
+        signOutRedirectURL: 'http://localhost:5173/',
+      }),
+    );
+  });
+
+  it('should sign in a user and sync state', async () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+    const authenticatedState: AuthStateInterface = {
+      allowedScopes: 'openid profile',
+      displayName: 'Test User',
+      email: 'test@example.com',
+      isAuthenticated: true,
+      isLoading: false,
+      sub: 'user-id-123',
+      username: 'testUser',
+    };
+
+    mockAuthAPI.getState.mockReturnValue(authenticatedState);
+
+    await authContext.signIn();
+
+    expect(mockAuthAPI.signIn).toHaveBeenCalled();
+
+    expect(authContext.state).toMatchObject(authenticatedState);
+  });
+
+  it('should sign out a user and sync state', async () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+
+    const unauthenticatedState: AuthStateInterface = {
+      allowedScopes: '',
+      displayName: '',
+      email: '',
+      isAuthenticated: false,
+      isLoading: false,
+      sub: '',
+      username: '',
+    };
+
+    mockAuthAPI.getState.mockReturnValue(unauthenticatedState);
+
+    await authContext.signOut();
+
+    expect(mockAuthAPI.signOut).toHaveBeenCalled();
+
+    expect(authContext.state).toMatchObject(unauthenticatedState);
+  });
+
+  it('should handle errors in withStateSync', async () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+
+    const testError: Error = new Error('Test error');
+    mockAuthAPI.getAccessToken.mockRejectedValueOnce(testError);
+
+    mockAuthAPI.getState.mockReturnValue(mockState);
+
+    await expect(authContext.getAccessToken()).rejects.toThrow('Test error');
+
+    expect(mockAuthAPI.getState).toHaveBeenCalled();
+  });
+
+  it('should retrieve basic user info and sync state', async () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+
+    const userInfoState: AuthStateInterface = {
+      ...mockState,
+      displayName: 'Test User',
+      email: 'test@example.com',
+      username: 'testUser',
+    };
+
+    mockAuthAPI.getState.mockReturnValueOnce(userInfoState);
+
+    await authContext.getBasicUserInfo();
+
+    expect(mockAuthAPI.getBasicUserInfo).toHaveBeenCalled();
+    expect(authContext.state).toMatchObject(userInfoState);
+  });
+
+  it('should try sign in silently and sync state', async () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+
+    const additionalParams: Record<string, string | boolean> = {prompt: 'none'};
+    const tokenRequestConfig: {params: Record<string, unknown>} = {params: {scope: 'openid profile'}};
+
+    const silentSignInState: AuthStateInterface = {
+      ...mockState,
+      isAuthenticated: true,
+      username: 'testUser',
+    };
+
+    mockAuthAPI.getState.mockReturnValueOnce(silentSignInState);
+
+    await authContext.trySignInSilently(additionalParams, tokenRequestConfig);
+
+    expect(mockAuthAPI.trySignInSilently).toHaveBeenCalledWith(additionalParams, tokenRequestConfig);
+    expect(authContext.state).toMatchObject(silentSignInState);
+  });
+
+  it('should update config and sync state', async () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+
+    const newConfig: Partial<AuthClientConfig<Config>> = {clientID: 'new-client-id'};
+
+    const updatedState: AuthStateInterface = {
+      ...mockState,
+      isLoading: false,
+    };
+
+    mockAuthAPI.getState.mockReturnValueOnce(updatedState);
+
+    await authContext.updateConfig(newConfig);
+
+    expect(mockAuthAPI.updateConfig).toHaveBeenCalledWith(newConfig);
+
+    expect(mockAuthAPI.getState).toHaveBeenCalled();
+
+    expect(authContext.state).toMatchObject(updatedState);
+  });
+
+  it('should handle token operations correctly', async () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+
+    // Test refreshAccessToken
+    const refreshedState: AuthStateInterface = {
+      ...mockState,
+      isAuthenticated: true,
+      username: 'testUser',
+    };
+    mockAuthAPI.getState.mockReturnValueOnce(refreshedState);
+    await authContext.refreshAccessToken();
+    expect(mockAuthAPI.refreshAccessToken).toHaveBeenCalled();
+    expect(authContext.state).toMatchObject(refreshedState);
+
+    const accessToken: string = 'mock-access-token';
+    mockAuthAPI.getAccessToken.mockResolvedValueOnce(accessToken);
+    const accessTokenValue: string = await authContext.getAccessToken();
+    expect(mockAuthAPI.getAccessToken).toHaveBeenCalled();
+    expect(accessTokenValue).toBe(accessToken);
+
+    const decodedIDToken: DecodedIDTokenPayload = {aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'};
+    mockAuthAPI.getDecodedIDToken.mockResolvedValueOnce(decodedIDToken);
+    const idToken: DecodedIDTokenPayload = await authContext.getDecodedIDToken();
+    expect(mockAuthAPI.getDecodedIDToken).toHaveBeenCalled();
+    expect(idToken).toMatchObject(decodedIDToken);
+  });
+
+  it('should handle HTTP operations correctly', async () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+
+    // Test enableHttpHandler
+    await authContext.enableHttpHandler();
+    expect(mockAuthAPI.enableHttpHandler).toHaveBeenCalled();
+
+    // Test disableHttpHandler
+    await authContext.disableHttpHandler();
+    expect(mockAuthAPI.disableHttpHandler).toHaveBeenCalled();
+
+    // Test getHttpClient
+    const mockHttpClient: Partial<HttpClientInstance> = {};
+    mockAuthAPI.getHttpClient.mockResolvedValueOnce(mockHttpClient);
+    const httpClient: HttpClientInstance = await authContext.getHttpClient();
+    expect(mockAuthAPI.getHttpClient).toHaveBeenCalled();
+    expect(httpClient).toBe(mockHttpClient);
+    expect(httpClient).toBe(mockHttpClient);
+  });
+
+  it('should handle custom grant request', async () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+
+    const customGrantConfig: SPACustomGrantConfig = {
+      attachToken: true,
+      data: {},
+      id: '1',
+      returnsSession: true,
+      signInRequired: true,
+    };
+
+    const customGrantResponse: BasicUserInfo | FetchResponse<any> = {
+      allowedScopes: 'openid',
+      sessionState: 'test',
+    };
+
+    mockAuthAPI.requestCustomGrant.mockResolvedValueOnce(customGrantResponse);
+
+    authContext.requestCustomGrant(customGrantConfig);
+
+    expect(mockAuthAPI.requestCustomGrant).toHaveBeenCalledWith(customGrantConfig);
+  });
+
+  it('should properly register event handlers with the on method', async () => {
+    const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
+
+    const regularHook: Hooks = Hooks.SignIn;
+    const regularCallback: Mock = vi.fn();
+
+    const customGrantHook: Hooks = Hooks.CustomGrant;
+    const customGrantCallback: Mock = vi.fn();
+    const customGrantId: string = 'custom-grant-id';
+
+    authContext.on(regularHook, regularCallback);
+    authContext.on(customGrantHook, customGrantCallback, customGrantId);
+
+    expect(mockAuthAPI.on).toHaveBeenCalledTimes(2);
+
+    expect(mockAuthAPI.on.mock.calls[0][0]).toBe(regularHook);
+    expect(mockAuthAPI.on.mock.calls[0][1]).toBe(regularCallback);
+
+    expect(mockAuthAPI.on.mock.calls[1][0]).toBe(customGrantHook);
+    expect(mockAuthAPI.on.mock.calls[1][1]).toBe(customGrantCallback);
+    expect(mockAuthAPI.on.mock.calls[1][2]).toBe(customGrantId);
+  });
+});
