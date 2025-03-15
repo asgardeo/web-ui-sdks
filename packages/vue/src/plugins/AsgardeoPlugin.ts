@@ -63,70 +63,67 @@ export const asgardeoPlugin: Plugin = {
       Object.assign(state, currentState);
     };
 
+    /* eslint-disable no-useless-catch */
+    const withStateSync = async <T>(cb: () => T | Promise<T>, refreshState: boolean = true): Promise<T> => {
+      let result: T;
+      try {
+        result = await cb();
+        return result;
+      } catch (err) {
+        throw err;
+      } finally {
+        if (refreshState) {
+          syncState();
+        }
+      }
+    };
+
     const trySignInSilently = async (
       additionalParams?: Record<string, string | boolean>,
       tokenRequestConfig?: {params: Record<string, unknown>},
-    ): Promise<boolean | BasicUserInfo> => {
-      const result: boolean | BasicUserInfo = await AuthClient.trySignInSilently(additionalParams, tokenRequestConfig);
-      syncState();
-      return result;
-    };
-
-    const checkIsAuthenticated = async (): Promise<void> => {
-      const isAuthenticatedState: boolean = await AuthClient.isAuthenticated();
-
-      if (!isAuthenticatedState) {
-        AuthClient.updateState({...state, isAuthenticated: false, isLoading: false});
-        syncState();
-        return;
-      }
-
-      const response: BasicUserInfo = await AuthClient.getBasicUserInfo();
-
-      const stateToUpdate: AuthStateInterface = response
-        ? {
-            allowedScopes: response.allowedScopes,
-            displayName: response.displayName,
-            email: response.email,
-            isAuthenticated: true,
-            isLoading: false,
-            sub: response.sub,
-            username: response.username,
-          }
-        : {...state, isAuthenticated: isAuthenticatedState, isLoading: false};
-      AuthClient.updateState(stateToUpdate);
-      syncState();
-    };
-
-    const initialize = async (): Promise<void> => {
-      if (isInitialized.value) return;
-
-      try {
-        const config: AuthVueConfig = {...defaultConfig, ...options} as AuthVueConfig;
-        await AuthClient.init(config);
-        syncState();
-        isInitialized.value = true;
-
-        AuthClient.on(Hooks.SignOut, () => {
-          syncState();
-        });
-
-        if (state.isAuthenticated) {
+    ): Promise<boolean | BasicUserInfo> =>
+      withStateSync(async () => AuthClient.trySignInSilently(additionalParams, tokenRequestConfig));
+    const checkIsAuthenticated = async (): Promise<void> =>
+      withStateSync(async () => {
+        const isAuthenticatedState: boolean = await AuthClient.isAuthenticated();
+        if (!isAuthenticatedState) {
+          AuthClient.updateState({...state, isAuthenticated: false, isLoading: false});
           return;
         }
+        const response: BasicUserInfo = await AuthClient.getBasicUserInfo();
+        const stateToUpdate: AuthStateInterface = response
+          ? {
+              allowedScopes: response.allowedScopes,
+              displayName: response.displayName,
+              email: response.email,
+              isAuthenticated: true,
+              isLoading: false,
+              sub: response.sub,
+              username: response.username,
+            }
+          : {...state, isAuthenticated: isAuthenticatedState, isLoading: false};
+        AuthClient.updateState(stateToUpdate);
+      });
 
-        if (!config.skipRedirectCallback) {
-          const authParams: AuthParams = null;
+    const initialize = async (): Promise<void> => {
+      await withStateSync(async () => {
+        if (isInitialized.value) return;
 
-          const url: URL = new URL(window.location.href);
+        try {
+          const config: AuthVueConfig = {...defaultConfig, ...options} as AuthVueConfig;
+          await AuthClient.init(config);
+          isInitialized.value = true;
 
-          if (
-            (SPAUtils.hasAuthSearchParamsInURL() &&
-              new URL(url.origin + url.pathname).toString() === new URL(config?.signInRedirectURL).toString()) ||
-            authParams?.authorizationCode ||
-            url.searchParams.get('error')
-          ) {
-            try {
+          if (!config.skipRedirectCallback) {
+            const url: URL = new URL(window.location.href);
+            const authParams: AuthParams = null;
+
+            if (
+              (SPAUtils.hasAuthSearchParamsInURL() &&
+                new URL(url.origin + url.pathname).toString() === new URL(config?.signInRedirectURL).toString()) ||
+              authParams?.authorizationCode ||
+              url.searchParams.get('error')
+            ) {
               await AuthClient.signIn(
                 {callOnlyOnRedirect: true},
                 authParams?.authorizationCode,
@@ -134,43 +131,28 @@ export const asgardeoPlugin: Plugin = {
                 authParams?.state,
               );
               SPAUtils.removeAuthorizationCode();
-              syncState();
-            } catch (err) {
-              error.value = err;
+              return;
             }
+          }
+
+          if (!config.disableAutoSignIn && (await AuthClient.isSessionActive())) {
+            await AuthClient.signIn();
+          }
+
+          await checkIsAuthenticated();
+
+          if (state.isAuthenticated) {
             return;
           }
-        }
 
-        if (!config.disableAutoSignIn && (await AuthClient.isSessionActive())) {
-          try {
-            await AuthClient.signIn();
-            syncState();
-          } catch (err) {
-            error.value = err;
-          }
-        }
-
-        await checkIsAuthenticated();
-
-        if (state.isAuthenticated) {
-          return;
-        }
-
-        if (!config.disableTrySignInSilently) {
-          try {
+          if (!config.disableTrySignInSilently) {
             await trySignInSilently();
-            syncState();
-            error.value = null;
-          } catch (err) {
-            if (err?.code) {
-              error.value = err;
-            }
           }
+        } catch (err) {
+          error.value = err;
+          throw err;
         }
-      } catch (err) {
-        error.value = err;
-      }
+      });
     };
 
     initialize();
@@ -218,8 +200,8 @@ export const asgardeoPlugin: Plugin = {
         authState?: string,
         callback?: (response: BasicUserInfo) => void,
         tokenRequestConfig?: {params: Record<string, unknown>},
-      ): Promise<BasicUserInfo> => {
-        try {
+      ): Promise<BasicUserInfo> =>
+        withStateSync(async () => {
           const result: BasicUserInfo = await AuthClient.signIn(
             config,
             authorizationCode,
@@ -229,35 +211,24 @@ export const asgardeoPlugin: Plugin = {
             tokenRequestConfig,
           );
 
-          syncState();
-
           if (result) {
             error.value = null;
             callback?.(result);
           }
           return result;
-        } catch (err) {
-          error.value = err;
-          throw err;
-        }
-      },
-      signOut: async (callback?: (response: boolean) => void): Promise<boolean> => {
-        try {
+        }),
+      signOut: async (callback?: (response: boolean) => void): Promise<boolean> =>
+        withStateSync(async () => {
           const result: boolean = await AuthClient.signOut();
-          syncState();
           callback?.(result);
           return result;
-        } catch (err) {
-          error.value = err;
-          throw err;
-        }
-      },
+        }),
       state,
       trySignInSilently,
-      updateConfig: async (config: Partial<AuthClientConfig<Config>>): Promise<void> => {
-        await AuthClient.updateConfig(config);
-        syncState();
-      },
+      updateConfig: async (config: Partial<AuthClientConfig<Config>>): Promise<void> =>
+        withStateSync(async () => {
+          await AuthClient.updateConfig(config);
+        }),
     };
 
     app.provide(ASGARDEO_INJECTION_KEY, authContext);
