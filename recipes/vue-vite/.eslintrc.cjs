@@ -16,17 +16,21 @@
  * under the License.
  */
 
-/// <reference types="vite/client" />
+const path = require('path');
 
-interface ImportMetaEnv {
-  readonly VITE_ASGARDEO_BASE_URL: string
-  readonly VITE_ASGARDEO_CLIENT_ID: string
-  readonly VITE_ASGARDEO_DISABLE_TRY_SIGN_IN_SILENTLY: boolean
-  readonly VITE_ASGARDEO_SCOPE: string
-  readonly VITE_ASGARDEO_SIGN_IN_REDIRECT_URL: string
-  readonly VITE_ASGARDEO_SIGN_OUT_REDIRECT_URL: string
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}
+module.exports = {
+  extends: [
+    'plugin:@wso2/typescript',
+    // 'plugin:@wso2/vue',
+    'plugin:@wso2/strict',
+    'plugin:@wso2/internal',
+    'plugin:@wso2/prettier',
+  ],
+  parserOptions: {
+    project: [path.resolve(__dirname, 'tsconfig.json'), path.resolve(__dirname, 'tsconfig.eslint.json')],
+  },
+  plugins: ['@wso2'],
+  rules: {
+    'no-underscore-dangle': ['error', {allow: ['_client', '_authState', '_context']}],
+  },
+};
