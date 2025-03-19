@@ -83,6 +83,7 @@ export const asgardeoPlugin: Plugin = {
       tokenRequestConfig?: {params: Record<string, unknown>},
     ): Promise<boolean | BasicUserInfo> =>
       withStateSync(async () => AuthClient.trySignInSilently(additionalParams, tokenRequestConfig));
+
     const checkIsAuthenticated = async (): Promise<void> =>
       withStateSync(async () => {
         const isAuthenticatedState: boolean = await AuthClient.isAuthenticated();
