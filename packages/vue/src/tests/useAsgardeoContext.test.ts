@@ -18,6 +18,7 @@
 
 import {describe, it, expect, vi, beforeEach, Mock} from 'vitest';
 import {inject} from 'vue';
+import {mockAuthContext} from './mocks/mocks';
 import {useAsgardeoContext} from '../composables/useAsgardeoContext';
 import {ASGARDEO_INJECTION_KEY} from '../plugins/AsgardeoPlugin';
 import {AuthContextInterface} from '../types';
@@ -27,17 +28,6 @@ vi.mock('vue', () => ({
 }));
 
 describe('useAsgardeoContext', () => {
-  const mockAuthContext: Partial<AuthContextInterface> = {
-    signIn: vi.fn(),
-    signOut: vi.fn(),
-    state: {
-      allowedScopes: 'openid profile email',
-      displayName: 'John Doe',
-      isAuthenticated: true,
-      isLoading: false,
-    },
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
   });

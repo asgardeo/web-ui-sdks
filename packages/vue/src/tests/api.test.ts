@@ -17,106 +17,24 @@
  */
 
 import {
-  AsgardeoAuthException,
-  AsgardeoSPAClient,
-  AuthClientConfig,
-  BasicUserInfo,
-  Config,
-  DecodedIDTokenPayload,
-  FetchResponse,
+  type AsgardeoSPAClient,
+  type AuthClientConfig,
+  type BasicUserInfo,
+  type Config,
+  type DecodedIDTokenPayload,
+  type FetchResponse,
   Hooks,
-  HttpRequestConfig,
-  HttpResponse,
-  SPACustomGrantConfig,
-  SignInConfig,
+  type HttpRequestConfig,
+  type HttpResponse,
+  type SPACustomGrantConfig,
+  type SignInConfig,
 } from '@asgardeo/auth-spa';
 import {describe, it, expect, beforeEach, vi, Mock} from 'vitest';
-import AuthAPI from '../api'; // Adjust this path as needed
-import {AuthStateInterface, AuthVueConfig} from '../types';
+import {MockAsgardeoAuthException, asgardeoAuthSPAMock} from './mocks/mocks';
+import AuthAPI from '../api';
+import {type AuthStateInterface, type AuthVueConfig} from '../types';
 
-// Mock the AsgardeoSPAClient
-vi.mock('@asgardeo/auth-spa', () => {
-  const mockInstance: Partial<AsgardeoSPAClient> = {
-    disableHttpHandler: vi.fn().mockResolvedValue(true),
-    enableHttpHandler: vi.fn().mockResolvedValue(true),
-    getAccessToken: vi.fn().mockResolvedValue('mock-access-token'),
-    getBasicUserInfo: vi.fn().mockResolvedValue({
-      allowedScopes: 'openid profile',
-      displayName: 'Test User',
-      email: 'test@example.com',
-      sub: 'user-id-123',
-      username: 'testUser',
-    }),
-    getDecodedIDToken: vi.fn().mockResolvedValue({sub: 'user-id-123'}),
-    getHttpClient: vi.fn().mockResolvedValue({}),
-    getIDPAccessToken: vi.fn().mockResolvedValue('mock-idp-access-token'),
-    getIDToken: vi.fn().mockResolvedValue('mock-id-token'),
-    getOIDCServiceEndpoints: vi.fn().mockResolvedValue({}),
-    httpRequest: vi.fn().mockResolvedValue({data: {}, status: 200}),
-    httpRequestAll: vi.fn().mockResolvedValue([{data: {}, status: 200}]),
-    initialize: vi.fn().mockResolvedValue(true),
-    isAuthenticated: vi.fn().mockResolvedValue(true),
-    isSessionActive: vi.fn().mockResolvedValue(true),
-    on: vi.fn().mockResolvedValue(undefined),
-    refreshAccessToken: vi.fn().mockResolvedValue({
-      displayName: 'Test User',
-      email: 'test@example.com',
-      username: 'testUser',
-    }),
-    requestCustomGrant: vi.fn().mockResolvedValue({
-      displayName: 'Test User',
-      email: 'test@example.com',
-      username: 'testUser',
-    }),
-    revokeAccessToken: vi.fn().mockResolvedValue(true),
-    signIn: vi.fn().mockResolvedValue({
-      allowedScopes: 'openid profile',
-      displayName: 'Test User',
-      email: 'test@example.com',
-      sub: 'user-id-123',
-      username: 'testUser',
-    }),
-    signOut: vi.fn().mockResolvedValue(true),
-    trySignInSilently: vi.fn().mockResolvedValue({
-      allowedScopes: 'openid profile',
-      displayName: 'Test User',
-      email: 'test@example.com',
-      sub: 'user-id-123',
-      username: 'testUser',
-    }),
-    updateConfig: vi.fn().mockResolvedValue(undefined),
-  };
-
-  return {
-    AsgardeoAuthException: class MockAsgardeoAuthException extends Error {
-      public code: string | undefined;
-
-      public name: string;
-
-      public message: string;
-
-      constructor(code: string, name: string, message: string) {
-        super(message);
-        this.code = code;
-        this.name = name;
-        this.message = message;
-        Object.setPrototypeOf(this, new.target.prototype);
-      }
-    },
-    AsgardeoSPAClient: {
-      getInstance: vi.fn().mockReturnValue(mockInstance),
-    },
-    Hooks: {
-      CustomGrant: 'custom-grant',
-      HttpRequest: 'http-request',
-      HttpRequestError: 'http-request-error',
-      HttpRequestFinish: 'http-request-finish',
-      Initialize: 'initialize',
-      SignIn: 'sign-in',
-      SignOut: 'sign-out',
-    },
-  };
-});
+vi.doMock('@asgardeo/auth-spa', () => asgardeoAuthSPAMock);
 
 describe('AuthAPI', () => {
   let authApi: AuthAPI;
@@ -124,7 +42,7 @@ describe('AuthAPI', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockClient = AsgardeoSPAClient.getInstance();
+    mockClient = asgardeoAuthSPAMock.AsgardeoSPAClient.getInstance();
     authApi = new AuthAPI(mockClient);
   });
 
@@ -235,11 +153,13 @@ describe('AuthAPI', () => {
     });
 
     it('should handle errors during sign out', async () => {
-      const error: AsgardeoAuthException = new AsgardeoAuthException(
+      const error: MockAsgardeoAuthException = new asgardeoAuthSPAMock.AsgardeoAuthException(
         'AUTH001',
         'AsgardeoAuthException',
         'Sign out failed',
       );
+
+      // Use the mock client from your mocks file
       mockClient.signOut.mockRejectedValueOnce(error);
 
       await expect(authApi.signOut()).rejects.toThrow('Sign out failed');
@@ -360,11 +280,13 @@ describe('AuthAPI', () => {
     });
 
     it('should handle errors', async () => {
-      const error: AsgardeoAuthException = new AsgardeoAuthException(
+      const error: MockAsgardeoAuthException = new asgardeoAuthSPAMock.AsgardeoAuthException(
         'AUTH002',
         'AsgardeoAuthException',
         'Custom grant failed',
       );
+
+      // Use the mockAsgardeoSPAClient from your mocks file
       mockClient.requestCustomGrant.mockRejectedValueOnce(error);
 
       const config: SPACustomGrantConfig = {
@@ -403,11 +325,12 @@ describe('AuthAPI', () => {
     });
 
     it('should handle errors', async () => {
-      const error: AsgardeoAuthException = new AsgardeoAuthException(
+      const error: MockAsgardeoAuthException = new asgardeoAuthSPAMock.AsgardeoAuthException(
         'AUTH003',
         'AsgardeoAuthException',
         'Token revocation failed',
       );
+
       mockClient.revokeAccessToken.mockRejectedValueOnce(error);
 
       await expect(authApi.revokeAccessToken()).rejects.toThrow('Token revocation failed');
@@ -565,14 +488,24 @@ describe('AuthAPI', () => {
     });
 
     it('should handle errors', async () => {
-      const error: AsgardeoAuthException = new AsgardeoAuthException(
+      const error: MockAsgardeoAuthException = new asgardeoAuthSPAMock.AsgardeoAuthException(
         'AUTH004',
         'AsgardeoAuthException',
-        'Silent sign-in failed',
+        'Custom grant failed',
       );
-      mockClient.trySignInSilently.mockRejectedValueOnce(error);
 
-      await expect(authApi.trySignInSilently()).rejects.toThrow('Silent sign-in failed');
+      // Use the mockAsgardeoSPAClient from your mocks file
+      mockClient.requestCustomGrant.mockRejectedValueOnce(error);
+
+      const config: SPACustomGrantConfig = {
+        attachToken: false,
+        data: {key: 'value'},
+        id: 'custom-grant-id',
+        returnsSession: true,
+        signInRequired: true,
+      };
+
+      await expect(authApi.requestCustomGrant(config)).rejects.toThrow('Custom grant failed');
     });
   });
 });

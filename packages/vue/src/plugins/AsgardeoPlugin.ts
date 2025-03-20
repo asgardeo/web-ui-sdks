@@ -57,12 +57,6 @@ export const asgardeoPlugin: Plugin = {
 
     const state: Reactive<AuthStateInterface> = reactive<AuthStateInterface>({...AuthClient.getState()});
 
-    // Syncs the state with the AuthClient state.
-    const syncState = (): void => {
-      const currentState: AuthStateInterface = AuthClient.getState();
-      Object.assign(state, currentState);
-    };
-
     /* eslint-disable no-useless-catch */
     const withStateSync = async <T>(cb: () => T | Promise<T>, refreshState: boolean = true): Promise<T> => {
       let result: T;
@@ -73,7 +67,8 @@ export const asgardeoPlugin: Plugin = {
         throw err;
       } finally {
         if (refreshState) {
-          syncState();
+          const currentState: AuthStateInterface = AuthClient.getState();
+          Object.assign(state, currentState);
         }
       }
     };

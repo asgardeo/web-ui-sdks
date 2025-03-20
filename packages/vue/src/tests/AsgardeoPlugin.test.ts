@@ -28,97 +28,13 @@ import {
 } from '@asgardeo/auth-spa';
 import {describe, it, expect, beforeEach, vi, Mock} from 'vitest';
 import {createApp} from 'vue';
+import {mockAuthAPI, mockState} from './mocks/mocks';
 import AuthAPI from '../api';
 import {asgardeoPlugin, ASGARDEO_INJECTION_KEY} from '../plugins/AsgardeoPlugin';
 import {AuthContextInterface, AuthStateInterface, type AuthVueConfig} from '../types';
 
 vi.mock('../api');
 vi.mock('@asgardeo/auth-spa');
-
-const mockState: AuthStateInterface = {
-  allowedScopes: '',
-  displayName: '',
-  email: '',
-  isAuthenticated: false,
-  isLoading: true,
-  sub: '',
-  username: '',
-};
-
-// Simple version
-type MockAuthAPI = {
-  disableHttpHandler: Mock;
-  enableHttpHandler: Mock;
-  getAccessToken: Mock;
-  getBasicUserInfo: Mock;
-  getDecodedIDToken: Mock;
-  getHttpClient: Mock;
-  getIDToken: Mock;
-  getOIDCServiceEndpoints: Mock;
-  getState: Mock;
-  httpRequest: Mock;
-  httpRequestAll: Mock;
-  init: Mock;
-  isAuthenticated: Mock;
-  isSessionActive: Mock;
-  on: Mock;
-  refreshAccessToken: Mock;
-  requestCustomGrant: Mock;
-  revokeAccessToken: Mock;
-  signIn: Mock;
-  signOut: Mock;
-  trySignInSilently: Mock;
-  updateConfig: Mock;
-  updateState: Mock;
-};
-
-const mockAuthAPI: MockAuthAPI = {
-  disableHttpHandler: vi.fn().mockResolvedValue(true),
-  enableHttpHandler: vi.fn().mockResolvedValue(true),
-  getAccessToken: vi.fn().mockResolvedValue('mock-access-token'),
-  getBasicUserInfo: vi.fn().mockResolvedValue({
-    allowedScopes: 'openid profile',
-    displayName: 'Test User',
-    email: 'test@example.com',
-    sub: 'user-id-123',
-    username: 'testUser',
-  }),
-  getDecodedIDToken: vi.fn().mockResolvedValue({aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'}),
-  getHttpClient: vi.fn().mockResolvedValue({}),
-  getIDToken: vi.fn().mockResolvedValue('mock-id-token'),
-  getOIDCServiceEndpoints: vi.fn().mockResolvedValue({}),
-  getState: vi.fn().mockReturnValue(mockState),
-  httpRequest: vi.fn().mockResolvedValue({data: {}, status: 200}),
-  httpRequestAll: vi.fn().mockResolvedValue([{data: {}, status: 200}]),
-  init: vi.fn().mockResolvedValue(true),
-  isAuthenticated: vi.fn().mockResolvedValue(true),
-  isSessionActive: vi.fn().mockResolvedValue(true),
-  on: vi.fn(),
-  refreshAccessToken: vi.fn().mockResolvedValue({
-    displayName: 'Test User',
-    email: 'test@example.com',
-    username: 'testUser',
-  }),
-  requestCustomGrant: vi.fn().mockResolvedValue({
-    displayName: 'Test User',
-    email: 'test@example.com',
-    username: 'testUser',
-  } as BasicUserInfo),
-  revokeAccessToken: vi.fn().mockResolvedValue(true),
-  signIn: vi.fn().mockResolvedValue({
-    allowedScopes: 'openid profile',
-    displayName: 'Test User',
-    email: 'test@example.com',
-    sub: 'user-id-123',
-    username: 'testUser',
-  }),
-  signOut: vi.fn().mockResolvedValue(true),
-  trySignInSilently: vi.fn().mockResolvedValue(false),
-  updateConfig: vi.fn().mockResolvedValue(undefined),
-  updateState: vi.fn().mockImplementation((newState: AuthStateInterface) => {
-    Object.assign(mockState, newState);
-  }),
-};
 
 vi.mocked(AuthAPI).mockImplementation(() => mockAuthAPI as unknown as AuthAPI);
 
