@@ -205,7 +205,6 @@ describe('asgardeoPlugin', () => {
   it('should handle token operations correctly', async () => {
     const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
 
-    // Test refreshAccessToken
     const refreshedState: AuthStateInterface = {
       ...mockState,
       isAuthenticated: true,
@@ -232,15 +231,12 @@ describe('asgardeoPlugin', () => {
   it('should handle HTTP operations correctly', async () => {
     const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
 
-    // Test enableHttpHandler
     await authContext.enableHttpHandler();
     expect(mockAuthAPI.enableHttpHandler).toHaveBeenCalled();
 
-    // Test disableHttpHandler
     await authContext.disableHttpHandler();
     expect(mockAuthAPI.disableHttpHandler).toHaveBeenCalled();
 
-    // Test getHttpClient
     const mockHttpClient: Partial<HttpClientInstance> = {};
     mockAuthAPI.getHttpClient.mockResolvedValueOnce(mockHttpClient);
     const httpClient: HttpClientInstance = await authContext.getHttpClient();

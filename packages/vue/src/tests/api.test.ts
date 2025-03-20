@@ -128,7 +128,6 @@ describe('AuthAPI', () => {
       const result: BasicUserInfo = await authApi.signIn();
       expect(result).toBeNull();
 
-      // State should not be updated
       expect(authApi.getState().isAuthenticated).toBe(false);
     });
 
@@ -159,7 +158,6 @@ describe('AuthAPI', () => {
         'Sign out failed',
       );
 
-      // Use the mock client from your mocks file
       mockClient.signOut.mockRejectedValueOnce(error);
 
       await expect(authApi.signOut()).rejects.toThrow('Sign out failed');
@@ -286,7 +284,6 @@ describe('AuthAPI', () => {
         'Custom grant failed',
       );
 
-      // Use the mockAsgardeoSPAClient from your mocks file
       mockClient.requestCustomGrant.mockRejectedValueOnce(error);
 
       const config: SPACustomGrantConfig = {
@@ -303,7 +300,6 @@ describe('AuthAPI', () => {
 
   describe('revokeAccessToken', () => {
     it('should call revokeAccessToken on the client and reset state', async () => {
-      // First set some state that should be cleared
       authApi.updateState({
         allowedScopes: 'read write',
         email: 'test@example.com',
@@ -494,7 +490,6 @@ describe('AuthAPI', () => {
         'Custom grant failed',
       );
 
-      // Use the mockAsgardeoSPAClient from your mocks file
       mockClient.requestCustomGrant.mockRejectedValueOnce(error);
 
       const config: SPACustomGrantConfig = {
