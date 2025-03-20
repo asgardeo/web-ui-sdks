@@ -31,6 +31,7 @@ module.exports = {
   },
   plugins: ['@wso2'],
   rules: {
-    'no-underscore-dangle': ['error', {allow: ['_client', '_authState', '_context']}],
+    'import/no-extraneous-dependencies': ['error', {devDependencies: true}],
+    'no-underscore-dangle': ['off'],
   },
 };

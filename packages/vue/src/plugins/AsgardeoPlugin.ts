@@ -57,7 +57,7 @@ export const asgardeoPlugin: Plugin = {
 
     const state: Reactive<AuthStateInterface> = reactive<AuthStateInterface>({...AuthClient.getState()});
 
-    // This is for updating the state object with the latest values like dispatch in react
+    // Syncs the state with the AuthClient state.
     const syncState = (): void => {
       const currentState: AuthStateInterface = AuthClient.getState();
       Object.assign(state, currentState);

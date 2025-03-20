@@ -51,9 +51,7 @@ class AuthAPI {
    *
    * @return {AuthStateInterface} Authentication State.
    */
-  public getState = (): AuthStateInterface => {
-    return this._authState;
-  };
+  public getState = (): AuthStateInterface => this._authState;
 
   /**
    * Initializes the AuthClient instance with the given authentication configuration.
@@ -62,9 +60,7 @@ class AuthAPI {
    *        containing details such as client ID, redirect URLs, and base URL.
    * @returns {Promise<boolean>} A promise that resolves to `true` if initialization is successful.
    */
-  public init = (config: AuthVueConfig): Promise<boolean> => {
-    return this._client.initialize(config);
-  };
+  public init = (config: AuthVueConfig): Promise<boolean> => this._client.initialize(config);
 
   /**
    * Handles user sign-in by exchanging the authorization code for tokens
@@ -84,8 +80,8 @@ class AuthAPI {
     authState?: string,
     callback?: (response: BasicUserInfo) => void,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo> => {
-    return this._client
+  ): Promise<BasicUserInfo> =>
+    this._client
       .signIn(config, authorizationCode, sessionState, authState, tokenRequestConfig)
       .then(async (response: BasicUserInfo) => {
         if (!response) {
@@ -111,15 +107,16 @@ class AuthAPI {
         return response;
       })
       .catch((error: Error) => Promise.reject(error));
-  };
 
   /**
    * Signs the user out and resets the authentication state.
    *
+   * @param {(response?: boolean) => void} [callback] - An optional callback function to execute after sign-out.
    * @returns {Promise<boolean>} A promise resolving to `true` if sign-out is successful.
+   *
    */
-  public signOut = async (callback?: (response?: boolean) => void): Promise<boolean> => {
-    return this._client
+  public signOut = async (callback?: (response?: boolean) => void): Promise<boolean> =>
+    this._client
       .signOut()
       .then((response: boolean) => {
         if (callback) {
@@ -128,7 +125,6 @@ class AuthAPI {
         return response;
       })
       .catch((error: AsgardeoAuthException) => Promise.reject(error));
-  };
 
   /**
    * Method to update Auth Client instance authentication state.
@@ -154,7 +150,7 @@ class AuthAPI {
    * This is the only way by which protected endpoints can be accessed
    * when the web worker is used to store session information.
    *
-   * @param {HttpRequestConfig} config -  The config object containing attributes necessary to send a request.
+   * @param {HttpRequestConfig} config - The config object containing attributes necessary to send a request.
    *
    * @return {Promise<FetchResponse>} - Returns a Promise that resolves with the response to the request.
    */
@@ -168,7 +164,7 @@ class AuthAPI {
    * This is the only way by which multiple requests can be sent to protected endpoints
    * when the web worker is used to store session information.
    *
-   * @param {HttpRequestConfig[]} configs -  The config object containing attributes necessary to send a request.
+   * @param {HttpRequestConfig[]} configs - The config object containing attributes necessary to send a request.
    *
    * @return {Promise<FetchResponse[]>} - Returns a Promise that resolves with the responses to the requests.
    */
@@ -180,6 +176,7 @@ class AuthAPI {
    * This method allows you to send a request with a custom grant.
    *
    * @param {CustomGrantRequestParams} config - The request parameters.
+   * @param {(response: BasicUserInfo | FetchResponse<any>) => void} [callback] - An optional callback function.
    *
    * @return {Promise<FetchResponse<any> | SignInResponse>} - A Promise that resolves with
    * the value returned by the custom grant request.
@@ -278,21 +275,21 @@ class AuthAPI {
   /**
    * This method return a Promise that resolves with the access token.
    *
-   * **This method will not return the access token if the storage type is set to `webWorker`.**
+   * @remarks
+   * This method will not return the access token if the storage type is set to `webWorker`.
    *
    * @return {Promise<string>} - A Promise that resolves with the access token.
    */
-  public async getAccessToken(): Promise<string> {
-    return this._client.getAccessToken();
-  }
+  public getAccessToken = async (): Promise<string> => this._client.getAccessToken();
 
   /**
-   * This method return a Promise that resolves with the idp access token.
+   * This method returns a Promise that resolves with the IDP access token.
    *
-   * **This method will not return the idp access token if the storage type is set to `webWorker`.**
-   * **This can be used to access the IDP access token when custom auth grant functionalities are used**
+   * @remarks
+   * This method will not return the IDP access token if the storage type is set to `webWorker`.
+   * It can be used to access the IDP access token when custom authentication grant functionalities are used.
    *
-   * @return {Promise<string>} - A Promise that resolves with the idp access token.
+   * @return {Promise<string>} A Promise that resolves with the IDP access token.
    */
   public async getIDPAccessToken(): Promise<string> {
     return this._client.getIDPAccessToken();
@@ -311,7 +308,7 @@ class AuthAPI {
   /**
    * This method specifies if the user is authenticated or not.
    *
-   * @return {Promise<boolean>} - A Promise that resolves with `true` if teh user is authenticated.
+   * @return {Promise<boolean>} - A Promise that resolves with `true` if the user is authenticated.
    */
   public async isAuthenticated(): Promise<boolean> {
     return this._client.isAuthenticated();
@@ -329,8 +326,7 @@ class AuthAPI {
   /**
    * This method enables callback functions attached to the http client.
    *
-   * @return {Promise<boolean>} - A promise that resolves with True.
-   *
+   * @return {Promise<boolean>} - A promise that resolves with `true`.
    */
   public async enableHttpHandler(): Promise<boolean> {
     return this._client.enableHttpHandler();
@@ -339,7 +335,7 @@ class AuthAPI {
   /**
    * This method disables callback functions attached to the http client.
    *
-   * @return {Promise<boolean>} - A promise that resolves with True.
+   * @return {Promise<boolean>} - A promise that resolves with `true`.
    */
   public async disableHttpHandler(): Promise<boolean> {
     return this._client.disableHttpHandler();
@@ -359,7 +355,7 @@ class AuthAPI {
    *
    * @param {Hooks.CustomGrant} hook - The name of the hook.
    * @param {(response?: any) => void} callback - The callback function.
-   * @param {string} id (optional) - The id of the hook. This is used when multiple custom grants are used.
+   * @param {string} id- Optional id for the hook. This is used when multiple custom grants are used.
    *
    */
   public on(hook: Hooks.CustomGrant, callback: (response?: any) => void, id: string): Promise<void>;
@@ -374,16 +370,19 @@ class AuthAPI {
 
   /**
    * This method allows you to sign in silently.
-   * First, this method sends a prompt none request to see if there is an active user session in the identity server.
-   * If there is one, then it requests the access token and stores it. Else, it returns false.
+   * First, this method sends a prompt-none request to check for an active user session in the identity provider.
+   * If a session exists, it retrieves the access token and stores it. Otherwise, it returns `false`.
    *
-   * @return {Promise<BasicUserInfo | boolean>} - A Promise that resolves with the user information after signing in
-   * or with `false` if the user is not signed in.
+   * @param {Record<string, string | boolean>} [additionalParams] - Optional additional parameters to be sent with the request.
+   * @param {{ params: Record<string, unknown> }} [tokenRequestConfig] - Optional configuration for the token request.
+   *
+   * @returns {Promise<BasicUserInfo | boolean>} A Promise that resolves with the user information after signing in,
+   * or `false` if the user is not signed in.
    *
    * @example
-   *```
-   * client.trySignInSilently()
-   *```
+   * ```
+   * client.trySignInSilently();
+   * ```
    */
   public async trySignInSilently(
     additionalParams?: Record<string, string | boolean>,
