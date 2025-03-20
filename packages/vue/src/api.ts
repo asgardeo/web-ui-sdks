@@ -44,11 +44,6 @@ class AuthAPI {
 
   constructor(spaClient?: AsgardeoSPAClient) {
     this._client = spaClient ?? AsgardeoSPAClient.getInstance();
-
-    this.getState = this.getState.bind(this);
-    this.init = this.init.bind(this);
-    this.signIn = this.signIn.bind(this);
-    this.signOut = this.signOut.bind(this);
   }
 
   /**
@@ -56,9 +51,9 @@ class AuthAPI {
    *
    * @return {AuthStateInterface} Authentication State.
    */
-  public getState(): AuthStateInterface {
+  public getState = (): AuthStateInterface => {
     return this._authState;
-  }
+  };
 
   /**
    * Initializes the AuthClient instance with the given authentication configuration.
@@ -67,9 +62,9 @@ class AuthAPI {
    *        containing details such as client ID, redirect URLs, and base URL.
    * @returns {Promise<boolean>} A promise that resolves to `true` if initialization is successful.
    */
-  public init(config: AuthVueConfig): Promise<boolean> {
+  public init = (config: AuthVueConfig): Promise<boolean> => {
     return this._client.initialize(config);
-  }
+  };
 
   /**
    * Handles user sign-in by exchanging the authorization code for tokens
@@ -82,14 +77,14 @@ class AuthAPI {
    * @param {{ params: Record<string, unknown> }} [tokenRequestConfig] - Optional token request parameters.
    * @returns {Promise<BasicUserInfo>} A promise resolving to the authenticated user's basic information.
    */
-  public async signIn(
+  public signIn = async (
     config?: SignInConfig,
     authorizationCode?: string,
     sessionState?: string,
     authState?: string,
     callback?: (response: BasicUserInfo) => void,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo> {
+  ): Promise<BasicUserInfo> => {
     return this._client
       .signIn(config, authorizationCode, sessionState, authState, tokenRequestConfig)
       .then(async (response: BasicUserInfo) => {
@@ -116,14 +111,14 @@ class AuthAPI {
         return response;
       })
       .catch((error: Error) => Promise.reject(error));
-  }
+  };
 
   /**
    * Signs the user out and resets the authentication state.
    *
    * @returns {Promise<boolean>} A promise resolving to `true` if sign-out is successful.
    */
-  public async signOut(callback?: (response?: boolean) => void): Promise<boolean> {
+  public signOut = async (callback?: (response?: boolean) => void): Promise<boolean> => {
     return this._client
       .signOut()
       .then((response: boolean) => {
@@ -133,7 +128,7 @@ class AuthAPI {
         return response;
       })
       .catch((error: AsgardeoAuthException) => Promise.reject(error));
-  }
+  };
 
   /**
    * Method to update Auth Client instance authentication state.
