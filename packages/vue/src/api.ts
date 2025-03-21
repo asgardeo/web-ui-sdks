@@ -178,7 +178,7 @@ class AuthAPI {
    * @param {CustomGrantRequestParams} config - The request parameters.
    * @param {(response: BasicUserInfo | FetchResponse<any>) => void} [callback] - An optional callback function.
    *
-   * @return {Promise<FetchResponse<any> | SignInResponse>} - A Promise that resolves with
+   * @return {Promise<FetchResponse<any> | SignInResponse>} a promise that resolves with
    * the value returned by the custom grant request.
    */
   public requestCustomGrant(
