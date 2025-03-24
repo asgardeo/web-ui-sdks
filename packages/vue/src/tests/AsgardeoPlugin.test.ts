@@ -28,7 +28,7 @@ import {
 } from '@asgardeo/auth-spa';
 import {describe, it, expect, beforeEach, vi, Mock} from 'vitest';
 import {createApp} from 'vue';
-import {mockAuthAPI, mockState} from './mocks/mocks';
+import {mockAuthAPI, mockState, mockConfig} from './mocks/mocks';
 import AuthAPI from '../api';
 import {asgardeoPlugin, ASGARDEO_INJECTION_KEY} from '../plugins/AsgardeoPlugin';
 import {AuthContextInterface, AuthStateInterface, type AuthVueConfig} from '../types';
@@ -58,14 +58,7 @@ describe('asgardeoPlugin', () => {
 
     app = createApp({});
 
-    config = {
-      baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
-      clientID: 'mock-client-id',
-      signInRedirectURL: 'http://localhost:5173/',
-      signOutRedirectURL: 'http://localhost:5173/',
-    };
-
-    app.use(asgardeoPlugin, config);
+    app.use(asgardeoPlugin, mockConfig);
   });
 
   it('should provide the authentication context', () => {

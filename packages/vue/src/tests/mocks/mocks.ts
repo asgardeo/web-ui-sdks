@@ -197,3 +197,10 @@ export const asgardeoAuthSPAMock: any = {
     SignOut: 'sign-out',
   },
 };
+
+export const mockConfig = {
+  baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
+  clientID: 'mock-client-id',
+  signInRedirectURL: 'http://localhost:5173/',
+  signOutRedirectURL: 'http://localhost:5173/',
+};
