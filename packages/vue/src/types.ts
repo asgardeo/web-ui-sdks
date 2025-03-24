@@ -46,17 +46,6 @@ export interface VueConfig {
   disableTrySignInSilently?: boolean;
 
   /**
-   * Determines if the SDK should inject the authentication state into Vue's reactive state.
-   * This can be useful for integrating with Vuex or Pinia state management.
-   */
-  enableReactiveAuthState?: boolean;
-
-  /**
-   * If enabled, the SDK will register global authentication-related components (if any) for Vue.
-   */
-  registerGlobalComponents?: boolean;
-
-  /**
    * The SDK's `AuthProvider` by default listens to route changes
    * to detect `code` & `session_state` parameters and perform a token exchange.
    * This option allows disabling that behavior.
