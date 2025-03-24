@@ -39,9 +39,8 @@
     "dev": "rollup -c -w",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
     "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
-    "type-check": "vue-tsc --noEmit",
-    "test": "vitest --config src/vitest.config.ts --environment=jsdom --run --passWithNoTests",
-    "prepublishOnly": "npm run build"
+    "typecheck": "vue-tsc --noEmit",
+    "test": "vitest --config src/vitest.config.ts --environment=jsdom --run --passWithNoTests"
   },
   "publishConfig": {
     "access": "public"
