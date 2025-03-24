@@ -111,7 +111,7 @@ class AuthAPI {
   /**
    * Signs the user out and resets the authentication state.
    *
-   * @param {(response?: boolean) => void} [callback] - An optional callback function to execute after sign-out.
+   * @param {(response?: boolean) => void} callback - An optional callback function to execute after sign-out.
    * @returns {Promise<boolean>} A promise resolving to `true` if sign-out is successful.
    *
    */
@@ -138,7 +138,7 @@ class AuthAPI {
   /**
    * This method returns a Promise that resolves with the basic user information obtained from the ID token.
    *
-   * @return {Promise<BasicUserInfo>} - A promise that resolves with the user information.
+   * @return {Promise<BasicUserInfo>} a promise that resolves with the user information.
    */
   public async getBasicUserInfo(): Promise<BasicUserInfo> {
     return this._client.getBasicUserInfo();
@@ -166,7 +166,7 @@ class AuthAPI {
    *
    * @param {HttpRequestConfig[]} configs - The config object containing attributes necessary to send a request.
    *
-   * @return {Promise<FetchResponse[]>} - Returns a Promise that resolves with the responses to the requests.
+   * @return {Promise<FetchResponse[]>} a Promise that resolves with the responses to the requests.
    */
   public async httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> {
     return this._client.httpRequestAll(configs);
