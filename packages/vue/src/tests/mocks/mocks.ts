@@ -18,7 +18,7 @@
 
 import {AsgardeoSPAClient, BasicUserInfo} from '@asgardeo/auth-spa';
 import {Mock, vi} from 'vitest';
-import {AuthContextInterface, AuthStateInterface} from '../../types';
+import {AuthContextInterface, AuthStateInterface, AuthVueConfig} from '../../types';
 
 export const mockAuthContext: Partial<AuthContextInterface> = {
   signIn: vi.fn(),
@@ -198,7 +198,7 @@ export const asgardeoAuthSPAMock: any = {
   },
 };
 
-export const mockConfig = {
+export const mockConfig: AuthVueConfig = {
   baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
   clientID: 'mock-client-id',
   signInRedirectURL: 'http://localhost:5173/',

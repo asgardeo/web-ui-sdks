@@ -31,7 +31,7 @@ import {createApp} from 'vue';
 import {mockAuthAPI, mockState, mockConfig} from './mocks/mocks';
 import AuthAPI from '../api';
 import {asgardeoPlugin, ASGARDEO_INJECTION_KEY} from '../plugins/AsgardeoPlugin';
-import {AuthContextInterface, AuthStateInterface, type AuthVueConfig} from '../types';
+import {AuthContextInterface, AuthStateInterface} from '../types';
 
 vi.mock('../api');
 vi.mock('@asgardeo/auth-spa');
@@ -40,7 +40,6 @@ vi.mocked(AuthAPI).mockImplementation(() => mockAuthAPI as unknown as AuthAPI);
 
 describe('asgardeoPlugin', () => {
   let app: ReturnType<typeof createApp>;
-  let config: AuthVueConfig;
 
   beforeEach(() => {
     vi.clearAllMocks();
