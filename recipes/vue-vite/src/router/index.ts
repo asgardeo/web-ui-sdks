@@ -16,24 +16,50 @@
  * under the License.
  */
 
-import { createRouter, createWebHistory } from 'vue-router'
+import { useAsgardeo } from '@asgardeo/vue'
+import {
+  createRouter,
+  createWebHistory,
+  type RouteLocationNormalized,
+  type NavigationGuardNext,
+  type Router,
+} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
-const router = createRouter({
+const AboutView = (): Promise<typeof import('../views/AboutView.vue')> =>
+  import('../views/AboutView.vue')
+
+const router: Router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
       component: HomeView,
+      name: 'home',
+      path: '/',
     },
     {
-      path: '/about',
+      beforeEnter: (
+        to: RouteLocationNormalized,
+        from: RouteLocationNormalized,
+        next: NavigationGuardNext,
+      ): void => {
+        const { isAuthenticated } = useAsgardeo()
+
+        isAuthenticated()
+          .then((auth: boolean) => {
+            if (auth) {
+              next()
+            } else {
+              next('/')
+            }
+          })
+          .catch(() => {
+            next('/')
+          })
+      },
+      component: AboutView,
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: '/about',
     },
   ],
 })

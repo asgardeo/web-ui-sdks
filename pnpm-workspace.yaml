@@ -2,3 +2,9 @@ packages:
   - "docs"
   - "packages/*"
   - "recipes/*"
+
+catalog:
+  "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?21281faa4f8354491747075f40f58b497d0c4730"
+  "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?21281faa4f8354491747075f40f58b497d0c4730"
+  "@wso2/stylelint-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/stylelint-config?21281faa4f8354491747075f40f58b497d0c4730"
+  "eslint": "~8.57.0"

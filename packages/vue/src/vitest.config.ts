@@ -16,17 +16,23 @@
  * under the License.
  */
 
-/// <reference types="vite/client" />
+import path from 'path';
+import vue from '@vitejs/plugin-vue';
+import {defineConfig} from 'vitest/config';
 
-interface ImportMetaEnv {
-  readonly VITE_ASGARDEO_BASE_URL: string
-  readonly VITE_ASGARDEO_CLIENT_ID: string
-  readonly VITE_ASGARDEO_DISABLE_TRY_SIGN_IN_SILENTLY: boolean
-  readonly VITE_ASGARDEO_SCOPE: string
-  readonly VITE_ASGARDEO_SIGN_IN_REDIRECT_URL: string
-  readonly VITE_ASGARDEO_SIGN_OUT_REDIRECT_URL: string
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname),
+    },
+  },
+  test: {
+    deps: {
+      inline: ['@asgardeo/auth-spa'],
+    },
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['@vitest/web-worker'],
+  },
+});

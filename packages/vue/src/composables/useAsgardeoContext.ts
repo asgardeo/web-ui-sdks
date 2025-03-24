@@ -16,17 +16,22 @@
  * under the License.
  */
 
-/// <reference types="vite/client" />
+import {inject} from 'vue';
+import {ASGARDEO_INJECTION_KEY} from '../plugins/AsgardeoPlugin';
+import {AuthContextInterface} from '../types';
 
-interface ImportMetaEnv {
-  readonly VITE_ASGARDEO_BASE_URL: string
-  readonly VITE_ASGARDEO_CLIENT_ID: string
-  readonly VITE_ASGARDEO_DISABLE_TRY_SIGN_IN_SILENTLY: boolean
-  readonly VITE_ASGARDEO_SCOPE: string
-  readonly VITE_ASGARDEO_SIGN_IN_REDIRECT_URL: string
-  readonly VITE_ASGARDEO_SIGN_OUT_REDIRECT_URL: string
-}
+/**
+ * Retrieves the Asgardeo authentication context from Vue's dependency injection system.
+ *
+ * @throws {Error} Throws an error if the Vue plugin is not installed.
+ * @returns {AuthContextInterface} The authentication context containing authentication methods and state.
+ */
+export function useAsgardeoContext(): AuthContextInterface {
+  const ctx: AuthContextInterface = inject(ASGARDEO_INJECTION_KEY);
 
-interface ImportMeta {
-  readonly env: ImportMetaEnv
+  if (!ctx) {
+    throw new Error('This can be only used when vue plugin is installed');
+  }
+
+  return ctx;
 }

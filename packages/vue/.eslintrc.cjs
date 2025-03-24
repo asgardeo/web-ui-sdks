@@ -30,4 +30,8 @@ module.exports = {
     project: [path.resolve(__dirname, 'tsconfig.json'), path.resolve(__dirname, 'tsconfig.eslint.json')],
   },
   plugins: ['@wso2'],
+  rules: {
+    'import/no-extraneous-dependencies': ['error', {devDependencies: true}],
+    'no-underscore-dangle': ['off'],
+  },
 };
