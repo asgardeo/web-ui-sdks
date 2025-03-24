@@ -20,6 +20,12 @@ import {inject} from 'vue';
 import {ASGARDEO_INJECTION_KEY} from '../plugins/AsgardeoPlugin';
 import {AuthContextInterface} from '../types';
 
+/**
+ * Retrieves the Asgardeo authentication context from Vue's dependency injection system.
+ *
+ * @throws {Error} Throws an error if the Vue plugin is not installed.
+ * @returns {AuthContextInterface} The authentication context containing authentication methods and state.
+ */
 export function useAsgardeoContext(): AuthContextInterface {
   const ctx: AuthContextInterface = inject(ASGARDEO_INJECTION_KEY);
 

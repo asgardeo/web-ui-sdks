@@ -19,6 +19,11 @@
 import {useAsgardeoContext} from './useAsgardeoContext';
 import {AuthContextInterface} from '../types';
 
+/**
+ * Hook to access the Asgardeo authentication context.
+ *
+ * @returns {AuthContextInterface} The authentication context containing authentication methods and state.
+ */
 export function useAsgardeo(): AuthContextInterface {
   const asgardeo: AuthContextInterface = useAsgardeoContext();
   return asgardeo;
