@@ -34,7 +34,7 @@ import {
 } from '@asgardeo/auth-spa';
 import type {Plugin, Ref, App, Reactive} from 'vue';
 import {reactive, ref} from 'vue';
-import AuthAPI from '../api';
+import AuthAPI from '../auth-api';
 import type {AuthContextInterface, AuthParams, AuthStateInterface, AuthVueConfig} from '../types';
 
 export type AsgardeoPluginOptions = AuthVueConfig;
