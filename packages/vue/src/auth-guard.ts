@@ -30,12 +30,11 @@ export const createAuthGuard = (redirectPath: string = '/login') => {
  * authGuard is a default guard that can be directly used in your route definitions.
  * It uses the createAuthGuard helper with a default redirect path.
  */
-export const authGuard = createAuthGuard();
 
 // example usage
 
 // import { createRouter, createWebHistory } from 'vue-router';
-// import { authGuard } from './auth-guard';
+// import { createAuthGuard } from './auth-guard';
 // import Home from './views/Home.vue';
 // import Login from './views/Login.vue';
 
@@ -44,7 +43,7 @@ export const authGuard = createAuthGuard();
 //     path: '/',
 //     name: 'Home',
 //     component: Home,
-//     beforeEnter: authGuard, // Protect this route
+//     beforeEnter: createAuthGuard(), // Protect this route
 //   },
 //   {
 //     path: '/login',
