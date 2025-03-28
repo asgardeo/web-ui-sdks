@@ -19,13 +19,7 @@
 const path = require('path');
 
 module.exports = {
-  extends: [
-    'plugin:@wso2/typescript',
-    // 'plugin:@wso2/vue',
-    'plugin:@wso2/strict',
-    'plugin:@wso2/internal',
-    'plugin:@wso2/prettier',
-  ],
+  extends: ['plugin:@wso2/typescript', 'plugin:@wso2/strict', 'plugin:@wso2/internal', 'plugin:@wso2/prettier'],
   parserOptions: {
     project: [path.resolve(__dirname, 'tsconfig.json'), path.resolve(__dirname, 'tsconfig.eslint.json')],
   },

@@ -29,11 +29,11 @@ import {
 import {describe, it, expect, beforeEach, vi, Mock} from 'vitest';
 import {createApp} from 'vue';
 import {mockAuthAPI, mockState, mockConfig} from './mocks/mocks';
-import AuthAPI from '../api';
+import AuthAPI from '../auth-api';
 import {asgardeoPlugin, ASGARDEO_INJECTION_KEY} from '../plugins/AsgardeoPlugin';
 import {AuthContextInterface, AuthStateInterface} from '../types';
 
-vi.mock('../api');
+vi.mock('../auth-api');
 vi.mock('@asgardeo/auth-spa');
 
 vi.mocked(AuthAPI).mockImplementation(() => mockAuthAPI as unknown as AuthAPI);

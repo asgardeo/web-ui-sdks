@@ -31,7 +31,7 @@ import {
 } from '@asgardeo/auth-spa';
 import {describe, it, expect, beforeEach, vi, Mock} from 'vitest';
 import {MockAsgardeoAuthException, asgardeoAuthSPAMock} from './mocks/mocks';
-import AuthAPI from '../api';
+import AuthAPI from '../auth-api';
 import {type AuthStateInterface, type AuthVueConfig} from '../types';
 
 vi.doMock('@asgardeo/auth-spa', () => asgardeoAuthSPAMock);
