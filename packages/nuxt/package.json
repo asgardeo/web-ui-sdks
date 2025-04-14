@@ -1,0 +1,79 @@
+{
+  "name": "@asgardeo/nuxt",
+  "version": "0.0.0",
+  "description": "Nuxt module for Asgardeo - Authentication and Identity Management",
+  "type": "module",
+  "main": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "author": "WSO2",
+  "license": "Apache-2.0",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "homepage": "https://github.com/asgardeo/web-ui-sdks/tree/main/packages/nuxt#readme",
+  "bugs": {
+    "url": "https://github.com/asgardeo/web-ui-sdks/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asgardeo/web-ui-sdks",
+    "directory": "packages/nuxt"
+  },
+  "keywords": [
+    "asgardeo",
+    "authentication",
+    "identity",
+    "oauth",
+    "oidc",
+    "nuxt",
+    "nuxt3",
+    "login",
+    "sso",
+    "identity-management"
+  ],
+  "scripts": {
+    "dev": "nuxi dev playground",
+    "dev:build": "nuxi build playground",
+    "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
+    "build": "nuxt-module-build",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
+    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "typecheck": "nuxi typecheck",
+    "test": "vitest --config src/vitest.config.ts --environment=jsdom --run --passWithNoTests",
+    "prepack": "npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@nuxt/kit": "^3.16.2",
+    "@nuxt/module-builder": "^0.5.5",
+    "@nuxt/schema": "^3.10.3",
+    "@nuxt/test-utils": "^3.11.0",
+    "@types/node": "^20.12.7",
+    "@vitest/web-worker": "^3.0.8",
+    "@wso2/eslint-plugin": "catalog:",
+    "@wso2/prettier-config": "catalog:",
+    "@wso2/stylelint-config": "catalog:",
+    "cookie-es": "^2.0.0",
+    "eslint": "catalog:",
+    "nuxt": "^3.10.3",
+    "prettier": "^3.2.5",
+    "sass": "^1.75.0",
+    "stylelint": "15.1.0",
+    "tslib": "^2.6.2",
+    "typescript": "5.1.6"
+  },
+  "dependencies": {
+    "@asgardeo/auth-node": "^0.1.3",
+    "@nuxt/kit": "^3.10.3",
+    "defu": "^6.1.4"
+  },
+  "peerDependencies": {
+    "nuxt": "^3.0.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  }
+}
