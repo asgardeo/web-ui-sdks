@@ -4,7 +4,9 @@
     "module": "ESNext",
     "types": [
       "vitest",
-      "node"
+      "node",
+      "@nuxt/schema",
+      "@nuxt/types"
     ]
   },
   "include": [

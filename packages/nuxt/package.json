@@ -50,8 +50,9 @@
   "devDependencies": {
     "@nuxt/kit": "^3.16.2",
     "@nuxt/module-builder": "^0.5.5",
-    "@nuxt/schema": "^3.10.3",
+    "@nuxt/schema": "^3.16.2",
     "@nuxt/test-utils": "^3.11.0",
+    "@nuxt/types": "^2.18.1",
     "@types/node": "^20.12.7",
     "@vitest/web-worker": "^3.0.8",
     "@wso2/eslint-plugin": "catalog:",
@@ -59,6 +60,7 @@
     "@wso2/stylelint-config": "catalog:",
     "cookie-es": "^2.0.0",
     "eslint": "catalog:",
+    "h3": "^1.15.1",
     "nuxt": "^3.10.3",
     "prettier": "^3.2.5",
     "sass": "^1.75.0",

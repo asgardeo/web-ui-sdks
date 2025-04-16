@@ -1,4 +1,4 @@
-import { AsgardeoNodeClient, type AuthClientConfig } from "@asgardeo/auth-node"; // Adjust import if necessary
+import { AsgardeoNodeClient, type AuthClientConfig } from "@asgardeo/auth-node";
 import { useRuntimeConfig } from '#imports';
 
 let _authClient: AsgardeoNodeClient<any> | null = null;
