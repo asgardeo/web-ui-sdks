@@ -9,7 +9,7 @@ import { defu } from "defu";
 import type { ModuleOptions } from "./runtime/types";
 import type { NuxtModule } from "nuxt/schema";
 
-const PACKAGE_NAME = "nuxt-asgardeo-auth";
+const PACKAGE_NAME = "@asgardeo/nuxt";
 
 const defaultBaseUrl =
   process.env.NODE_ENV === "production"

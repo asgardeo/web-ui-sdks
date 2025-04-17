@@ -1,33 +1,12 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-      "target": "es2016",
-      "module": "ESNext",
-      "moduleResolution": "node",
-      "lib": ["ESNext", "DOM"],
-      "esModuleInterop": true,
-      "allowJs": true,
-      "allowSyntheticDefaultImports": true,
-      "resolveJsonModule": true,
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-      "strict": true,
-      "declaration": true,
-      "declarationDir": "dist/types",
-      "outDir": "dist",
-      "importHelpers": true,
-      "types": ["node"],
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-      "paths": {
-        "@/*": ["./src/*"]
-      }
-    },
-    "exclude": ["node_modules", "dist", "tmp"],
-    "references": [
-      {
-        "path": "./tsconfig.lib.json"
-      }
-    ]
-  }
-  
+  "extends": "./.nuxt/tsconfig.json",
+  "exclude": [
+    "dist",
+    "node_modules",
+    "playground",
+    ".nuxt"
+  ],
+  "include": [
+    "src/**/*"
+  ],
+}

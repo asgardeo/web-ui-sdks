@@ -1,4 +1,4 @@
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 import { AsgardeoNodeClient } from '@asgardeo/auth-node'
 
 export default defineNuxtPlugin((nuxtApp) => {
