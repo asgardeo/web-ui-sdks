@@ -1,17 +1,41 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import {randomUUID} from 'node:crypto';
+import {
+  type DataLayer,
+  type BasicUserInfo,
+  type DecodedIDTokenPayload,
+  type OIDCEndpoints,
+  type TokenResponse,
+} from '@asgardeo/auth-node';
+import type {CookieSerializeOptions} from 'cookie-es';
 import {defineEventHandler, sendRedirect, setCookie, deleteCookie, getQuery, getCookie, createError, H3Event} from 'h3';
 import {getAsgardeoSdkInstance} from './services/asgardeo/index';
-import {randomUUID} from 'node:crypto';
-import type {CookieSerializeOptions} from 'cookie-es';
-import type {BasicUserInfo} from '@asgardeo/auth-node';
 
 export interface AsgardeoAuthHandlerOptions {
   basePath?: string;
   cookies?: {
-    state?: string;
-    sessionId?: string;
     defaultOptions?: CookieSerializeOptions;
-    stateOptions?: CookieSerializeOptions;
+    sessionId?: string;
     sessionIdOptions?: CookieSerializeOptions;
+    state?: string;
+    stateOptions?: CookieSerializeOptions;
   };
   defaultCallbackUrl?: string;
 }
@@ -22,15 +46,14 @@ function mergeCookieOptions(
 ): CookieSerializeOptions {
   const defaultBase = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
     path: '/',
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax' as const,
   };
   return {...defaultBase, ...base, ...specific};
 }
 
 export const AsgardeoAuthHandler = (options?: AsgardeoAuthHandlerOptions) => {
-  const basePath = options?.basePath ?? '/api/auth';
   const defaultCookieOptsFromUser = options?.cookies?.defaultOptions ?? {};
 
   const sessionIdCookieName = options?.cookies?.sessionId ?? 'ASGARDEO_SESSION_ID';
@@ -50,7 +73,6 @@ export const AsgardeoAuthHandler = (options?: AsgardeoAuthHandlerOptions) => {
     // --- Get SDK Instance ---
     const authClient = getAsgardeoSdkInstance();
     if (!authClient) {
-      console.error('Asgardeo SDK instance is not available.');
       throw createError({
         statusCode: 500,
         statusMessage: 'Authentication SDK not configured.',
@@ -59,20 +81,14 @@ export const AsgardeoAuthHandler = (options?: AsgardeoAuthHandlerOptions) => {
 
     // --- Sign-in Handler ---
     if (action === 'signin' && method === 'GET') {
-      console.log(`Handling GET ${basePath}/signin`);
-
       try {
         const sessionId = randomUUID();
-        console.log(`Generated Session ID: ${sessionId}`);
 
         setCookie(event, sessionIdCookieName, sessionId, sessionIdCookieOptions);
-        console.log(`Set ${sessionIdCookieName} cookie with ID: ${sessionId}, Options:`, sessionIdCookieOptions);
 
         // The SDK's signIn method expects a callback to perform the redirect
         await authClient.signIn(
           authorizationUrl => {
-            console.log('Redirecting user to Asgardeo for sign-in:', authorizationUrl);
-            // Don't return here, let sendRedirect finish
             sendRedirect(event, authorizationUrl, 302);
           },
           sessionId,
@@ -81,42 +97,31 @@ export const AsgardeoAuthHandler = (options?: AsgardeoAuthHandlerOptions) => {
           getQuery(event).session_state?.toString(),
           getQuery(event).state?.toString(),
         );
-
-        // If sendRedirect was called in the callback, execution might not reach here,
-        // but return just in case the callback logic changes.
         return;
       } catch (error: any) {
-        console.error('Error initiating Asgardeo sign in:', error);
         throw createError({
           statusCode: 500,
           statusMessage: 'Failed to initiate sign in',
           data: error.message,
         });
       }
-
-      // --- Callback Handler ---
-    } else if (action === 'callback' && method === 'GET') {
-      console.log(`Handling GET ${basePath}/callback`);
-
+    } // --- Callback Handler ---
+    else if (action === 'callback' && method === 'GET') {
       const sessionId = getCookie(event, sessionIdCookieName);
       if (!sessionId) {
-        console.error(`${sessionIdCookieName} cookie missing during callback.`);
         throw createError({
           statusCode: 400,
           statusMessage: 'Authentication callback error: Session ID missing.',
         });
       }
-      console.log(`Retrieved Session ID from cookie: ${sessionId}`);
 
       const query = getQuery(event);
-      const authorizationCode = query.code?.toString();
+      const authorizationCode: string | undefined = query.code?.toString();
       const sessionState = query.session_state?.toString() ?? '';
-      const stateReceived = query.state?.toString() ?? ''; // State param handling might be needed if used during signIn
+      const stateReceived = query.state?.toString() ?? '';
 
       if (!authorizationCode) {
-        console.error('Authorization code missing in callback.');
         if (query.error) {
-          console.error(`Asgardeo callback returned error: ${query.error} - ${query.error_description}`);
           throw createError({
             statusCode: 400,
             statusMessage: `Authentication failed: ${query.error_description || query.error}`,
@@ -129,41 +134,31 @@ export const AsgardeoAuthHandler = (options?: AsgardeoAuthHandlerOptions) => {
       }
 
       try {
-        console.log('Exchanging authorization code for tokens using Session ID:', sessionId);
-
         // Dummy callback, as signIn here should return tokens, not redirect.
-        const dummyRedirectCallback = () => {
-          console.warn('signIn redirect callback executed during token exchange phase - this should not happen.');
-        };
+        const dummyRedirectCallback = (): void => {};
 
-        const tokenResponse = await authClient.signIn(
+        const tokenResponse: TokenResponse = await authClient.signIn(
           dummyRedirectCallback,
           sessionId,
           authorizationCode,
           sessionState,
           stateReceived,
         );
-
         // Validate token response (adjust based on actual SDK response structure)
         if (!tokenResponse || (!tokenResponse.accessToken && !tokenResponse.idToken)) {
-          console.error('Token exchange failed or returned invalid response:', tokenResponse);
           throw createError({
             statusCode: 500,
             statusMessage: 'Token exchange failed: Invalid response from Identity Provider.',
           });
         }
 
-        console.log('Token exchange successful.');
-
         // TODO: Use the actual intended callback URL instead of hardcoding '/'
         // This could be stored in the state parameter during signIn or retrieved
         // from the session associated with sessionId if stored there earlier.
-        const redirectUrl = options?.defaultCallbackUrl ?? '/';
-        console.log(`Redirecting user to final destination: ${redirectUrl}`);
+        const redirectUrl: string = options?.defaultCallbackUrl ?? '/';
         await sendRedirect(event, redirectUrl, 302);
         return; // Important to return after sendRedirect
       } catch (error: any) {
-        console.error('Token exchange error:', error);
         // Clear the potentially invalid session cookie on token exchange failure? Optional.
         // deleteCookie(event, sessionIdCookieName, sessionIdCookieOptions);
         throw createError({
@@ -172,90 +167,215 @@ export const AsgardeoAuthHandler = (options?: AsgardeoAuthHandlerOptions) => {
           data: error.message || 'An unexpected error occurred during token exchange',
         });
       }
-
-      // --- Sign-out Handler ---
     } else if (action === 'user' && method === 'GET') {
-      // Assumes 'action' is set to 'user' for requests to e.g., /api/auth/user
-      console.log(`Handling GET ${basePath}/user`);
-
       // 1. Retrieve the Session ID from the cookie
       const sessionId = getCookie(event, sessionIdCookieName);
-      console.log(
-        `User endpoint: Attempting to read cookie '${sessionIdCookieName}'. Found: ${sessionId ? 'Yes' : 'No'}`,
-      );
-
       // 2. Validate if the Session ID exists
       if (!sessionId) {
-        console.log('User endpoint: No session cookie found. User is likely not logged in.');
         // If no session ID, the user is not authenticated
         throw createError({
-          statusCode: 401, // Unauthorized
+          statusCode: 401,
           statusMessage: 'Unauthorized: No active session found.',
         });
       }
-
       try {
         // 3. Fetch basic user information using the Session ID
-        console.log(`User endpoint: Fetching basic user info for session ID: ${sessionId}`);
-
-        // Use the instance of your auth class - ensure authClient is available here
-        // This call uses the session ID to retrieve the corresponding user data from Asgardeo/SDK cache
         const basicUserInfo: BasicUserInfo = await authClient.getBasicUserInfo(sessionId);
-
-        console.log('User endpoint: Successfully fetched user info for session:', sessionId);
-
         // 4. Return the fetched information
         return basicUserInfo;
       } catch (error: any) {
-        console.error(`User endpoint: Error fetching user info for session ${sessionId}:`, error);
         {
-          // Generic server error for issues
           throw createError({
             statusCode: 500,
             statusMessage: 'Failed to retrieve user information.',
           });
         }
       }
-    } else if (action === 'signout' && method === 'GET') {
-      console.log(`Handling GET ${basePath}/signout`);
+    } else if (action === 'isAuthenticated' && method === 'GET') {
+      // 1. Retrieve the Session ID from the cookie
+      const sessionId = getCookie(event, sessionIdCookieName);
+      // 2. Validate if the Session ID exists
+      if (!sessionId) {
+        // If no session ID, the user is not authenticated
+        return false;
+      }
+      try {
+        // 3. Check if the session is authenticated
+        const isAuth: boolean = await authClient.isAuthenticated(sessionId);
+        // 4. Return the authentication status
+        return isAuth;
+      } catch (error: any) {
+        console.error(`isAuthenticated check failed (Session: ${sessionId}):`, error);
+        return false;
+      }
+    } else if (action === 'get-id-token' && method === 'GET') {
+      // 1. Retrieve the Session ID from the cookie
+      const sessionId = getCookie(event, sessionIdCookieName);
+      // 2. Validate if the Session ID exists
+      if (!sessionId) {
+        throw createError({
+          statusCode: 401,
+          statusMessage: 'Unauthorized: No active session found.',
+        });
+      }
+      try {
+        // 3. Fetch the ID Token using the Session ID
+        console.log(`Attempting to get ID token for session: ${sessionId}`);
+        const idToken: string = await authClient.getIDToken(sessionId);
+        // 4. Return the fetched ID token
+        return {idToken};
+      } catch (error: any) {
+        console.error(`getIDTokenForSession Error (Session: ${sessionId}):`, error);
+        throw createError({
+          statusCode: 500,
+          statusMessage: 'Failed to retrieve ID token for the session.',
+        });
+      }
+    } else if (action === 'get-access-token' && method === 'GET') {
+      // 1. Retrieve the Session ID from the cookie
+      const sessionId = getCookie(event, sessionIdCookieName); // Assuming getCookie and sessionIdCookieName are defined
 
+      // 2. Validate if the Session ID exists
+      if (!sessionId) {
+        throw createError({
+          statusCode: 401,
+          statusMessage: 'Unauthorized: No active session found.',
+        });
+      }
+
+      try {
+        // 3. Fetch the Access Token using the Session ID
+        console.log(`Attempting to get Access token for session: ${sessionId}`);
+
+        const accessToken: string = await authClient.getAccessToken(sessionId);
+
+        // 4. Return the fetched access token
+        return {accessToken};
+      } catch (error: any) {
+        console.error(`getAccessTokenForSession Error (Session: ${sessionId}):`, error);
+
+        throw createError({
+          statusCode: 500,
+          statusMessage: 'Failed to retrieve Access token for the session.', // Updated error message
+        });
+      }
+    } else if (action === 'get-decoded-id-token' && method === 'GET') {
+      // Step 1: Retrieve the Session ID from the cookie
+      const sessionId = getCookie(event, sessionIdCookieName);
+
+      // Step 2: Validate if the Session ID exists
+      if (!sessionId) {
+        throw createError({
+          statusCode: 401,
+          statusMessage: 'Unauthorized: No active session found.',
+        });
+      }
+
+      try {
+        // Step 3: Fetch the decoded ID Token using the Session ID
+        console.log(`Attempting to get decoded ID token for session: ${sessionId}`);
+        const decodedIDToken: DecodedIDTokenPayload = await authClient.getDecodedIDToken(sessionId);
+
+        // Step 4: Return the decoded ID token payload
+        return {
+          decodedIDToken,
+        };
+      } catch (error: any) {
+        console.error(`Error retrieving decoded ID token (Session: ${sessionId}):`, error);
+
+        throw createError({
+          statusCode: 500,
+          statusMessage: 'Failed to retrieve decoded ID token for the session.',
+        });
+      }
+    } else if (action === 'revoke-token' && method === 'POST') {
+      // 1. Retrieve the Session ID from the cookie
+      const sessionId = getCookie(event, sessionIdCookieName);
+
+      // 2. Validate if the Session ID exists
+      if (!sessionId) {
+        throw createError({
+          statusCode: 401,
+          statusMessage: 'Unauthorized: No active session found.',
+        });
+      }
+      try {
+        // 3. Revoke tokens associated with the Session ID
+        console.log(`Attempting to revoke tokens for session: ${sessionId}`);
+        const result = await authClient.revokeAccessToken(sessionId);
+        console.log('123', result);
+        // 4. Return a success response
+        return {result};
+      } catch (error: any) {
+        console.error(`revokeTokensForSession Error (Session: ${sessionId}):`, error);
+        throw createError({
+          statusCode: 500,
+          statusMessage: 'Failed to revoke tokens for the session.',
+        });
+      }
+    } else if (action === 'signout' && method === 'GET') {
       const sessionId = getCookie(event, sessionIdCookieName);
 
       if (!sessionId) {
-        console.log(`SignOut: No ${sessionIdCookieName} cookie found. User likely already logged out.`);
-        return sendRedirect(event, '/', 302);
+        // No active session, just redirect to home or a logged-out page
+        return sendRedirect(event, options?.defaultCallbackUrl ?? '/', 302);
       }
 
-      console.log(`SignOut: Found Session ID: ${sessionId}. Initiating logout.`);
-
       try {
-        // 1. Delete the session cookie first
-        deleteCookie(event, sessionIdCookieName, sessionIdCookieOptions);
-        console.log(`SignOut: Deleted ${sessionIdCookieName} cookie.`);
-
-        // 2. Call the SDK signOut method, which returns a URL
         const signOutURL = await authClient.signOut(sessionId);
 
+        // 2. Delete the local session cookie regardless of SDK success/failure
+        deleteCookie(event, sessionIdCookieName, sessionIdCookieOptions);
+
+        // 3. Redirect to the Identity Provider's sign out URL
         if (!signOutURL) {
-          console.error('SignOut Error: SDK did not return a sign-out URL.');
-          return sendRedirect(event, '/?error=logout_url_missing', 302);
+          console.error('Sign out failed: Could not retrieve sign out URL from SDK.');
+          return sendRedirect(event, '/?error=signout_url_missing', 302);
         }
 
-        console.log(`SignOut: Redirecting user to Asgardeo logout URL: ${signOutURL}`);
         return sendRedirect(event, signOutURL, 302);
       } catch (error: any) {
-        console.error('SignOut Error:', error);
         deleteCookie(event, sessionIdCookieName, sessionIdCookieOptions);
+        console.error('Sign out failed:', error);
         throw createError({
           statusCode: 500,
           statusMessage: 'Sign out failed.',
           data: error.message || 'An unexpected error occurred during sign out',
         });
       }
+    } else if (action === 'get-oidc-endpoints' && method === 'GET') {
+      try {
+        // Log the attempt
+        console.log(`Attempting to get OIDC service endpoints.`);
 
-      // --- Default Handler for Unknown Actions ---
+        // Call the method on your authClient instance
+        // *** Assumption: authClient has getOIDCServiceEndpoints() method ***
+        const endpoints: OIDCEndpoints = await authClient.getOIDCServiceEndpoints();
+
+        // Return the fetched endpoints object directly.
+        // The framework (e.g., Nitro/h3) usually handles JSON serialization.
+        return endpoints;
+      } catch (error: any) {
+        // Log the specific error for server-side debugging
+        console.error(`getOIDCServiceEndpoints Error:`, error);
+
+        // Throw a generic server error for the client
+        throw createError({
+          statusCode: 500,
+          statusMessage: 'Failed to retrieve OIDC service endpoints.', // Updated error message
+        });
+      }
+    } else if (action === 'get-data-layer' && method === 'GET') {
+      try {
+        const dataLayer: DataLayer<any> = await authClient.getDataLayer();
+        return dataLayer;
+      } catch (error: any) {
+        throw createError({
+          statusCode: 500,
+          statusMessage: 'Failed to retrieve Data Layer.',
+        });
+      }
     } else {
-      console.warn(`Auth action "${action}" with method "${method}" not found or not supported.`);
       throw createError({
         statusCode: 404,
         statusMessage: `Authentication endpoint not found or method not allowed for action: ${action}`,

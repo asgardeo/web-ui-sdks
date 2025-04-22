@@ -1,4 +1,28 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 export interface ModuleOptions {
+  /**
+   * The base URL of your Asgardeo organization tenant.
+   * e.g., https://api.asgardeo.io/t/your_org_name
+   * @default process.env.ASGARDEO_BASE_URL
+   */
+  baseUrl: string;
+
   /**
    * Asgardeo Application Client ID.
    * @default process.env.ASGARDEO_CLIENT_ID
@@ -12,11 +36,10 @@ export interface ModuleOptions {
   clientSecret?: string;
 
   /**
-   * The base URL of your Asgardeo organization tenant.
-   * e.g., https://api.asgardeo.io/t/your_org_name
-   * @default process.env.ASGARDEO_BASE_URL
+   * Authentication scopes to request from Asgardeo.
+   * @default ['openid', 'profile']
    */
-  baseUrl: string;
+  scope?: string[]; // Moved up for sorting
 
   /**
    * The absolute redirect URI where Asgardeo should redirect after sign-in.
@@ -24,19 +47,16 @@ export interface ModuleOptions {
    * @default process.env.ASGARDEO_SIGN_IN_REDIRECT_URL
    */
   signInRedirectURL: string;
-
   /**
    * The absolute URI to redirect to after sign-out completes.
    * @default process.env.ASGARDEO_SIGN_OUT_REDIRECT_URL
    */
   signOutRedirectURL: string;
-
-  /**
-   * Authentication scopes to request from Asgardeo.
-   * @default ['openid', 'profile']
-   */
-  scope?: string[];
 }
 
 export type SessionLastRefreshedAt = Date | undefined;
-export type SessionStatus = "authenticated" | "unauthenticated" | "loading";
+
+export type SessionStatus = 'authenticated' | 'unauthenticated' | 'loading';
+
+import type {BasicUserInfo} from "@asgardeo/auth-node";
+export type { BasicUserInfo };
