@@ -16,30 +16,26 @@
  * under the License.
  */
 
-import type {BasicUserInfo, DataLayer, DecodedIDTokenPayload, FetchResponse, OIDCEndpoints} from '@asgardeo/auth-node';
-import {ref, readonly} from 'vue';
-import {navigateTo, type Ref} from '#imports';
+import type {BasicUserInfo, DataLayer, DecodedIDTokenPayload, OIDCEndpoints} from '@asgardeo/auth-node';
+import type {AuthInterface} from '../../types';
+import {navigateTo} from '#imports';
 
-export const useAuth = () => {
-  // Loading state to track when auth operations are in progress
-  const isLoading: Ref<boolean, boolean> = ref<boolean>(false);
-
+export const useAuth = (): AuthInterface => {
   /**
    * Initiates the Asgardeo sign-in flow by redirecting the user
    * to the server-side sign-in handler.
    * @param { string } [callbackUrl] - Optional URL to redirect to after successful login. Defaults to current page.
    */
   const signIn = async (callbackUrl?: string): Promise<void> => {
-    const targetUrl: string = '/api/auth/signin';
-    const options = {
-      query: {},
+    const options: any = {
       external: true,
+      query: {},
     };
     const redirectParam: string = callbackUrl || (typeof window !== 'undefined' ? window.location.pathname : '/');
     options.query = {callbackUrl: redirectParam};
     options.external = true; // Required for navigating away to Asgardeo
 
-    await navigateTo(targetUrl, options);
+    await navigateTo('/api/auth/signin', options);
   };
 
   /**
@@ -54,14 +50,14 @@ export const useAuth = () => {
   const getIdToken = async (): Promise<string | null> => {
     try {
       const response: Response = await fetch('/api/auth/get-id-token', {
-        method: 'GET',
         credentials: 'include',
+        method: 'GET',
       });
 
       if (!response.ok) {
         return null;
       }
-      const data = await response.json();
+      const data: any = await response.json();
       return data.idToken;
     } catch (error) {
       return null;
@@ -79,19 +75,16 @@ export const useAuth = () => {
    */
   const getAccessToken = async (): Promise<string | null> => {
     try {
-      // The specific endpoint for getting the access token
-      const apiUrl = '/api/auth/get-access-token';
-
-      const response: Response = await fetch(apiUrl, {
-        method: 'GET',
+      const response: Response = await fetch('/api/auth/get-access-token', {
         credentials: 'include',
+        method: 'GET',
       });
 
       if (!response.ok) {
         return null;
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
       return data.accessToken;
     } catch (error) {
       return null;
@@ -109,18 +102,16 @@ export const useAuth = () => {
    */
   const getDecodedIDToken = async (): Promise<DecodedIDTokenPayload | null> => {
     try {
-      const url = `/api/auth/get-decoded-id-token`;
-
-      const response: Response = await fetch(url, {
-        method: 'GET',
+      const response: Response = await fetch(`/api/auth/get-decoded-id-token`, {
         credentials: 'include',
+        method: 'GET',
       });
 
       if (!response.ok) {
         return null;
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
       return data.decodedIDToken;
     } catch (error) {
       return null;
@@ -134,19 +125,9 @@ export const useAuth = () => {
    * @returns {Promise<void>}
    */
   const revokeAccessToken = async (): Promise<void> => {
-    try {
-      const response: FetchResponse = await fetch('/api/auth/revoke-token', {
-        method: 'POST',
-      });
-
-      if (response?.ok) {
-        console.log(response.body);
-      } else {
-        console.warn('Token revocation response:', response);
-      }
-    } catch (error) {
-      console.error('Error revoking token:', error);
-    }
+    await fetch('/api/auth/revoke-token', {
+      method: 'POST',
+    }).catch((error: any) => error.data);
   };
 
   /**
@@ -161,16 +142,14 @@ export const useAuth = () => {
   const isAuthenticated = async (): Promise<boolean> => {
     try {
       const response: Response = await fetch('/api/auth/isAuthenticated', {
-        method: 'GET',
         credentials: 'include',
+        method: 'GET',
       });
 
       if (!response.ok) {
         return false;
       }
-
-      const data = await response.json();
-      return data === true;
+      return await response.json();
     } catch (error) {
       return false;
     }
@@ -183,10 +162,9 @@ export const useAuth = () => {
    * logout endpoint.
    */
   const signOut = async (): Promise<void> => {
-    const targetUrl: string = '/api/auth/signout';
-    const options = {external: true};
+    const options: any = {external: true};
 
-    await navigateTo(targetUrl, options);
+    await navigateTo('/api/auth/signout', options);
   };
 
   /**
@@ -197,20 +175,14 @@ export const useAuth = () => {
    * @returns {Promise<BasicUserInfo | null>} A promise resolving to user info or null.
    */
   const getBasicUserInfo = async (): Promise<BasicUserInfo | null> => {
-    const targetUrl: string = '/api/auth/user';
-
-    isLoading.value = true;
-
     try {
-      const userInfo: BasicUserInfo = await $fetch<BasicUserInfo>(targetUrl, {
+      const userInfo: BasicUserInfo = await $fetch<BasicUserInfo>('/api/auth/user', {
         method: 'GET',
       });
 
       return userInfo;
     } catch (error: any) {
       return null;
-    } finally {
-      isLoading.value = false;
     }
   };
 
@@ -227,9 +199,7 @@ export const useAuth = () => {
    */
   const getOIDCServiceEndpoints = async (): Promise<OIDCEndpoints | null> => {
     try {
-      const apiUrl = '/api/auth/get-oidc-endpoints';
-
-      const response: Response = await fetch(apiUrl, {
+      const response: Response = await fetch('/api/auth/get-oidc-endpoints', {
         method: 'GET',
       });
 
@@ -238,32 +208,22 @@ export const useAuth = () => {
       }
 
       // Assume the server returns the OIDCEndpoints object directly as JSON body
-      const data: OIDCEndpoints = await response.json();
-
-      if (typeof data === 'object' && data !== null) {
-        return data;
-      } else {
-        return null;
-      }
+      return await response.json();
     } catch (error) {
       return null;
     }
   };
 
-  
   const getDataLayer = async (): Promise<DataLayer<any> | null> => {
     try {
-      const apiUrl = '/api/auth/get-data-layer';
-
-      const response: Response = await fetch(apiUrl, {
+      const response: Response = await fetch('/api/auth/get-data-layer', {
         method: 'GET',
       });
 
       if (!response.ok) {
         return null;
       }
-      const data: DataLayer<any> = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
       return null;
     }
@@ -277,9 +237,8 @@ export const useAuth = () => {
     getIdToken,
     getOIDCServiceEndpoints,
     isAuthenticated,
-    isLoading: readonly(isLoading),
+    revokeAccessToken,
     signIn,
     signOut,
-    revokeAccessToken,
   };
 };

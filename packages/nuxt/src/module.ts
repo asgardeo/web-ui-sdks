@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {defineNuxtModule, addImports, createResolver, addServerImports, addTypeTemplate} from '@nuxt/kit';
+import {defineNuxtModule, addImports, createResolver, addServerImports} from '@nuxt/kit';
 import {defu} from 'defu';
 import type {NitroConfig} from 'nitropack';
 import type {Nuxt, NuxtModule} from 'nuxt/schema';

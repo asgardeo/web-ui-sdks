@@ -15,6 +15,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import type {BasicUserInfo, DataLayer, DecodedIDTokenPayload, OIDCEndpoints} from '@asgardeo/auth-node';
+
 export interface ModuleOptions {
   /**
    * The base URL of your Asgardeo organization tenant.
@@ -54,9 +57,21 @@ export interface ModuleOptions {
   signOutRedirectURL: string;
 }
 
+export interface AuthInterface {
+  getAccessToken: () => Promise<string | null>;
+  getBasicUserInfo: () => Promise<BasicUserInfo | null>;
+  getDataLayer: () => Promise<DataLayer<any> | null>;
+  getDecodedIDToken: () => Promise<DecodedIDTokenPayload | null>;
+  getIdToken: () => Promise<string | null>;
+  getOIDCServiceEndpoints: () => Promise<OIDCEndpoints | null>;
+  isAuthenticated: () => Promise<boolean>;
+  revokeAccessToken: () => Promise<void>;
+  signIn: (callbackUrl?: string) => Promise<void>;
+  signOut: () => Promise<void>;
+}
+
 export type SessionLastRefreshedAt = Date | undefined;
 
 export type SessionStatus = 'authenticated' | 'unauthenticated' | 'loading';
 
-import type {BasicUserInfo} from "@asgardeo/auth-node";
-export type { BasicUserInfo };
+export type {BasicUserInfo};

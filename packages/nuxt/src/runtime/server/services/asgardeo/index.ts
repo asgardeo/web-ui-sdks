@@ -45,9 +45,9 @@ export function getAsgardeoSdkInstance(): AsgardeoNodeClient<any> {
     clientID: config.clientID,
     clientSecret: useRuntimeConfig().asgardeoAuth.clientSecret as string,
     scope: config.scope,
+    sendCookiesInRequests: false,
     signInRedirectURL: config.signInRedirectURL,
     signOutRedirectURL: config.signOutRedirectURL,
-    sendCookiesInRequests: false
   };
 
   try {
