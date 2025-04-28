@@ -17,7 +17,7 @@
  */
 
 import {randomUUID} from 'node:crypto';
-import {AsgardeoNodeClient, type DataLayer, type TokenResponse} from '@asgardeo/auth-node';
+import {AsgardeoNodeClient, type AuthClientConfig, type DataLayer, type TokenResponse} from '@asgardeo/auth-node';
 import type {CookieSerializeOptions} from 'cookie-es';
 import {defineEventHandler, sendRedirect, setCookie, deleteCookie, getQuery, getCookie, createError, H3Event} from 'h3';
 import {getAsgardeoSdkInstance} from './services/asgardeo/index';
@@ -47,7 +47,7 @@ function mergeCookieOptions(
   return {...defaultBase, ...base, ...specific};
 }
 
-export const AsgardeoAuthHandler = (options?: AsgardeoAuthHandlerOptions): any => {
+export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: AsgardeoAuthHandlerOptions): any => {
   const defaultCookieOptsFromUser: CookieSerializeOptions = options?.cookies?.defaultOptions ?? {};
 
   const sessionIdCookieName: string = options?.cookies?.sessionId ?? 'ASGARDEO_SESSION_ID';
@@ -64,7 +64,7 @@ export const AsgardeoAuthHandler = (options?: AsgardeoAuthHandlerOptions): any =
     const action: string | undefined = event.context.params?._;
     const {method}: {method?: string | undefined} = event.node.req;
 
-    const authClient: AsgardeoNodeClient<any> = getAsgardeoSdkInstance();
+    const authClient: AsgardeoNodeClient<any> = getAsgardeoSdkInstance(config);
 
     if (action === 'signin' && method === 'GET') {
       try {
@@ -80,6 +80,7 @@ export const AsgardeoAuthHandler = (options?: AsgardeoAuthHandlerOptions): any =
           getQuery(event).code?.toString(),
           getQuery(event).session_state?.toString(),
           getQuery(event).state?.toString(),
+          {},
         );
         return null;
       } catch (error: any) {

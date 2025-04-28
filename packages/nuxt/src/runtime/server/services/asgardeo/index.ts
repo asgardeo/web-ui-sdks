@@ -17,43 +17,28 @@
  */
 
 import {AsgardeoNodeClient, type AuthClientConfig} from '@asgardeo/auth-node';
-import {useRuntimeConfig} from '#imports';
-import type {ModuleOptions} from '~/src/runtime/types';
-
-type PublicAsgardeoConfig = Pick<
-  ModuleOptions,
-  'clientID' | 'baseUrl' | 'signInRedirectURL' | 'signOutRedirectURL' | 'scope'
->;
 
 let authClientInstance: AsgardeoNodeClient<any> | null = null;
 
-export function getAsgardeoSdkInstance(): AsgardeoNodeClient<any> {
+/**
+ * Returns a singleton AsgardeoNodeClient instance.
+ * Must be called with configuration on first call.
+ */
+export function getAsgardeoSdkInstance(config: AuthClientConfig): AsgardeoNodeClient<any> {
   if (authClientInstance) {
     return authClientInstance;
   }
 
-  const config: PublicAsgardeoConfig = useRuntimeConfig().public.asgardeoAuth;
-
-  if (!config || !config.clientID || !config.baseUrl || !config.signInRedirectURL || !config.signOutRedirectURL) {
+  if (!config) {
     throw new Error(
-      'Asgardeo SDK configuration is incomplete in runtimeConfig. Check module setup and nuxt.config.ts. Required: clientID, serverOrigin (maps to baseUrl), signInRedirectURL, signOutRedirectURL.',
+      '[Asgardeo] No configuration provided. You must call getAsgardeoSdkInstance(config) with a valid AuthClientConfig on the first use.',
     );
   }
 
-  const sdkConfig: AuthClientConfig = {
-    baseUrl: config.baseUrl,
-    clientID: config.clientID,
-    clientSecret: useRuntimeConfig().asgardeoAuth.clientSecret as string,
-    scope: config.scope,
-    sendCookiesInRequests: false,
-    signInRedirectURL: config.signInRedirectURL,
-    signOutRedirectURL: config.signOutRedirectURL,
-  };
-
   try {
-    authClientInstance = new AsgardeoNodeClient(sdkConfig);
+    authClientInstance = new AsgardeoNodeClient(config);
   } catch (error) {
-    throw new Error('Asgardeo SDK Initialization failed. Check configuration and SDK compatibility.');
+    throw new Error('[Asgardeo] SDK initialization failed. Check provided configuration and SDK compatibility.');
   }
 
   return authClientInstance;
