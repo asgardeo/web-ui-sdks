@@ -1,4 +1,4 @@
-<!--
+/**
  * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
@@ -14,20 +14,11 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- -->
+ */
 
-<template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
-</template>
+declare module '*.vue' {
+  import { DefineComponent } from 'vue'
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
+  const component: DefineComponent<{}, {}, any>
+  export default component
 }
-</style>

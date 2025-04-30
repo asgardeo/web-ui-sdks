@@ -16,50 +16,69 @@
  * under the License.
  */
 
-import { useAsgardeo } from '@asgardeo/vue'
-import {
-  createRouter,
-  createWebHistory,
-  type RouteLocationNormalized,
-  type NavigationGuardNext,
-  type Router,
-} from 'vue-router'
+import { useAsgardeo, type AuthStateInterface } from '@asgardeo/vue'
+import { watch } from 'vue'
+import { createRouter, createWebHistory, type Router } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import LandingView from '@/views/LandingView.vue'
 
-const AboutView = (): Promise<typeof import('../views/AboutView.vue')> =>
-  import('../views/AboutView.vue')
+/**
+ * Wait for Asgardeo loading state to complete before proceeding
+ * @param state - The Asgardeo state containing isLoading property
+ * @returns A promise that resolves when loading is complete
+ */
+async function waitForAsgardeoLoaded(state: AuthStateInterface): Promise<void> {
+  return new Promise<void>((resolve: () => void) => {
+    // If already not loading, resolve immediately
+    if (!state.isLoading) {
+      resolve()
+      return
+    }
+
+    // Watch for changes in loading state
+    const unwatch: () => void = watch(
+      () => state.isLoading,
+      (isLoading: boolean) => {
+        if (!isLoading) {
+          unwatch()
+          resolve()
+        }
+      },
+    )
+  })
+}
 
 const router: Router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      component: HomeView,
-      name: 'home',
+      component: LandingView,
+      name: 'landing',
       path: '/',
     },
     {
-      beforeEnter: (
-        to: RouteLocationNormalized,
-        from: RouteLocationNormalized,
-        next: NavigationGuardNext,
-      ): void => {
-        const { isAuthenticated } = useAsgardeo()
+      beforeEnter: async (): Promise<boolean> => {
+        const { state, isAuthenticated, signIn } = useAsgardeo()
 
-        isAuthenticated()
-          .then((auth: boolean) => {
-            if (auth) {
-              next()
-            } else {
-              next('/')
-            }
-          })
-          .catch(() => {
-            next('/')
-          })
+        // Wait for loading to complete if still in progress
+        if (state.isLoading) {
+          await waitForAsgardeoLoaded(state)
+        }
+
+        try {
+          const auth: boolean = await isAuthenticated()
+          if (!auth) {
+            await signIn()
+            return false // Prevent navigation until sign-in completes
+          }
+          return true
+        } catch {
+          return false // Prevent navigation on error
+        }
       },
-      component: AboutView,
-      name: 'about',
-      path: '/about',
+      component: HomeView,
+      name: 'home',
+      path: '/home',
     },
   ],
 })
