@@ -1,51 +1,45 @@
 {
   "private": true,
-  "name": "@asgardeo/web-ui-sdks",
-  "version": "0.1.0",
-  "description": "Web SDKs for building customizable login UIs for Asgardeo & WSO2 Identity Server.",
+  "name": "@asgardeo/javascript-workspace",
+  "version": "0.0.0",
+  "description": "Workspace to hold the Asgardeo JavaScript SDKs.",
   "author": "WSO2",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/asgardeo/web-ui-sdks#readme",
+  "homepage": "https://github.com/asgardeo/javascript#readme",
   "bugs": {
-    "url": "https://github.com/asgardeo/web-ui-sdks/issues"
+    "url": "https://github.com/asgardeo/javascript/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/asgardeo/web-ui-sdks"
+    "url": "https://github.com/asgardeo/javascript"
   },
   "keywords": [
     "asgardeo",
-    "web-sdks",
-    "api-based-auth"
+    "javascript",
+    "workspace"
   ],
   "scripts": {
-    "build": "nx run-many --target=build --parallel --projects=@asgardeo/js,@asgardeo/react",
-    "changeset": "changeset",
-    "lint": "nx run-many --target=lint --parallel",
+    "build": "nx run-many --target=build --all --parallel",
+    "fix:lint": "nx run-many --target=fix:lint --all --parallel",
+    "lint": "nx run-many --target=lint --all --parallel",
     "publish:packages": "changeset publish",
-    "test": "nx run-many --target=test --parallel",
-    "typecheck": "nx run-many --target=typecheck --parallel",
     "version:packages": "changeset version && pnpm install --lockfile-only"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.0",
-    "@changesets/cli": "^2.27.3",
-    "@wso2/eslint-plugin": "catalog:",
-    "@wso2/prettier-config": "catalog:",
-    "eslint": "catalog:",
-    "nx": "18.2.4",
-    "prettier": "^3.2.5",
-    "typescript": "5.1.6"
-  },
-  "workspaces": [
-    "packages/*",
-    "recipes/*"
-  ],
-  "engines": {
-    "node": ">=18",
-    "pnpm": ">=9"
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.4",
+    "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?4ee6f6be232d7631999d709a86b91612f1d34ce7",
+    "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?4ee6f6be232d7631999d709a86b91612f1d34ce7",
+    "eslint": "8.57.0",
+    "nx": "20.8.1",
+    "prettier": "^2.6.2",
+    "typescript": "~5.7.2"
   },
   "publishConfig": {
     "access": "restricted"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "pnpm@10.8.0+sha512.0e82714d1b5b43c74610193cb20734897c1d00de89d0e18420aebc5977fa13d780a9cb05734624e81ebd81cc876cd464794850641c48b9544326b5622ca29971"
 }

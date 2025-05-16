@@ -1,15 +1,24 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "asgardeo/web-ui-sdks" }],
-  "commit": false,
-  "fixed": [],
-  "linked": [],
+  "$schema": "https://unpkg.com/@changesets/config@2.2.0/schema.json",
   "access": "restricted",
   "baseBranch": "main",
+  "changelog": [
+    "@changesets/changelog-github",
+    {
+      "repo": "asgardeo/javascript"
+    }
+  ],
+  "commit": false,
+  "fixed": [],
+  "ignore": [],
+  "linked": [],
   "privatePackages": {
     "version": true,
     "tag": true
   },
-  "updateInternalDependencies": "patch",
-  "ignore": []
+  "root": {
+    "packageDir": "."
+  },
+  "tagFormat": "@<scope>/<package>@${version}",
+  "updateInternalDependencies": "patch"
 }
