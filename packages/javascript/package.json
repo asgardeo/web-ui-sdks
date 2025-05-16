@@ -29,10 +29,11 @@
     "directory": "packages/javascript"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.lib.json",
+    "build": "node esbuild.config.mjs",
     "fix:lint": "eslint . --ext .js,.jsx,.ts,.tsx,.cjs,.mjs",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.cjs,.mjs",
-    "test": "vitest"
+    "test": "vitest",
+    "typecheck": "tsc -p tsconfig.lib.json"
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
