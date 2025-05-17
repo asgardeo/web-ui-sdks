@@ -30,7 +30,7 @@ export interface AuthenticationFlowBuilderProviderProps {
   clientId: string;
 }
 
-const AsgardeoProvider: FC<AuthenticationFlowBuilderProviderProps> = ({
+const AsgardeoProvider: FC<PropsWithChildren<AuthenticationFlowBuilderProviderProps>> = ({
   baseUrl,
   clientId,
   children,

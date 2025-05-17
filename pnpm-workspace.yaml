@@ -1,7 +1,9 @@
 packages:
   - "docs"
   - "packages/*"
+  - "!packages/react-legacy"
   - "recipes/*"
+  - "!recipes/react-vite-legacy"
 
 catalog:
   "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?4ee6f6be232d7631999d709a86b91612f1d34ce7"

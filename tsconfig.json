@@ -2,6 +2,8 @@
   "root": true,
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@asgardeo/react": ["packages/react/src/index.ts"],
+    }
   }
 }
