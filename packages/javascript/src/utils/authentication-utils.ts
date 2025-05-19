@@ -28,18 +28,18 @@ export class AuthenticationUtils {
 
         delete optionalizedPayload?.iss;
         delete optionalizedPayload?.aud;
-        delete optionalizedPayload?.exp;
-        delete optionalizedPayload?.iat;
-        delete optionalizedPayload?.acr;
-        delete optionalizedPayload?.amr;
-        delete optionalizedPayload?.azp;
-        delete optionalizedPayload?.auth_time;
-        delete optionalizedPayload?.nonce;
-        delete optionalizedPayload?.c_hash;
-        delete optionalizedPayload?.at_hash;
-        delete optionalizedPayload?.nbf;
-        delete optionalizedPayload?.isk;
-        delete optionalizedPayload?.sid;
+        delete optionalizedPayload?.["exp"];
+        delete optionalizedPayload?.["iat"];
+        delete optionalizedPayload?.["acr"];
+        delete optionalizedPayload?.["amr"];
+        delete optionalizedPayload?.["azp"];
+        delete optionalizedPayload?.["auth_time"];
+        delete optionalizedPayload?.["nonce"];
+        delete optionalizedPayload?.["c_hash"];
+        delete optionalizedPayload?.["at_hash"];
+        delete optionalizedPayload?.["nbf"];
+        delete optionalizedPayload?.["isk"];
+        delete optionalizedPayload?.["sid"];
 
         const camelCasedPayload : any= {};
 
@@ -78,7 +78,10 @@ export class AuthenticationUtils {
         return tokens.length > 2 ? tokens[tokens.length - 1] : "";
     };
 
-    public static getTokenRequestHeaders(): HeadersInit {
+    public static getTokenRequestHeaders(): {
+        Accept: string;
+        "Content-Type": string;
+    } {
         return {
             Accept: "application/json",
             "Content-Type": "application/x-www-form-urlencoded"

@@ -29,7 +29,7 @@
     "directory": "packages/javascript"
   },
   "scripts": {
-    "build": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs && tsc -p tsconfig.lib.json --emitDeclarationOnly --outDir dist",
     "fix:lint": "eslint . --ext .js,.jsx,.ts,.tsx,.cjs,.mjs",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.cjs,.mjs",
     "test": "vitest",

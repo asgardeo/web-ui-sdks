@@ -16,8 +16,10 @@
  * under the License.
  */
 
-import {FC, PropsWithChildren, ReactElement} from 'react';
+import {FC, PropsWithChildren, ReactElement, useEffect, useMemo, useState} from 'react';
 import AsgardeoContext from '../contexts/AsgardeoContext';
+import AuthAPI from '../__temp__/api';
+import { AuthStateInterface } from '../__temp__/models';
 
 export interface AuthenticationFlowBuilderProviderProps {
   /**
@@ -34,8 +36,61 @@ const AsgardeoProvider: FC<PropsWithChildren<AuthenticationFlowBuilderProviderPr
   baseUrl,
   clientId,
   children,
-}: PropsWithChildren<AuthenticationFlowBuilderProviderProps>): ReactElement => (
-  <AsgardeoContext.Provider value={{}}>{children}</AsgardeoContext.Provider>
-);
+}: PropsWithChildren<AuthenticationFlowBuilderProviderProps>): ReactElement => {
+      const AuthClient: AuthAPI = useMemo(() => {
+        return new AuthAPI();
+    }, []);
+
+    const [ state, dispatch ] = useState<AuthStateInterface>(AuthClient.getState());
+
+  useEffect(() => {
+    (async () => {
+      await AuthClient.init({
+        baseUrl,
+        clientID: clientId,
+        signInRedirectURL: window.location.origin,
+      });
+    })();
+  }, []);
+  
+      const signIn = async(
+        config?: any,
+        authorizationCode?: string,
+        sessionState?: string,
+        authState?: string,
+        callback?: (response: any) => void,
+        tokenRequestConfig?: {
+            params: Record<string, unknown>
+        }
+    ): Promise<any> => {
+        // const _config = await AuthClient.getConfigData();
+
+        // // NOTE: With React 19 strict mode, the initialization logic runs twice, and there's an intermittent
+        // // issue where the config object is not getting stored in the storage layer with Vite scaffolding.
+        // // Hence, we need to check if the client is initialized but the config object is empty, and reinitialize.
+        // // Tracker: https://github.com/asgardeo/asgardeo-auth-react-sdk/issues/240
+        // if (!_config || Object.keys(_config).length === 0) {
+        //     await AuthClient.init(mergedConfig);
+        // }
+
+        try {
+            // setError(null);
+            return await AuthClient.signIn(
+                dispatch,
+                state,
+                config,
+                authorizationCode,
+                sessionState,
+                authState,
+                callback,
+                tokenRequestConfig
+            );
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    };
+
+  return <AsgardeoContext.Provider value={{signIn}}>{children}</AsgardeoContext.Provider>;
+};
 
 export default AsgardeoProvider;

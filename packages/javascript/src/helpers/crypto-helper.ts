@@ -62,7 +62,7 @@ export class CryptoHelper<T = any> {
         const headerJSON: Record<string, string> = JSON.parse(this._cryptoUtils.base64URLDecode(jwtHeader));
 
         for (const key of keys) {
-            if (headerJSON.kid === key.kid) {
+            if (headerJSON["kid"] === key.kid) {
                 return key;
             }
         }
@@ -71,7 +71,7 @@ export class CryptoHelper<T = any> {
             "JS-CRYPTO_UTIL-GJFTIT-IV01",
             "kid not found.",
             "Failed to find the 'kid' specified in the id_token. 'kid' found in the header : " +
-            headerJSON.kid +
+            headerJSON["kid"] +
             ", Expected values: " +
             keys.map((key: JWKInterface) => key.kid).join(", ")
         );

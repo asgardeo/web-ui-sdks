@@ -21,12 +21,16 @@ import {Context, createContext} from 'react';
 /**
  * Props interface of {@link AsgardeoContext}
  */
-export type AsgardeoContextProps = {};
+export type AsgardeoContextProps = {
+  signIn: any;
+};
 
 /**
  * Context object for managing the Authentication flow builder core context.
  */
-const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({});
+const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
+  signIn: null
+});
 
 AsgardeoContext.displayName = 'AsgardeoContext';
 

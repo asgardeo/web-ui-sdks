@@ -207,13 +207,15 @@ export class AuthenticationHelper<T> {
             throw new AsgardeoAuthException(
                 "JS-AUTH_HELPER-VIT-HE03",
                 `Invalid response status received for jwks request (${ response.statusText }).`,
-                await response.json()
+                await response.json() as string
             );
         }
 
         const issuer: string | undefined = (await this._oidcProviderMetaData()).issuer;
 
-        const { keys }: { keys: JWKInterface[]; } = await response.json();
+        const { keys }: { keys: JWKInterface[]; } = await response.json() as {
+            keys: JWKInterface[];
+        };
 
         const jwk: any = await this._cryptoHelper.getJWKForTheIdToken(idToken.split(".")[ 0 ], keys);
 
@@ -231,9 +233,9 @@ export class AuthenticationHelper<T> {
     public getAuthenticatedUserInfo(idToken: string): AuthenticatedUserInfo {
         const payload: DecodedIDTokenPayload = this._cryptoHelper.decodeIDToken(idToken);
         const tenantDomain: string = AuthenticationUtils.getTenantDomainFromIdTokenPayload(payload);
-        const username: string = payload?.username ?? "";
-        const givenName: string = payload.given_name ?? "";
-        const familyName: string = payload.family_name ?? "";
+        const username: string = payload?.["username"] ?? "";
+        const givenName: string = payload?.["given_name"] ?? "";
+        const familyName: string = payload?.["family_name"] ?? "";
         const fullName: string =
             givenName && familyName
                 ? `${ givenName } ${ familyName }`
@@ -282,12 +284,12 @@ export class AuthenticationHelper<T> {
             throw new AsgardeoAuthException(
                 "JS-AUTH_HELPER-HTR-NE01",
                 `Invalid response status received for token request (${ response.statusText }).`,
-                await response.json()
+                await response.json() as string
             );
         }
 
         //Get the response in JSON
-        const parsedResponse: RawTokenResponse = await response.json();
+        const parsedResponse: RawTokenResponse = await response.json() as RawTokenResponse;
 
         parsedResponse.created_at = new Date().getTime();
 

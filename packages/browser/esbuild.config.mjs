@@ -16,29 +16,74 @@
  * under the License.
  */
 
-import {readFileSync} from 'fs';
+import { readFileSync } from 'fs';
 import * as esbuild from 'esbuild';
+import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
 
+const require = createRequire(import.meta.url);
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
+
+// Get dependencies excluding crypto-related ones that need to be bundled
+const externalDeps = [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})]
+  .filter(dep => !['crypto-browserify', 'randombytes', 'buffer'].includes(dep));
+
+// Plugin to alias crypto and buffer modules
+const polyfillPlugin = {
+  name: 'polyfill-plugin',
+  setup(build) {
+    // Crypto polyfill
+    build.onResolve({ filter: /^crypto$/ }, () => ({
+      path: require.resolve('crypto-browserify')
+    }));
+    
+    // Buffer polyfill
+    build.onResolve({ filter: /^buffer$/ }, () => ({
+      path: require.resolve('buffer/')
+    }));
+  }
+};
 
 const commonOptions = {
   bundle: true,
   entryPoints: ['src/index.ts'],
-  external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
+  external: externalDeps,
   platform: 'browser',
   target: ['es2020'],
+  define: {
+    global: 'globalThis', // Required by crypto-browserify
+    'process.env.NODE_DEBUG': 'false',
+    'process.version': '"16.0.0"',
+    'process.browser': 'true'
+  },
+  banner: {
+    js: `
+      import { Buffer } from 'buffer/';
+      if (typeof window !== 'undefined' && !window.Buffer) {
+        window.Buffer = Buffer;
+      }
+    `
+  },
+  footer: {
+    js: `
+      if (typeof window !== 'undefined' && !window.Buffer) {
+        window.Buffer = require('buffer/').Buffer;
+      }
+    `
+  },
+  plugins: [polyfillPlugin]
 };
 
 await esbuild.build({
   ...commonOptions,
   format: 'esm',
   outfile: 'dist/index.js',
-  sourcemap: true,
+  sourcemap: true
 });
 
 await esbuild.build({
   ...commonOptions,
   format: 'cjs',
   outfile: 'dist/cjs/index.js',
-  sourcemap: true,
+  sourcemap: true
 });

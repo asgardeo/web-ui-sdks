@@ -46,15 +46,15 @@ export interface FetchRequestConfig extends RequestInit {
     method?: Method;
     url?: string;
     credentials?: FetchCredentials;
-    body?: any;
+    body?: any; // FIXME: Add proper type
     bodyUsed?: boolean;
-    cache?: RequestCache;
+    cache?: any; // FIXME: Add proper type
     destination?: string;
     integrity?: string;
-    mode?: RequestMode;
+    mode?: any; // FIXME: Add proper type
     redirect?: FetchRedirect;
     referrer?: string;
-    referrerPolicy?: ReferrerPolicy;
+    referrerPolicy?: any;
 }
 
 export interface FetchResponse<T = any> extends ResponseInit {
@@ -62,7 +62,7 @@ export interface FetchResponse<T = any> extends ResponseInit {
     ok: boolean;
     bodyUsed?: boolean;
     redirected?: boolean;
-    type: ResponseType;
+    type: any; // FIXME: Add proper type
     url: string;
     //TODO: Implement trailer property once the MDN docs are completed
     json();

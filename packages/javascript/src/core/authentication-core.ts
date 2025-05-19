@@ -247,7 +247,7 @@ export class AuthenticationCore<T> {
             throw new AsgardeoAuthException(
                 "JS-AUTH_CORE-RAT1-HE03",
                 `Requesting access token failed with ${tokenResponse.statusText}`,
-                await tokenResponse.json()
+                await tokenResponse.json() as string
             );
         }
 
@@ -310,7 +310,7 @@ export class AuthenticationCore<T> {
             throw new AsgardeoAuthException(
                 "JS-AUTH_CORE-RAT2-HE04",
                 `Refreshing access token failed with ${tokenResponse.statusText}`,
-                await tokenResponse.json()
+                await tokenResponse.json() as string
             );
         }
 
@@ -363,7 +363,7 @@ export class AuthenticationCore<T> {
             throw new AsgardeoAuthException(
                 "JS-AUTH_CORE-RAT3-HE03",
                 `Invalid response status received for revoke access token request (${response.statusText}).`,
-                await response.json()
+                await response.json() as string
             );
         }
 
@@ -443,14 +443,14 @@ export class AuthenticationCore<T> {
             throw new AsgardeoAuthException(
                 "JS-AUTH_CORE-RCG-HE03",
                 `Invalid response status received for the custom grant request. (${response.statusText})`,
-                await response.json()
+                await response.json() as string
             );
         }
 
         if (customGrantParams.returnsSession) {
             return this._authenticationHelper.handleTokenResponse(response, userID);
         } else {
-            return Promise.resolve(await response.json());
+            return Promise.resolve(await response.json() as TokenResponse | FetchResponse);
         }
     }
 

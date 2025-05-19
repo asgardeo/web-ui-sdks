@@ -17,3 +17,4 @@
  */
 
 export {default as AsgardeoProvider} from './providers/AsgardeoProvider';
+export {default as useAsgardeo} from './hooks/useAsgardeo';
