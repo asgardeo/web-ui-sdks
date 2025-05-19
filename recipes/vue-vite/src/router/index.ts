@@ -17,16 +17,36 @@
  */
 
 import { useAsgardeo, type AuthStateInterface } from '@asgardeo/vue'
-import {
-  createRouter,
-  createWebHistory,
-  type RouteLocationNormalized,
-  type NavigationGuardNext,
-  type Router,
-} from 'vue-router'
+import { watch } from 'vue'
+import { createRouter, createWebHistory, type Router } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LandingView from '@/views/LandingView.vue'
-import { watch } from 'vue'
+
+/**
+ * Wait for Asgardeo loading state to complete before proceeding
+ * @param state - The Asgardeo state containing isLoading property
+ * @returns A promise that resolves when loading is complete
+ */
+async function waitForAsgardeoLoaded(state: AuthStateInterface): Promise<void> {
+  return new Promise<void>((resolve: () => void) => {
+    // If already not loading, resolve immediately
+    if (!state.isLoading) {
+      resolve()
+      return
+    }
+
+    // Watch for changes in loading state
+    const unwatch: () => void = watch(
+      () => state.isLoading,
+      (isLoading: boolean) => {
+        if (!isLoading) {
+          unwatch()
+          resolve()
+        }
+      },
+    )
+  })
+}
 
 const router: Router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,7 +57,7 @@ const router: Router = createRouter({
       path: '/',
     },
     {
-      beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
+      beforeEnter: async (): Promise<boolean> => {
         const { state, isAuthenticated, signIn } = useAsgardeo()
 
         // Wait for loading to complete if still in progress
@@ -46,7 +66,7 @@ const router: Router = createRouter({
         }
 
         try {
-          const auth = await isAuthenticated()
+          const auth: boolean = await isAuthenticated()
           if (!auth) {
             await signIn()
             return false // Prevent navigation until sign-in completes
@@ -62,31 +82,5 @@ const router: Router = createRouter({
     },
   ],
 })
-
-/**
- * Wait for Asgardeo loading state to complete before proceeding
- * @param state - The Asgardeo state containing isLoading property
- * @returns A promise that resolves when loading is complete
- */
-async function waitForAsgardeoLoaded(state: AuthStateInterface) {
-  return new Promise<void>((resolve) => {
-    // If already not loading, resolve immediately
-    if (!state.isLoading) {
-      resolve()
-      return
-    }
-
-    // Watch for changes in loading state
-    const unwatch = watch(
-      () => state.isLoading,
-      (isLoading) => {
-        if (!isLoading) {
-          unwatch()
-          resolve()
-        }
-      },
-    )
-  })
-}
 
 export default router
