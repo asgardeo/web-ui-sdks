@@ -22,8 +22,22 @@ import {Context, createContext} from 'react';
  * Props interface of {@link AsgardeoContext}
  */
 export type AsgardeoContextProps = {
+  /**
+   * Sign-in function to initiate the authentication process.
+   * @remark This is the programmatic version of the `SignInButton` component.
+   * TODO: Fix the types.
+   */
   signIn: any;
+  /**
+   * Sign-out function to terminate the authentication session.
+   * @remark This is the programmatic version of the `SignOutButton` component.
+   * TODO: Fix the types.
+   */
   signOut: any;
+  /**
+   * Flag indicating whether the user is signed in or not.
+   */
+  isSignedIn: boolean;
 };
 
 /**
@@ -32,6 +46,7 @@ export type AsgardeoContextProps = {
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
   signIn: null,
   signOut: null,
+  isSignedIn: false,
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';
