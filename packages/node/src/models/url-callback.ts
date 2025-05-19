@@ -15,9 +15,6 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-
-export * from "./client";
-export * from "./models";
-export * from "./utils/logger-utils"
-
-export * from "@asgardeo/javascript";
+export interface AuthURLCallback {
+    (url: string): void;
+}

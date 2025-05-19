@@ -28,15 +28,17 @@
     "directory": "packages/node"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.lib.json",
+    "build": "node esbuild.config.mjs && tsc -p tsconfig.lib.json --emitDeclarationOnly --outDir dist",
     "fix:lint": "eslint . --ext .js,.jsx,.ts,.tsx,.cjs,.mjs",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.cjs,.mjs",
-    "test": "vitest"
+    "test": "vitest",
+    "typecheck": "tsc -p tsconfig.lib.json"
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
     "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?4ee6f6be232d7631999d709a86b91612f1d34ce7",
     "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?4ee6f6be232d7631999d709a86b91612f1d34ce7",
+    "esbuild": "^0.25.4",
     "eslint": "8.57.0",
     "prettier": "^2.6.2",
     "typescript": "~5.7.2",
@@ -46,6 +48,14 @@
     "access": "public"
   },
   "dependencies": {
-    "tslib": "^2.8.1"
+    "@asgardeo/javascript": "workspace:^",
+    "base64url": "^3.0.1",
+    "cross-fetch": "^4.1.0",
+    "fast-sha256": "^1.3.0",
+    "jose": "^6.0.11",
+    "memory-cache": "^0.2.0",
+    "secure-random-bytes": "^5.0.1",
+    "tslib": "^2.8.1",
+    "uuid": "^11.1.0"
   }
 }

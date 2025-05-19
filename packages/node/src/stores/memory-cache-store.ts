@@ -16,14 +16,19 @@
  * under the License.
  */
 
-//Add Ponyfills for Fetch API
-import fetch, { Headers, Request, Response } from "cross-fetch";
+import {Store} from '@asgardeo/javascript';
+import cache from 'memory-cache';
 
-if (!globalThis.fetch) {
-    globalThis.fetch = fetch;
-    globalThis.Headers = Headers;
-    globalThis.Request = Request;
-    globalThis.Response = Response;
+export class MemoryCacheStore implements Store {
+  public async setData(key: string, value: string): Promise<void> {
+    cache.put(key, value);
+  }
+
+  public async getData(key: string): Promise<string> {
+    return cache.get(key) ?? '{}';
+  }
+
+  public async removeData(key: string): Promise<void> {
+    cache.del(key);
+  }
 }
-
-export * from "./public-api";

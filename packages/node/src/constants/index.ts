@@ -16,8 +16,5 @@
 * under the License.
 */
 
-export * from "./client";
-export * from "./models";
-export * from "./utils/logger-utils"
-
-export * from "@asgardeo/javascript";
+export * from "./uuid-config";
+export * from "./logger-config";
