@@ -21,3 +21,6 @@ export {default as useAsgardeo} from './hooks/useAsgardeo';
 
 export {default as SignInButton} from './components/SignInButton';
 export * from './components/SignInButton';
+
+export {default as SignOutButton} from './components/SignOutButton';
+export * from './components/SignOutButton';
