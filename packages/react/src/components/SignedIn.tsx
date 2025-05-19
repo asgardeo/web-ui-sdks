@@ -27,12 +27,9 @@ interface SignedInProps {
  * }
  * ```
  */
-const SignedIn: FC<PropsWithChildren<SignedInProps>> = ({
-  children,
-  fallback = null
-}) => {
+const SignedIn: FC<PropsWithChildren<SignedInProps>> = ({children, fallback = null}) => {
   const {isSignedIn} = useAsgardeo();
-  
+
   if (!isSignedIn) {
     return <>{fallback}</>;
   }
