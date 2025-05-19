@@ -27,3 +27,6 @@ export * from './components/SignOutButton';
 
 export {default as SignedIn} from './components/SignedIn';
 export * from './components/SignedIn';
+
+export {default as SignedOut} from './components/SignedOut';
+export * from './components/SignedOut';
