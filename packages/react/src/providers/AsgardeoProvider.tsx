@@ -90,7 +90,11 @@ const AsgardeoProvider: FC<PropsWithChildren<AuthenticationFlowBuilderProviderPr
     }
   };
 
-  return <AsgardeoContext.Provider value={{signIn}}>{children}</AsgardeoContext.Provider>;
+  const signOut = (callback?: (response: boolean) => void): Promise<boolean> => {
+    return AuthClient.signOut(dispatch, state, callback);
+  };
+
+  return <AsgardeoContext.Provider value={{signIn, signOut}}>{children}</AsgardeoContext.Provider>;
 };
 
 export default AsgardeoProvider;
