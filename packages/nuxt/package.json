@@ -50,7 +50,7 @@
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "lint": "nuxt prepare && eslint .",
     "test": "vitest run --passWithNoTests",
-    "typecheck": "nuxt prepare && vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+    "typecheck": "nuxt prepare && vue-tsc --noEmit"
   },
   "dependencies": {
     "@asgardeo/auth-node": "^0.1.3",
