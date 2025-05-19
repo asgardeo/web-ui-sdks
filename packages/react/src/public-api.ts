@@ -18,3 +18,6 @@
 
 export {default as AsgardeoProvider} from './providers/AsgardeoProvider';
 export {default as useAsgardeo} from './hooks/useAsgardeo';
+
+export {default as SignInButton} from './components/SignInButton';
+export * from './components/SignInButton';
