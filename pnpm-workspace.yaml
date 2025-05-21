@@ -1,12 +1,12 @@
 packages:
-  - "docs"
-  - "packages/*"
-  - "!packages/react-legacy"
-  - "!packages/core"
-  - "recipes/*"
-  - "!recipes/react-vite-legacy"
+  - 'docs'
+  - 'packages/*'
+  - '!packages/react-legacy'
+  - '!packages/core'
+  - 'recipes/*'
+  - '!recipes/react-vite-legacy'
 
 catalog:
-  "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?4ee6f6be232d7631999d709a86b91612f1d34ce7"
-  "@wso2/prettier-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?4ee6f6be232d7631999d709a86b91612f1d34ce7"
-  "@wso2/stylelint-config": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/stylelint-config?4ee6f6be232d7631999d709a86b91612f1d34ce7"
+  '@wso2/eslint-plugin': 'https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?a1fc6eb570653c999828aea9f5027cba06af4391'
+  '@wso2/prettier-config': 'https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?a1fc6eb570653c999828aea9f5027cba06af4391'
+  '@wso2/stylelint-config': 'https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/stylelint-config?a1fc6eb570653c999828aea9f5027cba06af4391'
