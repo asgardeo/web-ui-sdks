@@ -24,11 +24,6 @@ import type {ModuleOptions, BasicUserInfo} from './runtime/types';
 
 const PACKAGE_NAME: string = '@asgardeo/nuxt';
 
-const defaultBaseUrl: string =
-  process.env.NODE_ENV === 'production'
-    ? process.env.NUXT_PUBLIC_SITE_URL
-    : 'http://localhost:3000';
-
 export type {BasicUserInfo};
 
 export default defineNuxtModule<ModuleOptions>({
@@ -37,38 +32,33 @@ export default defineNuxtModule<ModuleOptions>({
     clientID: process.env.ASGARDEO_CLIENT_ID || '',
     clientSecret: process.env.ASGARDEO_CLIENT_SECRET || '',
     scope: ['openid', 'profile'],
-    signInRedirectURL: process.env.ASGARDEO_SIGN_IN_REDIRECT_URL || `${defaultBaseUrl}/api/auth/callback`,
-    signOutRedirectURL: process.env.ASGARDEO_SIGN_OUT_REDIRECT_URL || defaultBaseUrl,
+    signInRedirectURL: process.env.ASGARDEO_SIGN_IN_REDIRECT_URL || '',
+    signOutRedirectURL: process.env.ASGARDEO_SIGN_OUT_REDIRECT_URL || '',
   },
   meta: {
     configKey: 'asgardeoAuth',
     name: PACKAGE_NAME,
   },
   setup(userOptions: ModuleOptions, nuxt: Nuxt) {
-    // 1. Resolve options - Merge user options, nuxt.config, defaults
     const options: ModuleOptions = defu(
       userOptions,
-      nuxt.options.runtimeConfig.asgardeoAuth, // User settings in nuxt.config (server)
-      nuxt.options.runtimeConfig.public.asgardeoAuth, // User settings in nuxt.config (public)
+      nuxt.options.runtimeConfig.asgardeoAuth,
+      nuxt.options.runtimeConfig.public.asgardeoAuth,
       {
         clientID: process.env.ASGARDEO_CLIENT_ID,
         clientSecret: process.env.ASGARDEO_CLIENT_SECRET,
         enablePKCE: true,
         scope: ['openid', 'profile'],
         serverOrigin: process.env.ASGARDEO_BASE_URL,
-        signInRedirectURL: process.env.ASGARDEO_SIGN_IN_REDIRECT_URL || `${defaultBaseUrl}/api/auth/callback`,
-        signOutRedirectURL: process.env.ASGARDEO_SIGN_OUT_REDIRECT_URL || defaultBaseUrl,
+        signInRedirectURL: process.env.ASGARDEO_SIGN_IN_REDIRECT_URL || '',
+        signOutRedirectURL: process.env.ASGARDEO_SIGN_OUT_REDIRECT_URL || '',
       },
     ) as ModuleOptions;
 
-    // 2. Add runtime config
-    // Public - accessible client-side (only add non-sensitive values)
-    // eslint-disable-next-line no-param-reassign
     nuxt.options.runtimeConfig.public.asgardeoAuth = defu(nuxt.options.runtimeConfig.public.asgardeoAuth, {
       clientID: options.clientID,
     });
-    // Private - server-side only
-    // eslint-disable-next-line no-param-reassign
+
     nuxt.options.runtimeConfig.asgardeoAuth = defu(nuxt.options.runtimeConfig.asgardeoAuth, {
       clientID: options.clientID,
       clientSecret: options.clientSecret,
@@ -78,12 +68,10 @@ export default defineNuxtModule<ModuleOptions>({
       signOutRedirectURL: options.signOutRedirectURL,
     });
 
-    // 3. Locate runtime directory
     const {resolve} = createResolver(import.meta.url);
     const runtimeDir: string = resolve('./runtime');
     const runtimeServerDir: string = resolve('./runtime/server');
 
-    // 4. Add composables
     addImports({
       from: resolve(runtimeDir, 'composables/asgardeo/useAuth'),
       name: 'useAuth',
@@ -97,13 +85,9 @@ export default defineNuxtModule<ModuleOptions>({
       },
     ]);
 
-    // 5. Create virtual imports for server-side SDK helpers
     nuxt.hook('nitro:config', (nitroConfig: NitroConfig) => {
-      // eslint-disable-next-line no-param-reassign
       nitroConfig.alias = nitroConfig.alias || {};
-      // eslint-disable-next-line no-param-reassign
       nitroConfig.alias['#auth/server'] = resolve(runtimeDir, 'server/services/asgardeo');
-      // eslint-disable-next-line no-param-reassign
       nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
         inline: [resolve(runtimeDir)],
       });
