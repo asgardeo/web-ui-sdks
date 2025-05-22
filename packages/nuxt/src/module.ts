@@ -55,10 +55,12 @@ export default defineNuxtModule<ModuleOptions>({
       },
     ) as ModuleOptions;
 
+    // eslint-disable-next-line no-param-reassign
     nuxt.options.runtimeConfig.public.asgardeoAuth = defu(nuxt.options.runtimeConfig.public.asgardeoAuth, {
       clientID: options.clientID,
     });
 
+    // eslint-disable-next-line no-param-reassign
     nuxt.options.runtimeConfig.asgardeoAuth = defu(nuxt.options.runtimeConfig.asgardeoAuth, {
       clientID: options.clientID,
       clientSecret: options.clientSecret,
@@ -86,8 +88,11 @@ export default defineNuxtModule<ModuleOptions>({
     ]);
 
     nuxt.hook('nitro:config', (nitroConfig: NitroConfig) => {
+      // eslint-disable-next-line no-param-reassign
       nitroConfig.alias = nitroConfig.alias || {};
+      // eslint-disable-next-line no-param-reassign
       nitroConfig.alias['#auth/server'] = resolve(runtimeDir, 'server/services/asgardeo');
+      // eslint-disable-next-line no-param-reassign
       nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
         inline: [resolve(runtimeDir)],
       });
