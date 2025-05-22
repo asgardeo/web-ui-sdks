@@ -26,7 +26,7 @@ const PACKAGE_NAME: string = '@asgardeo/nuxt';
 
 const defaultBaseUrl: string =
   process.env.NODE_ENV === 'production'
-    ? process.env.NUXT_PUBLIC_SITE_URL || 'https://your-production-domain.com'
+    ? process.env.NUXT_PUBLIC_SITE_URL
     : 'http://localhost:3000';
 
 export type {BasicUserInfo};
