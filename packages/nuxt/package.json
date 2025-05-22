@@ -48,7 +48,7 @@
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
-    "lint": "nuxt prepare && eslint .",
+    "lint": "eslint .",
     "test": "vitest run --passWithNoTests",
     "typecheck": "nuxt prepare && vue-tsc --noEmit"
   },
