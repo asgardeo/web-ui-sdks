@@ -41,7 +41,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "build": "nuxt module-build prepare && nuxt module-build build",
