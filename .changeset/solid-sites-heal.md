@@ -1,6 +1,6 @@
 ---
 '@asgardeo/nuxt': patch
-'@asgardeo/vue': minor
+'@asgardeo/vue': patch
 ---
 
 initial release
