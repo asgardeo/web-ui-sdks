@@ -1,5 +1,5 @@
 ---
-'@asgardeo/nuxt': minor
+'@asgardeo/nuxt': patch
 '@asgardeo/vue': minor
 ---
 
