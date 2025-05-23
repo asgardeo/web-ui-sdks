@@ -35,7 +35,7 @@ import {AuthenticationHelper, SPAHelper} from './helpers';
 import {HttpClientInstance} from './http-client';
 import {
   AuthSPAClientConfig,
-  Config,
+  LegacyConfig as Config,
   HttpRequestConfig,
   HttpResponse,
   MainThreadClientConfig,

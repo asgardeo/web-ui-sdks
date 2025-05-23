@@ -25,13 +25,13 @@ import {
   BasicUserInfo,
   CryptoUtils,
   CustomGrantConfig,
-  DecodedIDTokenPayload,./legacy/helpers
+  DecodedIDTokenPayload,
   FetchResponse,
   GetAuthURLConfig,
   OIDCEndpoints,
   Store,
   TokenResponse,
-} from './legacy/models';
+} from './models';
 
 /**
  * Default configurations.

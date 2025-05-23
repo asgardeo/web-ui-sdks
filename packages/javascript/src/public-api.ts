@@ -22,9 +22,10 @@ export * from './legacy/constants/client-config';
 export * from './legacy/constants/custom-grant-template-tags';
 export * from './legacy/constants/parameters';
 export * from './legacy/constants/data';
-export * from './legacy/constants/parameters';
 export * from './legacy/constants/scopes';
 export * from './legacy/helpers/crypto-helper';
 export * from './legacy/utils';
 export * from './legacy/exception';
 export * from './legacy/data';
+
+export {BaseConfig, Config} from './models/config';
