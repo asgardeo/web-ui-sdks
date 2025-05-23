@@ -37,7 +37,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  GH_TOKEN: ${{ secrets.RELEASE_BOT_TOKEN }}
+  GH_TOKEN: ${{ secrets.ASGARDEO_GITHUB_BOT_TOKEN }}
   DOC_DIR: docs
 
 jobs:
