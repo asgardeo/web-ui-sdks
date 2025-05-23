@@ -17,7 +17,10 @@
  */
 
 export {default as AsgardeoProvider} from './providers/AsgardeoProvider';
+export * from './providers/AsgardeoProvider';
+
 export {default as useAsgardeo} from './hooks/useAsgardeo';
+export * from './hooks/useAsgardeo';
 
 export {default as SignInButton} from './components/SignInButton';
 export * from './components/SignInButton';
@@ -30,3 +33,5 @@ export * from './components/SignedIn';
 
 export {default as SignedOut} from './components/SignedOut';
 export * from './components/SignedOut';
+
+export * from '@asgardeo/browser';

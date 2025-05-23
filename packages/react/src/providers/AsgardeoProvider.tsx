@@ -16,35 +16,28 @@
  * under the License.
  */
 
+import {Config} from '@asgardeo/browser';
 import {FC, PropsWithChildren, ReactElement, useEffect, useMemo, useState} from 'react';
-import AsgardeoContext from '../contexts/AsgardeoContext';
 import AuthAPI from '../__temp__/api';
 import {AuthStateInterface} from '../__temp__/models';
+import AsgardeoContext from '../contexts/AsgardeoContext';
 
-export interface AuthenticationFlowBuilderProviderProps {
-  /**
-   * The base URL of the Asgardeo server.
-   */
-  baseUrl: string;
-  /**
-   * The client ID of the Asgardeo application.
-   */
-  clientId: string;
-}
+/**
+ * Props interface of {@link AsgardeoProvider}
+ */
+export type AsgardeoProviderProps = Config;
 
-const AsgardeoProvider: FC<PropsWithChildren<AuthenticationFlowBuilderProviderProps>> = ({
+const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   baseUrl,
   clientId,
   children,
-}: PropsWithChildren<AuthenticationFlowBuilderProviderProps>): ReactElement => {
-  const AuthClient: AuthAPI = useMemo(() => {
-    return new AuthAPI();
-  }, []);
+}: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
+  const AuthClient: AuthAPI = useMemo(() => new AuthAPI(), []);
 
   const [state, dispatch] = useState<AuthStateInterface>(AuthClient.getState());
 
   useEffect(() => {
-    (async () => {
+    (async (): Promise<void> => {
       await AuthClient.init({
         baseUrl,
         clientID: clientId,
@@ -90,13 +83,12 @@ const AsgardeoProvider: FC<PropsWithChildren<AuthenticationFlowBuilderProviderPr
     }
   };
 
-  const signOut = (callback?: (response: boolean) => void): Promise<boolean> => {
-    return AuthClient.signOut(dispatch, state, callback);
-  };
+  const signOut = (callback?: (response: boolean) => void): Promise<boolean> =>
+    AuthClient.signOut(dispatch, state, callback);
 
   const isSignedIn: boolean = state.isAuthenticated;
 
-  return <AsgardeoContext.Provider value={{signIn, signOut, isSignedIn}}>{children}</AsgardeoContext.Provider>;
+  return <AsgardeoContext.Provider value={{isSignedIn, signIn, signOut}}>{children}</AsgardeoContext.Provider>;
 };
 
 export default AsgardeoProvider;

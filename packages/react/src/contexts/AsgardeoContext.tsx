@@ -23,6 +23,10 @@ import {Context, createContext} from 'react';
  */
 export type AsgardeoContextProps = {
   /**
+   * Flag indicating whether the user is signed in or not.
+   */
+  isSignedIn: boolean;
+  /**
    * Sign-in function to initiate the authentication process.
    * @remark This is the programmatic version of the `SignInButton` component.
    * TODO: Fix the types.
@@ -34,19 +38,15 @@ export type AsgardeoContextProps = {
    * TODO: Fix the types.
    */
   signOut: any;
-  /**
-   * Flag indicating whether the user is signed in or not.
-   */
-  isSignedIn: boolean;
 };
 
 /**
  * Context object for managing the Authentication flow builder core context.
  */
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
+  isSignedIn: false,
   signIn: null,
   signOut: null,
-  isSignedIn: false,
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';
