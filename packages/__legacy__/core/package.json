@@ -1,5 +1,6 @@
 {
-  "name": "@asgardeo/js",
+  "private": true,
+  "name": "@asgardeo/js-legacy",
   "version": "0.1.3",
   "description": "Framework agnostic JS for Asgardeo or Identity Server",
   "main": "dist/esm/index.js",
@@ -51,7 +52,7 @@
     "typescript": "5.1.6"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "dependencies": {
     "@asgardeo/auth-js": "^5.0.1",
