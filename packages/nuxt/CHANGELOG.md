@@ -1,4 +1,4 @@
-# @asgardeo/vue
+# @asgardeo/nuxt
 
 ## 0.0.1
 

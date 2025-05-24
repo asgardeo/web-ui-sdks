@@ -145,7 +145,7 @@ The `footer` is optional. The [Commit Message Footer](#commit-footer) format des
   │       │             │
   │       │             └─⫸ Summary in present tense. Not capitalized. No period at the end.
   │       │
-  │       └─⫸ Commit Scope: primitives|scss|react|vue
+  │       └─⫸ Commit Scope: primitives|scss|react|vue|nuxt
   │
   └─⫸ Commit Type: build|ci|docs|feat|fix|perf|refactor|chore|test
 ```
@@ -176,6 +176,7 @@ The following is the list of supported scopes:
 * `core` - Changes to the `core` / `@asgardeo/js` package.
 * `react` - Changes to the `@asgardeo/react` package.
 * `vue` - Changes to the `@asgardeo/vue` package.
+* `nuxt` - Changes to the `@asgardeo/nuxt` package.
 * `workspace` - Changes to the workspace.
 * `sample-app` - Changes to the sample app.
 

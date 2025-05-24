@@ -11,7 +11,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
-  GH_TOKEN: ${{ secrets.RELEASE_BOT_TOKEN }}
+  GH_TOKEN: ${{ secrets.ASGARDEO_GITHUB_BOT_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
