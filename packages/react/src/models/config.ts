@@ -16,17 +16,6 @@
  * under the License.
  */
 
-import {useContext} from 'react';
-import AsgardeoContext, {AsgardeoContextProps} from '../contexts/AsgardeoReactContext';
+import {Config} from '@asgardeo/browser';
 
-const useAsgardeo = (): AsgardeoContextProps => {
-  const context: AsgardeoContextProps | null = useContext(AsgardeoContext);
-
-  if (!context) {
-    throw new Error('useAsgardeo must be used within an AsgardeoProvider');
-  }
-
-  return context;
-};
-
-export default useAsgardeo;
+export type AsgardeoReactConfig = Config;

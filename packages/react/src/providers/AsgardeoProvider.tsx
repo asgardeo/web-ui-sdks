@@ -16,17 +16,17 @@
  * under the License.
  */
 
-import {Config} from '@asgardeo/browser';
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState} from 'react';
 import AuthAPI from '../__temp__/api';
 import {AuthStateInterface} from '../__temp__/models';
-import AsgardeoContext from '../contexts/AsgardeoContext';
+import AsgardeoContext from '../contexts/AsgardeoReactContext';
 import useBrowserUrl from '../hooks/useBrowserUrl';
+import {AsgardeoReactConfig} from '../models/config';
 
 /**
  * Props interface of {@link AsgardeoProvider}
  */
-export type AsgardeoProviderProps = Config;
+export type AsgardeoProviderProps = AsgardeoReactConfig;
 
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   afterSignInUrl = window.location.origin,
