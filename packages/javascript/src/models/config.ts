@@ -18,6 +18,16 @@
 
 export interface BaseConfig<T = unknown> {
   /**
+   * Optional URL where the authorization server should redirect after authentication.
+   * This must match one of the allowed redirect URIs configured in your IdP.
+   * If not provided, the framework layer will use the default redirect URL based on the application type.
+   *
+   * @example
+   * For development: "http://localhost:3000/api/auth/callback"
+   * For production: "https://your-app.com/api/auth/callback"
+   */
+  afterSignInUrl?: string;
+  /**
    * The base URL of the Asgardeo identity server.
    * Example: "https://api.asgardeo.io/t/{org_name}"
    */
