@@ -17,10 +17,11 @@
  */
 
 import {Config} from '@asgardeo/browser';
-import {FC, PropsWithChildren, ReactElement, useEffect, useMemo, useState} from 'react';
+import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState} from 'react';
 import AuthAPI from '../__temp__/api';
 import {AuthStateInterface} from '../__temp__/models';
 import AsgardeoContext from '../contexts/AsgardeoContext';
+import useBrowserUrl from '../hooks/useBrowserUrl';
 
 /**
  * Props interface of {@link AsgardeoProvider}
@@ -28,11 +29,14 @@ import AsgardeoContext from '../contexts/AsgardeoContext';
 export type AsgardeoProviderProps = Config;
 
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
+  afterSignInUrl = window.location.origin,
   baseUrl,
   clientId,
   children,
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
+  const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const AuthClient: AuthAPI = useMemo(() => new AuthAPI(), []);
+  const {hasAuthParams} = useBrowserUrl();
 
   const [state, dispatch] = useState<AuthStateInterface>(AuthClient.getState());
 
@@ -41,8 +45,49 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       await AuthClient.init({
         baseUrl,
         clientID: clientId,
-        signInRedirectURL: window.location.origin,
+        signInRedirectURL: afterSignInUrl,
       });
+    })();
+  }, []);
+
+  /**
+   * Try signing in when the component is mounted.
+   */
+  useEffect(() => {
+    // React 18.x Strict.Mode has a new check for `Ensuring reusable state` to facilitate an upcoming react feature.
+    // https://reactjs.org/docs/strict-mode.html#ensuring-reusable-state
+    // This will remount all the useEffects to ensure that there are no unexpected side effects.
+    // When react remounts the signIn hook of the AuthProvider, it will cause a race condition. Hence, we have to
+    // prevent the re-render of this hook as suggested in the following discussion.
+    // https://github.com/reactwg/react-18/discussions/18#discussioncomment-795623
+    if (reRenderCheckRef.current) {
+      return;
+    }
+
+    reRenderCheckRef.current = true;
+
+    (async (): Promise<void> => {
+      // User is already authenticated. Skip...
+      if (state.isAuthenticated) {
+        return;
+      }
+
+      if (hasAuthParams(new URL(window.location.href), afterSignInUrl)) {
+        try {
+          await signIn(
+            {callOnlyOnRedirect: true},
+            // authParams?.authorizationCode,
+            // authParams?.sessionState,
+            // authParams?.state,
+          );
+
+          // setError(null);
+        } catch (error) {
+          if (error && Object.prototype.hasOwnProperty.call(error, 'code')) {
+            // setError(error);
+          }
+        }
+      }
     })();
   }, []);
 
