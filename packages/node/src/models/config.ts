@@ -16,10 +16,16 @@
  * under the License.
  */
 
-export * from './client';
-export * from './__legacy__/models';
-export * from './__legacy__/utils/logger-utils';
+import {Config} from '@asgardeo/javascript';
 
-export {AsgardeoNodeConfig} from './models/config';
-
-export * from '@asgardeo/javascript';
+/**
+ * Configuration type for the Asgardeo Node.js SDK.
+ * Extends the base Config type from @asgardeo/javascript with Node.js specific settings.
+ *
+ * @remarks
+ * This type is used to configure the Node.js SDK with settings like:
+ * - Server endpoints
+ * - Authentication parameters
+ * - Session management options
+ */
+export type AsgardeoNodeConfig = Config;
