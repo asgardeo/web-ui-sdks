@@ -128,12 +128,16 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     }
   };
 
+  const signUp = (): void => {
+    throw new Error('Not implemented');
+  };
+
   const signOut = (callback?: (response: boolean) => void): Promise<boolean> =>
     AuthClient.signOut(dispatch, state, callback);
 
   const isSignedIn: boolean = state.isAuthenticated;
 
-  return <AsgardeoContext.Provider value={{isSignedIn, signIn, signOut}}>{children}</AsgardeoContext.Provider>;
+  return <AsgardeoContext.Provider value={{isSignedIn, signIn, signOut, signUp}}>{children}</AsgardeoContext.Provider>;
 };
 
 export default AsgardeoProvider;

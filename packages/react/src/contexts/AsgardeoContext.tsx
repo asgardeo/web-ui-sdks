@@ -35,9 +35,15 @@ export type AsgardeoContextProps = {
   /**
    * Sign-out function to terminate the authentication session.
    * @remark This is the programmatic version of the `SignOutButton` component.
-   * TODO: Fix the types.
+   * FIXME: Fix the types.
    */
   signOut: any;
+  /**
+   * Sign-up function to initiate the registration process.
+   * @remark This is the programmatic version of the `SignUpButton` component.
+   * FIXME: Fix the types.
+   */
+  signUp: any;
 };
 
 /**
@@ -47,6 +53,7 @@ const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null
   isSignedIn: false,
   signIn: null,
   signOut: null,
+  signUp: null,
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';
