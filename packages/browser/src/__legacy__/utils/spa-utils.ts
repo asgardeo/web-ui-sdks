@@ -17,7 +17,7 @@
  */
 
 import {AsgardeoAuthClient, SIGN_OUT_SUCCESS_PARAM, SIGN_OUT_URL} from '@asgardeo/javascript';
-import {SignOutError} from '..';
+import {SignOutError} from '../..';
 import {
   ERROR,
   ERROR_DESCRIPTION,

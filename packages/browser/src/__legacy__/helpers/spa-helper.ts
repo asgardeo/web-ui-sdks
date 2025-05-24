@@ -18,7 +18,7 @@
 
 import {AsgardeoAuthClient, DataLayer, REFRESH_TOKEN_TIMER} from '@asgardeo/javascript';
 
-import {AuthenticationHelper, MainThreadClientConfig, WebWorkerClientConfig} from '../';
+import {AuthenticationHelper, MainThreadClientConfig, WebWorkerClientConfig} from '../..';
 
 export class SPAHelper<T extends MainThreadClientConfig | WebWorkerClientConfig> {
   private _authenticationClient: AsgardeoAuthClient<T>;

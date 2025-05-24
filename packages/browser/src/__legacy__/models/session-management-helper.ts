@@ -16,20 +16,18 @@
  * under the License.
  */
 
-import { GetAuthURLConfig } from "..";
+import {GetAuthURLConfig} from '../..';
 
 export interface SessionManagementHelperInterface {
-    initialize(
-        clientID: string,
-        checkSessionEndpoint: string,
-        getSessionState: () => Promise<string>,
-        interval: number,
-        sessionRefreshInterval: number,
-        redirectURL: string,
-        getAuthorizationURL: (params?: GetAuthURLConfig) => Promise<string>
-    ): void;
-    receivePromptNoneResponse(
-        setSessionState?: (sessionState: string | null) => Promise<void>
-    ): Promise<boolean>;
-    reset();
+  initialize(
+    clientID: string,
+    checkSessionEndpoint: string,
+    getSessionState: () => Promise<string>,
+    interval: number,
+    sessionRefreshInterval: number,
+    redirectURL: string,
+    getAuthorizationURL: (params?: GetAuthURLConfig) => Promise<string>,
+  ): void;
+  receivePromptNoneResponse(setSessionState?: (sessionState: string | null) => Promise<void>): Promise<boolean>;
+  reset();
 }

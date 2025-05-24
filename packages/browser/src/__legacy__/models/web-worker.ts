@@ -27,7 +27,7 @@ import {
   OIDCEndpoints,
 } from '@asgardeo/javascript';
 import {HttpRequestConfig, HttpResponse, Message} from '.';
-import {AuthorizationResponse, WebWorkerClientConfig} from '..';
+import {AuthorizationResponse, WebWorkerClientConfig} from '../..';
 
 interface WebWorkerEvent<T> extends MessageEvent {
   data: Message<T>;

@@ -29,10 +29,10 @@ import {
   OIDCEndpoints,
 } from '@asgardeo/javascript';
 import WorkerFile from './worker';
-import {MainThreadClient, WebWorkerClient} from './clients';
-import {Hooks, REFRESH_ACCESS_TOKEN_ERR0R} from './constants';
-import {AuthenticationHelper, SPAHelper} from './helpers';
-import {HttpClientInstance} from './http-client';
+import {MainThreadClient, WebWorkerClient} from './__legacy__/clients';
+import {Hooks, REFRESH_ACCESS_TOKEN_ERR0R} from './__legacy__/constants';
+import {AuthenticationHelper, SPAHelper} from './__legacy__/helpers';
+import {HttpClientInstance} from './__legacy__/http-client';
 import {
   AuthSPAClientConfig,
   LegacyConfig as Config,
@@ -44,9 +44,9 @@ import {
   SignOutError,
   WebWorkerClientConfig,
   WebWorkerClientInterface,
-} from './models';
-import {Storage} from './models/storage';
-import {SPAUtils} from './utils';
+} from './__legacy__/models';
+import {Storage} from './__legacy__/models/storage';
+import {SPAUtils} from './__legacy__/utils';
 
 /**
  * Default configurations.

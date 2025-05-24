@@ -17,7 +17,7 @@
  */
 
 import {AuthClientConfig} from '@asgardeo/javascript';
-import {Storage} from '../models/storage';
+import {Storage} from './storage';
 
 export interface SPAConfig {
   /**

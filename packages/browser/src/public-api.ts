@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2019, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,27 +20,27 @@
  * Entry point for all public APIs of this SDK.
  */
 export * from './client';
-export * from './models';
+export * from './__legacy__/models';
 
 // Utils
-export * from './utils/spa-utils';
+export * from './__legacy__/utils/spa-utils';
 
 // Constants
-export * from './constants/storage';
-export * from './constants/hooks';
+export * from './__legacy__/constants/storage';
+export * from './__legacy__/constants/hooks';
 
 export * from '@asgardeo/javascript';
 
 // clients
-export * from './clients/main-thread-client';
-export * from './clients/web-worker-client';
+export * from './__legacy__/clients/main-thread-client';
+export * from './__legacy__/clients/web-worker-client';
 
 // models
-export * from './models/request-custom-grant';
+export * from './__legacy__/models/request-custom-grant';
 
 // helpers
-export * from './helpers/authentication-helper';
-export * from './helpers/spa-helper';
+export * from './__legacy__/helpers/authentication-helper';
+export * from './__legacy__/helpers/spa-helper';
 
 // worker receiver
-export * from './worker/worker-receiver';
+export * from './__legacy__/worker/worker-receiver';

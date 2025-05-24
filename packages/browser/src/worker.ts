@@ -17,9 +17,9 @@
  */
 
 import {AsgardeoAuthClient} from '@asgardeo/javascript';
-import {AuthenticationHelper, SPAHelper} from './helpers';
-import {WebWorkerClientConfig} from './models';
-import {workerReceiver} from './worker/worker-receiver';
+import {AuthenticationHelper, SPAHelper} from './__legacy__/helpers';
+import {WebWorkerClientConfig} from './__legacy__/models';
+import {workerReceiver} from './__legacy__/worker/worker-receiver';
 
 workerReceiver((authClient: AsgardeoAuthClient<WebWorkerClientConfig>, spaHelper: SPAHelper<WebWorkerClientConfig>) => {
   return new AuthenticationHelper(authClient, spaHelper);
