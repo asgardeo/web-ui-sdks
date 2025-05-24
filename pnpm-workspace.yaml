@@ -1,8 +1,7 @@
 packages:
   - 'docs'
   - 'packages/*'
-  - '!packages/react-legacy'
-  - '!packages/core'
+  - '!packages/legacy'
   - 'recipes/*'
   - '!recipes/react-vite-legacy'
 

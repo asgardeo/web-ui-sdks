@@ -16,4 +16,18 @@
  * under the License.
  */
 
-export {default as greet} from './greet';
+import {NextRequest, NextResponse} from 'next/server';
+
+/**
+ * Options interface of {@link asgardeoMiddleware}
+ */
+export type AsgardeoMiddlewareOptions = {};
+
+/**
+ * Creates an Asgardeo middleware for protecting Next.js routes.
+ */
+export function asgardeoMiddleware(options: AsgardeoMiddlewareOptions = {}) {
+  return async function middleware(request: NextRequest): Promise<NextResponse | void> {};
+}
+
+export default asgardeoMiddleware;

@@ -16,6 +16,29 @@
  * under the License.
  */
 
-export default function greet(greeting: string): string {
-  return `Hello, ${greeting}!`;
-}
+import {readFileSync} from 'fs';
+import {build} from 'esbuild';
+
+const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
+
+const commonOptions = {
+  bundle: false,
+  entryPoints: ['src/index.ts'],
+  // external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
+  platform: 'node',
+  target: ['node18'],
+};
+
+await build({
+  ...commonOptions,
+  format: 'esm',
+  outfile: 'dist/index.js',
+  sourcemap: true,
+});
+
+await build({
+  ...commonOptions,
+  format: 'cjs',
+  outfile: 'dist/cjs/index.js',
+  sourcemap: true,
+});

@@ -16,4 +16,6 @@
  * under the License.
  */
 
-export * from './public-api';
+export {default as asgardeoMiddleware} from './server/asgardeoMiddleware';
+
+export {default as AsgardeoProvider} from './client/providers/AsgardeoProvider';
