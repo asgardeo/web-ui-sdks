@@ -19,6 +19,9 @@
 export {default as AsgardeoProvider} from './providers/AsgardeoProvider';
 export * from './providers/AsgardeoProvider';
 
+export {default as AsgardeoContext} from './contexts/AsgardeoContext';
+export * from './contexts/AsgardeoContext';
+
 export {default as useAsgardeo} from './hooks/useAsgardeo';
 export * from './hooks/useAsgardeo';
 

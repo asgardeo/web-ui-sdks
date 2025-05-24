@@ -34,7 +34,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@asgardeo/javascript": "workspace:^",
+    "@asgardeo/node": "workspace:^",
     "@asgardeo/react": "workspace:^",
     "@types/react": "^19.1.4",
     "tslib": "^2.8.1"
