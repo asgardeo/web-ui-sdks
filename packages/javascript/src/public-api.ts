@@ -16,16 +16,16 @@
  * under the License.
  */
 
-export * from './legacy/client';
-export * from './legacy/models';
-export * from './legacy/constants/client-config';
-export * from './legacy/constants/custom-grant-template-tags';
-export * from './legacy/constants/parameters';
-export * from './legacy/constants/data';
-export * from './legacy/constants/scopes';
-export * from './legacy/helpers/crypto-helper';
-export * from './legacy/utils';
-export * from './legacy/exception';
-export * from './legacy/data';
+export * from './__legacy__/client';
+export * from './__legacy__/models';
+export * from './__legacy__/constants/client-config';
+export * from './__legacy__/constants/custom-grant-template-tags';
+export * from './__legacy__/constants/parameters';
+export * from './__legacy__/constants/data';
+export * from './__legacy__/constants/scopes';
+export * from './__legacy__/helpers/crypto-helper';
+export * from './__legacy__/utils';
+export * from './__legacy__/exception';
+export * from './__legacy__/data';
 
 export {BaseConfig, Config} from './models/config';
