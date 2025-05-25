@@ -16,12 +16,8 @@
  * under the License.
  */
 
-export * from './client';
-export * from './__legacy__/models';
-export * from './__legacy__/utils/logger-utils';
+import {randomUUID} from 'node:crypto';
 
-export {AsgardeoNodeConfig} from './models/config';
+const generateSessionId = (): string => randomUUID();
 
-export {default as generateSessionId} from './utils/generateSessionId';
-
-export * from '@asgardeo/javascript';
+export default generateSessionId;
