@@ -16,16 +16,17 @@
  * under the License.
  */
 
-export * from './client';
-export * from './__legacy__/models';
-export * from './__legacy__/utils/logger-utils';
+class CookieConfig {
+  static readonly DEFAULT_MAX_AGE: number = 3600;
 
-export {default as CookieConfig} from './constants/CookieConfig';
+  static readonly DEFAULT_HTTP_ONLY: boolean = true;
 
-export {AsgardeoNodeConfig} from './models/config';
-export {CookieOptions} from './models/cookies';
+  static readonly DEFAULT_SAME_SITE: 'lax' | 'strict' | 'none' = 'lax';
 
-export {default as generateSessionId} from './utils/generateSessionId';
-export {default as getSessionCookieOptions} from './utils/getSessionCookieOptions';
+  static readonly DEFAULT_SECURE: boolean = true;
 
-export * from '@asgardeo/javascript';
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private constructor() {}
+}
+
+export default CookieConfig;
