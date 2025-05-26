@@ -48,3 +48,5 @@ export * from './__legacy__/worker/worker-receiver';
 export {AsgardeoBrowserConfig} from './models/config';
 
 export {default as hasAuthParamsInUrl} from './utils/hasAuthParamsInUrl';
+
+export {default as AsgardeoBrowserClient} from './AsgardeoBrowserClient';
