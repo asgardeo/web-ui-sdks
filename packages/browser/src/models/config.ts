@@ -16,6 +16,6 @@
  * under the License.
  */
 
-import {AsgardeoBrowserConfig} from '@asgardeo/browser';
+import {Config} from '@asgardeo/javascript';
 
-export type AsgardeoReactConfig = AsgardeoBrowserConfig;
+export type AsgardeoBrowserConfig = Config;

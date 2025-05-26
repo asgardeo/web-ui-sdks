@@ -45,4 +45,6 @@ export * from './__legacy__/helpers/spa-helper';
 // worker receiver
 export * from './__legacy__/worker/worker-receiver';
 
+export {AsgardeoBrowserConfig} from './models/config';
+
 export {default as hasAuthParamsInUrl} from './utils/hasAuthParamsInUrl';
