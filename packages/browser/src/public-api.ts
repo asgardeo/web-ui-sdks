@@ -19,7 +19,7 @@
 /**
  * Entry point for all public APIs of this SDK.
  */
-export * from './client';
+export * from './__legacy__/client';
 export * from './__legacy__/models';
 
 // Utils
@@ -45,4 +45,4 @@ export * from './__legacy__/helpers/spa-helper';
 // worker receiver
 export * from './__legacy__/worker/worker-receiver';
 
-export {hasAuthParamsInUrl} from './utils/hasAuthParamsInUrl';
+export {default as hasAuthParamsInUrl} from './utils/hasAuthParamsInUrl';
