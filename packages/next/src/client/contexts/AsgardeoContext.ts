@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
@@ -16,13 +18,13 @@
  * under the License.
  */
 
-import {AsgardeoContext as AsgardeoReactContext} from '@asgardeo/react';
+import {AsgardeoContextProps as AsgardeoReactContextProps} from '@asgardeo/react';
 import {Context, createContext} from 'react';
 
 /**
  * Props interface of {@link AsgardeoContext}
  */
-export type AsgardeoContextProps = AsgardeoReactContext;
+export type AsgardeoContextProps = AsgardeoReactContextProps;
 
 /**
  * Context object for managing the Authentication flow builder core context.

@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
@@ -16,28 +18,66 @@
  * under the License.
  */
 
-'use client';
+import {AsgardeoProviderProps as AsgardeoReactProviderProps} from '@asgardeo/react';
+import {useRouter, NextRouter} from 'next/navigation';
+import {FC, PropsWithChildren, ReactElement, useState} from 'react';
+import AsgardeoNextClient from '../../AsgardeoNextClient';
+import AsgardeoContext from '../../contexts/AsgardeoContext';
 
-import {AsgardeoProviderProps as ReactAsgardeoProviderProps} from '@asgardeo/react';
-import {FC, PropsWithChildren, ReactElement} from 'react';
+export type AsgardeoProviderProps = AsgardeoReactProviderProps;
+
+const withNextAsgardeoProviderOptions = (options: AsgardeoProviderProps): AsgardeoProviderProps => {
+  const {baseUrl, clientId, clientSecret, ...rest} = options;
+
+  return {
+    ...rest,
+    baseUrl: baseUrl || process.env['NEXT_PUBLIC_ASGARDEO_BASE_URL'],
+    clientID: clientId || process.env['NEXT_PUBLIC_ASGARDEO_CLIENT_ID'],
+    clientSecret: clientSecret || process.env['ASGARDEO_CLIENT_SECRET'],
+  };
+};
 
 /**
- * Props interface of {@link AsgardeoProvider}
+ * Provider component that makes the Asgardeo client instance available to any
+ * nested components that need to access authentication functionality.
  */
-export type AsgardeoProviderProps = Partial<ReactAsgardeoProviderProps>;
-
-const withNextAsgardeoProviderOptions = (options: AsgardeoProviderProps): AsgardeoProviderProps => ({
-  ...options,
-  baseUrl: process.env['NEXT_PUBLIC_ASGARDEO_BASE_URL'],
-  clientId: process.env['NEXT_PUBLIC_ASGARDEO_CLIENT_ID'],
-  clientSecret: process.env['ASGARDEO_CLIENT_SECRET'],
-});
-
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   children,
-  ...rest
-}: PropsWithChildren<AsgardeoProviderProps>): ReactElement => (
-  <div {...withNextAsgardeoProviderOptions(rest || {})}>{children}</div>
-);
+  baseUrl,
+  clientId,
+  clientSecret,
+}: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
+  const router: NextRouter = useRouter();
+
+  const [client] = useState(
+    () =>
+      new AsgardeoNextClient(
+        withNextAsgardeoProviderOptions({
+          baseUrl,
+          clientId,
+          clientSecret,
+          signInRedirectURL: window.location.origin,
+        }),
+      ),
+  );
+
+  const signIn = async (): Promise<void> => {
+    await client.signIn((authorizationUrl: string) => {
+      router.push(authorizationUrl);
+    }, 'sessionId');
+  };
+
+  const signUp = async (): Promise<void> => {
+    throw new Error('Not implemented. Sign up is not supported in Asgardeo Next Client.');
+  };
+
+  const signOut = async (): Promise<void> => {
+    await client.signOut();
+  };
+
+  const isSignedIn: boolean = true;
+
+  return <AsgardeoContext.Provider value={{isSignedIn, signIn, signOut, signUp}}>{children}</AsgardeoContext.Provider>;
+};
 
 export default AsgardeoProvider;

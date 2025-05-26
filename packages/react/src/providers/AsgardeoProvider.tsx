@@ -19,7 +19,7 @@
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState} from 'react';
 import AuthAPI from '../__temp__/api';
 import {AuthStateInterface} from '../__temp__/models';
-import AsgardeoContext from '../contexts/AsgardeoReactContext';
+import AsgardeoContext from '../contexts/AsgardeoContext';
 import useBrowserUrl from '../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../models/config';
 

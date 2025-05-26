@@ -17,7 +17,7 @@
  */
 
 import {useContext} from 'react';
-import AsgardeoContext, {AsgardeoContextProps} from '../contexts/AsgardeoNextContext';
+import AsgardeoContext, {AsgardeoContextProps} from '../contexts/AsgardeoContext';
 
 const useAsgardeo = (): AsgardeoContextProps => {
   const context: AsgardeoContextProps | null = useContext(AsgardeoContext);

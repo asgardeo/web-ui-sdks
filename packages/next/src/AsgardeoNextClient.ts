@@ -17,8 +17,37 @@
  */
 
 import {AsgardeoNodeClient} from '@asgardeo/node';
+import {cookies} from 'next/headers';
+import {redirect} from 'next/navigation';
 import {AsgardeoNextConfig} from './models/config';
 
+export interface SignInOptions {
+  /**
+   * The authorization code received from the OAuth provider
+   */
+  code?: string;
+
+  /**
+   * Additional parameters to include in the authorization request
+   */
+  params?: Record<string, string>;
+
+  /**
+   * The session state received from the OAuth provider
+   */
+  sessionState?: string;
+
+  /**
+   * The state parameter from the OAuth flow
+   */
+  state?: string;
+}
+
+/**
+ * Next.js-specific implementation of the Asgardeo authentication client.
+ * Extends the Node.js client with Next.js-specific functionality for handling
+ * authentication flows in Next.js applications.
+ */
 class AsgardeoNextClient extends AsgardeoNodeClient<AsgardeoNextConfig> {}
 
 export default AsgardeoNextClient;
