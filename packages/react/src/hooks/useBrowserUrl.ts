@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {SPAUtils} from '@asgardeo/browser';
+import {hasAuthParamsInUrl} from '@asgardeo/browser';
 
 /**
  * Interface for the useBrowserUrl hook return value.
@@ -48,14 +48,10 @@ export interface UseBrowserUrl {
  * ```
  */
 const useBrowserUrl = (): UseBrowserUrl => {
-  const hasAuthParams = (url: URL, afterSignInUrl: string): boolean => {
-    return (
-      (SPAUtils.hasAuthSearchParamsInURL() &&
-        new URL(url.origin + url.pathname).toString() === new URL(afterSignInUrl).toString()) ||
-      // authParams?.authorizationCode || // FIXME: These are sent externally. Need to see what we can do about this.
-      url.searchParams.get('error') !== null
-    );
-  };
+  const hasAuthParams = (url: URL, afterSignInUrl: string): boolean =>
+    (hasAuthParamsInUrl() && new URL(url.origin + url.pathname).toString() === new URL(afterSignInUrl).toString()) ||
+    // authParams?.authorizationCode || // FIXME: These are sent externally. Need to see what we can do about this.
+    url.searchParams.get('error') !== null;
 
   return {hasAuthParams};
 };

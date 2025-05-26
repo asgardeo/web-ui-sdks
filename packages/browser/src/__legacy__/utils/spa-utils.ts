@@ -151,6 +151,7 @@ export class SPAUtils {
   /**
    * Util function to test if `code` and `session_state` are available in the URL as search params.
    * @since 0.2.0
+   * @deprecated Use `hasAuthParamsInUrl` from `@asgardeo/browser` instead.
    *
    * @param params - Search params.
    * @return {boolean}

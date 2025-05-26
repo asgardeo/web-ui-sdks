@@ -44,3 +44,5 @@ export * from './__legacy__/helpers/spa-helper';
 
 // worker receiver
 export * from './__legacy__/worker/worker-receiver';
+
+export {hasAuthParamsInUrl} from './utils/hasAuthParamsInUrl';
