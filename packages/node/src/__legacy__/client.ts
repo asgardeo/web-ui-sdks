@@ -27,8 +27,8 @@ import {
   Store,
   TokenResponse,
 } from '@asgardeo/javascript';
-import {AsgardeoNodeCore} from './__legacy__/core';
-import {AuthURLCallback} from './__legacy__/models';
+import {AsgardeoNodeCore} from './core';
+import {AuthURLCallback} from './models';
 
 /**
  * This class provides the necessary methods needed to implement authentication.
