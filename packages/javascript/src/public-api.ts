@@ -28,6 +28,8 @@ export * from './__legacy__/utils';
 export * from './__legacy__/exception';
 export * from './__legacy__/data';
 
-export {AsgardeoClient} from './models/client';
+export {AsgardeoClient, SignInOptions} from './models/client';
 export {BaseConfig, Config} from './models/config';
 export {User} from './models/user';
+
+export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';

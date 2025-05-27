@@ -16,53 +16,48 @@
  * under the License.
  */
 
-import {User} from './user';
-
-export type SignInOptions = Record<string, unknown>;
+import {AsgardeoClient, SignInOptions} from './models/client';
+import {User} from './models/user';
+import {Config} from './models/config';
 
 /**
- * Interface defining the core functionality for Asgardeo authentication clients.
+ * Base class for implementing Asgardeo clients.
+ * This class provides the core functionality for managing user authentication and sessions.
  *
- * @template T - Type parameter for client-specific configuration
- *
- * @example
- * ```typescript
- * class AsgardeoNodeClient implements AsgardeoClient<NodeConfig> {
- *   // Implement interface methods
- * }
- * ```
+ * @template T - Configuration type that extends Config.
+ * @implements {AsgardeoClient<T>}
  */
-export interface AsgardeoClient<T> {
-  /**
-   * Gets user information from the session.
-   *
-   * @returns User object containing user details.
-   */
-  getUser(): Promise<User>;
-
+abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T> {
   /**
    * Initializes the authentication client with provided configuration.
    *
    * @param config - SDK Client instance configuration options.
    * @returns Promise resolving to boolean indicating success.
    */
-  initialize(config: T): Promise<boolean>;
+  abstract initialize(config: T): Promise<boolean>;
 
+  /**
+   * Gets user information from the session.
+   *
+   * @returns User object containing user details.
+   */
+  abstract getUser(): Promise<User>;
+  
   /**
    * Checks if the client is currently loading.
    * This can be used to determine if the client is in the process of initializing or fetching user data.
    *
    * @returns Boolean indicating if the client is loading.
    */
-  isLoading(): boolean;
+  abstract isLoading(): boolean;
 
   /**
    * Checks if a user is signed in.
-   * FIXME: This should be integrated with the existing isAuthenticated method which returns a Promise.
+   * FIXME: Check if this should return a boolean or a Promise<boolean>.
    *
-   * @returns Boolean indicating sign-in status.
+   * @returns Promise resolving to boolean indicating sign-in status.
    */
-  isSignedIn(): Promise<boolean>;
+  abstract isSignedIn(): Promise<boolean>;
 
   /**
    * Initiates the sign-in process for the user.
@@ -70,7 +65,7 @@ export interface AsgardeoClient<T> {
    * @param options - Optional sign-in options like additional parameters to be sent in the authorize request, etc.
    * @returns Promise resolving the user upon successful sign in.
    */
-  signIn(options?: SignInOptions): Promise<User>;
+  abstract signIn(options?: SignInOptions): Promise<User>;
 
   /**
    * Signs out the currently signed-in user.
@@ -78,5 +73,7 @@ export interface AsgardeoClient<T> {
    * @param afterSignOut - Callback function to be executed after sign-out is complete.
    * @returns A promise that resolves to true if sign-out is successful
    */
-  signOut(afterSignOut: () => void): Promise<boolean>;
+  abstract signOut(afterSignOut: () => void): Promise<boolean>;
 }
+
+export default AsgardeoJavaScriptClient;
