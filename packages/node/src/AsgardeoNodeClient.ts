@@ -16,18 +16,16 @@
  * under the License.
  */
 
-export {AsgardeoNodeClient as LegacyAsgardeoNodeClient} from './__legacy__/client';
-export * from './__legacy__/models';
-export * from './__legacy__/utils/logger-utils';
+import {AsgardeoJavaScriptClient} from '@asgardeo/javascript';
+import {AsgardeoNodeConfig} from './models/config';
+import {SignOutOptions} from '@asgardeo/javascript/dist/models/client';
 
-export {default as CookieConfig} from './constants/CookieConfig';
+/**
+ * Base class for implementing Asgardeo in Node.js based applications.
+ * This class provides the core functionality for managing user authentication and sessions.
+ *
+ * @typeParam T - Configuration type that extends AsgardeoNodeConfig.
+ */
+abstract class AsgardeoNodeClient<T = AsgardeoNodeConfig> extends AsgardeoJavaScriptClient<T> {}
 
-export {AsgardeoNodeConfig} from './models/config';
-export {CookieOptions} from './models/cookies';
-
-export {default as generateSessionId} from './utils/generateSessionId';
-export {default as getSessionCookieOptions} from './utils/getSessionCookieOptions';
-
-export {default as AsgardeoNodeClient} from './AsgardeoNodeClient';
-
-export * from '@asgardeo/javascript';
+export default AsgardeoNodeClient;
