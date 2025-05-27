@@ -47,4 +47,8 @@ export interface User {
    * Username used for authentication
    */
   username: string;
+  /**
+   * Display name of the user.
+   */
+  displayName: string;
 }

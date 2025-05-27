@@ -16,12 +16,12 @@
  * under the License.
  */
 
-import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState} from 'react';
-import AuthAPI from '../__temp__/api';
-import {AuthStateInterface} from '../__temp__/models';
+import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, use} from 'react';
+import {SignInOptions, User} from '@asgardeo/browser';
 import AsgardeoContext from '../contexts/AsgardeoContext';
 import useBrowserUrl from '../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../models/config';
+import AsgardeoReactClient from '../AsgardeoReactClient';
 
 /**
  * Props interface of {@link AsgardeoProvider}
@@ -35,17 +35,17 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   children,
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
-  const AuthClient: AuthAPI = useMemo(() => new AuthAPI(), []);
+  const asgardeo: AsgardeoReactClient = useMemo(() => new AsgardeoReactClient(), []);
   const {hasAuthParams} = useBrowserUrl();
 
-  const [state, dispatch] = useState<AuthStateInterface>(AuthClient.getState());
+  const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
 
   useEffect(() => {
     (async (): Promise<void> => {
-      await AuthClient.init({
+      await asgardeo.initialize({
         baseUrl,
-        clientID: clientId,
-        signInRedirectURL: afterSignInUrl,
+        clientId,
+        afterSignInUrl,
       });
     })();
   }, []);
@@ -68,7 +68,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
     (async (): Promise<void> => {
       // User is already authenticated. Skip...
-      if (state.isAuthenticated) {
+      if (await asgardeo.isSignedIn()) {
         return;
       }
 
@@ -83,6 +83,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
           // setError(null);
         } catch (error) {
+          debugger;
           if (error && Object.prototype.hasOwnProperty.call(error, 'code')) {
             // setError(error);
           }
@@ -91,40 +92,45 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     })();
   }, []);
 
-  const signIn = async (
-    config?: any,
-    authorizationCode?: string,
-    sessionState?: string,
-    authState?: string,
-    callback?: (response: any) => void,
-    tokenRequestConfig?: {
-      params: Record<string, unknown>;
-    },
-  ): Promise<any> => {
-    // const _config = await AuthClient.getConfigData();
+  /**
+   * Check if the user is signed in and update the state accordingly.
+   * This will also set an interval to check for the sign-in status every second
+   * until the user is signed in.
+   */
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
 
-    // // NOTE: With React 19 strict mode, the initialization logic runs twice, and there's an intermittent
-    // // issue where the config object is not getting stored in the storage layer with Vite scaffolding.
-    // // Hence, we need to check if the client is initialized but the config object is empty, and reinitialize.
-    // // Tracker: https://github.com/asgardeo/asgardeo-auth-react-sdk/issues/240
-    // if (!_config || Object.keys(_config).length === 0) {
-    //     await AuthClient.init(mergedConfig);
-    // }
+    (async () => {
+      try {
+        const status = await asgardeo.isSignedIn();
+        setIsSignedInSync(status);
 
+        if (!status) {
+          interval = setInterval(async () => {
+            const newStatus = await asgardeo.isSignedIn();
+            if (newStatus) {
+              setIsSignedInSync(true);
+              clearInterval(interval);
+            }
+          }, 1000);
+        }
+      } catch (error) {
+        setIsSignedInSync(false);
+      }
+    })();
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [asgardeo]);
+
+  const signIn = async (options?: SignInOptions): Promise<User> => {
     try {
-      // setError(null);
-      return await AuthClient.signIn(
-        dispatch,
-        state,
-        config,
-        authorizationCode,
-        sessionState,
-        authState,
-        callback,
-        tokenRequestConfig,
-      );
+      return await asgardeo.signIn(options);
     } catch (error) {
-      return Promise.reject(error);
+      throw new Error(`Error while signing in: ${error}`);
     }
   };
 
@@ -132,12 +138,15 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     throw new Error('Not implemented');
   };
 
-  const signOut = (callback?: (response: boolean) => void): Promise<boolean> =>
-    AuthClient.signOut(dispatch, state, callback);
+  const signOut = async (afterSignOut?: () => void): Promise<boolean> => await asgardeo.signOut(afterSignOut);
 
-  const isSignedIn: boolean = state.isAuthenticated;
-
-  return <AsgardeoContext.Provider value={{isSignedIn, signIn, signOut, signUp}}>{children}</AsgardeoContext.Provider>;
+  return (
+    <AsgardeoContext.Provider
+      value={{isSignedIn: isSignedInSync, signIn, signOut, signUp, isLoading: asgardeo.isLoading()}}
+    >
+      {children}
+    </AsgardeoContext.Provider>
+  );
 };
 
 export default AsgardeoProvider;

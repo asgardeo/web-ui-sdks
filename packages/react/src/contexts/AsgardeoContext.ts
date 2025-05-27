@@ -23,6 +23,10 @@ import {Context, createContext} from 'react';
  */
 export type AsgardeoContextProps = {
   /**
+   * Flag indicating whether the SDK is working in the background.
+   */
+  isLoading: boolean;
+  /**
    * Flag indicating whether the user is signed in or not.
    */
   isSignedIn: boolean;
@@ -50,7 +54,8 @@ export type AsgardeoContextProps = {
  * Context object for managing the Authentication flow builder core context.
  */
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
-  isSignedIn: false,
+  isLoading: true,
+  isSignedIn: Promise.resolve(false),
   signIn: null,
   signOut: null,
   signUp: null,

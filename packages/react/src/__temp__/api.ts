@@ -29,6 +29,7 @@ import {
   HttpResponse,
   OIDCEndpoints,
   SignInConfig,
+  User,
 } from '@asgardeo/browser';
 import {SPACustomGrantConfig} from '@asgardeo/browser/src/models/request-custom-grant';
 import {AuthStateInterface} from './models';
@@ -39,6 +40,9 @@ class AuthAPI {
   private _authState = AuthAPI.DEFAULT_STATE;
   private _client: AsgardeoSPAClient;
 
+  private _isLoading: boolean;
+  private user: Promise<User>;
+
   constructor(spaClient?: AsgardeoSPAClient) {
     this._client = spaClient ?? AsgardeoSPAClient.getInstance();
 
@@ -47,6 +51,30 @@ class AuthAPI {
     this.signIn = this.signIn.bind(this);
     this.signOut = this.signOut.bind(this);
     this.updateState = this.updateState.bind(this);
+  }
+
+  public setUser(user: Promise<User>): void {
+    this.user = user;
+  }
+
+  public getUser(): Promise<User> {
+    return this.user;
+  }
+
+  public _setIsLoading(isLoading: boolean): void {
+    this._isLoading = isLoading;
+  }
+
+  public _getIsLoading(): boolean {
+    return this._isLoading;
+  }
+
+  public isSignedIn(): Promise<boolean> {
+    return this.isAuthenticated();
+  }
+
+  public isLoading(): boolean {
+    return this._getIsLoading();
   }
 
   /**
@@ -84,11 +112,11 @@ class AuthAPI {
    * @param {any} callback - Action to trigger on successful sign in.
    */
   public async signIn(
-    dispatch: (state: AuthStateInterface) => void,
-    state: AuthStateInterface,
+    // dispatch: (state: AuthStateInterface) => void,
+    // state: AuthStateInterface,
     config: SignInConfig,
-    authorizationCode: string,
-    sessionState: string,
+    authorizationCode?: string,
+    sessionState?: string,
     authState?: string,
     callback?: (response: BasicUserInfo) => void,
     tokenRequestConfig?: {
@@ -116,7 +144,14 @@ class AuthAPI {
 
           this.updateState(stateToUpdate);
 
-          dispatch({...state, ...stateToUpdate});
+          // dispatch({...state, ...stateToUpdate});
+          this.setUser({
+            ...this.user,
+            displayName: response.displayName,
+            email: response.email,
+            username: response.username,
+          });
+          this._setIsLoading(false);
 
           if (callback) {
             callback(response);
@@ -137,11 +172,7 @@ class AuthAPI {
    * @param {AuthStateInterface} state - Current authentication state in React Auth Context.
    * @param {any} callback - Action to trigger on successful sign out.
    */
-  public signOut(
-    dispatch: (state: AuthStateInterface) => void,
-    state: AuthStateInterface,
-    callback?: (response?: boolean) => void,
-  ): Promise<boolean> {
+  public signOut(callback?: (response?: boolean) => void): Promise<boolean> {
     return this._client
       .signOut()
       .then(response => {
