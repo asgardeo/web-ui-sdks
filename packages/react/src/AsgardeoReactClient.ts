@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoBrowserClient, AsgardeoBrowserConfig, SignInOptions, SignOutOptions, User} from '@asgardeo/browser';
+import {AsgardeoBrowserClient, SignInOptions, SignOutOptions, User} from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import {AsgardeoReactConfig} from './models/config';
 
