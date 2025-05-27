@@ -16,10 +16,17 @@
  * under the License.
  */
 
-import {AsgardeoBrowserClient, AsgardeoBrowserConfig, SignInOptions, User} from '@asgardeo/browser';
+import {AsgardeoBrowserClient, AsgardeoBrowserConfig, SignInOptions, SignOutOptions, User} from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
+import {AsgardeoReactConfig} from './models/config';
 
-class AsgardeoReactClient extends AsgardeoBrowserClient {
+/**
+ * Client for mplementing Asgardeo in React applications.
+ * This class provides the core functionality for managing user authentication and sessions.
+ *
+ * @typeParam T - Configuration type that extends AsgardeoReactConfig.
+ */
+class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> extends AsgardeoBrowserClient<T> {
   private asgardeo: AuthAPI;
 
   constructor() {
@@ -29,7 +36,7 @@ class AsgardeoReactClient extends AsgardeoBrowserClient {
     this.asgardeo = new AuthAPI();
   }
 
-  override initialize(config: AsgardeoBrowserConfig): Promise<boolean> {
+  override initialize(config: T): Promise<boolean> {
     return this.asgardeo.init({
       baseUrl: config.baseUrl,
       clientID: config.clientId,
@@ -53,8 +60,18 @@ class AsgardeoReactClient extends AsgardeoBrowserClient {
     return this.asgardeo.signIn(options as any) as unknown as Promise<User>;
   }
 
-  override signOut(afterSignOut: () => void): Promise<boolean> {
-    return this.asgardeo.signOut(afterSignOut);
+  override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<boolean>;
+  override signOut(
+    options?: SignOutOptions,
+    sessionId?: string,
+    afterSignOut?: (redirectUrl: string) => void,
+  ): Promise<boolean>;
+  override signOut(...args: any[]): Promise<boolean> {
+    if (args[1] && typeof args[1] !== 'function') {
+      throw new Error('The second argument must be a function.');
+    }
+
+    return this.asgardeo.signOut(args[1]);
   }
 }
 
