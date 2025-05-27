@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoClient, SignInOptions} from './models/client';
+import {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 import {User} from './models/user';
 import {Config} from './models/config';
 
@@ -24,8 +24,7 @@ import {Config} from './models/config';
  * Base class for implementing Asgardeo clients.
  * This class provides the core functionality for managing user authentication and sessions.
  *
- * @template T - Configuration type that extends Config.
- * @implements {AsgardeoClient<T>}
+ * @typeParam T - Configuration type that extends Config.
  */
 abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T> {
   /**
@@ -42,7 +41,7 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
    * @returns User object containing user details.
    */
   abstract getUser(): Promise<User>;
-  
+
   /**
    * Checks if the client is currently loading.
    * This can be used to determine if the client is in the process of initializing or fetching user data.
@@ -70,10 +69,26 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
   /**
    * Signs out the currently signed-in user.
    *
+   * @param options - Optional sign-out options like additional parameters to be sent in the sign-out request, etc.
    * @param afterSignOut - Callback function to be executed after sign-out is complete.
    * @returns A promise that resolves to true if sign-out is successful
    */
-  abstract signOut(afterSignOut: () => void): Promise<boolean>;
+  abstract signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<boolean>;
+
+  /**
+   * Signs out the currently signed-in user with an optional session ID.
+   *
+   * @param options - Optional sign-out options like additional parameters to be sent in the sign-out request, etc.
+   * @param sessionId - Optional session ID to be used for sign-out.
+   *                    This can be useful in scenarios where multiple sessions are managed.
+   * @param afterSignOut - Callback function to be executed after sign-out is complete.
+   * @returns A promise that resolves to true if sign-out is successful
+   */
+  abstract signOut(
+    options?: SignOutOptions,
+    sessionId?: string,
+    afterSignOut?: (redirectUrl: string) => void,
+  ): Promise<boolean>;
 }
 
 export default AsgardeoJavaScriptClient;

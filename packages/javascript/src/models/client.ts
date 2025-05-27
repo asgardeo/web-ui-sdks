@@ -19,6 +19,7 @@
 import {User} from './user';
 
 export type SignInOptions = Record<string, unknown>;
+export type SignOutOptions = Record<string, unknown>;
 
 /**
  * Interface defining the core functionality for Asgardeo authentication clients.
@@ -75,8 +76,20 @@ export interface AsgardeoClient<T> {
   /**
    * Signs out the currently signed-in user.
    *
+   * @param options - Optional sign-out options like additional parameters to be sent in the sign-out request, etc.
    * @param afterSignOut - Callback function to be executed after sign-out is complete.
    * @returns A promise that resolves to true if sign-out is successful
    */
-  signOut(afterSignOut: () => void): Promise<boolean>;
+  signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<boolean>;
+
+  /**
+   * Signs out the currently signed-in user with an optional session ID.
+   *
+   * @param options - Optional sign-out options like additional parameters to be sent in the sign-out request, etc.
+   * @param sessionId - Optional session ID to be used for sign-out.
+   *                    This can be useful in scenarios where multiple sessions are managed.
+   * @param afterSignOut - Callback function to be executed after sign-out is complete.
+   * @returns A promise that resolves to true if sign-out is successful
+   */
+  signOut(options?: SignOutOptions, sessionId?: string, afterSignOut?: (redirectUrl: string) => void): Promise<boolean>;
 }
