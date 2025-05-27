@@ -16,6 +16,8 @@
  * under the License.
  */
 
+'use client';
+
 import {useContext} from 'react';
 import AsgardeoContext, {AsgardeoContextProps} from '../contexts/AsgardeoContext';
 

@@ -17,6 +17,8 @@
  */
 
 class CookieConfig {
+  static readonly SESSION_COOKIE_NAME: string = 'ASGARDEO_SESSION_ID';
+
   static readonly DEFAULT_MAX_AGE: number = 3600;
 
   static readonly DEFAULT_HTTP_ONLY: boolean = true;

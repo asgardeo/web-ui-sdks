@@ -18,47 +18,55 @@
 
 'use client';
 
-// import {SignInButton as ReactSignInButton} from '@asgardeo/react';
-import React, {ReactElement} from 'react';
+import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
 import useAsgardeo from '../hooks/useAsgardeo';
 
-export interface SignInButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /**
-   * Additional parameters to pass to the sign-in request
-   */
-  params?: Record<string, string>;
-}
+/**
+ * Interface for SignInButton component props.
+ */
+export type SignInButtonProps = HTMLAttributes<HTMLButtonElement>;
 
 /**
- * A button component that triggers the Asgardeo sign-in flow in Next.js applications.
- * Wraps the React SignInButton with Next.js specific functionality.
+ * SignInButton component. This button initiates the sign-in process when clicked.
  *
  * @example
  * ```tsx
- * // Basic usage
- * <SignInButton>Sign In</SignInButton>
+ * import { SignInButton } from '@asgardeo/auth-react';
  *
- * // With custom styling
- * <SignInButton className="my-button" style={{ padding: '1rem' }}>
- *   Login with Asgardeo
- * </SignInButton>
- *
- * // With additional auth params
- * <SignInButton params={{ prompt: 'login' }}>
- *   Sign In
- * </SignInButton>
+ * const App = () => {
+ *   const buttonRef = useRef<HTMLButtonElement>(null);
+ *   return (
+ *     <SignInButton ref={buttonRef} className="custom-class" style={{ backgroundColor: 'blue' }}>
+ *       Sign In
+ *     </SignInButton>
+ *   );
+ * }
  * ```
  */
-export function SignInButton({children, params, ...props}: SignInButtonProps): ReactElement {
-  const {signIn} = useAsgardeo();
+const SignInButton: FC<PropsWithChildren<SignInButtonProps>> = forwardRef<
+  HTMLButtonElement,
+  PropsWithChildren<SignInButtonProps>
+>(
+  (
+    {children = 'Sign In', className, style, ...rest}: PropsWithChildren<SignInButtonProps>,
+    ref: Ref<HTMLButtonElement>,
+  ): ReactElement => {
+    const {signIn} = useAsgardeo();
 
-  const handleSignIn = async (): Promise<void> => {
-    await signIn();
-  };
+    const handleClick = async (): Promise<void> => {
+      try {
+        await signIn();
+      } catch (error) {
+        throw new Error(`Sign in failed: ${JSON.stringify(error)}`);
+      }
+    };
 
-  return (
-    <button onClick={handleSignIn} {...props}>
-      {children}
-    </button>
-  );
-}
+    return (
+      <button ref={ref} onClick={handleClick} className={className} style={style} type="button" {...rest}>
+        {children}
+      </button>
+    );
+  },
+);
+
+export default SignInButton;

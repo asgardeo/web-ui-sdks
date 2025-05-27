@@ -2,7 +2,7 @@ packages:
   - 'docs'
   - 'packages/*'
   - '!packages/legacy'
-  - 'recipes/*'
+  - '!recipes/*'
   - '!recipes/react-vite-legacy'
 
 catalog:

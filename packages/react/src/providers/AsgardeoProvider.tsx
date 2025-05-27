@@ -16,12 +16,12 @@
  * under the License.
  */
 
+import {SignInOptions, SignOutOptions, User} from '@asgardeo/browser';
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, use} from 'react';
-import {SignInOptions, User} from '@asgardeo/browser';
+import AsgardeoReactClient from '../AsgardeoReactClient';
 import AsgardeoContext from '../contexts/AsgardeoContext';
 import useBrowserUrl from '../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../models/config';
-import AsgardeoReactClient from '../AsgardeoReactClient';
 
 /**
  * Props interface of {@link AsgardeoProvider}
@@ -43,9 +43,9 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   useEffect(() => {
     (async (): Promise<void> => {
       await asgardeo.initialize({
+        afterSignInUrl,
         baseUrl,
         clientId,
-        afterSignInUrl,
       });
     })();
   }, []);
@@ -138,7 +138,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     throw new Error('Not implemented');
   };
 
-  const signOut = async (afterSignOut?: () => void): Promise<boolean> => await asgardeo.signOut(afterSignOut);
+  const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<boolean> =>
+    asgardeo.signOut(options, afterSignOut);
 
   return (
     <AsgardeoContext.Provider

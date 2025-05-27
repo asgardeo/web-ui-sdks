@@ -61,7 +61,8 @@
   gap: 16px;
 }
 
-.ctas a {
+.ctas a,
+.ctas button {
   appearance: none;
   border-radius: 128px;
   height: 48px;
@@ -81,13 +82,13 @@
   font-weight: 500;
 }
 
-a.primary {
+.primary {
   background: var(--foreground);
   color: var(--background);
   gap: 8px;
 }
 
-a.secondary {
+.secondary {
   border-color: var(--gray-alpha-200);
   min-width: 158px;
 }
@@ -110,12 +111,12 @@ a.secondary {
 
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
+  .primary:hover {
     background: var(--button-primary-hover);
     border-color: transparent;
   }
 
-  a.secondary:hover {
+  .secondary:hover {
     background: var(--button-secondary-hover);
     border-color: transparent;
   }
@@ -150,7 +151,7 @@ a.secondary {
     padding: 0 16px;
   }
 
-  a.secondary {
+  .secondary {
     min-width: auto;
   }
 

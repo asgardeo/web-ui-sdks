@@ -1,5 +1,3 @@
-'use client';
-
 /**
  * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
@@ -18,66 +16,99 @@
  * under the License.
  */
 
-import {AsgardeoProviderProps as AsgardeoReactProviderProps} from '@asgardeo/react';
-import {useRouter, NextRouter} from 'next/navigation';
-import {FC, PropsWithChildren, ReactElement, useState} from 'react';
+'use client';
+
+import {AsgardeoProviderProps as AsgardeoReactProviderProps, SignOutOptions, User} from '@asgardeo/react';
+import {useRouter} from 'next/navigation';
+import {FC, PropsWithChildren, ReactElement, useEffect, useMemo, useState} from 'react';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
-import AsgardeoContext from '../../contexts/AsgardeoContext';
+import AsgardeoContext from '../contexts/AsgardeoContext';
 
-export type AsgardeoProviderProps = AsgardeoReactProviderProps;
-
-const withNextAsgardeoProviderOptions = (options: AsgardeoProviderProps): AsgardeoProviderProps => {
-  const {baseUrl, clientId, clientSecret, ...rest} = options;
-
-  return {
-    ...rest,
-    baseUrl: baseUrl || process.env['NEXT_PUBLIC_ASGARDEO_BASE_URL'],
-    clientID: clientId || process.env['NEXT_PUBLIC_ASGARDEO_CLIENT_ID'],
-    clientSecret: clientSecret || process.env['ASGARDEO_CLIENT_SECRET'],
-  };
-};
+export type AsgardeoProviderProps = Partial<AsgardeoReactProviderProps>;
 
 /**
  * Provider component that makes the Asgardeo client instance available to any
  * nested components that need to access authentication functionality.
  */
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
+  afterSignInUrl,
   children,
   baseUrl,
   clientId,
   clientSecret,
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
-  const router: NextRouter = useRouter();
+  const asgardeo: AsgardeoNextClient = useMemo(() => new AsgardeoNextClient(), []);
 
-  const [client] = useState(
-    () =>
-      new AsgardeoNextClient(
-        withNextAsgardeoProviderOptions({
-          baseUrl,
-          clientId,
-          clientSecret,
-          signInRedirectURL: window.location.origin,
-        }),
-      ),
-  );
+  const router = useRouter();
 
-  const signIn = async (): Promise<void> => {
-    await client.signIn((authorizationUrl: string) => {
-      router.push(authorizationUrl);
-    }, 'sessionId');
-  };
+  const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async (): Promise<void> => {
+      await asgardeo.initialize({
+        afterSignInUrl,
+        baseUrl,
+        clientId,
+        clientSecret,
+      });
+    })();
+  }, []);
+
+  /**
+   * Check if the user is signed in and update the state accordingly.
+   * This will also set an interval to check for the sign-in status every second
+   * until the user is signed in.
+   */
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    (async (): Promise<void> => {
+      try {
+        const status: boolean = await asgardeo.isSignedIn();
+
+        setIsSignedInSync(status);
+
+        if (!status) {
+          interval = setInterval(async () => {
+            const newStatus: boolean = await asgardeo.isSignedIn();
+
+            if (newStatus) {
+              setIsSignedInSync(true);
+              clearInterval(interval);
+            }
+          }, 1000);
+        }
+      } catch (error) {
+        setIsSignedInSync(false);
+      }
+    })();
+
+    return (): void => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [asgardeo]);
+
+  const signIn = async (): Promise<User> =>
+    asgardeo.signIn({}, 'undefined', (redirectUrl: string) => {
+      router.push(redirectUrl);
+    });
 
   const signUp = async (): Promise<void> => {
     throw new Error('Not implemented. Sign up is not supported in Asgardeo Next Client.');
   };
 
-  const signOut = async (): Promise<void> => {
-    await client.signOut();
-  };
+  const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<boolean> =>
+    asgardeo.signOut(options, afterSignOut);
 
-  const isSignedIn: boolean = true;
-
-  return <AsgardeoContext.Provider value={{isSignedIn, signIn, signOut, signUp}}>{children}</AsgardeoContext.Provider>;
+  return (
+    <AsgardeoContext.Provider
+      value={{isSignedIn: isSignedInSync, signIn, signOut, signUp, isLoading: asgardeo.isLoading()}}
+    >
+      {children}
+    </AsgardeoContext.Provider>
+  );
 };
 
 export default AsgardeoProvider;

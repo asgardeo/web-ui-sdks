@@ -21,13 +21,10 @@ export {default as asgardeoMiddleware} from './server/asgardeoMiddleware';
 export {default as AsgardeoProvider} from './client/providers/AsgardeoProvider';
 export * from './client/providers/AsgardeoProvider';
 
-export {SignInButton} from './client/components/SignInButton';
+export {default as SignInButton} from './client/components/SignInButton';
 export type {SignInButtonProps} from './client/components/SignInButton';
 
 export {default as AsgardeoContext} from './client/contexts/AsgardeoContext';
 export type {AsgardeoContextProps} from './client/contexts/AsgardeoContext';
 
-export {default as NextEnvironmentConstants} from './constants/NextEnvironmentConstants';
-
 export {default as AsgardeoNextClient} from './AsgardeoNextClient';
-export type {SignInOptions} from './AsgardeoNextClient';

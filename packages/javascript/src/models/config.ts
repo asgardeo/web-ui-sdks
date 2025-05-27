@@ -26,23 +26,23 @@ export interface BaseConfig<T = unknown> {
    * For development: "http://localhost:3000/api/auth/callback"
    * For production: "https://your-app.com/api/auth/callback"
    */
-  afterSignInUrl?: string;
+  afterSignInUrl?: string | undefined;
   /**
    * The base URL of the Asgardeo identity server.
    * Example: "https://api.asgardeo.io/t/{org_name}"
    */
-  baseUrl: string;
+  baseUrl: string | undefined;
   /**
    * The client ID obtained from the Asgardeo application registration.
    * This is used to identify your application during authentication.
    */
-  clientId: string;
+  clientId: string | undefined;
   /**
    * Optional client secret for the application.
    * Only required when using confidential client flows.
    * Not recommended for public clients like browser applications.
    */
-  clientSecret?: string;
+  clientSecret?: string | undefined;
 }
 
 export type Config<T = unknown> = BaseConfig<T>;

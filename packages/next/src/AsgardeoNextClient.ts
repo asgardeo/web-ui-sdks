@@ -16,38 +16,76 @@
  * under the License.
  */
 
-import {AsgardeoNodeClient} from '@asgardeo/node';
-import {cookies} from 'next/headers';
-import {redirect} from 'next/navigation';
+import {AsgardeoNodeClient, LegacyAsgardeoNodeClient, SignInOptions, SignOutOptions, User} from '@asgardeo/node';
 import {AsgardeoNextConfig} from './models/config';
-
-export interface SignInOptions {
-  /**
-   * The authorization code received from the OAuth provider
-   */
-  code?: string;
-
-  /**
-   * Additional parameters to include in the authorization request
-   */
-  params?: Record<string, string>;
-
-  /**
-   * The session state received from the OAuth provider
-   */
-  sessionState?: string;
-
-  /**
-   * The state parameter from the OAuth flow
-   */
-  state?: string;
-}
+import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
 
 /**
- * Next.js-specific implementation of the Asgardeo authentication client.
- * Extends the Node.js client with Next.js-specific functionality for handling
- * authentication flows in Next.js applications.
+ * Client for mplementing Asgardeo in Next.js applications.
+ * This class provides the core functionality for managing user authentication and sessions.
+ *
+ * @typeParam T - Configuration type that extends AsgardeoNextConfig.
  */
-class AsgardeoNextClient extends AsgardeoNodeClient<AsgardeoNextConfig> {}
+class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> extends AsgardeoNodeClient<T> {
+  private asgardeo: LegacyAsgardeoNodeClient<T>;
+
+  constructor() {
+    super();
+
+    this.asgardeo = new LegacyAsgardeoNodeClient();
+  }
+
+  override initialize(config: T): Promise<boolean> {
+    const {baseUrl, clientId, clientSecret, afterSignInUrl} = decorateConfigWithNextEnv({
+      afterSignInUrl: config.afterSignInUrl,
+      baseUrl: config.baseUrl,
+      clientId: config.clientId,
+      clientSecret: config.clientSecret,
+    });
+
+    return this.asgardeo.initialize({
+      baseUrl,
+      clientID: clientId,
+      clientSecret,
+      signInRedirectURL: afterSignInUrl,
+    } as any);
+  }
+
+  override getUser(): Promise<User> {
+    throw new Error('Method not implemented.');
+  }
+
+  override isLoading(): boolean {
+    return false;
+  }
+
+  override isSignedIn(sessionId?: string): Promise<boolean> {
+    return this.asgardeo.isAuthenticated(sessionId as string);
+  }
+
+  override signIn(
+    options?: SignInOptions,
+    sessionId?: string,
+    beforeSignIn?: (redirectUrl: string) => void,
+  ): Promise<User> {
+    return this.asgardeo.signIn(beforeSignIn as any, sessionId as string) as any;
+  }
+
+  override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<boolean>;
+  override signOut(
+    options?: SignOutOptions,
+    sessionId?: string,
+    afterSignOut?: (redirectUrl: string) => void,
+  ): Promise<boolean>;
+  override signOut(...args: any[]): Promise<boolean> {
+    if (args[1] && typeof args[1] !== 'string') {
+      throw new Error('The second argument must be a string.');
+    }
+
+    this.asgardeo.signOut(args[1]);
+
+    return Promise.resolve(true);
+  }
+}
 
 export default AsgardeoNextClient;

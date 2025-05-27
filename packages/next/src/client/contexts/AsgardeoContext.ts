@@ -1,5 +1,3 @@
-'use client';
-
 /**
  * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
@@ -18,6 +16,8 @@
  * under the License.
  */
 
+'use client';
+
 import {AsgardeoContextProps as AsgardeoReactContextProps} from '@asgardeo/react';
 import {Context, createContext} from 'react';
 
@@ -30,6 +30,7 @@ export type AsgardeoContextProps = AsgardeoReactContextProps;
  * Context object for managing the Authentication flow builder core context.
  */
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
+  isLoading: false,
   isSignedIn: false,
   signIn: null,
   signOut: null,

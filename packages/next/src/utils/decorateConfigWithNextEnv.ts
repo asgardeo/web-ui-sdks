@@ -16,6 +16,17 @@
  * under the License.
  */
 
-const generateSessionId = (): string => new Date().getTime().toString(36) + Math.random().toString(36).substring(2);
+import {AsgardeoNextConfig} from '../models/config';
 
-export default generateSessionId;
+const decorateConfigWithNextEnv = (config: AsgardeoNextConfig): AsgardeoNextConfig => {
+  const {baseUrl, clientId, clientSecret, ...rest} = config;
+
+  return {
+    ...rest,
+    baseUrl: baseUrl || (process.env['NEXT_PUBLIC_ASGARDEO_BASE_URL'] as string),
+    clientId: clientId || (process.env['NEXT_PUBLIC_ASGARDEO_CLIENT_ID'] as string),
+    clientSecret: clientSecret || (process.env['ASGARDEO_CLIENT_SECRET'] as string),
+  };
+};
+
+export default decorateConfigWithNextEnv;

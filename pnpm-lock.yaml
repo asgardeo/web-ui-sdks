@@ -163,9 +163,9 @@ importers:
 
   packages/next:
     dependencies:
-      '@asgardeo/javascript':
+      '@asgardeo/node':
         specifier: workspace:^
-        version: link:../javascript
+        version: link:../node
       '@asgardeo/react':
         specifier: workspace:^
         version: link:../react
