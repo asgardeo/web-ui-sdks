@@ -25,7 +25,7 @@ const commonOptions = {
   bundle: true,
   entryPoints: ['src/index.ts'],
   external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
-  platform: 'browser',
+  platform: 'node',
   target: ['es2020'],
 };
 
