@@ -16,15 +16,14 @@
  * under the License.
  */
 
-import {AsgardeoJavaScriptClient, User} from '@asgardeo/javascript';
+import {AsgardeoJavaScriptClient} from '@asgardeo/javascript';
 import {AsgardeoBrowserConfig} from './models/config';
 
 /**
  * Base class for implementing Asgardeo in browser-based applications.
  * This class provides the core functionality for managing user authentication and sessions.
  *
- * @template T - Configuration type that extends AsgardeoBrowserConfig
- * @implements {AsgardeoClient<T>}
+ * @typeParam T - Configuration type that extends AsgardeoBrowserConfig.
  */
 abstract class AsgardeoBrowserClient<T = AsgardeoBrowserConfig> extends AsgardeoJavaScriptClient<T> {}
 
