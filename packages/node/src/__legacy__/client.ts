@@ -60,8 +60,12 @@ export class AsgardeoNodeClient<T> {
     * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#constructor
     * @preserve
     */
-  constructor(config: AuthClientConfig<T>, store?: Store) {
+  constructor() {}
+
+  public async initialize (config: AuthClientConfig<T>, store?: Store): Promise<boolean> {
     this._authCore = new AsgardeoNodeCore(config, store);
+
+    return Promise.resolve(true);
   }
 
   /**
