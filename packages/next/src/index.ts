@@ -27,5 +27,7 @@ export type {SignInButtonProps} from './client/components/SignInButton';
 export {default as AsgardeoContext} from './client/contexts/AsgardeoContext';
 export type {AsgardeoContextProps} from './client/contexts/AsgardeoContext';
 
+export {default as NextEnvironmentConstants} from './constants/NextEnvironmentConstants';
+
 export {default as AsgardeoNextClient} from './AsgardeoNextClient';
 export type {SignInOptions} from './AsgardeoNextClient';
