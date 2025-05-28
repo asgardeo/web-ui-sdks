@@ -25,6 +25,9 @@ export * from './contexts/AsgardeoContext';
 export {default as useAsgardeo} from './hooks/useAsgardeo';
 export * from './hooks/useAsgardeo';
 
+export {default as useBrowserUrl} from './hooks/useBrowserUrl';
+export * from './hooks/useBrowserUrl';
+
 export {default as SignInButton} from './components/SignInButton';
 export * from './components/SignInButton';
 
