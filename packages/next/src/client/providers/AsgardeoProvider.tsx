@@ -18,97 +18,18 @@
 
 'use client';
 
-import {AsgardeoProviderProps as AsgardeoReactProviderProps, SignOutOptions, User} from '@asgardeo/react';
-import {useRouter} from 'next/navigation';
-import {FC, PropsWithChildren, ReactElement, useEffect, useMemo, useState} from 'react';
-import AsgardeoNextClient from '../../AsgardeoNextClient';
+import {FC, PropsWithChildren} from 'react';
 import AsgardeoContext from '../contexts/AsgardeoContext';
 
-export type AsgardeoProviderProps = Partial<AsgardeoReactProviderProps>;
-
 /**
- * Provider component that makes the Asgardeo client instance available to any
- * nested components that need to access authentication functionality.
+ * Props interface of {@link AsgardeoClientProvider}
  */
-const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
-  afterSignInUrl,
+export type AsgardeoClientProviderProps = {};
+
+const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
   children,
-  baseUrl,
-  clientId,
-  clientSecret,
-}: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
-  const asgardeo: AsgardeoNextClient = useMemo(() => new AsgardeoNextClient(), []);
+}: PropsWithChildren<AsgardeoClientProviderProps>) => (
+  <AsgardeoContext.Provider value={{}}>{children}</AsgardeoContext.Provider>
+);
 
-  const router = useRouter();
-
-  const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
-
-  useEffect(() => {
-    (async (): Promise<void> => {
-      await asgardeo.initialize({
-        afterSignInUrl,
-        baseUrl,
-        clientId,
-        clientSecret,
-      });
-    })();
-  }, []);
-
-  /**
-   * Check if the user is signed in and update the state accordingly.
-   * This will also set an interval to check for the sign-in status every second
-   * until the user is signed in.
-   */
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    (async (): Promise<void> => {
-      try {
-        const status: boolean = await asgardeo.isSignedIn();
-
-        setIsSignedInSync(status);
-
-        if (!status) {
-          interval = setInterval(async () => {
-            const newStatus: boolean = await asgardeo.isSignedIn();
-
-            if (newStatus) {
-              setIsSignedInSync(true);
-              clearInterval(interval);
-            }
-          }, 1000);
-        }
-      } catch (error) {
-        setIsSignedInSync(false);
-      }
-    })();
-
-    return (): void => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [asgardeo]);
-
-  const signIn = async (): Promise<User> =>
-    asgardeo.signIn({}, 'undefined', (redirectUrl: string) => {
-      router.push(redirectUrl);
-    });
-
-  const signUp = async (): Promise<void> => {
-    throw new Error('Not implemented. Sign up is not supported in Asgardeo Next Client.');
-  };
-
-  const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<boolean> =>
-    asgardeo.signOut(options, afterSignOut);
-
-  return (
-    <AsgardeoContext.Provider
-      value={{isSignedIn: isSignedInSync, signIn, signOut, signUp, isLoading: asgardeo.isLoading()}}
-    >
-      {children}
-    </AsgardeoContext.Provider>
-  );
-};
-
-export default AsgardeoProvider;
+export default AsgardeoClientProvider;

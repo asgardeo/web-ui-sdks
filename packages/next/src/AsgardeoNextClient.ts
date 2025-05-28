@@ -16,10 +16,22 @@
  * under the License.
  */
 
-import {AsgardeoNodeClient, LegacyAsgardeoNodeClient, SignInOptions, SignOutOptions, User} from '@asgardeo/node';
+import {
+  AsgardeoNodeClient,
+  LegacyAsgardeoNodeClient,
+  SignInOptions,
+  SignOutOptions,
+  User,
+  // removeTrailingSlash,
+} from '@asgardeo/node';
+import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
+import deleteSessionId from './server/actions/deleteSessionId';
+import getSessionId from './server/actions/getSessionId';
+import setSessionId from './server/actions/setSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
 
+const removeTrailingSlash = (path: string): string => (path.endsWith('/') ? path.slice(0, -1) : path);
 /**
  * Client for mplementing Asgardeo in Next.js applications.
  * This class provides the core functionality for managing user authentication and sessions.
@@ -28,6 +40,16 @@ import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
  */
 class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> extends AsgardeoNodeClient<T> {
   private asgardeo: LegacyAsgardeoNodeClient<T>;
+
+  private routes: {
+    session: string;
+    signIn: string;
+    signOut: string;
+  } = {
+    session: '/api/auth/session',
+    signIn: '/api/auth/sign-in',
+    signOut: '/api/auth/sign-out',
+  };
 
   constructor() {
     super();
@@ -63,28 +85,128 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     return this.asgardeo.isAuthenticated(sessionId as string);
   }
 
-  override signIn(
+  override async signIn(
     options?: SignInOptions,
     sessionId?: string,
-    beforeSignIn?: (redirectUrl: string) => void,
-  ): Promise<User> {
-    return this.asgardeo.signIn(beforeSignIn as any, sessionId as string) as any;
+    beforeSignIn?: (redirectUrl: string) => NextResponse,
+    authorizationCode?: string,
+    sessionState?: string,
+    state?: string,
+  ): Promise<NextResponse> {
+    let resolvedSessionId: string = sessionId || ((await getSessionId()) as string);
+
+    if (!resolvedSessionId) {
+      resolvedSessionId = await setSessionId(sessionId);
+    }
+
+    console.log('[AsgardeoNextClient] signIn called with options:', options, 'sessionId:', resolvedSessionId);
+
+    return this.asgardeo.signIn(
+      beforeSignIn as any,
+      resolvedSessionId,
+      authorizationCode,
+      sessionState,
+      state,
+    ) as unknown as NextResponse;
   }
 
-  override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<boolean>;
+  override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
   override signOut(
     options?: SignOutOptions,
     sessionId?: string,
     afterSignOut?: (redirectUrl: string) => void,
-  ): Promise<boolean>;
-  override signOut(...args: any[]): Promise<boolean> {
+  ): Promise<string>;
+  override async signOut(...args: any[]): Promise<string> {
     if (args[1] && typeof args[1] !== 'string') {
       throw new Error('The second argument must be a string.');
     }
 
-    this.asgardeo.signOut(args[1]);
+    const resolvedSessionId: string = args[1] || ((await getSessionId()) as string);
 
-    return Promise.resolve(true);
+    return Promise.resolve(await this.asgardeo.signOut(resolvedSessionId));
+  }
+
+  async handler(req: NextRequest): Promise<NextResponse> {
+    const {pathname, searchParams} = req.nextUrl;
+    const sanitizedPathname: string = removeTrailingSlash(pathname);
+    const {method} = req;
+
+    if ((method === 'GET' && sanitizedPathname === this.routes.signIn) || searchParams.get('code')) {
+      console.log('[AsgardeoNextClient] Handling sign-in request', searchParams.get('code'));
+
+      let response: NextResponse;
+
+      await this.signIn(
+        {},
+        undefined,
+        (redirectUrl: string) => {
+          response = NextResponse.redirect(redirectUrl, 302);
+        },
+        searchParams.get('code'),
+        searchParams.get('session_state'),
+        searchParams.get('state'),
+      );
+
+      // If we already redirected via the callback, return that
+      if (response) {
+        return response;
+      }
+
+      if (searchParams.get('code')) {
+        const cleanUrl: URL = new URL(req.url);
+        cleanUrl.searchParams.delete('code');
+        cleanUrl.searchParams.delete('state');
+        cleanUrl.searchParams.delete('session_state');
+
+        return NextResponse.redirect(cleanUrl.toString());
+      }
+
+      return NextResponse.next();
+    }
+
+    if (method === 'GET' && sanitizedPathname === this.routes.session) {
+      try {
+        const isAuthenticated: boolean = await this.isSignedIn();
+
+        return NextResponse.json({isSignedIn: isAuthenticated});
+      } catch (error) {
+        console.error('[AsgardeoNextClient] Session check error:', error);
+        return NextResponse.json({error: 'Failed to check session'}, {status: 500});
+      }
+    }
+
+    if (method === 'GET' && sanitizedPathname === this.routes.signOut) {
+      try {
+        const afterSignOutUrl: string = await this.signOut();
+
+        await deleteSessionId();
+
+        return NextResponse.redirect(afterSignOutUrl, 302);
+      } catch (error) {
+        console.error('[AsgardeoNextClient] Sign-out failed:', error);
+        return NextResponse.json({error: 'Failed to sign out'}, {status: 500});
+      }
+    }
+
+    // no auth handler found, simply touch the sessions
+    // TODO: this should only happen if rolling sessions are enabled. Also, we should
+    // try to avoid reading from the DB (for stateful sessions) on every request if possible.
+    // const res = NextResponse.next();
+    // const session = await this.sessionStore.get(req.cookies);
+
+    // if (session) {
+    //   // we pass the existing session (containing an `createdAt` timestamp) to the set method
+    //   // which will update the cookie's `maxAge` property based on the `createdAt` time
+    //   await this.sessionStore.set(req.cookies, res.cookies, {
+    //     ...session,
+    //   });
+    // }
+
+    return NextResponse.next();
+  }
+
+  middleware(req: NextRequest): Promise<NextResponse> {
+    return this.handler(req);
   }
 }
 

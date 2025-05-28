@@ -16,18 +16,16 @@
  * under the License.
  */
 
-import {NextRequest, NextResponse} from 'next/server';
+'use server';
 
-/**
- * Options interface of {@link asgardeoMiddleware}
- */
-export type AsgardeoMiddlewareOptions = {};
+import {CookieConfig} from '@asgardeo/node';
+import {ReadonlyRequestCookies} from 'next/dist/server/web/spec-extension/adapters/request-cookies';
+import {cookies} from 'next/headers';
 
-/**
- * Creates an Asgardeo middleware for protecting Next.js routes.
- */
-export function asgardeoMiddleware(options: AsgardeoMiddlewareOptions = {}) {
-  return async function middleware(request: NextRequest): Promise<NextResponse | void> {};
-}
+const isSignedIn = async (): Promise<boolean> => {
+  const cookieStore: ReadonlyRequestCookies = await cookies();
 
-export default asgardeoMiddleware;
+  return !!cookieStore.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+};
+
+export default isSignedIn;

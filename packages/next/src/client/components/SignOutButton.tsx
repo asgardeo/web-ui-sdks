@@ -21,9 +21,9 @@
 import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
 
 /**
- * Props interface of {@link SignInButton}
+ * Interface for SignInButton component props.
  */
-export type SignInButtonProps = HTMLAttributes<HTMLButtonElement>;
+export type SignOutButtonProps = HTMLAttributes<HTMLButtonElement>;
 
 /**
  * SignInButton component. This button initiates the sign-in process when clicked.
@@ -42,15 +42,15 @@ export type SignInButtonProps = HTMLAttributes<HTMLButtonElement>;
  * }
  * ```
  */
-const SignInButton: FC<PropsWithChildren<SignInButtonProps>> = forwardRef<
+const SignOutButton: FC<PropsWithChildren<SignOutButtonProps>> = forwardRef<
   HTMLButtonElement,
-  PropsWithChildren<SignInButtonProps>
+  PropsWithChildren<SignOutButtonProps>
 >(
   (
-    {children = 'Sign In', className, style, ...rest}: PropsWithChildren<SignInButtonProps>,
+    {children = 'Sign Out', className, style, ...rest}: PropsWithChildren<SignOutButtonProps>,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => (
-    <form action="/api/auth/sign-in">
+    <form action="/api/auth/sign-out">
       <button ref={ref} className={className} style={style} type="submit" {...rest}>
         {children}
       </button>
@@ -58,4 +58,4 @@ const SignInButton: FC<PropsWithChildren<SignInButtonProps>> = forwardRef<
   ),
 );
 
-export default SignInButton;
+export default SignOutButton;

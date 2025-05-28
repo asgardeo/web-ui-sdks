@@ -16,4 +16,16 @@
  * under the License.
  */
 
-export * from './public-api';
+'use server';
+
+import {CookieConfig} from '@asgardeo/node';
+import {ReadonlyRequestCookies} from 'next/dist/server/web/spec-extension/adapters/request-cookies';
+import {cookies} from 'next/headers';
+
+const deleteSessionId = async (): Promise<void> => {
+  const cookieStore: ReadonlyRequestCookies = await cookies();
+
+  await cookieStore.delete(CookieConfig.SESSION_COOKIE_NAME);
+};
+
+export default deleteSessionId;

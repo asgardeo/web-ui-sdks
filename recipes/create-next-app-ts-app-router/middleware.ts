@@ -1,6 +1,17 @@
-import {asgardeoMiddleware} from '@asgardeo/next';
+import {asgardeoMiddlewarem, AsgardeoNextClient} from '@asgardeo/next';
+import {NextRequest} from 'next/server';
 
-export default asgardeoMiddleware();
+const asgardeo = new AsgardeoNextClient();
+asgardeo.initialize({
+  baseUrl: process.env.NEXT_PUBLIC_ASGARDEO_BASE_URL,
+  clientId: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_ID,
+  clientSecret: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_SECRET,
+  afterSignInUrl: 'http://localhost:3000',
+});
+
+export async function middleware(request: NextRequest) {
+  return await asgardeo.middleware(request);
+}
 
 export const config = {
   matcher: [

@@ -1,12 +1,17 @@
 import styles from './page.module.css';
-import {SignInButton} from '@asgardeo/next';
+import {SignInButton, SignedIn, SignOutButton, SignedOut} from '@asgardeo/next';
 
 export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <div className={styles.ctas}>
-          <SignInButton className={styles.primary}>Sign In</SignInButton>
+          <SignedOut>
+            <SignInButton className={styles.primary}>Sign In</SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <SignOutButton className={styles.secondary}>Sign Out</SignOutButton>
+          </SignedIn>
         </div>
       </main>
     </div>

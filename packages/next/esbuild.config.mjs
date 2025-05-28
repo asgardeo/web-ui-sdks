@@ -16,15 +16,12 @@
  * under the License.
  */
 
-import {readFileSync} from 'fs';
 import {build} from 'esbuild';
-
-const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 const commonOptions = {
   bundle: false,
-  entryPoints: ['src/index.ts'],
-  // external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
+  entryPoints: ['src/index.ts', 'src/public-api.ts'],
+  outdir: 'dist',
   platform: 'node',
   target: ['node18'],
 };
@@ -32,13 +29,13 @@ const commonOptions = {
 await build({
   ...commonOptions,
   format: 'esm',
-  outfile: 'dist/index.js',
+  outdir: 'dist',
   sourcemap: true,
 });
 
 await build({
   ...commonOptions,
   format: 'cjs',
-  outfile: 'dist/cjs/index.js',
+  outdir: 'dist/cjs',
   sourcemap: true,
 });
