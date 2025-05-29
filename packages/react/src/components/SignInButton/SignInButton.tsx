@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {FC, forwardRef, ForwardRefExoticComponent, MouseEvent, ReactElement, Ref, RefAttributes, useState} from 'react';
+import {forwardRef, ForwardRefExoticComponent, MouseEvent, ReactElement, Ref, RefAttributes, useState} from 'react';
 import useAsgardeo from '../../hooks/useAsgardeo';
 import BaseSignInButton, {BaseSignInButtonProps} from './BaseSignInButton';
 

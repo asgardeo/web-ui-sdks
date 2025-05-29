@@ -58,4 +58,6 @@ const SignedOut: FC<PropsWithChildren<SignedOutProps>> = ({
   return <>{fallback}</>;
 };
 
+SignedOut.displayName = 'SignedOut';
+
 export default SignedOut;

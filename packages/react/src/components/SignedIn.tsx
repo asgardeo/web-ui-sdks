@@ -58,4 +58,6 @@ const SignedIn: FC<PropsWithChildren<SignedInProps>> = ({
   return <>{children}</>;
 };
 
+SignedIn.displayName = 'SignedIn';
+
 export default SignedIn;

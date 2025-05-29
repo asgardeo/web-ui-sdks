@@ -28,11 +28,20 @@ export * from './hooks/useAsgardeo';
 export {default as useBrowserUrl} from './hooks/useBrowserUrl';
 export * from './hooks/useBrowserUrl';
 
+export {default as BaseSignInButton} from './components/SignInButton/BaseSignInButton';
+export * from './components/SignInButton/BaseSignInButton';
+
 export {default as SignInButton} from './components/SignInButton/SignInButton';
 export * from './components/SignInButton/SignInButton';
 
+export {default as BaseSignOutButton} from './components/SignOutButton/BaseSignOutButton';
+export * from './components/SignOutButton/BaseSignOutButton';
+
 export {default as SignOutButton} from './components/SignOutButton/SignOutButton';
 export * from './components/SignOutButton/SignOutButton';
+
+export {default as BaseSignUpButton} from './components/SignUpButton/BaseSignUpButton';
+export * from './components/SignUpButton/BaseSignUpButton';
 
 export {default as SignUpButton} from './components/SignUpButton/SignUpButton';
 export * from './components/SignUpButton/SignUpButton';
