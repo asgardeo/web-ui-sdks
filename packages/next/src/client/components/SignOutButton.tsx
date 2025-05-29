@@ -18,28 +18,31 @@
 
 'use client';
 
+import {BaseSignOutButton, SignInButtonProps} from '@asgardeo/react';
 import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
 
 /**
- * Interface for SignInButton component props.
+ * Props interface of {@link SignOutButton}
  */
-export type SignOutButtonProps = HTMLAttributes<HTMLButtonElement>;
+export type SignOutButtonProps = SignOutButtonProps;
 
 /**
- * SignInButton component. This button initiates the sign-in process when clicked.
+ * SignOutButton component that supports both render props and traditional props patterns.
  *
- * @example
+ * @example Using render props
  * ```tsx
- * import { SignInButton } from '@asgardeo/auth-react';
+ * <SignOutButton>
+ *   {({ handleSignOut, isLoading }) => (
+ *     <button onClick={handleSignOut} disabled={isLoading}>
+ *       {isLoading ? 'Signing out...' : 'Sign Out'}
+ *     </button>
+ *   )}
+ * </SignOutButton>
+ * ```
  *
- * const App = () => {
- *   const buttonRef = useRef<HTMLButtonElement>(null);
- *   return (
- *     <SignInButton ref={buttonRef} className="custom-class" style={{ backgroundColor: 'blue' }}>
- *       Sign In
- *     </SignInButton>
- *   );
- * }
+ * @example Using traditional props
+ * ```tsx
+ * <SignOutButton className="custom-button">Sign Out</SignOutButton>
  * ```
  */
 const SignOutButton: FC<PropsWithChildren<SignOutButtonProps>> = forwardRef<
@@ -47,15 +50,17 @@ const SignOutButton: FC<PropsWithChildren<SignOutButtonProps>> = forwardRef<
   PropsWithChildren<SignOutButtonProps>
 >(
   (
-    {children = 'Sign Out', className, style, ...rest}: PropsWithChildren<SignOutButtonProps>,
+    {children = 'Sign Out', ...rest}: PropsWithChildren<SignOutButtonProps>,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => (
     <form action="/api/auth/sign-out">
-      <button ref={ref} className={className} style={style} type="submit" {...rest}>
+      <BaseSignOutButton type="submit" {...rest}>
         {children}
-      </button>
+      </BaseSignOutButton>
     </form>
   ),
 );
+
+SignOutButton.displayName = 'SignOutButton';
 
 export default SignOutButton;
