@@ -18,31 +18,29 @@
 
 'use client';
 
-import {BaseSignInButton, SignInButtonProps} from '@asgardeo/react';
 import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
+import InternalAuthAPIRoutesConfig from '../configs/InternalAuthAPIRoutesConfig';
 
 /**
  * Props interface of {@link SignInButton}
  */
-export type SignInButtonProps = SignInButtonProps;
+export type SignInButtonProps = HTMLAttributes<HTMLButtonElement>;
 
 /**
- * SignInButton component that supports both render props and traditional props patterns.
+ * SignInButton component. This button initiates the sign-in process when clicked.
  *
- * @example Using render props
+ * @example
  * ```tsx
- * <SignInButton>
- *   {({ handleSignIn, isLoading }) => (
- *     <button onClick={handleSignIn} disabled={isLoading}>
- *       {isLoading ? 'Signing in...' : 'Sign In'}
- *     </button>
- *   )}
- * </SignInButton>
- * ```
+ * import { SignInButton } from '@asgardeo/auth-react';
  *
- * @example Using traditional props
- * ```tsx
- * <SignInButton className="custom-button">Sign In</SignInButton>
+ * const App = () => {
+ *   const buttonRef = useRef<HTMLButtonElement>(null);
+ *   return (
+ *     <SignInButton ref={buttonRef} className="custom-class" style={{ backgroundColor: 'blue' }}>
+ *       Sign In
+ *     </SignInButton>
+ *   );
+ * }
  * ```
  */
 const SignInButton: FC<PropsWithChildren<SignInButtonProps>> = forwardRef<
@@ -50,17 +48,15 @@ const SignInButton: FC<PropsWithChildren<SignInButtonProps>> = forwardRef<
   PropsWithChildren<SignInButtonProps>
 >(
   (
-    {children = 'Sign In', ...rest}: PropsWithChildren<SignInButtonProps>,
+    {children = 'Sign In', className, style, ...rest}: PropsWithChildren<SignInButtonProps>,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => (
-    <form action="/api/auth/sign-in">
-      <BaseSignInButton type="submit" {...rest}>
+    <form action={InternalAuthAPIRoutesConfig.signIn}>
+      <button ref={ref} className={className} style={style} type="submit" {...rest}>
         {children}
-      </BaseSignInButton>
+      </button>
     </form>
   ),
 );
-
-SignInButton.displayName = 'SignInButton';
 
 export default SignInButton;

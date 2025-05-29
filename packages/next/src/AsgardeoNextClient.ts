@@ -30,6 +30,7 @@ import deleteSessionId from './server/actions/deleteSessionId';
 import getSessionId from './server/actions/getSessionId';
 import setSessionId from './server/actions/setSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
+import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
 
 const removeTrailingSlash = (path: string): string => (path.endsWith('/') ? path.slice(0, -1) : path);
 /**
@@ -40,16 +41,6 @@ const removeTrailingSlash = (path: string): string => (path.endsWith('/') ? path
  */
 class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> extends AsgardeoNodeClient<T> {
   private asgardeo: LegacyAsgardeoNodeClient<T>;
-
-  private routes: {
-    session: string;
-    signIn: string;
-    signOut: string;
-  } = {
-    session: '/api/auth/session',
-    signIn: '/api/auth/sign-in',
-    signOut: '/api/auth/sign-out',
-  };
 
   constructor() {
     super();
@@ -131,7 +122,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     const sanitizedPathname: string = removeTrailingSlash(pathname);
     const {method} = req;
 
-    if ((method === 'GET' && sanitizedPathname === this.routes.signIn) || searchParams.get('code')) {
+    if ((method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) || searchParams.get('code')) {
       console.log('[AsgardeoNextClient] Handling sign-in request', searchParams.get('code'));
 
       let response: NextResponse;
@@ -164,7 +155,8 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       return NextResponse.next();
     }
 
-    if (method === 'GET' && sanitizedPathname === this.routes.session) {
+    if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.session) {
+      console.log('[AsgardeoNextClient] Checking session status');
       try {
         const isAuthenticated: boolean = await this.isSignedIn();
 
@@ -175,7 +167,8 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       }
     }
 
-    if (method === 'GET' && sanitizedPathname === this.routes.signOut) {
+    if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signOut) {
+      console.log('[AsgardeoNextClient] Handling sign-out request');
       try {
         const afterSignOutUrl: string = await this.signOut();
 

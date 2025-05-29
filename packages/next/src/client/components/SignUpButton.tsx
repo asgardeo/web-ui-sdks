@@ -24,7 +24,7 @@ import InternalAuthAPIRoutesConfig from '../configs/InternalAuthAPIRoutesConfig'
 /**
  * Interface for SignInButton component props.
  */
-export type SignOutButtonProps = HTMLAttributes<HTMLButtonElement>;
+export type SignUpButtonProps = HTMLAttributes<HTMLButtonElement>;
 
 /**
  * SignInButton component. This button initiates the sign-in process when clicked.
@@ -43,15 +43,15 @@ export type SignOutButtonProps = HTMLAttributes<HTMLButtonElement>;
  * }
  * ```
  */
-const SignOutButton: FC<PropsWithChildren<SignOutButtonProps>> = forwardRef<
+const SignUpButton: FC<PropsWithChildren<SignUpButtonProps>> = forwardRef<
   HTMLButtonElement,
-  PropsWithChildren<SignOutButtonProps>
+  PropsWithChildren<SignUpButtonProps>
 >(
   (
-    {children = 'Sign Out', className, style, ...rest}: PropsWithChildren<SignOutButtonProps>,
+    {children = 'Sign Up', className, style, ...rest}: PropsWithChildren<SignUpButtonProps>,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => (
-    <form action={InternalAuthAPIRoutesConfig.signOut}>
+    <form action={InternalAuthAPIRoutesConfig.signUp}>
       <button ref={ref} className={className} style={style} type="submit" {...rest}>
         {children}
       </button>
@@ -59,4 +59,4 @@ const SignOutButton: FC<PropsWithChildren<SignOutButtonProps>> = forwardRef<
   ),
 );
 
-export default SignOutButton;
+export default SignUpButton;
