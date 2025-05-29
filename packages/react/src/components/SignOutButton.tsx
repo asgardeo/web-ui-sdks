@@ -16,55 +16,95 @@
  * under the License.
  */
 
-import {FC, forwardRef, HTMLAttributes, PropsWithChildren, Ref} from 'react';
+import {FC, forwardRef, HTMLAttributes, MouseEvent, ReactElement, ReactNode, Ref, useState} from 'react';
 import useAsgardeo from '../hooks/useAsgardeo';
 
 /**
- * Interface for SignOutButton component props.
+ * Props passed to the render function
  */
-export type SignOutButtonProps = HTMLAttributes<HTMLButtonElement>;
+export interface SignOutButtonRenderProps {
+  /**
+   * Function to initiate the sign-out process
+   */
+  signOut: () => Promise<void>;
+  /**
+   * Loading state during sign-out process
+   */
+  isLoading: boolean;
+}
 
 /**
- * SignOutButton component. This button initiates the sign-out process when clicked.
+ * Props interface for SignOutButton component
+ */
+export interface SignOutButtonProps extends Omit<HTMLAttributes<HTMLButtonElement>, 'children'> {
+  /**
+   * Render prop function that receives sign-out props, or traditional ReactNode children
+   */
+  children?: ((props: SignOutButtonRenderProps) => ReactNode) | ReactNode;
+}
+
+/**
+ * SignOutButton component that supports both render props and traditional props patterns.
  *
- * @example
+ * @example Using render props pattern
  * ```tsx
- * import { SignOutButton } from '@asgardeo/auth-react';
+ * <SignOutButton>
+ *   {({ handleSignOut, isLoading }) => (
+ *     <button onClick={handleSignOut} disabled={isLoading}>
+ *       {isLoading ? 'Signing out...' : 'Sign Out'}
+ *     </button>
+ *   )}
+ * </SignOutButton>
+ * ```
  *
- * const App = () => {
- *   const buttonRef = useRef<HTMLButtonElement>(null);
- *   return (
- *     <SignOutButton ref={buttonRef} className="custom-class" style={{ backgroundColor: 'blue' }}>
- *       Sign Out
- *     </SignOutButton>
- *   );
- * }
+ * @example Using traditional props pattern
+ * ```tsx
+ * <SignOutButton className="custom-button">Sign Out</SignOutButton>
  * ```
  */
-const SignOutButton: FC<PropsWithChildren<SignOutButtonProps>> = forwardRef<
-  HTMLButtonElement,
-  PropsWithChildren<SignOutButtonProps>
->(
+const SignOutButton: FC<SignOutButtonProps> = forwardRef<HTMLButtonElement, SignOutButtonProps>(
   (
-    {children = 'Sign Out', className, style, ...rest}: PropsWithChildren<SignOutButtonProps>,
+    {children = 'Sign Out', className, style, onClick, ...rest}: SignOutButtonProps,
     ref: Ref<HTMLButtonElement>,
-  ) => {
+  ): ReactElement => {
     const {signOut} = useAsgardeo();
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleClick = async (): Promise<void> => {
+    const handleSignOut = async (e?: MouseEvent<HTMLButtonElement>): Promise<void> => {
       try {
+        setIsLoading(true);
         await signOut();
+
+        if (onClick) {
+          onClick(e);
+        }
       } catch (error) {
         throw new Error(`Sign out failed: ${error instanceof Error ? error.message : String(error)}`);
+      } finally {
+        setIsLoading(false);
       }
     };
 
+    if (typeof children === 'function') {
+      return <>{children({signOut: handleSignOut, isLoading})}</>;
+    }
+
     return (
-      <button ref={ref} onClick={handleClick} className={className} style={style} type="button" {...rest}>
+      <button
+        ref={ref}
+        onClick={handleSignOut}
+        className={className}
+        style={style}
+        disabled={isLoading}
+        type="button"
+        {...rest}
+      >
         {children}
       </button>
     );
   },
 );
+
+SignOutButton.displayName = 'SignOutButton';
 
 export default SignOutButton;
