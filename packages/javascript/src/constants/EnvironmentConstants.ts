@@ -17,28 +17,23 @@
  */
 
 /**
- * Abstract class defining environment variable constants for Asgardeo authentication.
- * This class serves as a base for platform-specific environment constant implementations.
+ * Environment variable names used in the Asgardeo SDKs.
  */
-abstract class EnvironmentConstants {
+const EnvironmentConstants = {
   /**
-   * Base URL environment variable name for Asgardeo .
+   * Base URL environment variable name for Asgardeo.
    */
-  static readonly ASGARDEO_BASE_URL_ENV_VAR: string;
+  ASGARDEO_BASE_URL_ENV_VAR: 'ASGARDEO_BASE_URL',
 
   /**
    * Client ID environment variable name for Asgardeo.
    */
-  static readonly ASGARDEO_CLIENT_ID_ENV_VAR: string;
+  ASGARDEO_CLIENT_ID_ENV_VAR: 'ASGARDEO_CLIENT_ID',
 
   /**
    * Client secret environment variable name for Asgardeo.
    */
-  static readonly ASGARDEO_CLIENT_SECRET_ENV_VAR: string;
-
-  protected constructor() {
-    // Protected constructor allows inheritance while still preventing direct instantiation
-  }
-}
+  ASGARDEO_CLIENT_SECRET_ENV_VAR: 'ASGARDEO_CLIENT_SECRET',
+} as const;
 
 export default EnvironmentConstants;
