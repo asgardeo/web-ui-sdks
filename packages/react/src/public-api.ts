@@ -31,8 +31,8 @@ export * from './hooks/useBrowserUrl';
 export {default as SignInButton} from './components/SignInButton/SignInButton';
 export * from './components/SignInButton/SignInButton';
 
-export {default as SignOutButton} from './components/SignOutButton';
-export * from './components/SignOutButton';
+export {default as SignOutButton} from './components/SignOutButton/SignOutButton';
+export * from './components/SignOutButton/SignOutButton';
 
 export {default as SignedIn} from './components/SignedIn';
 export * from './components/SignedIn';
