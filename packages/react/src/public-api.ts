@@ -34,6 +34,9 @@ export * from './components/SignInButton/SignInButton';
 export {default as SignOutButton} from './components/SignOutButton/SignOutButton';
 export * from './components/SignOutButton/SignOutButton';
 
+export {default as SignUpButton} from './components/SignUpButton/SignUpButton';
+export * from './components/SignUpButton/SignUpButton';
+
 export {default as SignedIn} from './components/SignedIn';
 export * from './components/SignedIn';
 
