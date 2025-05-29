@@ -16,56 +16,96 @@
  * under the License.
  */
 
-import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
+import {FC, forwardRef, HTMLAttributes, MouseEvent, ReactElement, ReactNode, Ref, useState} from 'react';
 import useAsgardeo from '../hooks/useAsgardeo';
 
 /**
- * Interface for SignUpButton component props.
+ * Props passed to the render function
  */
-export type SignUpButtonProps = HTMLAttributes<HTMLButtonElement>;
+export interface SignUpRenderProps {
+  /**
+   * Function to initiate the sign-up process
+   */
+  signUp: () => Promise<void>;
+  /**
+   * Loading state during sign-up process
+   */
+  isLoading: boolean;
+}
 
 /**
- * SignUpButton component. This button initiates the sign-up process when clicked.
+ * Props interface for SignUpButton component
+ */
+export interface SignUpButtonProps extends Omit<HTMLAttributes<HTMLButtonElement>, 'children'> {
+  /**
+   * Render prop function that receives sign-up props, or traditional ReactNode children
+   */
+  children?: ((props: SignUpRenderProps) => ReactNode) | ReactNode;
+}
+
+/**
+ * SignUpButton component that supports both render props and traditional props patterns.
  * It redirects the user to the Asgardeo sign-up page configured for the application.
  *
- * @example
+ * @example Using render props pattern
  * ```tsx
- * import { SignUpButton } from '@asgardeo/auth-react';
+ * <SignUpButton>
+ *   {({ handleSignUp, isLoading }) => (
+ *     <button onClick={handleSignUp} disabled={isLoading}>
+ *       {isLoading ? 'Creating Account...' : 'Create Account'}
+ *     </button>
+ *   )}
+ * </SignUpButton>
+ * ```
  *
- * const App = () => {
- *   const buttonRef = useRef<HTMLButtonElement>(null);
- *   return (
- *     <SignUpButton ref={buttonRef} className="custom-class" style={{ backgroundColor: 'green' }}>
- *       Create Account
- *     </SignUpButton>
- *   );
- * }
+ * @example Using traditional props pattern
+ * ```tsx
+ * <SignUpButton className="custom-button">Create Account</SignUpButton>
  * ```
  */
-const SignUpButton: FC<PropsWithChildren<SignUpButtonProps>> = forwardRef<
-  HTMLButtonElement,
-  PropsWithChildren<SignUpButtonProps>
->(
+const SignUpButton: FC<SignUpButtonProps> = forwardRef<HTMLButtonElement, SignUpButtonProps>(
   (
-    {children = 'Sign Up', className, style, ...rest}: PropsWithChildren<SignUpButtonProps>,
+    {children = 'Sign Up', className, style, onClick, ...rest}: SignUpButtonProps,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => {
     const {signUp} = useAsgardeo();
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleClick = async (): Promise<void> => {
+    const handleSignUp = async (e?: MouseEvent<HTMLButtonElement>): Promise<void> => {
       try {
+        setIsLoading(true);
         await signUp();
+
+        if (onClick) {
+          onClick(e);
+        }
       } catch (error) {
         throw new Error(`Sign up failed: ${error instanceof Error ? error.message : String(error)}`);
+      } finally {
+        setIsLoading(false);
       }
     };
 
+    if (typeof children === 'function') {
+      return <>{children({signUp: handleSignUp, isLoading})}</>;
+    }
+
     return (
-      <button ref={ref} onClick={handleClick} className={className} style={style} type="button" {...rest}>
+      <button
+        ref={ref}
+        onClick={handleSignUp}
+        className={className}
+        style={style}
+        disabled={isLoading}
+        type="button"
+        {...rest}
+      >
         {children}
       </button>
     );
   },
 );
+
+SignUpButton.displayName = 'SignUpButton';
 
 export default SignUpButton;
