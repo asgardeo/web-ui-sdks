@@ -18,28 +18,31 @@
 
 'use client';
 
+import {BaseSignInButton, SignInButtonProps} from '@asgardeo/react';
 import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
 
 /**
  * Props interface of {@link SignInButton}
  */
-export type SignInButtonProps = HTMLAttributes<HTMLButtonElement>;
+export type SignInButtonProps = SignInButtonProps;
 
 /**
- * SignInButton component. This button initiates the sign-in process when clicked.
+ * SignInButton component that supports both render props and traditional props patterns.
  *
- * @example
+ * @example Using render props
  * ```tsx
- * import { SignInButton } from '@asgardeo/auth-react';
+ * <SignInButton>
+ *   {({ handleSignIn, isLoading }) => (
+ *     <button onClick={handleSignIn} disabled={isLoading}>
+ *       {isLoading ? 'Signing in...' : 'Sign In'}
+ *     </button>
+ *   )}
+ * </SignInButton>
+ * ```
  *
- * const App = () => {
- *   const buttonRef = useRef<HTMLButtonElement>(null);
- *   return (
- *     <SignInButton ref={buttonRef} className="custom-class" style={{ backgroundColor: 'blue' }}>
- *       Sign In
- *     </SignInButton>
- *   );
- * }
+ * @example Using traditional props
+ * ```tsx
+ * <SignInButton className="custom-button">Sign In</SignInButton>
  * ```
  */
 const SignInButton: FC<PropsWithChildren<SignInButtonProps>> = forwardRef<
@@ -47,15 +50,17 @@ const SignInButton: FC<PropsWithChildren<SignInButtonProps>> = forwardRef<
   PropsWithChildren<SignInButtonProps>
 >(
   (
-    {children = 'Sign In', className, style, ...rest}: PropsWithChildren<SignInButtonProps>,
+    {children = 'Sign In', ...rest}: PropsWithChildren<SignInButtonProps>,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => (
     <form action="/api/auth/sign-in">
-      <button ref={ref} className={className} style={style} type="submit" {...rest}>
+      <BaseSignInButton type="submit" {...rest}>
         {children}
-      </button>
+      </BaseSignInButton>
     </form>
   ),
 );
+
+SignInButton.displayName = 'SignInButton';
 
 export default SignInButton;
