@@ -19,7 +19,7 @@
 import {
   forwardRef,
   ForwardRefExoticComponent,
-  HTMLAttributes,
+  ButtonHTMLAttributes,
   ReactElement,
   ReactNode,
   Ref,
@@ -35,11 +35,11 @@ export interface CommonBaseSignOutButtonProps {
   /**
    * Function to initiate the sign-out process
    */
-  signOut: () => Promise<void>;
+  signOut?: () => Promise<void>;
   /**
    * Loading state during sign-out process
    */
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 /**
@@ -52,7 +52,7 @@ export type BaseSignOutButtonRenderProps = CommonBaseSignOutButtonProps;
  */
 export interface BaseSignOutButtonProps
   extends CommonBaseSignOutButtonProps,
-    Omit<HTMLAttributes<HTMLButtonElement>, 'children'> {
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /**
    * Render prop function that receives sign-out props, or traditional ReactNode children
    */

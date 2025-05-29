@@ -17,9 +17,9 @@
  */
 
 import {
+  ButtonHTMLAttributes,
   forwardRef,
   ForwardRefExoticComponent,
-  HTMLAttributes,
   ReactElement,
   ReactNode,
   Ref,
@@ -35,11 +35,11 @@ export interface CommonBaseSignInButtonProps {
   /**
    * Function to initiate the sign-in process
    */
-  signIn: () => Promise<void>;
+  signIn?: () => Promise<void>;
   /**
    * Loading state during sign-in process
    */
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 /**
@@ -52,7 +52,7 @@ export type BaseSignInButtonRenderProps = CommonBaseSignInButtonProps;
  */
 export interface BaseSignInButtonProps
   extends CommonBaseSignInButtonProps,
-    Omit<HTMLAttributes<HTMLButtonElement>, 'children'> {
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /**
    * Render prop function that receives sign-in props, or traditional ReactNode children
    */
