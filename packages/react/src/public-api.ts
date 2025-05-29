@@ -28,8 +28,8 @@ export * from './hooks/useAsgardeo';
 export {default as useBrowserUrl} from './hooks/useBrowserUrl';
 export * from './hooks/useBrowserUrl';
 
-export {default as SignInButton} from './components/SignInButton';
-export * from './components/SignInButton';
+export {default as SignInButton} from './components/SignInButton/SignInButton';
+export * from './components/SignInButton/SignInButton';
 
 export {default as SignOutButton} from './components/SignOutButton';
 export * from './components/SignOutButton';

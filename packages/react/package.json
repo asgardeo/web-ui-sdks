@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "@asgardeo/browser": "workspace:^",
+    "clsx": "^2.1.1",
     "esbuild": "^0.25.4",
     "tslib": "^2.8.1"
   }
