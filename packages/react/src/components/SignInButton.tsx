@@ -22,7 +22,7 @@ import useAsgardeo from '../hooks/useAsgardeo';
 /**
  * Props passed to the render function of {@link SignedIn}
  */
-export interface SignInRenderProps {
+export interface SignInButtonRenderProps {
   /**
    * Function to initiate the sign-in process
    */
@@ -40,7 +40,7 @@ export interface SignInButtonProps extends Omit<HTMLAttributes<HTMLButtonElement
   /**
    * Render prop function that receives sign-in props, or traditional ReactNode children
    */
-  children?: ((props: SignInRenderProps) => ReactNode) | ReactNode;
+  children?: ((props: SignInButtonRenderProps) => ReactNode) | ReactNode;
 }
 
 /**
