@@ -16,55 +16,96 @@
  * under the License.
  */
 
-import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
+import {FC, forwardRef, HTMLAttributes, MouseEvent, ReactElement, ReactNode, Ref, useState} from 'react';
 import useAsgardeo from '../hooks/useAsgardeo';
 
 /**
- * Interface for SignInButton component props.
+ * Props passed to the render function of {@link SignedIn}
  */
-export type SignInButtonProps = HTMLAttributes<HTMLButtonElement>;
+export interface SignInRenderProps {
+  /**
+   * Function to initiate the sign-in process
+   */
+  signIn: () => Promise<void>;
+  /**
+   * Loading state during sign-in process
+   */
+  isLoading: boolean;
+}
 
 /**
- * SignInButton component. This button initiates the sign-in process when clicked.
+ * Props interface of {@link SignInButton}
+ */
+export interface SignInButtonProps extends Omit<HTMLAttributes<HTMLButtonElement>, 'children'> {
+  /**
+   * Render prop function that receives sign-in props, or traditional ReactNode children
+   */
+  children?: ((props: SignInRenderProps) => ReactNode) | ReactNode;
+}
+
+/**
+ * SignInButton component that supports both render props and traditional props patterns.
  *
- * @example
+ * @example Using render props
  * ```tsx
- * import { SignInButton } from '@asgardeo/auth-react';
+ * <SignInButton>
+ *   {({ handleSignIn, isLoading }) => (
+ *     <button onClick={handleSignIn} disabled={isLoading}>
+ *       {isLoading ? 'Signing in...' : 'Sign In'}
+ *     </button>
+ *   )}
+ * </SignInButton>
+ * ```
  *
- * const App = () => {
- *   const buttonRef = useRef<HTMLButtonElement>(null);
- *   return (
- *     <SignInButton ref={buttonRef} className="custom-class" style={{ backgroundColor: 'blue' }}>
- *       Sign In
- *     </SignInButton>
- *   );
- * }
+ * @example Using traditional props
+ * ```tsx
+ * <SignInButton className="custom-button">Sign In</SignInButton>
  * ```
  */
-const SignInButton: FC<PropsWithChildren<SignInButtonProps>> = forwardRef<
-  HTMLButtonElement,
-  PropsWithChildren<SignInButtonProps>
->(
+const SignInButton: FC<SignInButtonProps> = forwardRef<HTMLButtonElement, SignInButtonProps>(
   (
-    {children = 'Sign In', className, style, ...rest}: PropsWithChildren<SignInButtonProps>,
+    {children = 'Sign In', className, style, onClick, ...rest}: SignInButtonProps,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => {
     const {signIn} = useAsgardeo();
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleClick = async (): Promise<void> => {
+    const handleSignIn = async (e?: MouseEvent<HTMLButtonElement>): Promise<void> => {
       try {
+        setIsLoading(true);
+
         await signIn();
+
+        if (onClick) {
+          onClick(e);
+        }
       } catch (error) {
         throw new Error(`Sign in failed: ${error instanceof Error ? error.message : String(error)}`);
+      } finally {
+        setIsLoading(false);
       }
     };
 
+    if (typeof children === 'function') {
+      return <>{children({signIn: handleSignIn, isLoading})}</>;
+    }
+
     return (
-      <button ref={ref} onClick={handleClick} className={className} style={style} type="button" {...rest}>
+      <button
+        ref={ref}
+        onClick={handleSignIn}
+        className={className}
+        style={style}
+        disabled={isLoading}
+        type="button"
+        {...rest}
+      >
         {children}
       </button>
     );
   },
 );
+
+SignInButton.displayName = 'SignInButton';
 
 export default SignInButton;
