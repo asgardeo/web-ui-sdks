@@ -30,6 +30,10 @@ export * from './__legacy__/data';
 
 export {default as EnvironmentConstants} from './constants/EnvironmentConstants';
 
+export {default as AsgardeoError} from './errors/AsgardeoError';
+export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';
+export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
+
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 export {BaseConfig, Config} from './models/config';
 export {User} from './models/user';
