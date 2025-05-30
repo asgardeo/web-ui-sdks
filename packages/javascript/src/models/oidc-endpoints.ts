@@ -16,22 +16,13 @@
  * under the License.
  */
 
-/**
- * Represents a user in the Asgardeo system
- *
- * @template User - Core user interface for authentication
- *
- * @remarks
- * This interface defines the basic user properties needed for authentication
- * and user management in Asgardeo applications.
- *
- * @example
- * ```typescript
- * const user: User = {
- *   email: "user@example.com",
- *   id: "123e4567-e89b-12d3-a456-426614174000",
- *   username: "johnsmith"
- * };
- * ```
- */
-export type User = Record<string, any>;
+export interface OIDCEndpoints {
+    issuer: string;
+    discovery: string;
+    authorize: string;
+    userinfo: string;
+    introspect: string;
+    jwks: string;
+    revoke: string;
+    signOut: string;
+}

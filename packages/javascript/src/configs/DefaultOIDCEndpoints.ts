@@ -16,22 +16,24 @@
  * under the License.
  */
 
+import {OIDCEndpoints} from './oidc-endpoints';
+
 /**
- * Represents a user in the Asgardeo system
- *
- * @template User - Core user interface for authentication
+ * Default OpenID Connect (OIDC) endpoints configuration.
+ * These endpoints follow the standard OIDC protocol paths.
  *
  * @remarks
- * This interface defines the basic user properties needed for authentication
- * and user management in Asgardeo applications.
- *
- * @example
- * ```typescript
- * const user: User = {
- *   email: "user@example.com",
- *   id: "123e4567-e89b-12d3-a456-426614174000",
- *   username: "johnsmith"
- * };
- * ```
+ * All paths are relative and should be combined with the base authorization server URL.
  */
-export type User = Record<string, any>;
+export const DefaultOIDCEndpoints: OIDCEndpoints = {
+  authorize: '/oauth2/authorize',
+  discovery: '/.well-known/openid-configuration',
+  introspect: '/oauth2/introspect',
+  jwks: '/oauth2/jwks',
+  revoke: '/oauth2/revoke',
+  logout: '/oauth2/logout',
+  token: '/oauth2/token',
+  userinfo: '/oauth2/userinfo',
+} as const;
+
+export default DefaultOIDCEndpoints;

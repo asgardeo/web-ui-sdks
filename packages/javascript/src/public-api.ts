@@ -28,6 +28,8 @@ export * from './__legacy__/utils';
 export * from './__legacy__/exception';
 export * from './__legacy__/data';
 
+export {default as getUserInfo} from './api/getUserInfo';
+
 export {default as EnvironmentConstants} from './constants/EnvironmentConstants';
 
 export {default as AsgardeoError} from './errors/AsgardeoError';
