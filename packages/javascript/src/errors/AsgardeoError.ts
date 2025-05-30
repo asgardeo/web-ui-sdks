@@ -43,6 +43,7 @@
  */
 export default class AsgardeoError extends Error {
   public readonly code: string;
+  public readonly origin: string;
 
   private static resolveOrigin(origin: string): string {
     if (!origin) {
@@ -70,7 +71,7 @@ export default class AsgardeoError extends Error {
     }
   }
 
-  public toString(): string {
+  public overridetoString(): string {
     return `[${this.name}]\nMessage: ${this.message}`;
   }
 }

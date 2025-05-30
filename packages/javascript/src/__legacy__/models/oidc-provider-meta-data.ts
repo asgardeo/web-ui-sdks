@@ -258,6 +258,11 @@ export interface OIDCEndpointsInternal {
     end_session_endpoint?: string;
     issuer?: string;
 }
+4
+/**
+ * @deprecated Use the properties defined in the new `OIDCEndpoints` at the `/models/oidc-endpoints.ts` instead.
+ * FIXME: Remove this once the final refactoring is done.
+ */
 export interface OIDCEndpoints {
     authorizationEndpoint: string;
     tokenEndpoint: string;

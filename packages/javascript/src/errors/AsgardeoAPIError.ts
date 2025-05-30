@@ -63,7 +63,7 @@ export default class AsgardeoAPIError extends AsgardeoError {
    * Returns a string representation of the API error
    * @returns Formatted error string with name, code, status, and message
    */
-  public toString(): string {
+  public override toString(): string {
     const status = this.statusCode ? ` (HTTP ${this.statusCode} - ${this.statusText})` : '';
     return `[${this.name}] (code="${this.code}")${status}\nMessage: ${this.message}`;
   }

@@ -56,7 +56,7 @@ export default class AsgardeoRuntimeError extends AsgardeoError {
    * Returns a string representation of the runtime error
    * @returns Formatted error string with name, code, details, and message
    */
-  public toString(): string {
+  public  override toString(): string {
     const details = this.details ? `\nDetails: ${JSON.stringify(this.details, null, 2)}` : '';
     return `[${this.name}] (code="${this.code}")${details}\nMessage: ${this.message}`;
   }

@@ -16,13 +16,43 @@
  * under the License.
  */
 
-export interface OIDCEndpoints {
-    issuer: string;
-    discovery: string;
-    authorize: string;
-    userinfo: string;
-    introspect: string;
-    jwks: string;
-    revoke: string;
-    signOut: string;
+import {OIDCEndpoints as LegacyOIDCEndpoints} from '../__legacy__/models/oidc-provider-meta-data';
+
+/**
+ * Interface representing OpenID Connect endpoints configuration.
+ * FIXME: Remove the temporary extends of legacy OIDC endpoints.
+ */
+export interface OIDCEndpoints extends Partial<LegacyOIDCEndpoints> {
+  /**
+   * The issuer identifier URL for the OpenID Provider
+   */
+  issuer: string;
+  /**
+   * The OpenID Provider's discovery endpoint URL
+   */
+  discovery: string;
+  /**
+   * The authorization endpoint URL where the authentication request is sent
+   */
+  authorize: string;
+  /**
+   * The userinfo endpoint URL that returns claims about the authenticated user
+   */
+  userinfo: string;
+  /**
+   * The introspection endpoint URL used to validate tokens
+   */
+  introspect: string;
+  /**
+   * The JSON Web Key Set endpoint URL that provides the public keys to verify tokens
+   */
+  jwks: string;
+  /**
+   * The revocation endpoint URL used to revoke access or refresh tokens
+   */
+  revoke: string;
+  /**
+   * The end session endpoint URL used to terminate the user's session
+   */
+  endSession: string;
 }

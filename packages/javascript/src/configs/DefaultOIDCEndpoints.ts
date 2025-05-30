@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {OIDCEndpoints} from './oidc-endpoints';
+import {OIDCEndpoints} from '../models/oidc-endpoints';
 
 /**
  * Default OpenID Connect (OIDC) endpoints configuration.
@@ -31,8 +31,8 @@ export const DefaultOIDCEndpoints: OIDCEndpoints = {
   introspect: '/oauth2/introspect',
   jwks: '/oauth2/jwks',
   revoke: '/oauth2/revoke',
-  logout: '/oauth2/logout',
-  token: '/oauth2/token',
+  endSession: '/oauth2/logout',
+  issuer: '/oauth2/token',
   userinfo: '/oauth2/userinfo',
 } as const;
 
