@@ -31,9 +31,3 @@ export interface SessionData {
     session_state: string;
     created_at: number;
 }
-
-export interface Store {
-    setData(key: string, value: string): Promise<void>;
-    getData(key: string): Promise<string>;
-    removeData(key: string): Promise<void>;
-}

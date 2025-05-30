@@ -16,209 +16,201 @@
  * under the License.
  */
 
-import { Stores } from "../constants";
-import { AuthClientConfig, OIDCProviderMetaData, SessionData, Store, StoreValue, TemporaryData } from "../models";
+import {Stores} from '../constants';
+import {Store} from '../../models/store';
+import {AuthClientConfig, OIDCProviderMetaData, SessionData, StoreValue, TemporaryData} from '../models';
 
 type PartialData<T> = Partial<AuthClientConfig<T> | OIDCProviderMetaData | SessionData | TemporaryData>;
 
-export const ASGARDEO_SESSION_ACTIVE: string = "asgardeo-session-active";
+export const ASGARDEO_SESSION_ACTIVE: string = 'asgardeo-session-active';
 
 export class DataLayer<T> {
-    protected _id: string;
-    protected _store: Store;
-    public constructor(instanceID: string, store: Store) {
-        this._id = instanceID;
-        this._store = store;
+  protected _id: string;
+  protected _store: Store;
+  public constructor(instanceID: string, store: Store) {
+    this._id = instanceID;
+    this._store = store;
+  }
+
+  protected async setDataInBulk(key: string, data: PartialData<T>): Promise<void> {
+    const existingDataJSON: string = (await this._store.getData(key)) ?? null;
+    const existingData: PartialData<T> = existingDataJSON && JSON.parse(existingDataJSON);
+
+    const dataToBeSaved: PartialData<T> = {...existingData, ...data};
+    const dataToBeSavedJSON: string = JSON.stringify(dataToBeSaved);
+
+    await this._store.setData(key, dataToBeSavedJSON);
+  }
+
+  protected async setValue(
+    key: string,
+    attribute: keyof AuthClientConfig<T> | keyof OIDCProviderMetaData | keyof SessionData | keyof TemporaryData,
+    value: StoreValue,
+  ): Promise<void> {
+    const existingDataJSON: string = (await this._store.getData(key)) ?? null;
+    const existingData: PartialData<T> = existingDataJSON && JSON.parse(existingDataJSON);
+
+    const dataToBeSaved: PartialData<T> = {...existingData, [attribute]: value};
+    const dataToBeSavedJSON: string = JSON.stringify(dataToBeSaved);
+
+    await this._store.setData(key, dataToBeSavedJSON);
+  }
+
+  protected async removeValue(
+    key: string,
+    attribute: keyof AuthClientConfig<T> | keyof OIDCProviderMetaData | keyof SessionData | keyof TemporaryData,
+  ): Promise<void> {
+    const existingDataJSON: string = (await this._store.getData(key)) ?? null;
+    const existingData: PartialData<T> = existingDataJSON && JSON.parse(existingDataJSON);
+
+    const dataToBeSaved: PartialData<T> = {...existingData};
+
+    delete dataToBeSaved[attribute as string];
+
+    const dataToBeSavedJSON: string = JSON.stringify(dataToBeSaved);
+
+    await this._store.setData(key, dataToBeSavedJSON);
+  }
+
+  protected _resolveKey(store: Stores | string, userID?: string): string {
+    return userID ? `${store}-${this._id}-${userID}` : `${store}-${this._id}`;
+  }
+
+  protected isLocalStorageAvailable(): boolean {
+    try {
+      const testValue: string = '__ASGARDEO_AUTH_CORE_LOCAL_STORAGE_TEST__';
+
+      localStorage.setItem(testValue, testValue);
+      localStorage.removeItem(testValue);
+
+      return true;
+    } catch (error) {
+      return false;
     }
+  }
 
-    protected async setDataInBulk(
-        key: string,
-        data: PartialData<T>
-    ): Promise<void> {
-        const existingDataJSON: string = (await this._store.getData(key)) ?? null;
-        const existingData: PartialData<T> = existingDataJSON && JSON.parse(existingDataJSON);
+  public async setConfigData(config: Partial<AuthClientConfig<T>>): Promise<void> {
+    await this.setDataInBulk(this._resolveKey(Stores.ConfigData), config);
+  }
 
-        const dataToBeSaved: PartialData<T> = { ...existingData, ...data };
-        const dataToBeSavedJSON: string = JSON.stringify(dataToBeSaved);
+  public async setOIDCProviderMetaData(oidcProviderMetaData: Partial<OIDCProviderMetaData>): Promise<void> {
+    this.setDataInBulk(this._resolveKey(Stores.OIDCProviderMetaData), oidcProviderMetaData);
+  }
 
-        await this._store.setData(key, dataToBeSavedJSON);
-    }
+  public async setTemporaryData(temporaryData: Partial<TemporaryData>, userID?: string): Promise<void> {
+    this.setDataInBulk(this._resolveKey(Stores.TemporaryData, userID), temporaryData);
+  }
 
-    protected async setValue(
-        key: string,
-        attribute: keyof AuthClientConfig<T> | keyof OIDCProviderMetaData | keyof SessionData | keyof TemporaryData,
-        value: StoreValue
-    ): Promise<void> {
-        const existingDataJSON: string = (await this._store.getData(key)) ?? null;
-        const existingData: PartialData<T> = existingDataJSON && JSON.parse(existingDataJSON);
+  public async setSessionData(sessionData: Partial<SessionData>, userID?: string): Promise<void> {
+    this.setDataInBulk(this._resolveKey(Stores.SessionData, userID), sessionData);
+  }
 
-        const dataToBeSaved: PartialData<T> = { ...existingData, [ attribute ]: value };
-        const dataToBeSavedJSON: string = JSON.stringify(dataToBeSaved);
+  public async setCustomData<K>(key: string, customData: Partial<K>, userID?: string): Promise<void> {
+    this.setDataInBulk(this._resolveKey(key, userID), customData);
+  }
 
-        await this._store.setData(key, dataToBeSavedJSON);
-    }
+  public async getConfigData(): Promise<AuthClientConfig<T>> {
+    return JSON.parse((await this._store.getData(this._resolveKey(Stores.ConfigData))) ?? null);
+  }
 
-    protected async removeValue(
-        key: string,
-        attribute: (keyof AuthClientConfig<T> | keyof OIDCProviderMetaData | keyof SessionData | keyof TemporaryData)
-    ): Promise<void> {
-        const existingDataJSON: string = (await this._store.getData(key)) ?? null;
-        const existingData: PartialData<T> = existingDataJSON && JSON.parse(existingDataJSON);
+  public async getOIDCProviderMetaData(): Promise<OIDCProviderMetaData> {
+    return JSON.parse((await this._store.getData(this._resolveKey(Stores.OIDCProviderMetaData))) ?? null);
+  }
 
-        const dataToBeSaved: PartialData<T> = { ...existingData };
+  public async getTemporaryData(userID?: string): Promise<TemporaryData> {
+    return JSON.parse((await this._store.getData(this._resolveKey(Stores.TemporaryData, userID))) ?? null);
+  }
 
-        delete dataToBeSaved[ attribute as string ];
+  public async getSessionData(userID?: string): Promise<SessionData> {
+    return JSON.parse((await this._store.getData(this._resolveKey(Stores.SessionData, userID))) ?? null);
+  }
 
-        const dataToBeSavedJSON: string = JSON.stringify(dataToBeSaved);
+  public async getCustomData<K>(key: string, userID?: string): Promise<K> {
+    return JSON.parse((await this._store.getData(this._resolveKey(key, userID))) ?? null);
+  }
 
-        await this._store.setData(key, dataToBeSavedJSON);
-    }
+  public setSessionStatus(status: string): void {
+    // Using local storage to store the session status as it is required to be available across tabs.
+    this.isLocalStorageAvailable() && localStorage.setItem(`${ASGARDEO_SESSION_ACTIVE}`, status);
+  }
 
-    protected _resolveKey(store: Stores | string, userID?: string): string {
-        return userID ? `${ store }-${ this._id }-${ userID }` : `${ store }-${ this._id }`;
-    }
+  public getSessionStatus(): string {
+    return this.isLocalStorageAvailable() ? localStorage.getItem(`${ASGARDEO_SESSION_ACTIVE}`) ?? '' : '';
+  }
 
-    protected isLocalStorageAvailable(): boolean {
-        try {
-            const testValue: string = "__ASGARDEO_AUTH_CORE_LOCAL_STORAGE_TEST__";
+  public removeSessionStatus(): void {
+    this.isLocalStorageAvailable() && localStorage.removeItem(`${ASGARDEO_SESSION_ACTIVE}`);
+  }
 
-            localStorage.setItem(testValue, testValue);
-            localStorage.removeItem(testValue);
+  public async removeConfigData(): Promise<void> {
+    await this._store.removeData(this._resolveKey(Stores.ConfigData));
+  }
 
-            return true;
-        } catch (error) {
-            return false;
-        }
-    }
+  public async removeOIDCProviderMetaData(): Promise<void> {
+    await this._store.removeData(this._resolveKey(Stores.OIDCProviderMetaData));
+  }
 
-    public async setConfigData(config: Partial<AuthClientConfig<T>>): Promise<void> {
-        await this.setDataInBulk(this._resolveKey(Stores.ConfigData), config);
-    }
+  public async removeTemporaryData(userID?: string): Promise<void> {
+    await this._store.removeData(this._resolveKey(Stores.TemporaryData, userID));
+  }
 
-    public async setOIDCProviderMetaData(oidcProviderMetaData: Partial<OIDCProviderMetaData>): Promise<void> {
-        this.setDataInBulk(this._resolveKey(Stores.OIDCProviderMetaData), oidcProviderMetaData);
-    }
+  public async removeSessionData(userID?: string): Promise<void> {
+    await this._store.removeData(this._resolveKey(Stores.SessionData, userID));
+  }
 
-    public async setTemporaryData(temporaryData: Partial<TemporaryData>, userID?: string): Promise<void> {
-        this.setDataInBulk(this._resolveKey(Stores.TemporaryData, userID), temporaryData);
-    }
+  public async getConfigDataParameter(key: keyof AuthClientConfig<T>): Promise<StoreValue> {
+    const data: string = await this._store.getData(this._resolveKey(Stores.ConfigData));
 
-    public async setSessionData(sessionData: Partial<SessionData>, userID?: string): Promise<void> {
-        this.setDataInBulk(this._resolveKey(Stores.SessionData, userID), sessionData);
-    }
+    return data && JSON.parse(data)[key];
+  }
 
-    public async setCustomData<K>(key: string, customData: Partial<K>, userID?: string): Promise<void> {
-        this.setDataInBulk(this._resolveKey(key, userID), customData);
-    }
+  public async getOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData): Promise<StoreValue> {
+    const data: string = await this._store.getData(this._resolveKey(Stores.OIDCProviderMetaData));
 
-    public async getConfigData(): Promise<AuthClientConfig<T>> {
-        return JSON.parse((await this._store.getData(this._resolveKey(Stores.ConfigData))) ?? null);
-    }
+    return data && JSON.parse(data)[key];
+  }
 
-    public async getOIDCProviderMetaData(): Promise<OIDCProviderMetaData> {
-        return JSON.parse((await this._store.getData(this._resolveKey(Stores.OIDCProviderMetaData))) ?? null);
-    }
+  public async getTemporaryDataParameter(key: keyof TemporaryData, userID?: string): Promise<StoreValue> {
+    const data: string = await this._store.getData(this._resolveKey(Stores.TemporaryData, userID));
 
-    public async getTemporaryData(userID?: string): Promise<TemporaryData> {
-        return JSON.parse((await this._store.getData(this._resolveKey(Stores.TemporaryData, userID))) ?? null);
-    }
+    return data && JSON.parse(data)[key];
+  }
 
-    public async getSessionData(userID?: string): Promise<SessionData> {
-        return JSON.parse((await this._store.getData(this._resolveKey(Stores.SessionData, userID))) ?? null);
-    }
+  public async getSessionDataParameter(key: keyof SessionData, userID?: string): Promise<StoreValue> {
+    const data: string = await this._store.getData(this._resolveKey(Stores.SessionData, userID));
 
-    public async getCustomData<K>(key: string, userID?: string): Promise<K> {
-        return JSON.parse((await this._store.getData(this._resolveKey(key, userID))) ?? null);
-    }
+    return data && JSON.parse(data)[key];
+  }
 
-    public setSessionStatus(status: string): void {
-        // Using local storage to store the session status as it is required to be available across tabs.
-        this.isLocalStorageAvailable() && localStorage.setItem(`${ASGARDEO_SESSION_ACTIVE}`, status);
-    }
+  public async setConfigDataParameter(key: keyof AuthClientConfig<T>, value: StoreValue): Promise<void> {
+    await this.setValue(this._resolveKey(Stores.ConfigData), key, value);
+  }
 
-    public getSessionStatus(): string {
-        return this.isLocalStorageAvailable() 
-            ? localStorage.getItem(`${ASGARDEO_SESSION_ACTIVE}`) ?? ""
-            : "";
-    }
+  public async setOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData, value: StoreValue): Promise<void> {
+    await this.setValue(this._resolveKey(Stores.OIDCProviderMetaData), key, value);
+  }
 
-    public removeSessionStatus(): void {
-        this.isLocalStorageAvailable() && localStorage.removeItem(`${ASGARDEO_SESSION_ACTIVE}`);
-    }
+  public async setTemporaryDataParameter(key: keyof TemporaryData, value: StoreValue, userID?: string): Promise<void> {
+    await this.setValue(this._resolveKey(Stores.TemporaryData, userID), key, value);
+  }
 
-    public async removeConfigData(): Promise<void> {
-        await this._store.removeData(this._resolveKey(Stores.ConfigData));
-    }
+  public async setSessionDataParameter(key: keyof SessionData, value: StoreValue, userID?: string): Promise<void> {
+    await this.setValue(this._resolveKey(Stores.SessionData, userID), key, value);
+  }
 
-    public async removeOIDCProviderMetaData(): Promise<void> {
-        await this._store.removeData(this._resolveKey(Stores.OIDCProviderMetaData));
-    }
+  public async removeConfigDataParameter(key: keyof AuthClientConfig<T>): Promise<void> {
+    await this.removeValue(this._resolveKey(Stores.ConfigData), key);
+  }
 
-    public async removeTemporaryData(userID?: string): Promise<void> {
-        await this._store.removeData(this._resolveKey(Stores.TemporaryData, userID));
-    }
+  public async removeOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData): Promise<void> {
+    await this.removeValue(this._resolveKey(Stores.OIDCProviderMetaData), key);
+  }
 
-    public async removeSessionData(userID?: string): Promise<void> {
-        await this._store.removeData(this._resolveKey(Stores.SessionData, userID));
-    }
+  public async removeTemporaryDataParameter(key: keyof TemporaryData, userID?: string): Promise<void> {
+    await this.removeValue(this._resolveKey(Stores.TemporaryData, userID), key);
+  }
 
-    public async getConfigDataParameter(key: keyof AuthClientConfig<T>): Promise<StoreValue> {
-        const data: string = await this._store.getData(this._resolveKey(Stores.ConfigData));
-
-        return data && JSON.parse(data)[ key ];
-    }
-
-    public async getOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData): Promise<StoreValue> {
-        const data: string = await this._store.getData(this._resolveKey(Stores.OIDCProviderMetaData));
-
-        return data && JSON.parse(data)[ key ];
-    }
-
-    public async getTemporaryDataParameter(key: keyof TemporaryData, userID?: string): Promise<StoreValue> {
-        const data: string = await this._store.getData(this._resolveKey(Stores.TemporaryData, userID));
-
-        return data && JSON.parse(data)[ key ];
-    }
-
-    public async getSessionDataParameter(key: keyof SessionData, userID?: string): Promise<StoreValue> {
-        const data: string = await this._store.getData(this._resolveKey(Stores.SessionData, userID));
-
-        return data && JSON.parse(data)[ key ];
-    }
-
-    public async setConfigDataParameter(key: keyof AuthClientConfig<T>, value: StoreValue): Promise<void> {
-        await this.setValue(this._resolveKey(Stores.ConfigData), key, value);
-    }
-
-    public async setOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData, value: StoreValue): Promise<void> {
-        await this.setValue(this._resolveKey(Stores.OIDCProviderMetaData), key, value);
-    }
-
-    public async setTemporaryDataParameter(
-        key: keyof TemporaryData,
-        value: StoreValue,
-        userID?: string
-    ): Promise<void> {
-        await this.setValue(this._resolveKey(Stores.TemporaryData, userID), key, value);
-    }
-
-    public async setSessionDataParameter(key: keyof SessionData, value: StoreValue, userID?: string): Promise<void> {
-        await this.setValue(this._resolveKey(Stores.SessionData, userID), key, value);
-    }
-
-    public async removeConfigDataParameter(key: keyof AuthClientConfig<T>): Promise<void> {
-        await this.removeValue(this._resolveKey(Stores.ConfigData), key);
-    }
-
-    public async removeOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData): Promise<void> {
-        await this.removeValue(this._resolveKey(Stores.OIDCProviderMetaData), key);
-    }
-
-    public async removeTemporaryDataParameter(key: keyof TemporaryData, userID?: string): Promise<void> {
-        await this.removeValue(this._resolveKey(Stores.TemporaryData, userID), key);
-    }
-
-    public async removeSessionDataParameter(key: keyof SessionData, userID?: string): Promise<void> {
-        await this.removeValue(this._resolveKey(Stores.SessionData, userID), key);
-    }
+  public async removeSessionDataParameter(key: keyof SessionData, userID?: string): Promise<void> {
+    await this.removeValue(this._resolveKey(Stores.SessionData, userID), key);
+  }
 }

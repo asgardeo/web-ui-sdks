@@ -29,9 +29,9 @@ import {
   FetchResponse,
   GetAuthURLConfig,
   OIDCEndpoints,
-  Store,
   TokenResponse,
 } from './models';
+import {Store} from '../models/store';
 
 /**
  * Default configurations.
