@@ -40,17 +40,17 @@ describe('getUserInfo', () => {
       json: () => Promise.resolve(mockUserInfo),
     });
 
-    const endpoint: string = 'https://localhost:9443/oauth2/userinfo';
-    const result = await getUserInfo(endpoint);
+    const url: string = 'https://api.asgardeo.io/t/<ORGANIZATION>/oauth2/userinfo';
+    const result = await getUserInfo({url});
 
-    expect(fetch).toHaveBeenCalledWith(endpoint, {
+    expect(fetch).toHaveBeenCalledWith(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
     });
-    
+
     console.log('getUserInfo result:', result);
 
     expect(result).toEqual({
@@ -74,12 +74,13 @@ describe('getUserInfo', () => {
       json: () => Promise.resolve(mockUserInfo),
     });
 
-    const result = await getUserInfo();
+    const url: string = 'https://api.asgardeo.io/t/<ORGANIZATION>/oauth2/userinfo';
+    const result = await getUserInfo({url});
 
     expect(result).toEqual({
       id: 'test-id',
       name: 'Test User',
-      email: 'test@example.com'
+      email: 'test@example.com',
     });
   });
 
@@ -93,10 +94,12 @@ describe('getUserInfo', () => {
       statusText: 'Bad Request',
     });
 
-    await expect(getUserInfo()).rejects.toThrow(AsgardeoAPIError);
-    await expect(getUserInfo()).rejects.toThrow(`Failed to fetch user info: ${errorText}`);
+    const url: string = 'https://api.asgardeo.io/t/<ORGANIZATION>/oauth2/userinfo';
 
-    const error = await getUserInfo().catch(e => e);
+    await expect(getUserInfo({url})).rejects.toThrow(AsgardeoAPIError);
+    await expect(getUserInfo({url})).rejects.toThrow(`Failed to fetch user info: ${errorText}`);
+
+    const error = await getUserInfo({url}).catch(e => e);
     expect(error.code).toBe('getUserInfo-ResponseError-001');
     expect(error.name).toBe('AsgardeoAPIError');
   });

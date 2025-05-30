@@ -22,15 +22,12 @@ import AsgardeoAPIError from '../errors/AsgardeoAPIError';
 /**
  * Retrieves the user information from the specified OIDC userinfo endpoint.
  *
- * @param endpoint - The OIDC userinfo endpoint URL. If not provided, uses the default endpoint from DefaultOIDCEndpoints.
+ * @param requestConfig - Request configuration object.
  * @returns A promise that resolves with the user information.
- * @throws AsgardeoAPIError When the API request fails or returns a non-200 status code.
- *                           Error code: 'getUserInfo-ResponseError-001'
- *
- * @example
- * ```typescript
- * try {
- *   const userInfo = await getUserInfo();
+ * @throw
+ *   const userInfo = await getUserInfo({
+ *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/oauth2/userinfo",
+ *   });
  *   console.log(userInfo);
  * } catch (error) {
  *   if (error instanceof AsgardeoAPIError) {
@@ -39,13 +36,26 @@ import AsgardeoAPIError from '../errors/AsgardeoAPIError';
  * }
  * ```
  */
-const getUserInfo = async (endpoint: string): Promise<User> => {
-  const response: Response = await fetch(endpoint, {
+const getUserInfo = async ({url, ...requestConfig}: Partial<Request>): Promise<User> => {
+  try {
+    new URL(url);
+  } catch (error) {
+    throw new AsgardeoAPIError(
+      'Invalid endpoint URL provided',
+      'getUserInfo-ValidationError-001',
+      'javascript',
+      400,
+      'Invalid Request',
+    );
+  }
+
+  const response: Response = await fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
+    ...requestConfig,
   });
 
   if (!response.ok) {
