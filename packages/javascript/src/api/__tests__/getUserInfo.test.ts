@@ -51,8 +51,6 @@ describe('getUserInfo', () => {
       },
     });
 
-    console.log('getUserInfo result:', result);
-
     expect(result).toEqual({
       id: 'test-id',
       name: 'Test User',
@@ -101,6 +99,40 @@ describe('getUserInfo', () => {
 
     const error = await getUserInfo({url}).catch(e => e);
     expect(error.code).toBe('getUserInfo-ResponseError-001');
+    expect(error.name).toBe('AsgardeoAPIError');
+  });
+
+  it('should throw AsgardeoAPIError for invalid URL', async () => {
+    const invalidUrl = 'not-a-valid-url';
+    await expect(getUserInfo({url: invalidUrl})).rejects.toThrow(AsgardeoAPIError);
+
+    const error = await getUserInfo({url: invalidUrl}).catch(e => e);
+    expect(error.message).toBe(
+      '🛡️ Asgardeo - @asgardeo/javascript: Invalid endpoint URL provided\n\n(code="getUserInfo-ValidationError-001")\n',
+    );
+    expect(error.code).toBe('getUserInfo-ValidationError-001');
+    expect(error.name).toBe('AsgardeoAPIError');
+  });
+
+  it('should throw AsgardeoAPIError for undefined URL', async () => {
+    await expect(getUserInfo({})).rejects.toThrow(AsgardeoAPIError);
+
+    const error = await getUserInfo({}).catch(e => e);
+    expect(error.message).toBe(
+      '🛡️ Asgardeo - @asgardeo/javascript: Invalid endpoint URL provided\n\n(code="getUserInfo-ValidationError-001")\n',
+    );
+    expect(error.code).toBe('getUserInfo-ValidationError-001');
+    expect(error.name).toBe('AsgardeoAPIError');
+  });
+
+  it('should throw AsgardeoAPIError for empty string URL', async () => {
+    await expect(getUserInfo({url: ''})).rejects.toThrow(AsgardeoAPIError);
+
+    const error = await getUserInfo({url: ''}).catch(e => e);
+    expect(error.message).toBe(
+      '🛡️ Asgardeo - @asgardeo/javascript: Invalid endpoint URL provided\n\n(code="getUserInfo-ValidationError-001")\n',
+    );
+    expect(error.code).toBe('getUserInfo-ValidationError-001');
     expect(error.name).toBe('AsgardeoAPIError');
   });
 });
