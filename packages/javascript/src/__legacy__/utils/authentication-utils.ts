@@ -77,14 +77,4 @@ export class AuthenticationUtils {
         // and the tenant domain is appended to the`sub` attribute.
         return tokens.length > 2 ? tokens[tokens.length - 1] : "";
     };
-
-    public static getTokenRequestHeaders(): {
-        Accept: string;
-        "Content-Type": string;
-    } {
-        return {
-            Accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded"
-        };
-    }
 }

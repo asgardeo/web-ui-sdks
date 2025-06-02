@@ -234,7 +234,10 @@ export class AuthenticationCore<T> {
                 credentials: configData.sendCookiesInRequests
                     ? FetchCredentialTypes.Include
                     : FetchCredentialTypes.SameOrigin,
-                headers: new Headers(AuthenticationUtils.getTokenRequestHeaders()),
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
                 method: "POST"
             });
         } catch (error: any) {
@@ -297,7 +300,10 @@ export class AuthenticationCore<T> {
                 credentials: configData.sendCookiesInRequests
                     ? FetchCredentialTypes.Include
                     : FetchCredentialTypes.SameOrigin,
-                headers: new Headers(AuthenticationUtils.getTokenRequestHeaders()),
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
                 method: "POST"
             });
         } catch (error: any) {
@@ -350,7 +356,10 @@ export class AuthenticationCore<T> {
                 credentials: configData.sendCookiesInRequests
                     ? FetchCredentialTypes.Include
                     : FetchCredentialTypes.SameOrigin,
-                headers: new Headers(AuthenticationUtils.getTokenRequestHeaders()),
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
                 method: "POST"
             });
         } catch (error: any) {
@@ -410,7 +419,8 @@ export class AuthenticationCore<T> {
         );
 
         let requestHeaders: Record<string, any> = {
-            ...AuthenticationUtils.getTokenRequestHeaders()
+            Accept: "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
         };
 
         if (customGrantParams.attachToken) {
