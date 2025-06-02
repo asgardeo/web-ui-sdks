@@ -50,9 +50,9 @@ import {
   TokenResponse,
 } from '../models';
 import {IdTokenPayload} from '../../models/id-token';
-import {AuthenticationUtils} from '../utils';
 import PkceConstants from '../../constants/PkceConstants';
 import getTenantDomainFromIdTokenPayload from '../../utils/getTenantDomainFromIdToken';
+import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;
@@ -233,7 +233,7 @@ export class AuthenticationHelper<T> {
       displayName: displayName,
       tenantDomain,
       username: username,
-      ...AuthenticationUtils.filterClaimsFromIDTokenPayload(payload),
+      ...extractUserClaimsFromIdToken(payload),
     };
   }
 

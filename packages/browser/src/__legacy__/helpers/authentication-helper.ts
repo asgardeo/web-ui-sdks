@@ -20,7 +20,6 @@ import {
   AsgardeoAuthClient,
   AsgardeoAuthException,
   AuthClientConfig,
-  AuthenticationUtils,
   BasicUserInfo,
   CryptoHelper,
   CustomGrantConfig,

@@ -45,7 +45,6 @@ import {
   TokenResponse,
 } from '../models';
 import {IdTokenPayload} from '../../models/id-token';
-import {AuthenticationUtils} from '../utils';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;

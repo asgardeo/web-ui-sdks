@@ -24,7 +24,6 @@ export * from './__legacy__/constants/parameters';
 export * from './__legacy__/constants/data';
 export * from './__legacy__/constants/scopes';
 export * from './__legacy__/helpers/crypto-helper';
-export * from './__legacy__/utils';
 export * from './__legacy__/exception';
 export * from './__legacy__/data';
 
@@ -43,5 +42,6 @@ export {User} from './models/user';
 
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 
+export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
 export {default as getPkceStorageKeyFromState} from './utils/getPkceStorageKeyFromState';
 export {default as removeTrailingSlash} from './utils/removeTrailingSlash';

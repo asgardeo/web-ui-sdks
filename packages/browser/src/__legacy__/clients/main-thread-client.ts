@@ -20,7 +20,6 @@ import {
   AUTHORIZATION_CODE,
   AsgardeoAuthClient,
   AuthClientConfig,
-  AuthenticationUtils,
   BasicUserInfo,
   CryptoHelper,
   DataLayer,
