@@ -16,6 +16,7 @@
  * under the License.
  */
 import extractPKCEKeyFromStateParam from "../../utils/extractPKCEKeyFromStateParam";
+import generateStateParamForRequestCorrelation from "../../utils/generateStateParamForRequestCorrelation";
 import {
     AUTHORIZATION_ENDPOINT,
     FetchCredentialTypes,
@@ -131,7 +132,7 @@ export class AuthenticationCore<T> {
 
         authorizeRequestParams.set(
             STATE,
-            AuthenticationUtils.generateStateParamForRequestCorrelation(
+            generateStateParamForRequestCorrelation(
                 pkceKey,
                 customParams ? customParams[STATE]?.toString() : ""
             )

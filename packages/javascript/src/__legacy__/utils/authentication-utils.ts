@@ -87,18 +87,4 @@ export class AuthenticationUtils {
             "Content-Type": "application/x-www-form-urlencoded"
         };
     }
-
-    /**
-     * This generates the state param value to be sent with an authorization request.
-     *
-     * @param pkceKey - The PKCE key.
-     * @param state - The state value to be passed. (The correlation ID will be appended to this state value.)
-     *
-     * @returns The state param value.
-     */
-    public static generateStateParamForRequestCorrelation(pkceKey: string, state?: string): string {
-        const index: number = parseInt(pkceKey.split(PKCEConstants.PKCE_SEPARATOR)[1]);
-
-        return state ? `${state}_request_${index}` : `request_${index}`;
-    }
 }
