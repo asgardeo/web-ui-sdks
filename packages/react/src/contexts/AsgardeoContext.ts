@@ -17,6 +17,7 @@
  */
 
 import {Context, createContext} from 'react';
+import {User} from '@asgardeo/browser';
 
 /**
  * Props interface of {@link AsgardeoContext}
@@ -48,6 +49,7 @@ export type AsgardeoContextProps = {
    * FIXME: Fix the types.
    */
   signUp: any;
+  user: any;
 };
 
 /**
@@ -59,6 +61,7 @@ const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null
   signIn: null,
   signOut: null,
   signUp: null,
+  user: null
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';

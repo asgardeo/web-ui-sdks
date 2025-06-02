@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoBrowserClient, SignInOptions, SignOutOptions, User} from '@asgardeo/browser';
+import {AsgardeoBrowserClient, getUserInfo, SignInOptions, SignOutOptions, User} from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import {AsgardeoReactConfig} from './models/config';
 
@@ -44,8 +44,11 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     });
   }
 
-  override getUser(): Promise<User> {
-    return this.asgardeo.getUser();
+  override async getUser(): Promise<any> {
+    return null;
+    // return getUserInfo({
+    //   url: (await this.asgardeo.getOIDCServiceEndpoints()).userinfoEndpoint as string,
+    // });
   }
 
   override isLoading(): boolean {

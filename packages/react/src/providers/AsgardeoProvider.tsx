@@ -37,6 +37,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const asgardeo: AsgardeoReactClient = useMemo(() => new AsgardeoReactClient(), []);
   const {hasAuthParams} = useBrowserUrl();
+  const [user, setUser] = useState<any | null>(null);
 
   const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
 
@@ -69,6 +70,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     (async (): Promise<void> => {
       // User is already authenticated. Skip...
       if (await asgardeo.isSignedIn()) {
+        setUser(await asgardeo.getUser());
+
         return;
       }
 
@@ -128,7 +131,11 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
   const signIn = async (options?: SignInOptions): Promise<User> => {
     try {
-      return await asgardeo.signIn(options);
+      const response = await asgardeo.signIn(options);
+
+      setUser(await asgardeo.getUser());
+
+      return response;
     } catch (error) {
       throw new Error(`Error while signing in: ${error}`);
     }
@@ -143,7 +150,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
   return (
     <AsgardeoContext.Provider
-      value={{isSignedIn: isSignedInSync, signIn, signOut, signUp, isLoading: asgardeo.isLoading()}}
+      value={{isSignedIn: isSignedInSync, signIn, signOut, signUp, isLoading: asgardeo.isLoading(), user}}
     >
       {children}
     </AsgardeoContext.Provider>
