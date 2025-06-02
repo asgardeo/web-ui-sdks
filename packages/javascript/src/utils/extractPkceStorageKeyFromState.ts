@@ -23,10 +23,13 @@ import PkceConstants from '../constants/PkceConstants';
  *
  * @param state - The state parameter string containing the request index.
  * @returns The PKCE key string in the format `pkce_code_verifier_${index}`.
+ *
  * @example
+ * ```typescript
  * const state = "request_1";
  * const pkceKey = extractPkceStorageKeyFromState(state);
  * // Returns: "pkce_code_verifier_1"
+ * ```
  */
 const extractPkceStorageKeyFromState = (state: string): string => {
   const index: number = parseInt(state.split('request_')[1]);
