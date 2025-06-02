@@ -61,17 +61,4 @@ export class AuthenticationUtils {
 
     return camelCasedPayload;
   }
-
-  /**
-   * @deprecated since v1.0.6 and will be removed with the v2.0.0 release.
-   */
-  public static getTenantDomainFromIdTokenPayload = (payload: IdTokenPayload, uidSeparator: string = '@'): string => {
-    // Try to extract the tenant domain from the `sub` claim.
-    const uid: string = payload.sub;
-    const tokens: string[] = uid.split(uidSeparator);
-
-    // This works only when the email is used as the username
-    // and the tenant domain is appended to the`sub` attribute.
-    return tokens.length > 2 ? tokens[tokens.length - 1] : '';
-  };
 }
