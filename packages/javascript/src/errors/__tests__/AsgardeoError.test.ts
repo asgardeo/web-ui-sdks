@@ -18,8 +18,8 @@
 
 import AsgardeoError from '../AsgardeoError';
 
-describe('AsgardeoError', () => {
-  it('should create an error with javascript SDK origin', () => {
+describe('AsgardeoError', (): void => {
+  it('should create an error with javascript SDK origin', (): void => {
     const message: string = 'Test error message';
     const code: string = 'TEST_ERROR';
     const origin: string = 'javascript';
@@ -29,7 +29,7 @@ describe('AsgardeoError', () => {
     expect(error.code).toBe(code);
   });
 
-  it('should create an error with react SDK origin', () => {
+  it('should create an error with react SDK origin', (): void => {
     const message: string = 'Test error message';
     const code: string = 'TEST_ERROR';
     const origin: string = 'react';
@@ -39,7 +39,7 @@ describe('AsgardeoError', () => {
     expect(error.code).toBe(code);
   });
 
-  it('should format different SDK origins correctly', () => {
+  it('should format different SDK origins correctly', (): void => {
     const message: string = 'Test error message';
     const code: string = 'TEST_ERROR';
     const origins: string[] = ['react', 'next', 'javascript'];
@@ -56,7 +56,7 @@ describe('AsgardeoError', () => {
     });
   });
 
-  it('should sanitize message if it already contains the SDK prefix', () => {
+  it('should sanitize message if it already contains the SDK prefix', (): void => {
     const message: string = '🛡️ Asgardeo - @asgardeo/react: Already prefixed message';
     const code: string = 'TEST_ERROR';
     const origin: string = 'react';
@@ -66,7 +66,7 @@ describe('AsgardeoError', () => {
     expect(error.code).toBe(code);
   });
 
-  it('should have correct name and be instance of Error', () => {
+  it('should have correct name and be instance of Error', (): void => {
     const message: string = 'Test message';
     const code: string = 'TEST_ERROR';
     const origin: string = 'javascript';
@@ -77,7 +77,7 @@ describe('AsgardeoError', () => {
     expect(error).toBeInstanceOf(AsgardeoError);
   });
 
-  it('should have a stack trace', () => {
+  it('should have a stack trace', (): void => {
     const message: string = 'Test message';
     const code: string = 'TEST_ERROR';
     const origin: string = 'javascript';
@@ -86,7 +86,7 @@ describe('AsgardeoError', () => {
     expect(error.stack).toBeDefined();
   });
 
-  it('should format toString output correctly with SDK origin', () => {
+  it('should format toString output correctly with SDK origin', (): void => {
     const message: string = 'Test message';
     const code: string = 'TEST_ERROR';
     const origin: string = 'react';
@@ -98,7 +98,7 @@ describe('AsgardeoError', () => {
     expect(error.toString()).toBe(expectedString);
   });
 
-  it('should default to the agnostic SDK if no origin is provided', () => {
+  it('should default to the agnostic SDK if no origin is provided', (): void => {
     const message: string = 'Test message';
     const code: string = 'TEST_ERROR';
     const error: AsgardeoError = new AsgardeoError(message, code, '');

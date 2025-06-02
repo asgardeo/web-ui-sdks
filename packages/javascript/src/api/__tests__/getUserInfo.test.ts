@@ -18,16 +18,17 @@
 
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import getUserInfo from '../getUserInfo';
+import {User} from '../../models/user';
 import DefaultOIDCEndpoints from '../../configs/DefaultOIDCEndpoints';
 import AsgardeoAPIError from '../../errors/AsgardeoAPIError';
 
-describe('getUserInfo', () => {
-  beforeEach(() => {
+describe('getUserInfo', (): void => {
+  beforeEach((): void => {
     vi.resetAllMocks();
   });
 
-  it('should fetch user info successfully', async () => {
-    const mockUserInfo = {
+  it('should fetch user info successfully', async (): void => {
+    const mockUserInfo: User = {
       id: 'test-id',
       name: 'Test User',
       email: 'test@example.com',
@@ -41,7 +42,7 @@ describe('getUserInfo', () => {
     });
 
     const url: string = 'https://api.asgardeo.io/t/<ORGANIZATION>/oauth2/userinfo';
-    const result = await getUserInfo({url});
+    const result: User = await getUserInfo({url});
 
     expect(fetch).toHaveBeenCalledWith(url, {
       method: 'GET',
@@ -60,8 +61,8 @@ describe('getUserInfo', () => {
     });
   });
 
-  it('should handle missing optional fields', async () => {
-    const mockUserInfo = {
+  it('should handle missing optional fields', async (): void => {
+    const mockUserInfo: User = {
       id: 'test-id',
       name: 'Test User',
       email: 'test@example.com',
@@ -73,7 +74,7 @@ describe('getUserInfo', () => {
     });
 
     const url: string = 'https://api.asgardeo.io/t/<ORGANIZATION>/oauth2/userinfo';
-    const result = await getUserInfo({url});
+    const result: User = await getUserInfo({url});
 
     expect(result).toEqual({
       id: 'test-id',
@@ -82,8 +83,8 @@ describe('getUserInfo', () => {
     });
   });
 
-  it('should throw AsgardeoAPIError on fetch failure', async () => {
-    const errorText = 'Failed to fetch';
+  it('should throw AsgardeoAPIError on fetch failure', async (): void => {
+    const errorText: string = 'Failed to fetch';
 
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
@@ -97,16 +98,19 @@ describe('getUserInfo', () => {
     await expect(getUserInfo({url})).rejects.toThrow(AsgardeoAPIError);
     await expect(getUserInfo({url})).rejects.toThrow(`Failed to fetch user info: ${errorText}`);
 
-    const error = await getUserInfo({url}).catch(e => e);
+    const error: AsgardeoAPIError = await getUserInfo({url}).catch(e => e);
+
     expect(error.code).toBe('getUserInfo-ResponseError-001');
     expect(error.name).toBe('AsgardeoAPIError');
   });
 
-  it('should throw AsgardeoAPIError for invalid URL', async () => {
-    const invalidUrl = 'not-a-valid-url';
+  it('should throw AsgardeoAPIError for invalid URL', async (): void => {
+    const invalidUrl: string = 'not-a-valid-url';
+
     await expect(getUserInfo({url: invalidUrl})).rejects.toThrow(AsgardeoAPIError);
 
-    const error = await getUserInfo({url: invalidUrl}).catch(e => e);
+    const error: AsgardeoAPIError = await getUserInfo({url: invalidUrl}).catch(e => e);
+
     expect(error.message).toBe(
       '🛡️ Asgardeo - @asgardeo/javascript: Invalid endpoint URL provided\n\n(code="getUserInfo-ValidationError-001")\n',
     );
@@ -114,10 +118,11 @@ describe('getUserInfo', () => {
     expect(error.name).toBe('AsgardeoAPIError');
   });
 
-  it('should throw AsgardeoAPIError for undefined URL', async () => {
+  it('should throw AsgardeoAPIError for undefined URL', async (): void => {
     await expect(getUserInfo({})).rejects.toThrow(AsgardeoAPIError);
 
-    const error = await getUserInfo({}).catch(e => e);
+    const error: AsgardeoAPIError = await getUserInfo({}).catch(e => e);
+
     expect(error.message).toBe(
       '🛡️ Asgardeo - @asgardeo/javascript: Invalid endpoint URL provided\n\n(code="getUserInfo-ValidationError-001")\n',
     );
@@ -125,10 +130,11 @@ describe('getUserInfo', () => {
     expect(error.name).toBe('AsgardeoAPIError');
   });
 
-  it('should throw AsgardeoAPIError for empty string URL', async () => {
+  it('should throw AsgardeoAPIError for empty string URL', async (): void => {
     await expect(getUserInfo({url: ''})).rejects.toThrow(AsgardeoAPIError);
 
-    const error = await getUserInfo({url: ''}).catch(e => e);
+    const error: AsgardeoAPIError = await getUserInfo({url: ''}).catch(e => e);
+
     expect(error.message).toBe(
       '🛡️ Asgardeo - @asgardeo/javascript: Invalid endpoint URL provided\n\n(code="getUserInfo-ValidationError-001")\n',
     );

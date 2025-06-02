@@ -18,8 +18,8 @@
 
 import AsgardeoAPIError from '../AsgardeoAPIError';
 
-describe('AsgardeoAPIError', () => {
-  it('should create an API error with status code and text', () => {
+describe('AsgardeoAPIError', (): void => {
+  it('should create an API error with status code and text', (): void => {
     const message: string = 'Not Found Error';
     const code: string = 'API_NOT_FOUND';
     const origin: string = 'react';
@@ -33,7 +33,7 @@ describe('AsgardeoAPIError', () => {
     expect(error.statusText).toBe(statusText);
   });
 
-  it('should create an API error without status code and text', () => {
+  it('should create an API error without status code and text', (): void => {
     const message: string = 'Unknown API Error';
     const code: string = 'API_ERROR';
     const origin: string = 'javascript';
@@ -44,7 +44,7 @@ describe('AsgardeoAPIError', () => {
     expect(error.statusText).toBeUndefined();
   });
 
-  it('should have correct name and be instance of Error and AsgardeoAPIError', () => {
+  it('should have correct name and be instance of Error and AsgardeoAPIError', (): void => {
     const message: string = 'Test Error';
     const code: string = 'TEST_ERROR';
     const origin: string = 'react';
@@ -55,7 +55,7 @@ describe('AsgardeoAPIError', () => {
     expect(error).toBeInstanceOf(AsgardeoAPIError);
   });
 
-  it('should format toString with status when available', () => {
+  it('should format toString with status when available', (): void => {
     const message: string = 'Bad Request';
     const code: string = 'API_BAD_REQUEST';
     const origin: string = 'react';
@@ -70,7 +70,7 @@ describe('AsgardeoAPIError', () => {
     expect(error.toString()).toBe(expected);
   });
 
-  it('should format toString without status when not available', () => {
+  it('should format toString without status when not available', (): void => {
     const message: string = 'Test Error';
     const code: string = 'TEST_ERROR';
     const origin: string = 'react';
@@ -83,7 +83,7 @@ describe('AsgardeoAPIError', () => {
     expect(error.toString()).toBe(expected);
   });
 
-  it('should default to the agnostic SDK if no origin is provided', () => {
+  it('should default to the agnostic SDK if no origin is provided', (): void => {
     const message: string = 'Test message';
     const code: string = 'TEST_ERROR';
     const error: AsgardeoError = new AsgardeoAPIError(message, code, '');

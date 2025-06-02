@@ -18,8 +18,8 @@
 
 import AsgardeoRuntimeError from '../AsgardeoRuntimeError';
 
-describe('AsgardeoRuntimeError', () => {
-  it('should create a runtime error with details', () => {
+describe('AsgardeoRuntimeError', (): void => {
+  it('should create a runtime error with details', (): void => {
     const message: string = 'Configuration Error';
     const code: string = 'CONFIG_ERROR';
     const origin: string = 'react';
@@ -31,7 +31,7 @@ describe('AsgardeoRuntimeError', () => {
     expect(error.details).toEqual(details);
   });
 
-  it('should create a runtime error without details', () => {
+  it('should create a runtime error without details', (): void => {
     const message: string = 'Unknown Runtime Error';
     const code: string = 'RUNTIME_ERROR';
     const origin: string = 'javascript';
@@ -41,7 +41,7 @@ describe('AsgardeoRuntimeError', () => {
     expect(error.details).toBeUndefined();
   });
 
-  it('should have correct name and be instance of Error and AsgardeoRuntimeError', () => {
+  it('should have correct name and be instance of Error and AsgardeoRuntimeError', (): void => {
     const message: string = 'Test Error';
     const code: string = 'TEST_ERROR';
     const origin: string = 'react';
@@ -52,7 +52,7 @@ describe('AsgardeoRuntimeError', () => {
     expect(error).toBeInstanceOf(AsgardeoRuntimeError);
   });
 
-  it('should format toString with details when available', () => {
+  it('should format toString with details when available', (): void => {
     const message: string = 'Validation Error';
     const code: string = 'VALIDATION_ERROR';
     const origin: string = 'react';
@@ -67,7 +67,7 @@ describe('AsgardeoRuntimeError', () => {
     expect(error.toString()).toBe(expected);
   });
 
-  it('should format toString without details when not available', () => {
+  it('should format toString without details when not available', (): void => {
     const message: string = 'Test Error';
     const code: string = 'TEST_ERROR';
     const origin: string = 'react';
@@ -80,7 +80,7 @@ describe('AsgardeoRuntimeError', () => {
     expect(error.toString()).toBe(expected);
   });
 
-  it('should default to the agnostic SDK if no origin is provided', () => {
+  it('should default to the agnostic SDK if no origin is provided', (): void => {
     const message: string = 'Test message';
     const code: string = 'TEST_ERROR';
     const error: AsgardeoError = new AsgardeoRuntimeError(message, code, '');
