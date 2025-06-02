@@ -1,0 +1,97 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import {describe, expect, it} from 'vitest';
+import extractUserClaimsFromIdToken from '../extractUserClaimsFromIdToken';
+import {IdTokenPayload} from '../../models/id-token';
+
+describe('extractUserClaimsFromIdToken', (): void => {
+  it('should remove protocol claims and keep user claims', (): void => {
+    const payload: IdTokenPayload = {
+      iss: 'https://example.com',
+      aud: 'client_id',
+      exp: 1712345678,
+      iat: 1712345670,
+      email: 'user@example.com',
+      given_name: 'John',
+      family_name: 'Doe',
+    };
+
+    const expected: {
+      email: string;
+      givenName: string;
+      familyName: string;
+    } = {
+      email: 'user@example.com',
+      givenName: 'John',
+      familyName: 'Doe',
+    };
+
+    expect(extractUserClaimsFromIdToken(payload)).toEqual(expected);
+  });
+
+  it('should handle empty payload', (): void => {
+    const payload = {} as IdTokenPayload;
+
+    expect(extractUserClaimsFromIdToken(payload)).toEqual({});
+  });
+
+  it('should convert snake_case to camelCase', (): void => {
+    const payload: IdTokenPayload = {
+      phone_number: '+1234567890',
+      custom_claim_value: 'test',
+      normalClaim: 'value',
+    } as IdTokenPayload;
+
+    const expected: {
+      phoneNumber: string;
+      customClaimValue: string;
+      normalClaim: string;
+    } = {
+      phoneNumber: '+1234567890',
+      customClaimValue: 'test',
+      normalClaim: 'value',
+    };
+
+    expect(extractUserClaimsFromIdToken(payload)).toEqual(expected);
+  });
+
+  it('should remove all protocol claims', (): void => {
+    const payload: IdTokenPayload = {
+      iss: 'https://example.com',
+      aud: 'client_id',
+      exp: 1712345678,
+      iat: 1712345670,
+      acr: '1',
+      amr: ['pwd'],
+      azp: 'client_1',
+      auth_time: 1712345670,
+      nonce: 'abc123',
+      c_hash: 'hash1',
+      at_hash: 'hash2',
+      nbf: 1712345670,
+      isk: 'key1',
+      sid: 'session1',
+      custom_claim: 'value',
+    } as IdTokenPayload;
+
+    expect(extractUserClaimsFromIdToken(payload)).toEqual({
+      customClaim: 'value',
+    });
+  });
+});
