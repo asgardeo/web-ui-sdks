@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import getPkceStorageKeyFromState from '../../utils/getPkceStorageKeyFromState';
+import extractPkceStorageKeyFromState from '../../utils/extractPkceStorageKeyFromState';
 import generateStateParamForRequestCorrelation from '../../utils/generateStateParamForRequestCorrelation';
 import {
   AUTHORIZATION_ENDPOINT,
@@ -200,10 +200,10 @@ export class AuthenticationCore<T> {
     if (configData.enablePKCE) {
       body.set(
         'code_verifier',
-        `${await this._dataLayer.getTemporaryDataParameter(getPkceStorageKeyFromState(state), userID)}`,
+        `${await this._dataLayer.getTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID)}`,
       );
 
-      await this._dataLayer.removeTemporaryDataParameter(getPkceStorageKeyFromState(state), userID);
+      await this._dataLayer.removeTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID);
     }
 
     let tokenResponse: Response;
@@ -645,11 +645,11 @@ export class AuthenticationCore<T> {
   }
 
   public async getPKCECode(state: string, userID?: string): Promise<string> {
-    return (await this._dataLayer.getTemporaryDataParameter(getPkceStorageKeyFromState(state), userID)) as string;
+    return (await this._dataLayer.getTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID)) as string;
   }
 
   public async setPKCECode(pkce: string, state: string, userID?: string): Promise<void> {
-    return await this._dataLayer.setTemporaryDataParameter(getPkceStorageKeyFromState(state), pkce, userID);
+    return await this._dataLayer.setTemporaryDataParameter(extractPkceStorageKeyFromState(state), pkce, userID);
   }
 
   public async updateConfig(config: Partial<AuthClientConfig<T>>): Promise<void> {

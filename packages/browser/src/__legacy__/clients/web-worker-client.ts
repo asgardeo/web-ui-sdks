@@ -32,7 +32,7 @@ import {
   SESSION_STATE,
   STATE,
   Store,
-  getPkceStorageKeyFromState,
+  extractPkceStorageKeyFromState,
 } from '@asgardeo/javascript';
 import {
   DISABLE_HTTP_HANDLER,
@@ -407,7 +407,7 @@ export const WebWorkerClient = async (
 
     const response: AuthorizationResponse = await communicate<GetAuthURLConfig, AuthorizationResponse>(message);
 
-    const pkceKey: string = getPkceStorageKeyFromState(
+    const pkceKey: string = extractPkceStorageKeyFromState(
       new URL(response.authorizationURL).searchParams.get(STATE) ?? '',
     );
 
@@ -460,7 +460,7 @@ export const WebWorkerClient = async (
     return communicate<GetAuthURLConfig, AuthorizationResponse>(message).then(
       async (response: AuthorizationResponse) => {
         if (response.pkce && config.enablePKCE) {
-          const pkceKey: string = getPkceStorageKeyFromState(
+          const pkceKey: string = extractPkceStorageKeyFromState(
             new URL(response.authorizationURL).searchParams.get(STATE) ?? '',
           );
 
@@ -481,7 +481,7 @@ export const WebWorkerClient = async (
     },
   ): Promise<BasicUserInfo> => {
     const config: AuthClientConfig<WebWorkerClientConfig> = await getConfigData();
-    const pkceKey: string = getPkceStorageKeyFromState(resolvedState);
+    const pkceKey: string = extractPkceStorageKeyFromState(resolvedState);
 
     const message: Message<AuthorizationInfo> = {
       data: {

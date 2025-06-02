@@ -43,5 +43,5 @@ export {User} from './models/user';
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
-export {default as getPkceStorageKeyFromState} from './utils/getPkceStorageKeyFromState';
+export {default as extractPkceStorageKeyFromState} from './utils/extractPkceStorageKeyFromState';
 export {default as removeTrailingSlash} from './utils/removeTrailingSlash';
