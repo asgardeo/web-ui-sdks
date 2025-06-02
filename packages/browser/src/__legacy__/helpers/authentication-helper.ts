@@ -25,7 +25,7 @@ import {
   CryptoHelper,
   CustomGrantConfig,
   DataLayer,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   GetAuthURLConfig,
   OIDCEndpoints,
@@ -659,11 +659,11 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     return this._authenticationClient.getBasicUserInfo();
   }
 
-  public async getDecodedIDToken(): Promise<DecodedIDTokenPayload> {
+  public async getDecodedIDToken(): Promise<IdTokenPayload> {
     return this._authenticationClient.getDecodedIDToken();
   }
 
-  public async getDecodedIDPIDToken(): Promise<DecodedIDTokenPayload> {
+  public async getDecodedIDPIDToken(): Promise<IdTokenPayload> {
     return this._authenticationClient.getDecodedIDToken();
   }
 

@@ -24,7 +24,7 @@ import {
   CryptoUtils,
   CustomGrantConfig,
   DataLayer,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
   SessionData,
@@ -220,7 +220,7 @@ export class AsgardeoNodeCore<T> {
     return this._auth.getOIDCServiceEndpoints();
   }
 
-  public async getDecodedIDToken(userId?: string): Promise<DecodedIDTokenPayload> {
+  public async getDecodedIDToken(userId?: string): Promise<IdTokenPayload> {
     return this._auth.getDecodedIDToken(userId);
   }
 

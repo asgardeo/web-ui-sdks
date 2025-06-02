@@ -24,7 +24,7 @@ import {
   BasicUserInfo,
   CryptoHelper,
   DataLayer,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   GetAuthURLConfig,
   OIDCEndpoints,
@@ -368,7 +368,7 @@ export const MainThreadClient = async (
     return _authenticationHelper.getBasicUserInfo();
   };
 
-  const getDecodedIDToken = async (): Promise<DecodedIDTokenPayload> => {
+  const getDecodedIDToken = async (): Promise<IdTokenPayload> => {
     return _authenticationHelper.getDecodedIDToken();
   };
 

@@ -16,65 +16,62 @@
  * under the License.
  */
 
-import PkceConstants from "../../constants/PkceConstants";
-import { DecodedIDTokenPayload } from "../models";
+import PkceConstants from '../../constants/PkceConstants';
+import {IdTokenPayload} from '../../models/id-token';
 
 export class AuthenticationUtils {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    private constructor() {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private constructor() {}
 
-    public static filterClaimsFromIDTokenPayload(payload: DecodedIDTokenPayload): any {
-        const optionalizedPayload: Partial<DecodedIDTokenPayload> = { ...payload };
+  public static filterClaimsFromIDTokenPayload(payload: IdTokenPayload): any {
+    const optionalizedPayload: Partial<IdTokenPayload> = {...payload};
 
-        delete optionalizedPayload?.iss;
-        delete optionalizedPayload?.aud;
-        delete optionalizedPayload?.["exp"];
-        delete optionalizedPayload?.["iat"];
-        delete optionalizedPayload?.["acr"];
-        delete optionalizedPayload?.["amr"];
-        delete optionalizedPayload?.["azp"];
-        delete optionalizedPayload?.["auth_time"];
-        delete optionalizedPayload?.["nonce"];
-        delete optionalizedPayload?.["c_hash"];
-        delete optionalizedPayload?.["at_hash"];
-        delete optionalizedPayload?.["nbf"];
-        delete optionalizedPayload?.["isk"];
-        delete optionalizedPayload?.["sid"];
+    delete optionalizedPayload?.iss;
+    delete optionalizedPayload?.aud;
+    delete optionalizedPayload?.['exp'];
+    delete optionalizedPayload?.['iat'];
+    delete optionalizedPayload?.['acr'];
+    delete optionalizedPayload?.['amr'];
+    delete optionalizedPayload?.['azp'];
+    delete optionalizedPayload?.['auth_time'];
+    delete optionalizedPayload?.['nonce'];
+    delete optionalizedPayload?.['c_hash'];
+    delete optionalizedPayload?.['at_hash'];
+    delete optionalizedPayload?.['nbf'];
+    delete optionalizedPayload?.['isk'];
+    delete optionalizedPayload?.['sid'];
 
-        const camelCasedPayload : any= {};
+    const camelCasedPayload: any = {};
 
-        Object.entries(optionalizedPayload).forEach(([ key, value ]: [ key: string, value: unknown ]) => {
-            const keyParts: string[] = key.split("_");
+    Object.entries(optionalizedPayload).forEach(([key, value]: [key: string, value: unknown]) => {
+      const keyParts: string[] = key.split('_');
 
-            const camelCasedKey: string = keyParts
-                .map((key: string, index: number) => {
-                    if (index === 0) {
-                        return key;
-                    }
+      const camelCasedKey: string = keyParts
+        .map((key: string, index: number) => {
+          if (index === 0) {
+            return key;
+          }
 
-                    return [ key[ 0 ].toUpperCase(), ...key.slice(1) ].join("");
-                })
-                .join("");
+          return [key[0].toUpperCase(), ...key.slice(1)].join('');
+        })
+        .join('');
 
-            camelCasedPayload[camelCasedKey] = value;
-        });
+      camelCasedPayload[camelCasedKey] = value;
+    });
 
-        return camelCasedPayload;
-    }
+    return camelCasedPayload;
+  }
 
-    /**
-     * @deprecated since v1.0.6 and will be removed with the v2.0.0 release.
-     */
-    public static getTenantDomainFromIdTokenPayload = (
-        payload: DecodedIDTokenPayload,
-        uidSeparator: string = "@"
-    ): string => {
-        // Try to extract the tenant domain from the `sub` claim.
-        const uid: string = payload.sub;
-        const tokens: string[] = uid.split(uidSeparator);
+  /**
+   * @deprecated since v1.0.6 and will be removed with the v2.0.0 release.
+   */
+  public static getTenantDomainFromIdTokenPayload = (payload: IdTokenPayload, uidSeparator: string = '@'): string => {
+    // Try to extract the tenant domain from the `sub` claim.
+    const uid: string = payload.sub;
+    const tokens: string[] = uid.split(uidSeparator);
 
-        // This works only when the email is used as the username
-        // and the tenant domain is appended to the`sub` attribute.
-        return tokens.length > 2 ? tokens[tokens.length - 1] : "";
-    };
+    // This works only when the email is used as the username
+    // and the tenant domain is appended to the`sub` attribute.
+    return tokens.length > 2 ? tokens[tokens.length - 1] : '';
+  };
 }

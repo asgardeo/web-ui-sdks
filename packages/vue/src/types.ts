@@ -23,7 +23,7 @@ import {
   BasicUserInfo,
   Config,
   CustomGrantConfig,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   Hooks,
   HttpClientInstance,
@@ -96,7 +96,7 @@ export interface AuthContextInterface {
   error: AsgardeoAuthException;
   getAccessToken(): Promise<string>;
   getBasicUserInfo(): Promise<BasicUserInfo>;
-  getDecodedIDToken(): Promise<DecodedIDTokenPayload>;
+  getDecodedIDToken(): Promise<IdTokenPayload>;
   getHttpClient(): Promise<HttpClientInstance>;
   getIDToken(): Promise<string>;
   getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;

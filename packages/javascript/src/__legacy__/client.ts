@@ -25,12 +25,12 @@ import {
   BasicUserInfo,
   CryptoUtils,
   CustomGrantConfig,
-  DecodedIDTokenPayload,
   FetchResponse,
   GetAuthURLConfig,
   OIDCEndpoints,
   TokenResponse,
 } from './models';
+import {IdTokenPayload} from '../models/id-token';
 import {Store} from '../models/store';
 
 /**
@@ -350,7 +350,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getDecodedIDToken(userID?: string): Promise<DecodedIDTokenPayload> {
+  public async getDecodedIDToken(userID?: string): Promise<IdTokenPayload> {
     return this._authenticationCore.getDecodedIDToken(userID);
   }
 

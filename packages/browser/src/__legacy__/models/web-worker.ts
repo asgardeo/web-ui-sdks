@@ -22,7 +22,7 @@ import {
   BasicUserInfo,
   CryptoHelper,
   CustomGrantConfig,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
 } from '@asgardeo/javascript';
@@ -58,8 +58,8 @@ export interface WebWorkerCoreInterface {
   refreshAccessToken(): Promise<BasicUserInfo>;
   revokeAccessToken(): Promise<boolean>;
   getBasicUserInfo(): Promise<BasicUserInfo>;
-  getDecodedIDToken(): Promise<DecodedIDTokenPayload>;
-  getDecodedIDPIDToken(): Promise<DecodedIDTokenPayload>;
+  getDecodedIDToken(): Promise<IdTokenPayload>;
+  getDecodedIDPIDToken(): Promise<IdTokenPayload>;
   getCryptoHelper(): Promise<CryptoHelper>;
   getIDToken(): Promise<string>;
   getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;

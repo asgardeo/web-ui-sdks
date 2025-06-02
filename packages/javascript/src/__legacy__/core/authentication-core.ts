@@ -36,7 +36,6 @@ import {
   BasicUserInfo,
   CryptoUtils,
   CustomGrantConfig,
-  DecodedIDTokenPayload,
   FetchRequestConfig,
   FetchResponse,
   OIDCEndpoints,
@@ -45,6 +44,7 @@ import {
   StrictAuthClientConfig,
   TokenResponse,
 } from '../models';
+import {IdTokenPayload} from '../../models/id-token';
 import {AuthenticationUtils} from '../utils';
 
 export class AuthenticationCore<T> {
@@ -461,9 +461,9 @@ export class AuthenticationCore<T> {
     return basicUserInfo;
   }
 
-  public async getDecodedIDToken(userID?: string): Promise<DecodedIDTokenPayload> {
+  public async getDecodedIDToken(userID?: string): Promise<IdTokenPayload> {
     const idToken: string = (await this._dataLayer.getSessionData(userID)).id_token;
-    const payload: DecodedIDTokenPayload = this._cryptoHelper.decodeIDToken(idToken);
+    const payload: IdTokenPayload = this._cryptoHelper.decodeIDToken(idToken);
 
     return payload;
   }

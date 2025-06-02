@@ -24,7 +24,7 @@ import {
   CryptoHelper,
   CustomGrantConfig,
   DataLayer,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
 } from '@asgardeo/javascript';
@@ -750,7 +750,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getDecodedIDToken(): Promise<DecodedIDTokenPayload | undefined> {
+  public async getDecodedIDToken(): Promise<IdTokenPayload | undefined> {
     await this._validateMethod();
 
     return this._client?.getDecodedIDToken();

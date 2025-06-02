@@ -25,7 +25,7 @@ import {
   BasicUserInfo,
   CryptoHelper,
   CustomGrantConfig,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   GetAuthURLConfig,
   OIDCEndpoints,
@@ -704,12 +704,12 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getDecodedIDToken = (): Promise<DecodedIDTokenPayload> => {
+  const getDecodedIDToken = (): Promise<IdTokenPayload> => {
     const message: Message<null> = {
       type: GET_DECODED_ID_TOKEN,
     };
 
-    return communicate<null, DecodedIDTokenPayload>(message)
+    return communicate<null, IdTokenPayload>(message)
       .then(response => {
         return Promise.resolve(response);
       })
@@ -718,12 +718,12 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getDecodedIDPIDToken = (): Promise<DecodedIDTokenPayload> => {
+  const getDecodedIDPIDToken = (): Promise<IdTokenPayload> => {
     const message: Message<null> = {
       type: GET_DECODED_IDP_ID_TOKEN,
     };
 
-    return communicate<null, DecodedIDTokenPayload>(message)
+    return communicate<null, IdTokenPayload>(message)
       .then(response => {
         return Promise.resolve(response);
       })

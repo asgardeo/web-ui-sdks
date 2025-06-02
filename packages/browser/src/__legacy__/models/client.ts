@@ -22,7 +22,7 @@ import {
   CryptoHelper,
   CustomGrantConfig,
   DataLayer,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
 } from '@asgardeo/javascript';
@@ -60,7 +60,7 @@ export interface MainThreadClientInterface {
   refreshAccessToken(): Promise<BasicUserInfo>;
   revokeAccessToken(): Promise<boolean>;
   getBasicUserInfo(): Promise<BasicUserInfo>;
-  getDecodedIDToken(): Promise<DecodedIDTokenPayload>;
+  getDecodedIDToken(): Promise<IdTokenPayload>;
   getCryptoHelper(): Promise<CryptoHelper>;
   getConfigData(): Promise<AuthClientConfig<MainThreadClientConfig>>;
   getIDToken(): Promise<string>;
@@ -97,8 +97,8 @@ export interface WebWorkerClientInterface {
   getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
   getBasicUserInfo(): Promise<BasicUserInfo>;
   getConfigData(): Promise<AuthClientConfig<WebWorkerClientConfig>>;
-  getDecodedIDToken(): Promise<DecodedIDTokenPayload>;
-  getDecodedIDPIDToken(): Promise<DecodedIDTokenPayload>;
+  getDecodedIDToken(): Promise<IdTokenPayload>;
+  getDecodedIDPIDToken(): Promise<IdTokenPayload>;
   getCryptoHelper(): Promise<CryptoHelper>;
   getIDToken(): Promise<string>;
   isAuthenticated(): Promise<boolean>;

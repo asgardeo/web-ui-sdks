@@ -21,7 +21,7 @@ import {
   BasicUserInfo,
   CustomGrantConfig,
   DataLayer,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
   Store,
@@ -62,7 +62,7 @@ export class AsgardeoNodeClient<T> {
     */
   constructor() {}
 
-  public async initialize (config: AuthClientConfig<T>, store?: Store): Promise<boolean> {
+  public async initialize(config: AuthClientConfig<T>, store?: Store): Promise<boolean> {
     this._authCore = new AsgardeoNodeCore(config, store);
 
     return Promise.resolve(true);
@@ -220,7 +220,7 @@ export class AsgardeoNodeClient<T> {
    * @param {string} userId - The userId of the user.
    * (If you are using ExpressJS, you may get this from the request cookies)
    *
-   * @return {Promise<DecodedIDTokenPayload>} -A Promise that resolves with
+   * @return {Promise<IdTokenPayload>} -A Promise that resolves with
    * an object containing the decoded ID token payload.
    *
    * @example
@@ -233,7 +233,7 @@ export class AsgardeoNodeClient<T> {
    * @memberof AsgardeoNodeClient
    *
    */
-  public async getDecodedIDToken(userId?: string): Promise<DecodedIDTokenPayload> {
+  public async getDecodedIDToken(userId?: string): Promise<IdTokenPayload> {
     return this._authCore.getDecodedIDToken(userId);
   }
 

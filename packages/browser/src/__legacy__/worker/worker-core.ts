@@ -23,7 +23,7 @@ import {
   BasicUserInfo,
   CryptoHelper,
   CustomGrantConfig,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
   SESSION_STATE,
@@ -168,7 +168,7 @@ export const WebWorkerCore = async (
     return _authenticationHelper.getBasicUserInfo();
   };
 
-  const getDecodedIDToken = async (): Promise<DecodedIDTokenPayload> => {
+  const getDecodedIDToken = async (): Promise<IdTokenPayload> => {
     return _authenticationHelper.getDecodedIDToken();
   };
 
@@ -176,7 +176,7 @@ export const WebWorkerCore = async (
     return _authenticationHelper.getCryptoHelper();
   };
 
-  const getDecodedIDPIDToken = async (): Promise<DecodedIDTokenPayload> => {
+  const getDecodedIDPIDToken = async (): Promise<IdTokenPayload> => {
     return _authenticationHelper.getDecodedIDPIDToken();
   };
 
