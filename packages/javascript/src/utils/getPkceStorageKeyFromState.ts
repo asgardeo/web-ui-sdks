@@ -21,15 +21,15 @@ import PkceConstants from '../constants/PkceConstants';
 /**
  * Extracts the PKCE key from a state parameter string.
  *
- * @param stateParam - The state parameter string containing the request index.
+ * @param state - The state parameter string containing the request index.
  * @returns The PKCE key string in the format `pkce_code_verifier_${index}`.
  * @example
- * const stateParam = "request_1";
- * const pkceKey = getPkceStorageKeyFromState(stateParam);
+ * const state = "request_1";
+ * const pkceKey = getPkceStorageKeyFromState(state);
  * // Returns: "pkce_code_verifier_1"
  */
-const getPkceStorageKeyFromState = (stateParam: string): string => {
-  const index: number = parseInt(stateParam.split('request_')[1]);
+const getPkceStorageKeyFromState = (state: string): string => {
+  const index: number = parseInt(state.split('request_')[1]);
 
   return `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}${index}`;
 };
