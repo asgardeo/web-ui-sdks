@@ -16,9 +16,9 @@
  * under the License.
  */
 
-const PKCEConstants = {
+const PkceConstants = {
   PKCE_CODE_VERIFIER: 'pkce_code_verifier',
   PKCE_SEPARATOR: '#',
 } as const;
 
-export default PKCEConstants;
+export default PkceConstants;

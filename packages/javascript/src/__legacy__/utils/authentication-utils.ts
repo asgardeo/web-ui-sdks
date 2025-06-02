@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import PKCEConstants from "../../constants/PKCEConstants";
+import PkceConstants from "../../constants/PkceConstants";
 import { DecodedIDTokenPayload } from "../models";
 
 export class AuthenticationUtils {

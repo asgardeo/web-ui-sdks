@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import PKCEConstants from '../constants/PKCEConstants';
+import PkceConstants from '../constants/PkceConstants';
 
 /**
  * Generates a state parameter for request correlation by combining an optional state string with a request index.
@@ -34,7 +34,7 @@ import PKCEConstants from '../constants/PKCEConstants';
  * // Returns: "request_1"
  */
 const generateStateParamForRequestCorrelation = (pkceKey: string, state?: string): string => {
-  const index: number = parseInt(pkceKey.split(PKCEConstants.PKCE_SEPARATOR)[1]);
+  const index: number = parseInt(pkceKey.split(PkceConstants.PKCE_SEPARATOR)[1]);
 
   return state ? `${state}_request_${index}` : `request_${index}`;
 };
