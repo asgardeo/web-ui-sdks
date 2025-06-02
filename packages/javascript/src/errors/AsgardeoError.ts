@@ -71,7 +71,7 @@ export default class AsgardeoError extends Error {
     }
   }
 
-  public overridetoString(): string {
+  public override toString(): string {
     return `[${this.name}]\nMessage: ${this.message}`;
   }
 }
