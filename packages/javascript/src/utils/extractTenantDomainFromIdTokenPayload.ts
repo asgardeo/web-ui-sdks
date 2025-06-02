@@ -24,17 +24,20 @@ import {IdTokenPayload} from '../models/id-token';
  * @deprecated since v1.0.6 — This utility assumes a legacy tenant extraction pattern from the `sub` claim,
  * which may not be reliable. Will be removed in a future version.
  *
+ * @param payload - The ID token payload containing the `sub` claim.
+ * @param subjectSeparator - The separator used in the `sub` claim to split the user identifier and tenant domain.
+ *
  * Consider extracting the tenant domain using a dedicated claim (e.g., `tenant_domain`) when available.
  */
-const getTenantDomainFromIdTokenPayload = (payload: IdTokenPayload, uidSeparator: string = '@'): string => {
+const extractTenantDomainFromIdTokenPayload = (payload: IdTokenPayload, subjectSeparator: string = '@'): string => {
   const uid: string = payload.sub;
 
   if (!uid) return '';
 
-  const tokens: string[] = uid.split(uidSeparator);
+  const tokens: string[] = uid.split(subjectSeparator);
 
   // This pattern assumes a format like: `<username>@<something>@<tenant_domain>`
   return tokens.length > 2 ? tokens[tokens.length - 1] : '';
 };
 
-export default getTenantDomainFromIdTokenPayload;
+export default extractTenantDomainFromIdTokenPayload;

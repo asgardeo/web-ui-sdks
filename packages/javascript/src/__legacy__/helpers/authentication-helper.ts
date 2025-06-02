@@ -51,7 +51,7 @@ import {
 } from '../models';
 import {IdTokenPayload} from '../../models/id-token';
 import PkceConstants from '../../constants/PkceConstants';
-import getTenantDomainFromIdTokenPayload from '../../utils/getTenantDomainFromIdToken';
+import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
 
 export class AuthenticationHelper<T> {
@@ -221,7 +221,7 @@ export class AuthenticationHelper<T> {
 
   public getAuthenticatedUserInfo(idToken: string): AuthenticatedUserInfo {
     const payload: IdTokenPayload = this._cryptoHelper.decodeIDToken(idToken);
-    const tenantDomain: string = getTenantDomainFromIdTokenPayload(payload);
+    const tenantDomain: string = extractTenantDomainFromIdTokenPayload(payload);
     const username: string = payload?.['username'] ?? '';
     const givenName: string = payload?.['given_name'] ?? '';
     const familyName: string = payload?.['family_name'] ?? '';
