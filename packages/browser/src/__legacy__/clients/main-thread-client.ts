@@ -33,7 +33,7 @@ import {
   STATE,
   SessionData,
   Store,
-  extractPKCEKeyFromStateParam
+  getPkceStorageKeyFromState,
 } from '@asgardeo/javascript';
 import {SILENT_SIGN_IN_STATE, TOKEN_REQUEST_CONFIG_KEY} from '../constants';
 import {AuthenticationHelper, SPAHelper, SessionManagementHelper} from '../helpers';
@@ -224,7 +224,7 @@ export const MainThreadClient = async (
 
       return _authenticationClient.getAuthorizationURL(signInConfig).then(async (url: string) => {
         if (config.storage === Storage.BrowserMemory && config.enablePKCE) {
-          const pkceKey: string = extractPKCEKeyFromStateParam(resolvedState);
+          const pkceKey: string = getPkceStorageKeyFromState(resolvedState);
 
           SPAUtils.setPKCE(pkceKey, (await _authenticationClient.getPKCECode(resolvedState)) as string);
         }
@@ -336,7 +336,7 @@ export const MainThreadClient = async (
       const state = urlObject.searchParams.get(STATE);
 
       SPAUtils.setPKCE(
-        extractPKCEKeyFromStateParam(state ?? ''),
+        getPkceStorageKeyFromState(state ?? ''),
         (await _authenticationClient.getPKCECode(state ?? '')) as string,
       );
     }

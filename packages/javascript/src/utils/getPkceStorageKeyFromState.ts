@@ -25,13 +25,13 @@ import PKCEConstants from '../constants/PKCEConstants';
  * @returns The PKCE key string in the format `pkce_code_verifier_${index}`.
  * @example
  * const stateParam = "request_1";
- * const pkceKey = extractPKCEKeyFromStateParam(stateParam);
+ * const pkceKey = getPkceStorageKeyFromState(stateParam);
  * // Returns: "pkce_code_verifier_1"
  */
-const extractPKCEKeyFromStateParam = (stateParam: string): string => {
+const getPkceStorageKeyFromState = (stateParam: string): string => {
   const index: number = parseInt(stateParam.split('request_')[1]);
 
   return `${PKCEConstants.PKCE_CODE_VERIFIER}${PKCEConstants.PKCE_SEPARATOR}${index}`;
 };
 
-export default extractPKCEKeyFromStateParam;
+export default getPkceStorageKeyFromState;
