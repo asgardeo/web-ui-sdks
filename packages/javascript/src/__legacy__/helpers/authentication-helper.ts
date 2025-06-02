@@ -27,8 +27,6 @@ import {
     JWKS_ENDPOINT,
     OIDC_SCOPE,
     OIDC_SESSION_IFRAME_ENDPOINT,
-    PKCE_CODE_VERIFIER,
-    PKCE_SEPARATOR,
     REVOKE_TOKEN_ENDPOINT,
     SCOPE_TAG,
     SERVICE_RESOURCES,
@@ -53,6 +51,7 @@ import {
     TokenResponse
 } from "../models";
 import { AuthenticationUtils } from "../utils";
+import PKCEConstants from "../../constants/PKCEConstants";
 
 export class AuthenticationHelper<T> {
     private _dataLayer: DataLayer<T>;
@@ -340,14 +339,14 @@ export class AuthenticationHelper<T> {
         const keys: string[] = [];
 
         Object.keys(tempData).forEach((key: string) => {
-            if (key.startsWith(PKCE_CODE_VERIFIER)) {
+            if (key.startsWith(PKCEConstants.PKCE_CODE_VERIFIER)) {
                 keys.push(key);
             }
         });
 
         const lastKey: string | undefined = keys.sort().pop();
-        const index: number = parseInt(lastKey?.split(PKCE_SEPARATOR)[ 1 ] ?? "-1");
+        const index: number = parseInt(lastKey?.split(PKCEConstants.PKCE_SEPARATOR)[1] ?? "-1");
 
-        return `${ PKCE_CODE_VERIFIER }${ PKCE_SEPARATOR }${ index + 1 }`;
+        return `${PKCEConstants.PKCE_CODE_VERIFIER}${PKCEConstants.PKCE_SEPARATOR}${index + 1}`;
     }
 }

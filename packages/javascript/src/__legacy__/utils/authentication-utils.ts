@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import { PKCE_CODE_VERIFIER, PKCE_SEPARATOR } from "../constants";
+import PKCEConstants from "../../constants/PKCEConstants";
 import { DecodedIDTokenPayload } from "../models";
 
 export class AuthenticationUtils {
@@ -97,7 +97,7 @@ export class AuthenticationUtils {
      * @returns The state param value.
      */
     public static generateStateParamForRequestCorrelation(pkceKey: string, state?: string): string {
-        const index: number = parseInt(pkceKey.split(PKCE_SEPARATOR)[1]);
+        const index: number = parseInt(pkceKey.split(PKCEConstants.PKCE_SEPARATOR)[1]);
 
         return state ? `${state}_request_${index}` : `request_${index}`;
     }
@@ -105,6 +105,6 @@ export class AuthenticationUtils {
     public static extractPKCEKeyFromStateParam(stateParam: string): string {
         const index: number = parseInt(stateParam.split("request_")[1]);
 
-        return `${PKCE_CODE_VERIFIER}${PKCE_SEPARATOR}${index}`;
+        return `${PKCEConstants.PKCE_CODE_VERIFIER}${PKCEConstants.PKCE_SEPARATOR}${index}`;
     }
 }

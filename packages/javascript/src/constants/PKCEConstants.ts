@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, WSO2 LLC. (https://www.wso2.com). All Rights Reserved.
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,15 +16,9 @@
  * under the License.
  */
 
-export enum Stores {
-    ConfigData = "config_data",
-    OIDCProviderMetaData = "oidc_provider_meta_data",
-    SessionData = "session_data",
-    TemporaryData = "temporary_data"
-}
+const PKCEConstants = {
+  PKCE_CODE_VERIFIER: 'pkce_code_verifier',
+  PKCE_SEPARATOR: '#',
+} as const;
 
-export const REFRESH_TOKEN_TIMER: string = "refresh_token_timer";
-
-export const SUPPORTED_SIGNATURE_ALGORITHMS: string[] = [
-    "RS256", "RS512", "RS384", "PS256"
-];
+export default PKCEConstants;
