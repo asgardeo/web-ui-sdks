@@ -30,6 +30,7 @@ import {
   GetAuthURLConfig,
   OIDCEndpoints,
   TokenResponse,
+  extractPKCEKeyFromStateParam
 } from '@asgardeo/javascript';
 import {SPAHelper} from './spa-helper';
 import {
@@ -457,10 +458,10 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     const config = await this._dataLayer.getConfigData();
 
     if (config.storage === Storage.BrowserMemory && config.enablePKCE && sessionState) {
-      const pkce = SPAUtils.getPKCE(AuthenticationUtils.extractPKCEKeyFromStateParam(sessionState));
+      const pkce = SPAUtils.getPKCE(extractPKCEKeyFromStateParam(sessionState));
 
       await this._authenticationClient.setPKCECode(
-        AuthenticationUtils.extractPKCEKeyFromStateParam(sessionState),
+        extractPKCEKeyFromStateParam(sessionState),
         pkce,
       );
     } else if (config.storage === Storage.WebWorker && pkce) {

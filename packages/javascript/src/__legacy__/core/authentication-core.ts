@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import extractPKCEKeyFromStateParam from "../../utils/extractPKCEKeyFromStateParam";
 import {
     AUTHORIZATION_ENDPOINT,
     FetchCredentialTypes,
@@ -213,13 +214,13 @@ export class AuthenticationCore<T> {
         if (configData.enablePKCE) {
             body.set(
                 "code_verifier", `${await this._dataLayer.getTemporaryDataParameter(
-                    AuthenticationUtils.extractPKCEKeyFromStateParam(state),
+                    extractPKCEKeyFromStateParam(state),
                     userID
                 )}`
             );
 
             await this._dataLayer.removeTemporaryDataParameter(
-                AuthenticationUtils.extractPKCEKeyFromStateParam(state),
+                extractPKCEKeyFromStateParam(state),
                 userID
             );
         }
@@ -668,14 +669,14 @@ export class AuthenticationCore<T> {
 
     public async getPKCECode(state: string, userID?: string): Promise<string> {
         return (await this._dataLayer.getTemporaryDataParameter(
-            AuthenticationUtils.extractPKCEKeyFromStateParam(state),
+            extractPKCEKeyFromStateParam(state),
             userID
         )) as string;
     }
 
     public async setPKCECode(pkce: string, state: string, userID?: string): Promise<void> {
         return await this._dataLayer.setTemporaryDataParameter(
-            AuthenticationUtils.extractPKCEKeyFromStateParam(state),
+            extractPKCEKeyFromStateParam(state),
             pkce,
             userID
         );

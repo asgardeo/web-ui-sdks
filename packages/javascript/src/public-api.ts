@@ -42,4 +42,5 @@ export {User} from './models/user';
 
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 
+export {default as extractPKCEKeyFromStateParam} from './utils/extractPKCEKeyFromStateParam';
 export {default as removeTrailingSlash} from './utils/removeTrailingSlash';

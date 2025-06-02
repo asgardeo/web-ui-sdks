@@ -101,10 +101,4 @@ export class AuthenticationUtils {
 
         return state ? `${state}_request_${index}` : `request_${index}`;
     }
-
-    public static extractPKCEKeyFromStateParam(stateParam: string): string {
-        const index: number = parseInt(stateParam.split("request_")[1]);
-
-        return `${PKCEConstants.PKCE_CODE_VERIFIER}${PKCEConstants.PKCE_SEPARATOR}${index}`;
-    }
 }
