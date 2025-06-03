@@ -19,7 +19,6 @@
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import getUserInfo from '../getUserInfo';
 import {User} from '../../models/user';
-import DefaultOIDCEndpoints from '../../configs/DefaultOIDCEndpoints';
 import AsgardeoAPIError from '../../errors/AsgardeoAPIError';
 
 describe('getUserInfo', (): void => {
