@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, WSO2 LLC. (https://www.wso2.com). All Rights Reserved.
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,4 +16,24 @@
  * under the License.
  */
 
-export const REFRESH_TOKEN_TIMER: string = 'refresh_token_timer';
+/**
+ * Constants related to OIDC token management and storage.
+ */
+const OidcTokenConstants = {
+  /**
+   * Storage-related constants for OIDC tokens.
+   */
+  Storage: {
+    /**
+     * Timer-related storage keys.
+     */
+    TimerKeys: {
+      /**
+       * Key used to store the refresh token timer identifier.
+       */
+      REFRESH_TOKEN_TIMER: 'refresh_token_timer',
+    },
+  },
+} as const;
+
+export default OidcTokenConstants;

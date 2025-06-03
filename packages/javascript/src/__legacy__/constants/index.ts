@@ -18,6 +18,5 @@
 
 export * from './oidc-endpoints';
 export * from './custom-grant-template-tags';
-export * from './data';
 export * from './parameters';
 export * from './fetch';

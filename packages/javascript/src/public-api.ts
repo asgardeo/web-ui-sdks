@@ -21,12 +21,13 @@ export * from './__legacy__/models';
 export * from './models/oauth/oauth-response';
 export * from './__legacy__/constants/custom-grant-template-tags';
 export * from './__legacy__/constants/parameters';
-export * from './__legacy__/constants/data';
 export * from './__legacy__/helpers/crypto-helper';
 export * from './__legacy__/exception';
 export * from './__legacy__/data';
 
 export {default as getUserInfo} from './api/getUserInfo';
+
+export {default as OidcTokenConstants} from './constants/oidc/OidcTokenConstants';
 
 export {default as AsgardeoError} from './errors/AsgardeoError';
 export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';
