@@ -23,37 +23,37 @@ import generatePkceStorageKey from '../generatePkceStorageKey';
 describe('generatePkceStorageKey', (): void => {
   it('should generate PKCE key with index 0 for empty temporary data', (): void => {
     const tempData: TemporaryStore = {};
-    const expectedKey: string = `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}0`;
+    const expectedKey: string = `${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}0`;
 
     expect(generatePkceStorageKey(tempData)).toBe(expectedKey);
   });
 
   it('should generate PKCE key with incremented index for existing PKCE keys', (): void => {
     const tempData: TemporaryStore = {
-      [`${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}1`]: 'value1',
-      [`${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}2`]: 'value2',
+      [`${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}1`]: 'value1',
+      [`${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}2`]: 'value2',
     };
-    const expectedKey: string = `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}3`;
+    const expectedKey: string = `${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}3`;
 
     expect(generatePkceStorageKey(tempData)).toBe(expectedKey);
   });
 
   it('should handle non-sequential PKCE keys', (): void => {
     const tempData: TemporaryStore = {
-      [`${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}1`]: 'value1',
-      [`${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}5`]: 'value5',
+      [`${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}1`]: 'value1',
+      [`${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}5`]: 'value5',
     };
-    const expectedKey: string = `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}6`;
+    const expectedKey: string = `${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}6`;
 
     expect(generatePkceStorageKey(tempData)).toBe(expectedKey);
   });
 
   it('should ignore non-PKCE keys in temporary data', (): void => {
     const tempData: TemporaryStore = {
-      [`${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}1`]: 'value1',
+      [`${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}1`]: 'value1',
       'other-key': 'other-value',
     };
-    const expectedKey: string = `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}2`;
+    const expectedKey: string = `${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}2`;
 
     expect(generatePkceStorageKey(tempData)).toBe(expectedKey);
   });

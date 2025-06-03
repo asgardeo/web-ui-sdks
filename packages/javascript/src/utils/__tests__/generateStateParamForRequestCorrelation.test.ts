@@ -22,26 +22,26 @@ import PkceConstants from '../../constants/PkceConstants';
 
 describe('generateStateParamForRequestCorrelation', (): void => {
   it('should generate state parameter with custom state', (): void => {
-    const pkceKey: string = `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}1`;
+    const pkceKey: string = `${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}1`;
     const customState: string = 'myState';
 
     expect(generateStateParamForRequestCorrelation(pkceKey, customState)).toBe('myState_request_1');
   });
 
   it('should generate state parameter without custom state', (): void => {
-    const pkceKey: string = `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}2`;
+    const pkceKey: string = `${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}2`;
 
     expect(generateStateParamForRequestCorrelation(pkceKey)).toBe('request_2');
   });
 
   it('should handle different index values', (): void => {
-    const pkceKey: string = `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}999`;
+    const pkceKey: string = `${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}999`;
 
     expect(generateStateParamForRequestCorrelation(pkceKey)).toBe('request_999');
   });
 
   it('should combine custom state with request index correctly', (): void => {
-    const pkceKey: string = `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}5`;
+    const pkceKey: string = `${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}5`;
     const customState: string = 'complex_state_123';
 
     expect(generateStateParamForRequestCorrelation(pkceKey, customState)).toBe('complex_state_123_request_5');

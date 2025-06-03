@@ -34,7 +34,7 @@ import PkceConstants from '../constants/PkceConstants';
 const extractPkceStorageKeyFromState = (state: string): string => {
   const index: number = parseInt(state.split('request_')[1]);
 
-  return `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}${index}`;
+  return `${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}${index}`;
 };
 
 export default extractPkceStorageKeyFromState;

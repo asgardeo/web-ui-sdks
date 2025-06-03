@@ -37,15 +37,15 @@ const generatePkceStorageKey = (tempStore: TemporaryStore): string => {
   const keys: string[] = [];
 
   Object.keys(tempStore).forEach((key: string) => {
-    if (key.startsWith(PkceConstants.PKCE_CODE_VERIFIER)) {
+    if (key.startsWith(PkceConstants.PkceStorageKeys.CODE_VERIFIER)) {
       keys.push(key);
     }
   });
 
   const lastKey: string | undefined = keys.sort().pop();
-  const index: number = parseInt(lastKey?.split(PkceConstants.PKCE_SEPARATOR)[1] ?? '-1');
+  const index: number = parseInt(lastKey?.split(PkceConstants.PkceStorageKeys.SEPARATOR)[1] ?? '-1');
 
-  return `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}${index + 1}`;
+  return `${PkceConstants.PkceStorageKeys.CODE_VERIFIER}${PkceConstants.PkceStorageKeys.SEPARATOR}${index + 1}`;
 };
 
 export default generatePkceStorageKey;

@@ -16,9 +16,23 @@
  * under the License.
  */
 
+/**
+ * Constants used for PKCE (Proof Key for Code Exchange) implementation.
+ */
 const PkceConstants = {
-  PKCE_CODE_VERIFIER: 'pkce_code_verifier',
-  PKCE_SEPARATOR: '#',
+  /**
+   * Storage keys used for PKCE-related data persistence.
+   */
+  PkceStorageKeys: {
+    /**
+     * Key used to store the PKCE code verifier in the storage.
+     */
+    CODE_VERIFIER: 'pkce_code_verifier',
+    /**
+     * Separator character used in storage keys.
+     */
+    SEPARATOR: '#',
+  },
 } as const;
 
 export default PkceConstants;
