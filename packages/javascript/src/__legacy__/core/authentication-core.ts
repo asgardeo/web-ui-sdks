@@ -39,7 +39,7 @@ import {IdTokenPayload} from '../../models/id-token';
 import {TemporaryStore} from '../../models/store';
 import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
-import ScopeConstants from '../../constants/oidc/ScopeConstants';
+import ScopeConstants from '../../constants/ScopeConstants';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;

@@ -50,7 +50,7 @@ import {IdTokenPayload} from '../../models/id-token';
 import PkceConstants from '../../constants/PkceConstants';
 import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
-import ScopeConstants from '../../constants/oidc/ScopeConstants';
+import ScopeConstants from '../../constants/ScopeConstants';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;

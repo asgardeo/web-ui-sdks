@@ -19,7 +19,7 @@
 import {AsgardeoAuthException} from '../exception';
 import {CryptoUtils, JWKInterface} from '../models';
 import {IdTokenPayload} from '../../models/id-token';
-import TokenConstants from '../../constants/oidc/TokenConstants';
+import TokenConstants from '../../constants/TokenConstants';
 
 export class CryptoHelper<T = any> {
   private _cryptoUtils: CryptoUtils<T>;

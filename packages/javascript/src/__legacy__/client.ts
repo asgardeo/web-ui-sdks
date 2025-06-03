@@ -33,7 +33,7 @@ import {IdTokenPayload} from '../models/id-token';
 import {OIDCEndpoints} from '../models/oidc/oidc-endpoints';
 import {Store} from '../models/store';
 import {ResponseMode} from '../models/oauth/oauth-response';
-import ScopeConstants from '../constants/oidc/ScopeConstants';
+import ScopeConstants from '../constants/ScopeConstants';
 
 /**
  * Default configurations.
