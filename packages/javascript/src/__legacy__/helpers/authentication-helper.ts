@@ -310,27 +310,4 @@ export class AuthenticationHelper<T> {
       return Promise.resolve(tokenResponse);
     }
   }
-
-  /**
-   * This generates a PKCE key with the right index value.
-   *
-   * @param userID - The userID to identify a user in a multi-user scenario.
-   *
-   * @returns The PKCE key.
-   */
-  public async generatePKCEKey(userID?: string): Promise<string> {
-    const tempData: TemporaryData = await this._dataLayer.getTemporaryData(userID);
-    const keys: string[] = [];
-
-    Object.keys(tempData).forEach((key: string) => {
-      if (key.startsWith(PkceConstants.PKCE_CODE_VERIFIER)) {
-        keys.push(key);
-      }
-    });
-
-    const lastKey: string | undefined = keys.sort().pop();
-    const index: number = parseInt(lastKey?.split(PkceConstants.PKCE_SEPARATOR)[1] ?? '-1');
-
-    return `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}${index + 1}`;
-  }
 }

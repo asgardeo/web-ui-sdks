@@ -45,6 +45,7 @@ import {
   TokenResponse,
 } from '../models';
 import {IdTokenPayload} from '../../models/id-token';
+import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
@@ -94,7 +95,8 @@ export class AuthenticationCore<T> {
       authorizeRequestParams.set('response_mode', configData.responseMode);
     }
 
-    const pkceKey: string = await this._authenticationHelper.generatePKCEKey(userID);
+    const tempStore: TemporaryData = await this._dataLayer.getTemporaryData(userID);
+    const pkceKey: string = await generatePkceStorageKey(tempStore);
 
     if (configData.enablePKCE) {
       const codeVerifier: string = this._cryptoHelper?.getCodeVerifier();
