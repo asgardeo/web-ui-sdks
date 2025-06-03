@@ -19,7 +19,7 @@
 /**
  * Constants related to OIDC token management and storage.
  */
-const OidcTokenConstants = {
+const TokenConstants = {
   /**
    * Storage-related constants for OIDC tokens.
    */
@@ -36,4 +36,4 @@ const OidcTokenConstants = {
   },
 } as const;
 
-export default OidcTokenConstants;
+export default TokenConstants;

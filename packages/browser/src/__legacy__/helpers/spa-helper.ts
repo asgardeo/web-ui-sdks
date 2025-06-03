@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, DataLayer, OidcTokenConstants} from '@asgardeo/javascript';
+import {AsgardeoAuthClient, DataLayer, TokenConstants} from '@asgardeo/javascript';
 
 import {AuthenticationHelper} from '../helper/authentication-helper';
 import {MainThreadClientConfig, WebWorkerClientConfig} from '../models/config';
@@ -48,13 +48,20 @@ export class SPAHelper<T extends MainThreadClientConfig | WebWorkerClientConfig>
         await authenticationHelper.refreshAccessToken();
       }, time * 1000);
 
-      await this._dataLayer.setTemporaryDataParameter(OidcTokenConstants.Storage.TimerKeys.REFRESH_TOKEN_TIMER, JSON.stringify(timer));
+      await this._dataLayer.setTemporaryDataParameter(
+        TokenConstants.Storage.TimerKeys.REFRESH_TOKEN_TIMER,
+        JSON.stringify(timer),
+      );
     }
   }
 
   public async getRefreshTimeoutTimer(): Promise<number> {
-    if (await this._dataLayer.getTemporaryDataParameter(OidcTokenConstants.Storage.TimerKeys.REFRESH_TOKEN_TIMER)) {
-      return JSON.parse((await this._dataLayer.getTemporaryDataParameter(OidcTokenConstants.Storage.TimerKeys.REFRESH_TOKEN_TIMER)) as string);
+    if (await this._dataLayer.getTemporaryDataParameter(TokenConstants.Storage.TimerKeys.REFRESH_TOKEN_TIMER)) {
+      return JSON.parse(
+        (await this._dataLayer.getTemporaryDataParameter(
+          TokenConstants.Storage.TimerKeys.REFRESH_TOKEN_TIMER,
+        )) as string,
+      );
     }
 
     return -1;
