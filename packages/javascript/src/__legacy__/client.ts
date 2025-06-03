@@ -32,8 +32,8 @@ import {
 import {IdTokenPayload} from '../models/id-token';
 import {OIDCEndpoints} from '../models/oidc/oidc-endpoints';
 import {Store} from '../models/store';
-import { OAuthResponseMode } from '../models/oauth/oauth-response';
-import OidcScopes from '../constants/oidc/OidcScopes';
+import {OAuthResponseMode} from '../models/oauth/oauth-response';
+import OidcScopeConstants from '../constants/oidc/OidcScopeConstants';
 
 /**
  * Default configurations.
@@ -42,7 +42,7 @@ const DefaultConfig: Partial<AuthClientConfig<unknown>> = {
   clockTolerance: 300,
   enablePKCE: true,
   responseMode: OAuthResponseMode.Query,
-  scope: [OidcScopes.OPENID],
+  scope: [OidcScopeConstants.OPENID],
   sendCookiesInRequests: true,
   validateIDToken: true,
   validateIDTokenIssuer: true,

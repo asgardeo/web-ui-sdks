@@ -46,7 +46,7 @@ import {IdTokenPayload} from '../../models/id-token';
 import {TemporaryStore} from '../../models/store';
 import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
-import OidcScopes from '../../constants/oidc/OidcScopes';
+import OidcScopeConstants from '../../constants/oidc/OidcScopeConstants';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
@@ -80,11 +80,11 @@ export class AuthenticationCore<T> {
       authorizeRequestParams.set('client_secret', configData.clientSecret);
     }
 
-    let scope: string = OidcScopes.OPENID;
+    let scope: string = OidcScopeConstants.OPENID;
 
     if (configData.scope && configData.scope.length > 0) {
-      if (!configData.scope.includes(OidcScopes.OPENID)) {
-        configData.scope.push(OidcScopes.OPENID);
+      if (!configData.scope.includes(OidcScopeConstants.OPENID)) {
+        configData.scope.push(OidcScopeConstants.OPENID);
       }
       scope = configData.scope.join(' ');
     }

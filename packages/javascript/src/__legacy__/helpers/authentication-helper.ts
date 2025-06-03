@@ -51,7 +51,7 @@ import {IdTokenPayload} from '../../models/id-token';
 import PkceConstants from '../../constants/PkceConstants';
 import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
-import OidcScopes from '../../constants/oidc/OidcScopes';
+import OidcScopeConstants from '../../constants/oidc/OidcScopeConstants';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;
@@ -237,13 +237,13 @@ export class AuthenticationHelper<T> {
   }
 
   public async replaceCustomGrantTemplateTags(text: string, userID?: string): Promise<string> {
-    let scope: string = OidcScopes.OPENID;
+    let scope: string = OidcScopeConstants.OPENID;
     const configData: StrictAuthClientConfig = await this._config();
     const sessionData: SessionData = await this._dataLayer.getSessionData(userID);
 
     if (configData.scope && configData.scope.length > 0) {
-      if (!configData.scope.includes(OidcScopes.OPENID)) {
-        configData.scope.push(OidcScopes.OPENID);
+      if (!configData.scope.includes(OidcScopeConstants.OPENID)) {
+        configData.scope.push(OidcScopeConstants.OPENID);
       }
       scope = configData.scope.join(' ');
     }
