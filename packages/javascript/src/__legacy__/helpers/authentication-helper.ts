@@ -50,7 +50,7 @@ import {IdTokenPayload} from '../../models/id-token';
 import PkceConstants from '../../constants/PkceConstants';
 import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
-import OidcScopeConstants from '../../constants/oidc/OidcScopeConstants';
+import ScopeConstants from '../../constants/oidc/ScopeConstants';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;
@@ -180,7 +180,7 @@ export class AuthenticationHelper<T> {
 
     try {
       response = await fetch(jwksEndpoint, {
-        credentials: configData.sendCookiesInRequests ? "include" : "same-origin",
+        credentials: configData.sendCookiesInRequests ? 'include' : 'same-origin',
       });
     } catch (error: any) {
       throw new AsgardeoAuthException(
@@ -236,13 +236,13 @@ export class AuthenticationHelper<T> {
   }
 
   public async replaceCustomGrantTemplateTags(text: string, userID?: string): Promise<string> {
-    let scope: string = OidcScopeConstants.OPENID;
+    let scope: string = ScopeConstants.OPENID;
     const configData: StrictAuthClientConfig = await this._config();
     const sessionData: SessionData = await this._dataLayer.getSessionData(userID);
 
     if (configData.scope && configData.scope.length > 0) {
-      if (!configData.scope.includes(OidcScopeConstants.OPENID)) {
-        configData.scope.push(OidcScopeConstants.OPENID);
+      if (!configData.scope.includes(ScopeConstants.OPENID)) {
+        configData.scope.push(ScopeConstants.OPENID);
       }
       scope = configData.scope.join(' ');
     }

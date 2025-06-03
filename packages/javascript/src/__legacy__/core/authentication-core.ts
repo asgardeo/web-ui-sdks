@@ -17,13 +17,7 @@
  */
 import extractPkceStorageKeyFromState from '../../utils/extractPkceStorageKeyFromState';
 import generateStateParamForRequestCorrelation from '../../utils/generateStateParamForRequestCorrelation';
-import {
-  AUTHORIZATION_ENDPOINT,
-  OP_CONFIG_INITIATED,
-  SESSION_STATE,
-  SIGN_OUT_SUCCESS_PARAM,
-  STATE,
-} from '../constants';
+import {AUTHORIZATION_ENDPOINT, OP_CONFIG_INITIATED, SESSION_STATE, SIGN_OUT_SUCCESS_PARAM, STATE} from '../constants';
 import {DataLayer} from '../data';
 import {AsgardeoAuthException} from '../exception';
 import {AuthenticationHelper, CryptoHelper} from '../helpers';
@@ -45,7 +39,7 @@ import {IdTokenPayload} from '../../models/id-token';
 import {TemporaryStore} from '../../models/store';
 import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
-import OidcScopeConstants from '../../constants/oidc/OidcScopeConstants';
+import ScopeConstants from '../../constants/oidc/ScopeConstants';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
@@ -79,11 +73,11 @@ export class AuthenticationCore<T> {
       authorizeRequestParams.set('client_secret', configData.clientSecret);
     }
 
-    let scope: string = OidcScopeConstants.OPENID;
+    let scope: string = ScopeConstants.OPENID;
 
     if (configData.scope && configData.scope.length > 0) {
-      if (!configData.scope.includes(OidcScopeConstants.OPENID)) {
-        configData.scope.push(OidcScopeConstants.OPENID);
+      if (!configData.scope.includes(ScopeConstants.OPENID)) {
+        configData.scope.push(ScopeConstants.OPENID);
       }
       scope = configData.scope.join(' ');
     }
@@ -213,7 +207,7 @@ export class AuthenticationCore<T> {
     try {
       tokenResponse = await fetch(tokenEndpoint, {
         body: body,
-        credentials: configData.sendCookiesInRequests ? "include" : "same-origin",
+        credentials: configData.sendCookiesInRequests ? 'include' : 'same-origin',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -277,7 +271,7 @@ export class AuthenticationCore<T> {
     try {
       tokenResponse = await fetch(tokenEndpoint, {
         body: body.join('&'),
-        credentials: configData.sendCookiesInRequests ? "include" : "same-origin",
+        credentials: configData.sendCookiesInRequests ? 'include' : 'same-origin',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -331,7 +325,7 @@ export class AuthenticationCore<T> {
     try {
       response = await fetch(revokeTokenEndpoint, {
         body: body.join('&'),
-        credentials: configData.sendCookiesInRequests ? "include" : "same-origin",
+        credentials: configData.sendCookiesInRequests ? 'include' : 'same-origin',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -408,7 +402,7 @@ export class AuthenticationCore<T> {
 
     const requestConfig: FetchRequestConfig = {
       body: data.join('&'),
-      credentials: configData.sendCookiesInRequests ? "include" : "same-origin",
+      credentials: configData.sendCookiesInRequests ? 'include' : 'same-origin',
       headers: new Headers(requestHeaders),
       method: 'POST',
     };

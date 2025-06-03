@@ -21,7 +21,7 @@
  * These scopes determine what user information the client application can access.
  * @see {@link https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims OpenID Connect Core Specification}
  */
-const OidcScopeConstants = {
+const ScopeConstants = {
   /**
    * The basic scope required for OpenID Connect authentication.
    * Requests an ID token containing basic user information.
@@ -40,4 +40,4 @@ const OidcScopeConstants = {
   EMAIL: 'email',
 } as const;
 
-export default OidcScopeConstants;
+export default ScopeConstants;
