@@ -22,7 +22,6 @@ export * from './models/oauth/oauth-response';
 export * from './__legacy__/constants/custom-grant-template-tags';
 export * from './__legacy__/constants/parameters';
 export * from './__legacy__/constants/data';
-export * from './__legacy__/constants/scopes';
 export * from './__legacy__/helpers/crypto-helper';
 export * from './__legacy__/exception';
 export * from './__legacy__/data';

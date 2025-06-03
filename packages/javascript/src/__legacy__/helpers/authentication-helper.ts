@@ -25,7 +25,6 @@ import {
   FetchCredentialTypes,
   ISSUER,
   JWKS_ENDPOINT,
-  OIDC_SCOPE,
   OIDC_SESSION_IFRAME_ENDPOINT,
   REVOKE_TOKEN_ENDPOINT,
   SCOPE_TAG,
@@ -52,6 +51,7 @@ import {IdTokenPayload} from '../../models/id-token';
 import PkceConstants from '../../constants/PkceConstants';
 import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
+import OidcScopes from '../../constants/oidc/OidcScopes';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;
@@ -237,13 +237,13 @@ export class AuthenticationHelper<T> {
   }
 
   public async replaceCustomGrantTemplateTags(text: string, userID?: string): Promise<string> {
-    let scope: string = OIDC_SCOPE;
+    let scope: string = OidcScopes.OPENID;
     const configData: StrictAuthClientConfig = await this._config();
     const sessionData: SessionData = await this._dataLayer.getSessionData(userID);
 
     if (configData.scope && configData.scope.length > 0) {
-      if (!configData.scope.includes(OIDC_SCOPE)) {
-        configData.scope.push(OIDC_SCOPE);
+      if (!configData.scope.includes(OidcScopes.OPENID)) {
+        configData.scope.push(OidcScopes.OPENID);
       }
       scope = configData.scope.join(' ');
     }

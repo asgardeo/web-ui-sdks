@@ -20,7 +20,6 @@ import generateStateParamForRequestCorrelation from '../../utils/generateStatePa
 import {
   AUTHORIZATION_ENDPOINT,
   FetchCredentialTypes,
-  OIDC_SCOPE,
   OP_CONFIG_INITIATED,
   SESSION_STATE,
   SIGN_OUT_SUCCESS_PARAM,
@@ -47,6 +46,7 @@ import {IdTokenPayload} from '../../models/id-token';
 import {TemporaryStore} from '../../models/store';
 import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
+import OidcScopes from '../../constants/oidc/OidcScopes';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
@@ -80,11 +80,11 @@ export class AuthenticationCore<T> {
       authorizeRequestParams.set('client_secret', configData.clientSecret);
     }
 
-    let scope: string = OIDC_SCOPE;
+    let scope: string = OidcScopes.OPENID;
 
     if (configData.scope && configData.scope.length > 0) {
-      if (!configData.scope.includes(OIDC_SCOPE)) {
-        configData.scope.push(OIDC_SCOPE);
+      if (!configData.scope.includes(OidcScopes.OPENID)) {
+        configData.scope.push(OidcScopes.OPENID);
       }
       scope = configData.scope.join(' ');
     }
