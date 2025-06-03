@@ -16,10 +16,9 @@
  * under the License.
  */
 
-export * from "./client-config";
-export * from "./oidc-endpoints";
-export * from "./custom-grant-template-tags";
-export * from "./data";
-export * from "./parameters";
-export * from "./scopes";
-export * from  "./fetch";
+export * from './oidc-endpoints';
+export * from './custom-grant-template-tags';
+export * from './data';
+export * from './parameters';
+export * from './scopes';
+export * from './fetch';

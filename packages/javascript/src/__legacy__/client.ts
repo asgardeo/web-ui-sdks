@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {OIDC_SCOPE, OP_CONFIG_INITIATED, ResponseMode, SIGN_OUT_SUCCESS_PARAM, STATE} from './constants';
+import {OIDC_SCOPE, OP_CONFIG_INITIATED, SIGN_OUT_SUCCESS_PARAM, STATE} from './constants';
 import {AuthenticationCore} from './core';
 import {DataLayer} from './data';
 import {CryptoHelper} from './helpers';
@@ -32,6 +32,7 @@ import {
 import {IdTokenPayload} from '../models/id-token';
 import {OIDCEndpoints} from '../models/oidc/oidc-endpoints';
 import {Store} from '../models/store';
+import { OAuthResponseMode } from '../models/oauth/oauth-response';
 
 /**
  * Default configurations.
@@ -39,7 +40,7 @@ import {Store} from '../models/store';
 const DefaultConfig: Partial<AuthClientConfig<unknown>> = {
   clockTolerance: 300,
   enablePKCE: true,
-  responseMode: ResponseMode.query,
+  responseMode: OAuthResponseMode.Query,
   scope: [OIDC_SCOPE],
   sendCookiesInRequests: true,
   validateIDToken: true,

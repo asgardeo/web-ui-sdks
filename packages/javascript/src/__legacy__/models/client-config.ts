@@ -16,8 +16,8 @@
  * under the License.
  */
 
+import { OAuthResponseMode } from '../../models/oauth/oauth-response';
 import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
-import { ResponseMode } from "../constants";
 
 export interface DefaultAuthClientConfig {
   signInRedirectURL: string;
@@ -27,19 +27,19 @@ export interface DefaultAuthClientConfig {
   clientSecret?: string;
   enablePKCE?: boolean;
   prompt?: string;
-  responseMode?: ResponseMode;
+  responseMode?: OAuthResponseMode;
   scope?: string[];
   validateIDToken?: boolean;
   validateIDTokenIssuer?: boolean;
   /**
-  * Allowed leeway for id_tokens (in seconds).
-  */
+   * Allowed leeway for id_tokens (in seconds).
+   */
   clockTolerance?: number;
   /**
-  * Specifies if cookies should be sent with access-token requests, refresh-token requests,
-  * custom-grant requests, etc.
-  *
-  */
+   * Specifies if cookies should be sent with access-token requests, refresh-token requests,
+   * custom-grant requests, etc.
+   *
+   */
   sendCookiesInRequests?: boolean;
   sendIdTokenInLogoutRequest?: boolean;
 }
@@ -62,9 +62,6 @@ export interface ExplicitAuthClientConfig extends DefaultAuthClientConfig {
   wellKnownEndpoint?: string;
 }
 
-export type StrictAuthClientConfig =
-  | WellKnownAuthClientConfig
-  | BaseURLAuthClientConfig
-  | ExplicitAuthClientConfig;
+export type StrictAuthClientConfig = WellKnownAuthClientConfig | BaseURLAuthClientConfig | ExplicitAuthClientConfig;
 
 export type AuthClientConfig<T = unknown> = StrictAuthClientConfig & T;

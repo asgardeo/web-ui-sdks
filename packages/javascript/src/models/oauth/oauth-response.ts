@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, WSO2 LLC. (https://www.wso2.com). All Rights Reserved.
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,8 +16,20 @@
  * under the License.
  */
 
-export enum ResponseMode {
-    formPost = "form_post",
-    query = "query",
-    direct = "direct"
+/**
+ * Enum representing different OAuth response modes.
+ */
+export enum OAuthResponseMode {
+  /**
+   * Response is returned as POST parameters in an HTML form.
+   */
+  FormPost = 'form_post',
+  /**
+   * Response is returned as query parameters in the URL.
+   */
+  Query = 'query',
+  /**
+   * Response is returned directly to the client.
+   */
+  Direct = 'direct',
 }
