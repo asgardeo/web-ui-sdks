@@ -16,10 +16,10 @@
  * under the License.
  */
 
-import {SUPPORTED_SIGNATURE_ALGORITHMS} from '../constants';
 import {AsgardeoAuthException} from '../exception';
 import {CryptoUtils, JWKInterface} from '../models';
 import {IdTokenPayload} from '../../models/id-token';
+import OidcSignatureValidationConstants from '../../constants/oidc/OidcSignatureValidationConstants';
 
 export class CryptoHelper<T = any> {
   private _cryptoUtils: CryptoUtils<T>;
@@ -105,7 +105,7 @@ export class CryptoHelper<T = any> {
       .verifyJwt(
         idToken,
         jwk,
-        SUPPORTED_SIGNATURE_ALGORITHMS,
+        OidcSignatureValidationConstants.SUPPORTED_ALGORITHMS as unknown as string[],
         clientID,
         issuer,
         username,

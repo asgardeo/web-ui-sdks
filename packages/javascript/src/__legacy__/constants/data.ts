@@ -17,5 +17,3 @@
  */
 
 export const REFRESH_TOKEN_TIMER: string = 'refresh_token_timer';
-
-export const SUPPORTED_SIGNATURE_ALGORITHMS: string[] = ['RS256', 'RS512', 'RS384', 'PS256'];
