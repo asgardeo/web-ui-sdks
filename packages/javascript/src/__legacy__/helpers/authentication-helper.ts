@@ -77,14 +77,14 @@ export class AuthenticationHelper<T> {
     const configData: StrictAuthClientConfig = await this._config();
 
     const requiredEndpoints: string[] = [
-      OidcMetadataConstants.Endpoints.AUTHORIZATION,
-      OidcMetadataConstants.Endpoints.END_SESSION,
-      OidcMetadataConstants.Endpoints.JWKS,
-      OidcMetadataConstants.Endpoints.SESSION_IFRAME,
-      OidcMetadataConstants.Endpoints.REVOCATION,
-      OidcMetadataConstants.Endpoints.TOKEN,
-      OidcMetadataConstants.Endpoints.ISSUER,
-      OidcMetadataConstants.Endpoints.USERINFO,
+      OidcMetadataConstants.StorageKeys.Endpoints.AUTHORIZATION,
+      OidcMetadataConstants.StorageKeys.Endpoints.END_SESSION,
+      OidcMetadataConstants.StorageKeys.Endpoints.JWKS,
+      OidcMetadataConstants.StorageKeys.Endpoints.SESSION_IFRAME,
+      OidcMetadataConstants.StorageKeys.Endpoints.REVOCATION,
+      OidcMetadataConstants.StorageKeys.Endpoints.TOKEN,
+      OidcMetadataConstants.StorageKeys.Endpoints.ISSUER,
+      OidcMetadataConstants.StorageKeys.Endpoints.USERINFO,
     ];
 
     const isRequiredEndpointsContains: boolean = configData.endpoints
@@ -143,14 +143,14 @@ export class AuthenticationHelper<T> {
       });
 
     const defaultEndpoints: OIDCProviderMetaData = {
-      [OidcMetadataConstants.Endpoints.AUTHORIZATION]: `${baseUrl}${SERVICE_RESOURCES.authorizationEndpoint}`,
-      [OidcMetadataConstants.Endpoints.END_SESSION]: `${baseUrl}${SERVICE_RESOURCES.endSessionEndpoint}`,
-      [OidcMetadataConstants.Endpoints.ISSUER]: `${baseUrl}${SERVICE_RESOURCES.issuer}`,
-      [OidcMetadataConstants.Endpoints.JWKS]: `${baseUrl}${SERVICE_RESOURCES.jwksUri}`,
-      [OidcMetadataConstants.Endpoints.SESSION_IFRAME]: `${baseUrl}${SERVICE_RESOURCES.checkSessionIframe}`,
-      [OidcMetadataConstants.Endpoints.REVOCATION]: `${baseUrl}${SERVICE_RESOURCES.revocationEndpoint}`,
-      [OidcMetadataConstants.Endpoints.TOKEN]: `${baseUrl}${SERVICE_RESOURCES.tokenEndpoint}`,
-      [OidcMetadataConstants.Endpoints.USERINFO]: `${baseUrl}${SERVICE_RESOURCES.userinfoEndpoint}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.AUTHORIZATION]: `${baseUrl}${SERVICE_RESOURCES.authorizationEndpoint}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.END_SESSION]: `${baseUrl}${SERVICE_RESOURCES.endSessionEndpoint}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.ISSUER]: `${baseUrl}${SERVICE_RESOURCES.issuer}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.JWKS]: `${baseUrl}${SERVICE_RESOURCES.jwksUri}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.SESSION_IFRAME]: `${baseUrl}${SERVICE_RESOURCES.checkSessionIframe}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.REVOCATION]: `${baseUrl}${SERVICE_RESOURCES.revocationEndpoint}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.TOKEN]: `${baseUrl}${SERVICE_RESOURCES.tokenEndpoint}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.USERINFO]: `${baseUrl}${SERVICE_RESOURCES.userinfoEndpoint}`,
     };
 
     return {...defaultEndpoints, ...oidcProviderMetaData};

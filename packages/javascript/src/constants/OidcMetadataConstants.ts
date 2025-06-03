@@ -18,17 +18,17 @@
 
 const OidcMetadataConstants = {
   StorageKeys: {
+    Endpoints: {
+      AUTHORIZATION: 'authorization_endpoint',
+      TOKEN: 'token_endpoint',
+      REVOCATION: 'revocation_endpoint',
+      END_SESSION: 'end_session_endpoint',
+      JWKS: 'jwks_uri',
+      SESSION_IFRAME: 'check_session_iframe',
+      ISSUER: 'issuer',
+      USERINFO: 'userinfo_endpoint',
+    },
     OPENID_PROVIDER_CONFIG_INITIATED: 'op_config_initiated',
-  },
-  Endpoints: {
-    AUTHORIZATION: 'authorization_endpoint',
-    TOKEN: 'token_endpoint',
-    REVOCATION: 'revocation_endpoint',
-    END_SESSION: 'end_session_endpoint',
-    JWKS: 'jwks_uri',
-    SESSION_IFRAME: 'check_session_iframe',
-    ISSUER: 'issuer',
-    USERINFO: 'userinfo_endpoint',
   },
 } as const;
 

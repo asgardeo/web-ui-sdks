@@ -126,7 +126,7 @@ export class AuthenticationCore<T> {
 
   public async getAuthorizationURL(config?: AuthorizationURLParams, userID?: string): Promise<string> {
     const authorizeEndpoint: string = (await this._dataLayer.getOIDCProviderMetaDataParameter(
-      OidcMetadataConstants.Endpoints.AUTHORIZATION as keyof OIDCProviderMetaData,
+      OidcMetadataConstants.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCProviderMetaData,
     )) as string;
 
     if (!authorizeEndpoint || authorizeEndpoint.trim().length === 0) {
