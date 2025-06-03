@@ -19,7 +19,7 @@
 /**
  * Enum representing different OAuth response modes.
  */
-export enum OAuthResponseMode {
+export enum ResponseMode {
   /**
    * Response is returned as POST parameters in an HTML form.
    */

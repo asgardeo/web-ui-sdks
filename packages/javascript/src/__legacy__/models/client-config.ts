@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import { OAuthResponseMode } from '../../models/oauth/oauth-response';
+import {ResponseMode} from '../../models/oauth/oauth-response';
 import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 
 export interface DefaultAuthClientConfig {
@@ -27,7 +27,7 @@ export interface DefaultAuthClientConfig {
   clientSecret?: string;
   enablePKCE?: boolean;
   prompt?: string;
-  responseMode?: OAuthResponseMode;
+  responseMode?: ResponseMode;
   scope?: string[];
   validateIDToken?: boolean;
   validateIDTokenIssuer?: boolean;

@@ -28,7 +28,7 @@ import {
   FetchResponse,
   GetAuthURLConfig,
   OIDCEndpoints,
-  OAuthResponseMode,
+  ResponseMode,
   SESSION_STATE,
   STATE,
   Store,
@@ -570,7 +570,7 @@ export const WebWorkerClient = async (
       let resolvedSessionState: string;
       let resolvedState: string;
 
-      if (config?.responseMode === OAuthResponseMode.FormPost && authorizationCode) {
+      if (config?.responseMode === ResponseMode.FormPost && authorizationCode) {
         resolvedAuthorizationCode = authorizationCode;
         resolvedSessionState = sessionState ?? '';
         resolvedState = state ?? '';

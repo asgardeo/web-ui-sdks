@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AuthClient, OAuthResponseMode} from '../auth-client';
+import {AuthClient, ResponseMode} from '../auth-client';
 import AsgardeoUIException from '../exception';
 import {UIAuthClient} from '../models/auth-config';
 
@@ -51,7 +51,7 @@ const signOut = async (): Promise<void> => {
   try {
     formBody.append('id_token_hint', await authClient.getIDToken());
     formBody.append('client_id', (await authClient.getDataLayer().getConfigData()).clientID);
-    formBody.append('response_mode', OAuthResponseMode.Direct);
+    formBody.append('response_mode', ResponseMode.Direct);
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-SIGNOUT-SO-IV', 'Failed to build the body of the signout request.');
   }
