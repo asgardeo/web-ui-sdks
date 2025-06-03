@@ -22,7 +22,6 @@ import {
   CLIENT_ID_TAG,
   CLIENT_SECRET_TAG,
   END_SESSION_ENDPOINT,
-  FetchCredentialTypes,
   ISSUER,
   JWKS_ENDPOINT,
   OIDC_SESSION_IFRAME_ENDPOINT,
@@ -181,7 +180,7 @@ export class AuthenticationHelper<T> {
 
     try {
       response = await fetch(jwksEndpoint, {
-        credentials: configData.sendCookiesInRequests ? FetchCredentialTypes.Include : FetchCredentialTypes.SameOrigin,
+        credentials: configData.sendCookiesInRequests ? "include" : "same-origin",
       });
     } catch (error: any) {
       throw new AsgardeoAuthException(

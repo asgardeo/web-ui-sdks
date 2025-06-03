@@ -19,7 +19,6 @@ import extractPkceStorageKeyFromState from '../../utils/extractPkceStorageKeyFro
 import generateStateParamForRequestCorrelation from '../../utils/generateStateParamForRequestCorrelation';
 import {
   AUTHORIZATION_ENDPOINT,
-  FetchCredentialTypes,
   OP_CONFIG_INITIATED,
   SESSION_STATE,
   SIGN_OUT_SUCCESS_PARAM,
@@ -214,7 +213,7 @@ export class AuthenticationCore<T> {
     try {
       tokenResponse = await fetch(tokenEndpoint, {
         body: body,
-        credentials: configData.sendCookiesInRequests ? FetchCredentialTypes.Include : FetchCredentialTypes.SameOrigin,
+        credentials: configData.sendCookiesInRequests ? "include" : "same-origin",
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -278,7 +277,7 @@ export class AuthenticationCore<T> {
     try {
       tokenResponse = await fetch(tokenEndpoint, {
         body: body.join('&'),
-        credentials: configData.sendCookiesInRequests ? FetchCredentialTypes.Include : FetchCredentialTypes.SameOrigin,
+        credentials: configData.sendCookiesInRequests ? "include" : "same-origin",
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -332,7 +331,7 @@ export class AuthenticationCore<T> {
     try {
       response = await fetch(revokeTokenEndpoint, {
         body: body.join('&'),
-        credentials: configData.sendCookiesInRequests ? FetchCredentialTypes.Include : FetchCredentialTypes.SameOrigin,
+        credentials: configData.sendCookiesInRequests ? "include" : "same-origin",
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -409,7 +408,7 @@ export class AuthenticationCore<T> {
 
     const requestConfig: FetchRequestConfig = {
       body: data.join('&'),
-      credentials: configData.sendCookiesInRequests ? FetchCredentialTypes.Include : FetchCredentialTypes.SameOrigin,
+      credentials: configData.sendCookiesInRequests ? "include" : "same-origin",
       headers: new Headers(requestHeaders),
       method: 'POST',
     };
