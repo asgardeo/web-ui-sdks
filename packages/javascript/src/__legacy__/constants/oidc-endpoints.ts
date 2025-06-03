@@ -20,7 +20,7 @@ import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 
   // TODO: Remove `Partial<OIDCEndpoints>` once the refactoring is done.
 export const SERVICE_RESOURCES: Partial<OIDCEndpoints>  = {
-    authorization: "/oauth2/authorize",
+    authorizationEndpoint: "/oauth2/authorize",
     checkSessionIframe: "/oidc/checksession",
     endSessionEndpoint: "/oidc/logout",
     issuer: "/oauth2/token",
