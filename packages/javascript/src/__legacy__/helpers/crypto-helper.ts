@@ -19,7 +19,7 @@
 import {AsgardeoAuthException} from '../exception';
 import {CryptoUtils, JWKInterface} from '../models';
 import {IdTokenPayload} from '../../models/id-token';
-import OidcSignatureValidationConstants from '../../constants/oidc/OidcSignatureValidationConstants';
+import TokenConstants from '../../constants/oidc/TokenConstants';
 
 export class CryptoHelper<T = any> {
   private _cryptoUtils: CryptoUtils<T>;
@@ -105,7 +105,7 @@ export class CryptoHelper<T = any> {
       .verifyJwt(
         idToken,
         jwk,
-        OidcSignatureValidationConstants.SUPPORTED_ALGORITHMS as unknown as string[],
+        TokenConstants.SignatureValidation.SUPPORTED_ALGORITHMS as unknown as string[],
         clientID,
         issuer,
         username,

@@ -21,6 +21,24 @@
  */
 const TokenConstants = {
   /**
+   * Token signature validation constants.
+   */
+  SignatureValidation: {
+    /**
+     * Fallback array of supported signature algorithms for OIDC token validation.
+     * These values are used when the supported algorithms cannot be retrieved from
+     * the .well-known/openid-configuration endpoint.
+     *
+     * Supported algorithms:
+     * - `RS256` - RSASSA-PKCS1-v1_5 using SHA-256
+     * - `RS512` - RSASSA-PKCS1-v1_5 using SHA-512
+     * - `RS384` - RSASSA-PKCS1-v1_5 using SHA-384
+     * - `PS256` - RSASSA-PSS using SHA-256 and MGF1 with SHA-256
+     */
+    SUPPORTED_ALGORITHMS: ['RS256', 'RS512', 'RS384', 'PS256'],
+  },
+
+  /**
    * Storage-related constants for OIDC tokens.
    */
   Storage: {
