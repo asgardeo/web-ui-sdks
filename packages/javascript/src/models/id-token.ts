@@ -24,22 +24,27 @@ export interface IdTokenPayloadStandardClaims {
    * The audience for which this token is intended.
    */
   aud: string | string[];
+
   /**
    * The unique identifier of the user to whom the ID token belongs.
    */
   sub: string;
+
   /**
    * The issuer identifier for the issuer of the response.
    */
   iss: string;
+
   /**
    * The email of the user.
    */
   email?: string;
+
   /**
    * The username the user prefers to be called.
    */
   preferred_username?: string;
+
   /**
    * The tenant domain of the user.
    */

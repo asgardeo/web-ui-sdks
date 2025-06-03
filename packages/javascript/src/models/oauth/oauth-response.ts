@@ -24,10 +24,12 @@ export enum OAuthResponseMode {
    * Response is returned as POST parameters in an HTML form.
    */
   FormPost = 'form_post',
+
   /**
    * Response is returned as query parameters in the URL.
    */
   Query = 'query',
+
   /**
    * Response is returned directly to the client.
    */

@@ -41,30 +41,37 @@ export interface OIDCEndpoints extends Partial<LegacyOIDCEndpoints> {
    * The issuer identifier URL for the OpenID Provider
    */
   issuer: string;
+
   /**
    * The OpenID Provider's discovery endpoint URL
    */
   discovery: string;
+
   /**
    * The authorization endpoint URL where the authentication request is sent
    */
   authorization: string;
+
   /**
    * The userinfo endpoint URL that returns claims about the authenticated user
    */
   userinfo: string;
+
   /**
    * The introspection endpoint URL used to validate tokens
    */
   introspection: string;
+
   /**
    * The JSON Web Key Set endpoint URL that provides the public keys to verify tokens
    */
   jwks: string;
+
   /**
    * The revocation endpoint URL used to revoke access or refresh tokens
    */
   revocation: string;
+
   /**
    * The end session endpoint URL used to terminate the user's session
    */
