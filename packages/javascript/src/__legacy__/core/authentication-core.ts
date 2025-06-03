@@ -17,7 +17,6 @@
  */
 import extractPkceStorageKeyFromState from '../../utils/extractPkceStorageKeyFromState';
 import generateStateParamForRequestCorrelation from '../../utils/generateStateParamForRequestCorrelation';
-import {SESSION_STATE, SIGN_OUT_SUCCESS_PARAM, STATE} from '../constants';
 import {DataLayer} from '../data';
 import {AsgardeoAuthException} from '../exception';
 import {AuthenticationHelper, CryptoHelper} from '../helpers';
@@ -41,6 +40,7 @@ import {OIDCEndpoints} from '../../models/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 import ScopeConstants from '../../constants/ScopeConstants';
 import OidcMetadataConstants from '../../constants/OidcMetadataConstants';
+import OidcRequestParamsConstants from '../../constants/OidcRequestParamsConstants';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
@@ -110,15 +110,18 @@ export class AuthenticationCore<T> {
 
     if (customParams) {
       for (const [key, value] of Object.entries(customParams)) {
-        if (key != '' && value != '' && key !== STATE) {
+        if (key != '' && value != '' && key !== OidcRequestParamsConstants.STATE) {
           authorizeRequestParams.set(key, value.toString());
         }
       }
     }
 
     authorizeRequestParams.set(
-      STATE,
-      generateStateParamForRequestCorrelation(pkceKey, customParams ? customParams[STATE]?.toString() : ''),
+      OidcRequestParamsConstants.STATE,
+      generateStateParamForRequestCorrelation(
+        pkceKey,
+        customParams ? customParams[OidcRequestParamsConstants.STATE]?.toString() : '',
+      ),
     );
 
     return authorizeRequestParams;
@@ -171,7 +174,11 @@ export class AuthenticationCore<T> {
     }
 
     sessionState &&
-      (await this._dataLayer.setSessionDataParameter(SESSION_STATE as keyof SessionData, sessionState, userID));
+      (await this._dataLayer.setSessionDataParameter(
+        OidcRequestParamsConstants.SESSION_STATE as keyof SessionData,
+        sessionState,
+        userID,
+      ));
 
     const body: URLSearchParams = new URLSearchParams();
 
@@ -599,7 +606,7 @@ export class AuthenticationCore<T> {
       queryParams.set('client_id', configData.clientID);
     }
 
-    queryParams.set('state', SIGN_OUT_SUCCESS_PARAM);
+    queryParams.set('state', OidcRequestParamsConstants.SIGN_OUT_SUCCESS);
 
     return `${logoutEndpoint}?${queryParams.toString()}`;
   }

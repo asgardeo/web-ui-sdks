@@ -16,8 +16,4 @@
  * under the License.
  */
 
-export const AUTHORIZATION_CODE: string = "code";
-export const SESSION_STATE: string = "session_state";
 export const SIGN_OUT_URL: string = "sign_out_url";
-export const SIGN_OUT_SUCCESS_PARAM: string = "sign_out_success";
-export const STATE: string = "state";

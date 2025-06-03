@@ -16,7 +16,6 @@
  * under the License.
  */
 
-import {SIGN_OUT_SUCCESS_PARAM, STATE} from './constants';
 import {AuthenticationCore} from './core';
 import {DataLayer} from './data';
 import {CryptoHelper} from './helpers';
@@ -35,6 +34,7 @@ import {Store} from '../models/store';
 import {ResponseMode} from '../models/oauth-response';
 import ScopeConstants from '../constants/ScopeConstants';
 import OidcMetadataConstants from '../constants/OidcMetadataConstants';
+import OidcRequestParamsConstants from '../constants/OidcRequestParamsConstants';
 
 /**
  * Default configurations.
@@ -625,10 +625,10 @@ export class AsgardeoAuthClient<T> {
    */
   public static isSignOutSuccessful(signOutRedirectURL: string): boolean {
     const url: URL = new URL(signOutRedirectURL);
-    const stateParam: string | null = url.searchParams.get(STATE);
+    const stateParam: string | null = url.searchParams.get(OidcRequestParamsConstants.STATE);
     const error: boolean = Boolean(url.searchParams.get('error'));
 
-    return stateParam ? stateParam === SIGN_OUT_SUCCESS_PARAM && !error : false;
+    return stateParam ? stateParam === OidcRequestParamsConstants.SIGN_OUT_SUCCESS && !error : false;
   }
 
   /**
@@ -647,10 +647,10 @@ export class AsgardeoAuthClient<T> {
    */
   public static didSignOutFail(signOutRedirectURL: string): boolean {
     const url: URL = new URL(signOutRedirectURL);
-    const stateParam: string | null = url.searchParams.get(STATE);
+    const stateParam: string | null = url.searchParams.get(OidcRequestParamsConstants.STATE);
     const error: boolean = Boolean(url.searchParams.get('error'));
 
-    return stateParam ? stateParam === SIGN_OUT_SUCCESS_PARAM && error : false;
+    return stateParam ? stateParam === OidcRequestParamsConstants.SIGN_OUT_SUCCESS && error : false;
   }
 
   /**
