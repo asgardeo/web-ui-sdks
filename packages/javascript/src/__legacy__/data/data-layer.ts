@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {Stores} from '../constants';
+import {Stores} from '../../models/store';
 import {Store} from '../../models/store';
 import {AuthClientConfig, OIDCProviderMetaData, SessionData} from '../models';
 import { TemporaryStore, TemporaryStoreValue } from '../../models/store';

@@ -16,15 +16,6 @@
  * under the License.
  */
 
-export enum Stores {
-    ConfigData = "config_data",
-    OIDCProviderMetaData = "oidc_provider_meta_data",
-    SessionData = "session_data",
-    TemporaryData = "temporary_data"
-}
+export const REFRESH_TOKEN_TIMER: string = 'refresh_token_timer';
 
-export const REFRESH_TOKEN_TIMER: string = "refresh_token_timer";
-
-export const SUPPORTED_SIGNATURE_ALGORITHMS: string[] = [
-    "RS256", "RS512", "RS384", "PS256"
-];
+export const SUPPORTED_SIGNATURE_ALGORITHMS: string[] = ['RS256', 'RS512', 'RS384', 'PS256'];

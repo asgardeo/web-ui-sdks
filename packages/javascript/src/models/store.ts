@@ -62,3 +62,25 @@ export type TemporaryStoreValue = string | string[] | boolean | number | OIDCEnd
  * Represents a key-value store for temporary data storage.
  */
 export type TemporaryStore = {[key: string]: TemporaryStoreValue};
+
+/**
+ * Enum representing different types of data stores used in the application.
+ */
+export enum Stores {
+  /**
+   * Store for configuration data that defines the application's behavior and settings.
+   */
+  ConfigData = 'config_data',
+  /**
+   * Store for OpenID Connect provider metadata, including endpoints and configuration.
+   */
+  OIDCProviderMetaData = 'oidc_provider_meta_data',
+  /**
+   * Store for user session-related data like tokens and authentication state.
+   */
+  SessionData = 'session_data',
+  /**
+   * Store for temporary data that needs to persist only for a short duration.
+   */
+  TemporaryData = 'temporary_data',
+}
