@@ -18,9 +18,6 @@
 
 import { OIDCEndpoints } from ".";
 
-export type StoreValue = string | string[] | boolean | number | OIDCEndpoints;
-export type TemporaryData = { [ key: string ]: StoreValue; };
-
 export interface SessionData {
     access_token: string;
     id_token: string;

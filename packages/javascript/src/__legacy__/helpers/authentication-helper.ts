@@ -46,7 +46,6 @@ import {
   RawTokenResponse,
   SessionData,
   StrictAuthClientConfig,
-  TemporaryData,
   TokenResponse,
 } from '../models';
 import {IdTokenPayload} from '../../models/id-token';

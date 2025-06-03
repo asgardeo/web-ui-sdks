@@ -17,19 +17,19 @@
  */
 
 import PkceConstants from '../../constants/PkceConstants';
-import {TemporaryData} from '../../__legacy__/models';
+import {TemporaryStore} from '../../models/store';
 import generatePkceStorageKey from '../generatePkceStorageKey';
 
 describe('generatePkceStorageKey', (): void => {
   it('should generate PKCE key with index 0 for empty temporary data', (): void => {
-    const tempData: TemporaryData = {};
+    const tempData: TemporaryStore = {};
     const expectedKey: string = `${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}0`;
 
     expect(generatePkceStorageKey(tempData)).toBe(expectedKey);
   });
 
   it('should generate PKCE key with incremented index for existing PKCE keys', (): void => {
-    const tempData: TemporaryData = {
+    const tempData: TemporaryStore = {
       [`${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}1`]: 'value1',
       [`${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}2`]: 'value2',
     };
@@ -39,7 +39,7 @@ describe('generatePkceStorageKey', (): void => {
   });
 
   it('should handle non-sequential PKCE keys', (): void => {
-    const tempData: TemporaryData = {
+    const tempData: TemporaryStore = {
       [`${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}1`]: 'value1',
       [`${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}5`]: 'value5',
     };
@@ -49,7 +49,7 @@ describe('generatePkceStorageKey', (): void => {
   });
 
   it('should ignore non-PKCE keys in temporary data', (): void => {
-    const tempData: TemporaryData = {
+    const tempData: TemporaryStore = {
       [`${PkceConstants.PKCE_CODE_VERIFIER}${PkceConstants.PKCE_SEPARATOR}1`]: 'value1',
       'other-key': 'other-value',
     };

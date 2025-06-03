@@ -18,9 +18,10 @@
 
 import {Stores} from '../constants';
 import {Store} from '../../models/store';
-import {AuthClientConfig, OIDCProviderMetaData, SessionData, StoreValue, TemporaryData} from '../models';
+import {AuthClientConfig, OIDCProviderMetaData, SessionData} from '../models';
+import { TemporaryStore, TemporaryStoreValue } from '../../models/store';
 
-type PartialData<T> = Partial<AuthClientConfig<T> | OIDCProviderMetaData | SessionData | TemporaryData>;
+type PartialData<T> = Partial<AuthClientConfig<T> | OIDCProviderMetaData | SessionData | TemporaryStore>;
 
 export const ASGARDEO_SESSION_ACTIVE: string = 'asgardeo-session-active';
 
@@ -44,8 +45,8 @@ export class DataLayer<T> {
 
   protected async setValue(
     key: string,
-    attribute: keyof AuthClientConfig<T> | keyof OIDCProviderMetaData | keyof SessionData | keyof TemporaryData,
-    value: StoreValue,
+    attribute: keyof AuthClientConfig<T> | keyof OIDCProviderMetaData | keyof SessionData | keyof TemporaryStore,
+    value: TemporaryStoreValue,
   ): Promise<void> {
     const existingDataJSON: string = (await this._store.getData(key)) ?? null;
     const existingData: PartialData<T> = existingDataJSON && JSON.parse(existingDataJSON);
@@ -58,7 +59,7 @@ export class DataLayer<T> {
 
   protected async removeValue(
     key: string,
-    attribute: keyof AuthClientConfig<T> | keyof OIDCProviderMetaData | keyof SessionData | keyof TemporaryData,
+    attribute: keyof AuthClientConfig<T> | keyof OIDCProviderMetaData | keyof SessionData | keyof TemporaryStore,
   ): Promise<void> {
     const existingDataJSON: string = (await this._store.getData(key)) ?? null;
     const existingData: PartialData<T> = existingDataJSON && JSON.parse(existingDataJSON);
@@ -97,7 +98,7 @@ export class DataLayer<T> {
     this.setDataInBulk(this._resolveKey(Stores.OIDCProviderMetaData), oidcProviderMetaData);
   }
 
-  public async setTemporaryData(temporaryData: Partial<TemporaryData>, userID?: string): Promise<void> {
+  public async setTemporaryData(temporaryData: Partial<TemporaryStore>, userID?: string): Promise<void> {
     this.setDataInBulk(this._resolveKey(Stores.TemporaryData, userID), temporaryData);
   }
 
@@ -117,7 +118,7 @@ export class DataLayer<T> {
     return JSON.parse((await this._store.getData(this._resolveKey(Stores.OIDCProviderMetaData))) ?? null);
   }
 
-  public async getTemporaryData(userID?: string): Promise<TemporaryData> {
+  public async getTemporaryData(userID?: string): Promise<TemporaryStore> {
     return JSON.parse((await this._store.getData(this._resolveKey(Stores.TemporaryData, userID))) ?? null);
   }
 
@@ -158,43 +159,43 @@ export class DataLayer<T> {
     await this._store.removeData(this._resolveKey(Stores.SessionData, userID));
   }
 
-  public async getConfigDataParameter(key: keyof AuthClientConfig<T>): Promise<StoreValue> {
+  public async getConfigDataParameter(key: keyof AuthClientConfig<T>): Promise<TemporaryStoreValue> {
     const data: string = await this._store.getData(this._resolveKey(Stores.ConfigData));
 
     return data && JSON.parse(data)[key];
   }
 
-  public async getOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData): Promise<StoreValue> {
+  public async getOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData): Promise<TemporaryStoreValue> {
     const data: string = await this._store.getData(this._resolveKey(Stores.OIDCProviderMetaData));
 
     return data && JSON.parse(data)[key];
   }
 
-  public async getTemporaryDataParameter(key: keyof TemporaryData, userID?: string): Promise<StoreValue> {
+  public async getTemporaryDataParameter(key: keyof TemporaryStore, userID?: string): Promise<TemporaryStoreValue> {
     const data: string = await this._store.getData(this._resolveKey(Stores.TemporaryData, userID));
 
     return data && JSON.parse(data)[key];
   }
 
-  public async getSessionDataParameter(key: keyof SessionData, userID?: string): Promise<StoreValue> {
+  public async getSessionDataParameter(key: keyof SessionData, userID?: string): Promise<TemporaryStoreValue> {
     const data: string = await this._store.getData(this._resolveKey(Stores.SessionData, userID));
 
     return data && JSON.parse(data)[key];
   }
 
-  public async setConfigDataParameter(key: keyof AuthClientConfig<T>, value: StoreValue): Promise<void> {
+  public async setConfigDataParameter(key: keyof AuthClientConfig<T>, value: TemporaryStoreValue): Promise<void> {
     await this.setValue(this._resolveKey(Stores.ConfigData), key, value);
   }
 
-  public async setOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData, value: StoreValue): Promise<void> {
+  public async setOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData, value: TemporaryStoreValue): Promise<void> {
     await this.setValue(this._resolveKey(Stores.OIDCProviderMetaData), key, value);
   }
 
-  public async setTemporaryDataParameter(key: keyof TemporaryData, value: StoreValue, userID?: string): Promise<void> {
+  public async setTemporaryDataParameter(key: keyof TemporaryStore, value: TemporaryStoreValue, userID?: string): Promise<void> {
     await this.setValue(this._resolveKey(Stores.TemporaryData, userID), key, value);
   }
 
-  public async setSessionDataParameter(key: keyof SessionData, value: StoreValue, userID?: string): Promise<void> {
+  public async setSessionDataParameter(key: keyof SessionData, value: TemporaryStoreValue, userID?: string): Promise<void> {
     await this.setValue(this._resolveKey(Stores.SessionData, userID), key, value);
   }
 
@@ -206,7 +207,7 @@ export class DataLayer<T> {
     await this.removeValue(this._resolveKey(Stores.OIDCProviderMetaData), key);
   }
 
-  public async removeTemporaryDataParameter(key: keyof TemporaryData, userID?: string): Promise<void> {
+  public async removeTemporaryDataParameter(key: keyof TemporaryStore, userID?: string): Promise<void> {
     await this.removeValue(this._resolveKey(Stores.TemporaryData, userID), key);
   }
 

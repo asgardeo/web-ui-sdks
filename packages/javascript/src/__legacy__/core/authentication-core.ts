@@ -45,6 +45,7 @@ import {
   TokenResponse,
 } from '../models';
 import {IdTokenPayload} from '../../models/id-token';
+import {TemporaryStore} from '../../models/store';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 
 export class AuthenticationCore<T> {
@@ -95,7 +96,7 @@ export class AuthenticationCore<T> {
       authorizeRequestParams.set('response_mode', configData.responseMode);
     }
 
-    const tempStore: TemporaryData = await this._dataLayer.getTemporaryData(userID);
+    const tempStore: TemporaryStore = await this._dataLayer.getTemporaryData(userID);
     const pkceKey: string = await generatePkceStorageKey(tempStore);
 
     if (configData.enablePKCE) {

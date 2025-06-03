@@ -16,6 +16,8 @@
  * under the License.
  */
 
+import {OIDCEndpoints} from './oidc-endpoints';
+
 /**
  * Interface representing a key-value storage mechanism.
  * Implementations can include various storage backends like browser storage,
@@ -50,3 +52,13 @@ export interface Store {
    */
   removeData(key: string): Promise<void>;
 }
+
+/**
+ * Represents the possible value types that can be stored in the temporary data storage.
+ */
+export type TemporaryStoreValue = string | string[] | boolean | number | OIDCEndpoints;
+
+/**
+ * Represents a key-value store for temporary data storage.
+ */
+export type TemporaryStore = {[key: string]: TemporaryStoreValue};

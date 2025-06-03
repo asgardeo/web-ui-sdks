@@ -17,7 +17,7 @@
  */
 
 import PkceConstants from '../constants/PkceConstants';
-import {TemporaryData} from '../__legacy__/models';
+import {TemporaryStore} from '../models/store';
 
 /**
  * Generates the next available PKCE storage key based on the current temporary data.
@@ -33,7 +33,7 @@ import {TemporaryData} from '../__legacy__/models';
  * const key = generatePkceStorageKey(sessionStorage);
  * // Returns: "pkce_code_verifier_3" (if existing keys are pkce_code_verifier_0 to _2)
  */
-const generatePkceStorageKey = (tempStore: TemporaryData): string => {
+const generatePkceStorageKey = (tempStore: TemporaryStore): string => {
   const keys: string[] = [];
 
   Object.keys(tempStore).forEach((key: string) => {
