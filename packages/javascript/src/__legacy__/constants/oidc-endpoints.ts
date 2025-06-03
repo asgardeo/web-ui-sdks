@@ -30,7 +30,6 @@ export const SERVICE_RESOURCES: Partial<OIDCEndpoints> = {
   userinfoEndpoint: '/oauth2/userinfo',
 };
 
-export const OP_CONFIG_INITIATED: string = 'op_config_initiated';
 export const TENANT: string = 'tenant';
 export const SIGN_IN_REDIRECT_URL: string = 'sign_in_redirect_url';
 export const SIGN_OUT_REDIRECT_URL: string = 'sign_out_redirect_url';

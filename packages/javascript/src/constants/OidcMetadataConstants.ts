@@ -17,6 +17,9 @@
  */
 
 const OidcMetadataConstants = {
+  StorageKeys: {
+    OPENID_PROVIDER_CONFIG_INITIATED: 'op_config_initiated',
+  },
   Endpoints: {
     AUTHORIZATION: 'authorization_endpoint',
     TOKEN: 'token_endpoint',

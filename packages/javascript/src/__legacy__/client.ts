@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {OP_CONFIG_INITIATED, SIGN_OUT_SUCCESS_PARAM, STATE} from './constants';
+import {SIGN_OUT_SUCCESS_PARAM, STATE} from './constants';
 import {AuthenticationCore} from './core';
 import {DataLayer} from './data';
 import {CryptoHelper} from './helpers';
@@ -34,6 +34,7 @@ import {OIDCEndpoints} from '../models/oidc-endpoints';
 import {Store} from '../models/store';
 import {ResponseMode} from '../models/oauth-response';
 import ScopeConstants from '../constants/ScopeConstants';
+import OidcMetadataConstants from '../constants/OidcMetadataConstants';
 
 /**
  * Default configurations.
@@ -193,7 +194,11 @@ export class AsgardeoAuthClient<T> {
 
     delete authRequestConfig?.forceInit;
 
-    if (await this._dataLayer.getTemporaryDataParameter(OP_CONFIG_INITIATED)) {
+    if (
+      await this._dataLayer.getTemporaryDataParameter(
+        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+      )
+    ) {
       return this._authenticationCore.getAuthorizationURLParams(authRequestConfig, userID);
     }
 
@@ -230,7 +235,11 @@ export class AsgardeoAuthClient<T> {
 
     delete authRequestConfig?.forceInit;
 
-    if (await this._dataLayer.getTemporaryDataParameter(OP_CONFIG_INITIATED)) {
+    if (
+      await this._dataLayer.getTemporaryDataParameter(
+        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+      )
+    ) {
       return this._authenticationCore.getAuthorizationURL(authRequestConfig, userID);
     }
 
@@ -273,7 +282,11 @@ export class AsgardeoAuthClient<T> {
       params: Record<string, unknown>;
     },
   ): Promise<TokenResponse> {
-    if (await this._dataLayer.getTemporaryDataParameter(OP_CONFIG_INITIATED)) {
+    if (
+      await this._dataLayer.getTemporaryDataParameter(
+        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+      )
+    ) {
       return this._authenticationCore.requestAccessToken(
         authorizationCode,
         sessionState,

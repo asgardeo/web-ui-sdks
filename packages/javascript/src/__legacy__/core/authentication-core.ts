@@ -17,7 +17,7 @@
  */
 import extractPkceStorageKeyFromState from '../../utils/extractPkceStorageKeyFromState';
 import generateStateParamForRequestCorrelation from '../../utils/generateStateParamForRequestCorrelation';
-import {OP_CONFIG_INITIATED, SESSION_STATE, SIGN_OUT_SUCCESS_PARAM, STATE} from '../constants';
+import {SESSION_STATE, SIGN_OUT_SUCCESS_PARAM, STATE} from '../constants';
 import {DataLayer} from '../data';
 import {AsgardeoAuthException} from '../exception';
 import {AuthenticationHelper, CryptoHelper} from '../helpers';
@@ -475,7 +475,12 @@ export class AuthenticationCore<T> {
   public async getOIDCProviderMetaData(forceInit: boolean): Promise<void> {
     const configData: StrictAuthClientConfig = await this._config();
 
-    if (!forceInit && (await this._dataLayer.getTemporaryDataParameter(OP_CONFIG_INITIATED))) {
+    if (
+      !forceInit &&
+      (await this._dataLayer.getTemporaryDataParameter(
+        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+      ))
+    ) {
       return Promise.resolve();
     }
 
@@ -500,7 +505,10 @@ export class AuthenticationCore<T> {
       await this._dataLayer.setOIDCProviderMetaData(
         await this._authenticationHelper.resolveEndpoints(await response.json()),
       );
-      await this._dataLayer.setTemporaryDataParameter(OP_CONFIG_INITIATED, true);
+      await this._dataLayer.setTemporaryDataParameter(
+        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        true,
+      );
 
       return Promise.resolve();
     } else if ((configData as any).baseUrl) {
@@ -513,13 +521,19 @@ export class AuthenticationCore<T> {
           error ?? 'Resolving endpoints by base url failed.',
         );
       }
-      await this._dataLayer.setTemporaryDataParameter(OP_CONFIG_INITIATED, true);
+      await this._dataLayer.setTemporaryDataParameter(
+        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        true,
+      );
 
       return Promise.resolve();
     } else {
       await this._dataLayer.setOIDCProviderMetaData(await this._authenticationHelper.resolveEndpointsExplicitly());
 
-      await this._dataLayer.setTemporaryDataParameter(OP_CONFIG_INITIATED, true);
+      await this._dataLayer.setTemporaryDataParameter(
+        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        true,
+      );
 
       return Promise.resolve();
     }
