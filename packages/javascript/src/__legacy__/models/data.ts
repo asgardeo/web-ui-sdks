@@ -16,8 +16,6 @@
  * under the License.
  */
 
-import { OIDCEndpoints } from ".";
-
 export interface SessionData {
     access_token: string;
     id_token: string;

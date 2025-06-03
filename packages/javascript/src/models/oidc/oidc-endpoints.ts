@@ -16,7 +16,21 @@
  * under the License.
  */
 
-import {OIDCEndpoints as LegacyOIDCEndpoints} from '../__legacy__/models/oidc-provider-meta-data';
+/**
+ * @deprecated Use the properties defined in the new `OIDCEndpoints` at the `/models/oidc-endpoints.ts` instead.
+ * FIXME: Remove this once the final refactoring is done.
+ */
+export interface LegacyOIDCEndpoints {
+  authorizationEndpoint: string;
+  tokenEndpoint: string;
+  userinfoEndpoint: string;
+  jwksUri: string;
+  registrationEndpoint?: string;
+  revocationEndpoint: string;
+  introspectionEndpoint?: string;
+  checkSessionIframe: string;
+  endSessionEndpoint: string;
+}
 
 /**
  * Interface representing OpenID Connect endpoints configuration.
@@ -34,7 +48,7 @@ export interface OIDCEndpoints extends Partial<LegacyOIDCEndpoints> {
   /**
    * The authorization endpoint URL where the authentication request is sent
    */
-  authorize: string;
+  authorization: string;
   /**
    * The userinfo endpoint URL that returns claims about the authenticated user
    */
@@ -42,7 +56,7 @@ export interface OIDCEndpoints extends Partial<LegacyOIDCEndpoints> {
   /**
    * The introspection endpoint URL used to validate tokens
    */
-  introspect: string;
+  introspection: string;
   /**
    * The JSON Web Key Set endpoint URL that provides the public keys to verify tokens
    */
@@ -50,7 +64,7 @@ export interface OIDCEndpoints extends Partial<LegacyOIDCEndpoints> {
   /**
    * The revocation endpoint URL used to revoke access or refresh tokens
    */
-  revoke: string;
+  revocation: string;
   /**
    * The end session endpoint URL used to terminate the user's session
    */

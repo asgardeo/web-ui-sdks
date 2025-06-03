@@ -16,10 +16,11 @@
  * under the License.
  */
 
-import { OIDCEndpoints } from "../models";
+import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 
-export const SERVICE_RESOURCES: OIDCEndpoints  = {
-    authorizationEndpoint: "/oauth2/authorize",
+  // TODO: Remove `Partial<OIDCEndpoints>` once the refactoring is done.
+export const SERVICE_RESOURCES: Partial<OIDCEndpoints>  = {
+    authorization: "/oauth2/authorize",
     checkSessionIframe: "/oidc/checksession",
     endSessionEndpoint: "/oidc/logout",
     issuer: "/oauth2/token",

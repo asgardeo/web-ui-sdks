@@ -27,10 +27,10 @@ import {
   CustomGrantConfig,
   FetchResponse,
   GetAuthURLConfig,
-  OIDCEndpoints,
   TokenResponse,
 } from './models';
 import {IdTokenPayload} from '../models/id-token';
+import {OIDCEndpoints} from '../models/oidc/oidc-endpoints';
 import {Store} from '../models/store';
 
 /**
@@ -329,7 +329,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getOIDCServiceEndpoints(): Promise<OIDCEndpoints> {
+  public async getOIDCServiceEndpoints(): Promise<Partial<OIDCEndpoints>> {
     return this._authenticationCore.getOIDCServiceEndpoints();
   }
 

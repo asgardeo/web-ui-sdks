@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import { OIDCEndpoints } from "./oidc-provider-meta-data";
+import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 import { ResponseMode } from "../constants";
 
 export interface DefaultAuthClientConfig {

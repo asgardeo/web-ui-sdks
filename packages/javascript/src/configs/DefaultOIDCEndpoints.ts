@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {OIDCEndpoints} from '../models/oidc-endpoints';
+import {OIDCEndpoints} from '../models/oidc/oidc-endpoints';
 
 /**
  * Default OpenID Connect (OIDC) endpoints configuration.
@@ -26,11 +26,11 @@ import {OIDCEndpoints} from '../models/oidc-endpoints';
  * All paths are relative and should be combined with the base authorization server URL.
  */
 export const DefaultOIDCEndpoints: OIDCEndpoints = {
-  authorize: '/oauth2/authorize',
-  discovery: '/.well-known/openid-configuration',
-  introspect: '/oauth2/introspect',
+  authorization: '/oauth2/authorize',
+  discovery: '/oauth2/token/.well-known/openid-configuration',
+  introspection: '/oauth2/introspect',
   jwks: '/oauth2/jwks',
-  revoke: '/oauth2/revoke',
+  revocation: '/oauth2/revoke',
   endSession: '/oauth2/logout',
   issuer: '/oauth2/token',
   userinfo: '/oauth2/userinfo',

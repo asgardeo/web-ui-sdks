@@ -38,7 +38,6 @@ import {
   CustomGrantConfig,
   FetchRequestConfig,
   FetchResponse,
-  OIDCEndpoints,
   OIDCProviderMetaData,
   SessionData,
   StrictAuthClientConfig,
@@ -46,6 +45,7 @@ import {
 } from '../models';
 import {IdTokenPayload} from '../../models/id-token';
 import {TemporaryStore} from '../../models/store';
+import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 
 export class AuthenticationCore<T> {
@@ -531,7 +531,8 @@ export class AuthenticationCore<T> {
     }
   }
 
-  public async getOIDCServiceEndpoints(): Promise<OIDCEndpoints> {
+  // TODO: Remove `Partial<OIDCEndpoints>` once the refactoring is done.
+  public async getOIDCServiceEndpoints(): Promise<Partial<OIDCEndpoints>> {
     const oidcProviderMetaData: OIDCProviderMetaData = await this._oidcProviderMetaData();
 
     return {
