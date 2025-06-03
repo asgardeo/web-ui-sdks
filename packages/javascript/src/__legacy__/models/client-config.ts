@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import {ResponseMode} from '../../models/oauth/oauth-response';
-import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
+import {ResponseMode} from '../../models/oauth-response';
+import {OIDCEndpoints} from '../../models/oidc-endpoints';
 
 export interface DefaultAuthClientConfig {
   signInRedirectURL: string;

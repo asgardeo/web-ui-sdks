@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {OIDCEndpoints} from '../models/oidc/oidc-endpoints';
+import {OIDCEndpoints} from '../models/oidc-endpoints';
 
 /**
  * Default OpenID Connect (OIDC) endpoints configuration.

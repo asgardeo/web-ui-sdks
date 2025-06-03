@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {OIDCEndpoints} from './oidc/oidc-endpoints';
+import {OIDCEndpoints} from './oidc-endpoints';
 
 /**
  * Interface representing a key-value storage mechanism.

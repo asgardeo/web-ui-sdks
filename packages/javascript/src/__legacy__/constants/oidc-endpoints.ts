@@ -16,32 +16,32 @@
  * under the License.
  */
 
-import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
+import {OIDCEndpoints} from '../../models/oidc-endpoints';
 
-  // TODO: Remove `Partial<OIDCEndpoints>` once the refactoring is done.
-export const SERVICE_RESOURCES: Partial<OIDCEndpoints>  = {
-    authorizationEndpoint: "/oauth2/authorize",
-    checkSessionIframe: "/oidc/checksession",
-    endSessionEndpoint: "/oidc/logout",
-    issuer: "/oauth2/token",
-    jwksUri: "/oauth2/jwks",
-    revocationEndpoint: "/oauth2/revoke",
-    tokenEndpoint: "/oauth2/token",
-    userinfoEndpoint: "/oauth2/userinfo"
+// TODO: Remove `Partial<OIDCEndpoints>` once the refactoring is done.
+export const SERVICE_RESOURCES: Partial<OIDCEndpoints> = {
+  authorizationEndpoint: '/oauth2/authorize',
+  checkSessionIframe: '/oidc/checksession',
+  endSessionEndpoint: '/oidc/logout',
+  issuer: '/oauth2/token',
+  jwksUri: '/oauth2/jwks',
+  revocationEndpoint: '/oauth2/revoke',
+  tokenEndpoint: '/oauth2/token',
+  userinfoEndpoint: '/oauth2/userinfo',
 };
 
-export const AUTHORIZATION_ENDPOINT: string = "authorization_endpoint";
-export const TOKEN_ENDPOINT: string = "token_endpoint";
-export const REVOKE_TOKEN_ENDPOINT: string = "revocation_endpoint";
-export const END_SESSION_ENDPOINT: string = "end_session_endpoint";
-export const JWKS_ENDPOINT: string = "jwks_uri";
-export const OP_CONFIG_INITIATED: string = "op_config_initiated";
-export const TENANT: string = "tenant";
-export const SIGN_IN_REDIRECT_URL: string = "sign_in_redirect_url";
-export const SIGN_OUT_REDIRECT_URL: string = "sign_out_redirect_url";
-export const OIDC_SESSION_IFRAME_ENDPOINT: string = "check_session_iframe";
-export const OPEN_ID_CONFIG: string = "open_id_config";
-export const REGISTRATION_ENDPOINT: string = "registration_endpoint";
-export const USERINFO_ENDPOINT: string = "userinfo_endpoint";
-export const INTROSPECTION_ENDPOINT: string = "introspection_endpoint";
-export const ISSUER: string = "issuer";
+export const AUTHORIZATION_ENDPOINT: string = 'authorization_endpoint';
+export const TOKEN_ENDPOINT: string = 'token_endpoint';
+export const REVOKE_TOKEN_ENDPOINT: string = 'revocation_endpoint';
+export const END_SESSION_ENDPOINT: string = 'end_session_endpoint';
+export const JWKS_ENDPOINT: string = 'jwks_uri';
+export const OP_CONFIG_INITIATED: string = 'op_config_initiated';
+export const TENANT: string = 'tenant';
+export const SIGN_IN_REDIRECT_URL: string = 'sign_in_redirect_url';
+export const SIGN_OUT_REDIRECT_URL: string = 'sign_out_redirect_url';
+export const OIDC_SESSION_IFRAME_ENDPOINT: string = 'check_session_iframe';
+export const OPEN_ID_CONFIG: string = 'open_id_config';
+export const REGISTRATION_ENDPOINT: string = 'registration_endpoint';
+export const USERINFO_ENDPOINT: string = 'userinfo_endpoint';
+export const INTROSPECTION_ENDPOINT: string = 'introspection_endpoint';
+export const ISSUER: string = 'issuer';

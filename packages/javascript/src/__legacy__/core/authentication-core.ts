@@ -37,7 +37,7 @@ import {
 } from '../models';
 import {IdTokenPayload} from '../../models/id-token';
 import {TemporaryStore} from '../../models/store';
-import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
+import {OIDCEndpoints} from '../../models/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 import ScopeConstants from '../../constants/ScopeConstants';
 
