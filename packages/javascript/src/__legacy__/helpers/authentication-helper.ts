@@ -18,19 +18,11 @@
 
 import {CryptoHelper} from './crypto-helper';
 import {
-  AUTHORIZATION_ENDPOINT,
   CLIENT_ID_TAG,
   CLIENT_SECRET_TAG,
-  END_SESSION_ENDPOINT,
-  ISSUER,
-  JWKS_ENDPOINT,
-  OIDC_SESSION_IFRAME_ENDPOINT,
-  REVOKE_TOKEN_ENDPOINT,
   SCOPE_TAG,
   SERVICE_RESOURCES,
-  TOKEN_ENDPOINT,
   TOKEN_TAG,
-  USERINFO_ENDPOINT,
   USERNAME_TAG,
 } from '../constants';
 import {DataLayer} from '../data';
@@ -51,6 +43,7 @@ import PkceConstants from '../../constants/PkceConstants';
 import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
 import ScopeConstants from '../../constants/ScopeConstants';
+import OidcMetadataConstants from '../../constants/OidcMetadataConstants';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;
@@ -84,14 +77,14 @@ export class AuthenticationHelper<T> {
     const configData: StrictAuthClientConfig = await this._config();
 
     const requiredEndpoints: string[] = [
-      AUTHORIZATION_ENDPOINT,
-      END_SESSION_ENDPOINT,
-      JWKS_ENDPOINT,
-      OIDC_SESSION_IFRAME_ENDPOINT,
-      REVOKE_TOKEN_ENDPOINT,
-      TOKEN_ENDPOINT,
-      ISSUER,
-      USERINFO_ENDPOINT,
+      OidcMetadataConstants.Endpoints.AUTHORIZATION,
+      OidcMetadataConstants.Endpoints.END_SESSION,
+      OidcMetadataConstants.Endpoints.JWKS,
+      OidcMetadataConstants.Endpoints.SESSION_IFRAME,
+      OidcMetadataConstants.Endpoints.REVOCATION,
+      OidcMetadataConstants.Endpoints.TOKEN,
+      OidcMetadataConstants.Endpoints.ISSUER,
+      OidcMetadataConstants.Endpoints.USERINFO,
     ];
 
     const isRequiredEndpointsContains: boolean = configData.endpoints
@@ -150,14 +143,14 @@ export class AuthenticationHelper<T> {
       });
 
     const defaultEndpoints: OIDCProviderMetaData = {
-      [AUTHORIZATION_ENDPOINT]: `${baseUrl}${SERVICE_RESOURCES.authorizationEndpoint}`,
-      [END_SESSION_ENDPOINT]: `${baseUrl}${SERVICE_RESOURCES.endSessionEndpoint}`,
-      [ISSUER]: `${baseUrl}${SERVICE_RESOURCES.issuer}`,
-      [JWKS_ENDPOINT]: `${baseUrl}${SERVICE_RESOURCES.jwksUri}`,
-      [OIDC_SESSION_IFRAME_ENDPOINT]: `${baseUrl}${SERVICE_RESOURCES.checkSessionIframe}`,
-      [REVOKE_TOKEN_ENDPOINT]: `${baseUrl}${SERVICE_RESOURCES.revocationEndpoint}`,
-      [TOKEN_ENDPOINT]: `${baseUrl}${SERVICE_RESOURCES.tokenEndpoint}`,
-      [USERINFO_ENDPOINT]: `${baseUrl}${SERVICE_RESOURCES.userinfoEndpoint}`,
+      [OidcMetadataConstants.Endpoints.AUTHORIZATION]: `${baseUrl}${SERVICE_RESOURCES.authorizationEndpoint}`,
+      [OidcMetadataConstants.Endpoints.END_SESSION]: `${baseUrl}${SERVICE_RESOURCES.endSessionEndpoint}`,
+      [OidcMetadataConstants.Endpoints.ISSUER]: `${baseUrl}${SERVICE_RESOURCES.issuer}`,
+      [OidcMetadataConstants.Endpoints.JWKS]: `${baseUrl}${SERVICE_RESOURCES.jwksUri}`,
+      [OidcMetadataConstants.Endpoints.SESSION_IFRAME]: `${baseUrl}${SERVICE_RESOURCES.checkSessionIframe}`,
+      [OidcMetadataConstants.Endpoints.REVOCATION]: `${baseUrl}${SERVICE_RESOURCES.revocationEndpoint}`,
+      [OidcMetadataConstants.Endpoints.TOKEN]: `${baseUrl}${SERVICE_RESOURCES.tokenEndpoint}`,
+      [OidcMetadataConstants.Endpoints.USERINFO]: `${baseUrl}${SERVICE_RESOURCES.userinfoEndpoint}`,
     };
 
     return {...defaultEndpoints, ...oidcProviderMetaData};

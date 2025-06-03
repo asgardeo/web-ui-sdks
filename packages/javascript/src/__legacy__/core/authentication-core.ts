@@ -17,7 +17,7 @@
  */
 import extractPkceStorageKeyFromState from '../../utils/extractPkceStorageKeyFromState';
 import generateStateParamForRequestCorrelation from '../../utils/generateStateParamForRequestCorrelation';
-import {AUTHORIZATION_ENDPOINT, OP_CONFIG_INITIATED, SESSION_STATE, SIGN_OUT_SUCCESS_PARAM, STATE} from '../constants';
+import {OP_CONFIG_INITIATED, SESSION_STATE, SIGN_OUT_SUCCESS_PARAM, STATE} from '../constants';
 import {DataLayer} from '../data';
 import {AsgardeoAuthException} from '../exception';
 import {AuthenticationHelper, CryptoHelper} from '../helpers';
@@ -40,6 +40,7 @@ import {TemporaryStore} from '../../models/store';
 import {OIDCEndpoints} from '../../models/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 import ScopeConstants from '../../constants/ScopeConstants';
+import OidcMetadataConstants from '../../constants/OidcMetadataConstants';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
@@ -125,7 +126,7 @@ export class AuthenticationCore<T> {
 
   public async getAuthorizationURL(config?: AuthorizationURLParams, userID?: string): Promise<string> {
     const authorizeEndpoint: string = (await this._dataLayer.getOIDCProviderMetaDataParameter(
-      AUTHORIZATION_ENDPOINT as keyof OIDCProviderMetaData,
+      OidcMetadataConstants.Endpoints.AUTHORIZATION as keyof OIDCProviderMetaData,
     )) as string;
 
     if (!authorizeEndpoint || authorizeEndpoint.trim().length === 0) {
