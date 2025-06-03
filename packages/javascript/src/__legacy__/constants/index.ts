@@ -16,6 +16,5 @@
  * under the License.
  */
 
-export * from './oidc-endpoints';
 export * from './custom-grant-template-tags';
 export * from './parameters';

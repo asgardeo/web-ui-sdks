@@ -21,7 +21,6 @@ import {
   CLIENT_ID_TAG,
   CLIENT_SECRET_TAG,
   SCOPE_TAG,
-  SERVICE_RESOURCES,
   TOKEN_TAG,
   USERNAME_TAG,
 } from '../constants';
@@ -143,14 +142,14 @@ export class AuthenticationHelper<T> {
       });
 
     const defaultEndpoints: OIDCProviderMetaData = {
-      [OidcMetadataConstants.StorageKeys.Endpoints.AUTHORIZATION]: `${baseUrl}${SERVICE_RESOURCES.authorizationEndpoint}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.END_SESSION]: `${baseUrl}${SERVICE_RESOURCES.endSessionEndpoint}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.ISSUER]: `${baseUrl}${SERVICE_RESOURCES.issuer}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.JWKS]: `${baseUrl}${SERVICE_RESOURCES.jwksUri}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.SESSION_IFRAME]: `${baseUrl}${SERVICE_RESOURCES.checkSessionIframe}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.REVOCATION]: `${baseUrl}${SERVICE_RESOURCES.revocationEndpoint}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.TOKEN]: `${baseUrl}${SERVICE_RESOURCES.tokenEndpoint}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.USERINFO]: `${baseUrl}${SERVICE_RESOURCES.userinfoEndpoint}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.AUTHORIZATION]: `${baseUrl}${OidcMetadataConstants.Endpoints.AUTHORIZATION}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.END_SESSION]: `${baseUrl}${OidcMetadataConstants.Endpoints.END_SESSION}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.ISSUER]: `${baseUrl}${OidcMetadataConstants.Endpoints.ISSUER}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.JWKS]: `${baseUrl}${OidcMetadataConstants.Endpoints.JWKS}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.SESSION_IFRAME]: `${baseUrl}${OidcMetadataConstants.Endpoints.SESSION_IFRAME}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.REVOCATION]: `${baseUrl}${OidcMetadataConstants.Endpoints.REVOCATION}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.TOKEN]: `${baseUrl}${OidcMetadataConstants.Endpoints.TOKEN}`,
+      [OidcMetadataConstants.StorageKeys.Endpoints.USERINFO]: `${baseUrl}${OidcMetadataConstants.Endpoints.USERINFO}`,
     };
 
     return {...defaultEndpoints, ...oidcProviderMetaData};

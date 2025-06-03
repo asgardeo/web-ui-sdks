@@ -17,6 +17,16 @@
  */
 
 const OidcMetadataConstants = {
+  Endpoints: {
+    AUTHORIZATION: '/oauth2/authorize',
+    SESSION_IFRAME: '/oidc/checksession',
+    END_SESSION: '/oidc/logout',
+    ISSUER: '/oauth2/token',
+    JWKS: '/oauth2/jwks',
+    REVOCATION: '/oauth2/revoke',
+    TOKEN: '/oauth2/token',
+    USERINFO: '/oauth2/userinfo',
+  },
   StorageKeys: {
     Endpoints: {
       AUTHORIZATION: 'authorization_endpoint',
