@@ -29,8 +29,3 @@ export const SERVICE_RESOURCES: Partial<OIDCEndpoints> = {
   tokenEndpoint: '/oauth2/token',
   userinfoEndpoint: '/oauth2/userinfo',
 };
-
-export const TENANT: string = 'tenant';
-export const SIGN_IN_REDIRECT_URL: string = 'sign_in_redirect_url';
-export const SIGN_OUT_REDIRECT_URL: string = 'sign_out_redirect_url';
-export const OPEN_ID_CONFIG: string = 'open_id_config';
