@@ -16,12 +16,11 @@
  * under the License.
  */
 
-export * from "./client-config";
-export * from "./data";
-export * from "./oidc-provider-meta-data";
-export * from "../../models/token";
-export * from "./custom-grant";
-export * from "./authorization-url";
-export * from "./user";
-export * from "../../models/crypto";
-export * from "./fetch";
+export * from './client-config';
+export * from './data';
+export * from '../../models/token';
+export * from './custom-grant';
+export * from './authorization-url';
+export * from './user';
+export * from '../../models/crypto';
+export * from './fetch';

@@ -23,8 +23,6 @@ import {
   AuthClientConfig,
   AuthenticatedUserInfo,
   JWKInterface,
-  OIDCEndpointsInternal,
-  OIDCProviderMetaData,
   RawAccessTokenResponse,
   SessionData,
   StrictAuthClientConfig,
@@ -37,6 +35,7 @@ import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdTok
 import ScopeConstants from '../../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import TokenExchangeConstants from '../../constants/TokenExchangeConstants';
+import {OIDCEndpointsInternal, OIDCProviderMetaData} from '../../models/oidc-discovery';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;

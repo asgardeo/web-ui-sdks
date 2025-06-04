@@ -29,7 +29,6 @@ import {
   CustomGrantConfig,
   FetchRequestConfig,
   FetchResponse,
-  OIDCProviderMetaData,
   SessionData,
   StrictAuthClientConfig,
   TokenResponse,
@@ -41,6 +40,7 @@ import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 import ScopeConstants from '../../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../../constants/OIDCRequestConstants';
+import {OIDCProviderMetaData} from '../../models/oidc-discovery';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;

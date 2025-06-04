@@ -18,8 +18,9 @@
 
 import {Stores} from '../../models/store';
 import {Store} from '../../models/store';
-import {AuthClientConfig, OIDCProviderMetaData, SessionData} from '../models';
-import { TemporaryStore, TemporaryStoreValue } from '../../models/store';
+import {AuthClientConfig, SessionData} from '../models';
+import {TemporaryStore, TemporaryStoreValue} from '../../models/store';
+import {OIDCProviderMetaData} from '../../models/oidc-discovery';
 
 type PartialData<T> = Partial<AuthClientConfig<T> | OIDCProviderMetaData | SessionData | TemporaryStore>;
 
@@ -187,15 +188,26 @@ export class DataLayer<T> {
     await this.setValue(this._resolveKey(Stores.ConfigData), key, value);
   }
 
-  public async setOIDCProviderMetaDataParameter(key: keyof OIDCProviderMetaData, value: TemporaryStoreValue): Promise<void> {
+  public async setOIDCProviderMetaDataParameter(
+    key: keyof OIDCProviderMetaData,
+    value: TemporaryStoreValue,
+  ): Promise<void> {
     await this.setValue(this._resolveKey(Stores.OIDCProviderMetaData), key, value);
   }
 
-  public async setTemporaryDataParameter(key: keyof TemporaryStore, value: TemporaryStoreValue, userID?: string): Promise<void> {
+  public async setTemporaryDataParameter(
+    key: keyof TemporaryStore,
+    value: TemporaryStoreValue,
+    userID?: string,
+  ): Promise<void> {
     await this.setValue(this._resolveKey(Stores.TemporaryData, userID), key, value);
   }
 
-  public async setSessionDataParameter(key: keyof SessionData, value: TemporaryStoreValue, userID?: string): Promise<void> {
+  public async setSessionDataParameter(
+    key: keyof SessionData,
+    value: TemporaryStoreValue,
+    userID?: string,
+  ): Promise<void> {
     await this.setValue(this._resolveKey(Stores.SessionData, userID), key, value);
   }
 
