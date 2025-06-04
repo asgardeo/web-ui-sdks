@@ -1,0 +1,226 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useState} from 'react';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import clsx from 'clsx';
+import {useTheme} from '../../../theme/useTheme';
+import {Avatar} from '../../primitives/Avatar/Avatar';
+import {Popover} from '../../primitives/Popover/Popover';
+
+const useStyles = () => {
+  const {theme} = useTheme();
+
+  return useMemo(
+    () => ({
+      trigger: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: theme.spacing.unit + 'px',
+        padding: theme.spacing.unit * 0.5 + 'px',
+        border: 'none',
+        background: 'none',
+        cursor: 'pointer',
+        borderRadius: theme.borderRadius.small,
+        '&:hover': {
+          backgroundColor: theme.colors.background,
+        },
+      } as CSSProperties,
+      userName: {
+        color: theme.colors.text.primary,
+        fontSize: '1rem',
+        fontWeight: 500,
+      } as CSSProperties,
+      dropdownContent: {
+        minWidth: '200px',
+        maxWidth: '300px',
+      } as CSSProperties,
+      menuItem: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: theme.spacing.unit + 'px',
+        padding: `${theme.spacing.unit * 0.75}px ${theme.spacing.unit}px`,
+        color: theme.colors.text.primary,
+        textDecoration: 'none',
+        cursor: 'pointer',
+        '&:hover': {
+          backgroundColor: theme.colors.background,
+        },
+      } as CSSProperties,
+      divider: {
+        margin: `${theme.spacing.unit * 0.5}px 0`,
+        borderBottom: `1px solid ${theme.colors.border}`,
+      } as CSSProperties,
+    }),
+    [theme],
+  );
+};
+
+export interface MenuItem {
+  label: string;
+  icon?: ReactNode;
+  onClick?: () => void;
+  href?: string;
+}
+
+export interface BaseUserDropdownProps {
+  /**
+   * Optional element to render when no user is signed in.
+   */
+  fallback?: ReactElement;
+  /**
+   * Optional className for the dropdown container.
+   */
+  className?: string;
+  /**
+   * The user object containing profile information
+   */
+  user: any;
+  /**
+   * The HTML element ID where the portal should be mounted
+   */
+  portalId?: string;
+  /**
+   * Menu items to display in the dropdown
+   */
+  menuItems?: MenuItem[];
+  /**
+   * Show username next to avatar
+   */
+  showUsername?: boolean;
+  /**
+   * Optional size for the avatar
+   */
+  avatarSize?: number;
+  /**
+   * Mapping of component attribute names to identity provider field names.
+   * Allows customizing which user profile fields should be used for each attribute.
+   */
+  attributeMapping?: {
+    picture?: string;
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+    [key: string]: string | undefined;
+  };
+}
+
+/**
+ * BaseUserDropdown component displays a user avatar with a dropdown menu.
+ * When clicked, it shows a popover with customizable menu items.
+ * This component serves as the base for framework-specific implementations.
+ */
+export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
+  fallback = <div>Please sign in</div>,
+  className = '',
+  user,
+  portalId = 'asgardeo-user-dropdown',
+  menuItems = [],
+  showUsername = true,
+  avatarSize = 32,
+  attributeMapping = {},
+}): ReactElement => {
+  const styles = useStyles();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const defaultAttributeMappings = {
+    picture: 'profile',
+    firstName: 'given_name',
+    lastName: 'family_name',
+  };
+
+  const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};
+
+  const getMappedValue = (key: string) => {
+    const mappedKey = mergedMappings[key];
+    return mappedKey ? user[mappedKey] : user[key];
+  };
+
+  const getDisplayName = () => {
+    const firstName = getMappedValue('firstName');
+    const lastName = getMappedValue('lastName');
+
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`;
+    }
+
+    return getMappedValue('username') || '';
+  };
+
+  if (!user) {
+    return fallback;
+  }
+
+  const handleMenuItemClick = (item: MenuItem) => {
+    if (item.onClick) {
+      item.onClick();
+    }
+    setIsOpen(false);
+  };
+
+  return (
+    <div className={clsx(withVendorCSSClassPrefix('user-dropdown'), className)}>
+      <button
+        className={withVendorCSSClassPrefix('user-dropdown-trigger')}
+        style={styles.trigger}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Avatar
+          imageUrl={getMappedValue('picture')}
+          name={getDisplayName()}
+          size={avatarSize}
+          alt={`${getDisplayName()}'s avatar`}
+        />
+        {showUsername && <span style={styles.userName}>{getDisplayName()}</span>}
+      </button>
+
+      <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} portalId={portalId}>
+        <Popover.Content>
+          <div style={styles.dropdownContent}>
+            {menuItems.map((item, index) => (
+              <div key={index}>
+                {item.href ? (
+                  <a
+                    href={item.href}
+                    style={styles.menuItem}
+                    className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </a>
+                ) : (
+                  <button
+                    onClick={() => handleMenuItemClick(item)}
+                    style={styles.menuItem}
+                    className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </button>
+                )}
+                {index < menuItems.length - 1 && <div style={styles.divider} />}
+              </div>
+            ))}
+          </div>
+        </Popover.Content>
+      </Popover>
+    </div>
+  );
+};
+
+export default BaseUserDropdown;

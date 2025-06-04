@@ -61,4 +61,10 @@ export * from './components/presentation/UserProfile/BaseUserProfile';
 export {default as UserProfile} from './components/presentation/UserProfile/UserProfile';
 export * from './components/presentation/UserProfile/UserProfile';
 
+export {default as BaseUserDropdown} from './components/presentation/UserDropdown/BaseUserDropdown';
+export * from './components/presentation/UserDropdown/BaseUserDropdown';
+
+export {default as UserDropdown} from './components/presentation/UserDropdown/UserDropdown';
+export * from './components/presentation/UserDropdown/UserDropdown';
+
 export * from '@asgardeo/browser';
