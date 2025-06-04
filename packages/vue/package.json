@@ -42,9 +42,6 @@
     "typecheck": "vue-tsc --noEmit",
     "test": "vitest --config src/vitest.config.ts --environment=jsdom --run --passWithNoTests"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-image": "^3.0.3",
@@ -90,5 +87,8 @@
     "types": "./dist/index.d.ts",
     "import": "./dist/esm/index.js",
     "require": "./dist/cjs/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
