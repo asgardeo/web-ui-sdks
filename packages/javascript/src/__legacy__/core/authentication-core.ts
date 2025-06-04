@@ -40,7 +40,7 @@ import {OIDCEndpoints} from '../../models/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 import ScopeConstants from '../../constants/ScopeConstants';
 import OidcMetadataConstants from '../../constants/OidcMetadataConstants';
-import OidcRequestParamsConstants from '../../constants/OidcRequestParamsConstants';
+import OidcRequestConstants from '../../constants/OidcRequestConstants';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
@@ -110,17 +110,17 @@ export class AuthenticationCore<T> {
 
     if (customParams) {
       for (const [key, value] of Object.entries(customParams)) {
-        if (key != '' && value != '' && key !== OidcRequestParamsConstants.STATE) {
+        if (key != '' && value != '' && key !== OidcRequestConstants.Params.STATE) {
           authorizeRequestParams.set(key, value.toString());
         }
       }
     }
 
     authorizeRequestParams.set(
-      OidcRequestParamsConstants.STATE,
+      OidcRequestConstants.Params.STATE,
       generateStateParamForRequestCorrelation(
         pkceKey,
-        customParams ? customParams[OidcRequestParamsConstants.STATE]?.toString() : '',
+        customParams ? customParams[OidcRequestConstants.Params.STATE]?.toString() : '',
       ),
     );
 
@@ -175,7 +175,7 @@ export class AuthenticationCore<T> {
 
     sessionState &&
       (await this._dataLayer.setSessionDataParameter(
-        OidcRequestParamsConstants.SESSION_STATE as keyof SessionData,
+        OidcRequestConstants.Params.SESSION_STATE as keyof SessionData,
         sessionState,
         userID,
       ));
@@ -606,7 +606,7 @@ export class AuthenticationCore<T> {
       queryParams.set('client_id', configData.clientID);
     }
 
-    queryParams.set('state', OidcRequestParamsConstants.SIGN_OUT_SUCCESS);
+    queryParams.set('state', OidcRequestConstants.Params.SIGN_OUT_SUCCESS);
 
     return `${logoutEndpoint}?${queryParams.toString()}`;
   }
