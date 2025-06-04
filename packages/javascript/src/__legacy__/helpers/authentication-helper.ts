@@ -17,7 +17,6 @@
  */
 
 import {CryptoHelper} from './crypto-helper';
-import {CLIENT_ID_TAG, CLIENT_SECRET_TAG, SCOPE_TAG, TOKEN_TAG, USERNAME_TAG} from '../constants';
 import {DataLayer} from '../data';
 import {AsgardeoAuthException} from '../exception';
 import {
@@ -37,6 +36,7 @@ import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDoma
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
 import ScopeConstants from '../../constants/ScopeConstants';
 import OidcMetadataConstants from '../../constants/OidcMetadataConstants';
+import TokenExchangeConstants from '../../constants/TokenExchangeConstants';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;
@@ -240,11 +240,11 @@ export class AuthenticationHelper<T> {
     }
 
     return text
-      .replace(TOKEN_TAG, sessionData.access_token)
-      .replace(USERNAME_TAG, this.getAuthenticatedUserInfo(sessionData.id_token).username)
-      .replace(SCOPE_TAG, scope)
-      .replace(CLIENT_ID_TAG, configData.clientID)
-      .replace(CLIENT_SECRET_TAG, configData.clientSecret ?? '');
+      .replace(TokenExchangeConstants.Placeholders.TOKEN, sessionData.access_token)
+      .replace(TokenExchangeConstants.Placeholders.USERNAME, this.getAuthenticatedUserInfo(sessionData.id_token).username)
+      .replace(TokenExchangeConstants.Placeholders.SCOPE, scope)
+      .replace(TokenExchangeConstants.Placeholders.CLIENT_ID, configData.clientID)
+      .replace(TokenExchangeConstants.Placeholders.CLIENT_SECRET, configData.clientSecret ?? '');
   }
 
   public async clearUserSessionData(userID?: string): Promise<void> {
