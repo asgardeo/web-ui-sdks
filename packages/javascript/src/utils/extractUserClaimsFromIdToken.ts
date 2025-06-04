@@ -60,6 +60,8 @@ const extractUserClaimsFromIdToken = (payload: IdTokenPayload): Record<string, u
     'nbf',
     'isk',
     'sid',
+    'jti',
+    'sub',
   ];
 
   protocolClaims.forEach(claim => {
