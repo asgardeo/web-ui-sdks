@@ -25,14 +25,14 @@ import {
   AuthenticatedUserInfo,
   AuthorizationURLParams,
   BasicUserInfo,
-  Crypto,
   CustomGrantConfig,
   FetchRequestConfig,
   FetchResponse,
   SessionData,
   StrictAuthClientConfig,
-  TokenResponse,
 } from '../models';
+import {TokenResponse} from '../../models/token';
+import {Crypto} from '../../models/crypto';
 import {IdTokenPayload} from '../../models/id-token';
 import {TemporaryStore} from '../../models/store';
 import {OIDCEndpoints} from '../../models/oidc-endpoints';

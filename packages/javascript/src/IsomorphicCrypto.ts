@@ -17,7 +17,7 @@
  */
 
 import {AsgardeoAuthException} from './__legacy__/exception';
-import {Crypto, JWKInterface} from './__legacy__/models';
+import {Crypto, JWKInterface} from './models/crypto';
 import {IdTokenPayload} from './models/id-token';
 import TokenConstants from './constants/TokenConstants';
 

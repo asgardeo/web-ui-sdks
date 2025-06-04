@@ -19,15 +19,9 @@
 import {IsomorphicCrypto} from '../../IsomorphicCrypto';
 import {DataLayer} from '../data';
 import {AsgardeoAuthException} from '../exception';
-import {
-  AuthClientConfig,
-  AuthenticatedUserInfo,
-  JWKInterface,
-  AccessTokenApiResponse,
-  SessionData,
-  StrictAuthClientConfig,
-  TokenResponse,
-} from '../models';
+import {AuthClientConfig, AuthenticatedUserInfo, SessionData, StrictAuthClientConfig} from '../models';
+import {JWKInterface} from '../../models/crypto';
+import {TokenResponse, AccessTokenApiResponse} from '../../models/token';
 import {IdTokenPayload} from '../../models/id-token';
 import PKCEConstants from '../../constants/PKCEConstants';
 import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';

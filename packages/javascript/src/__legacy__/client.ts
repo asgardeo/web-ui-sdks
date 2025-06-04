@@ -21,12 +21,12 @@ import {DataLayer} from './data';
 import {
   AuthClientConfig,
   BasicUserInfo,
-  Crypto,
   CustomGrantConfig,
   FetchResponse,
   GetAuthURLConfig,
-  TokenResponse,
 } from './models';
+import {Crypto} from '../models/crypto';
+import {TokenResponse} from '../models/token';
 import {IdTokenPayload} from '../models/id-token';
 import {OIDCEndpoints} from '../models/oidc-endpoints';
 import {Store} from '../models/store';
