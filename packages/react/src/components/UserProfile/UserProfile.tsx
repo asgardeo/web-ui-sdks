@@ -16,109 +16,31 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactElement, useMemo} from 'react';
-
-interface StyleMap extends Record<string, CSSProperties> {
-  '@media (prefers-color-scheme: dark)'?: Record<string, CSSProperties>;
-  '&:last-child'?: CSSProperties;
-}
-
-const useStyles = () => {
-  return useMemo(
-    (): Record<string, StyleMap> => ({
-      root: {
-        padding: '1rem',
-        width: '100%',
-        maxWidth: '600px',
-        margin: '0 auto',
-      },
-      card: {
-        background: '#ffffff',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        padding: '1.5rem',
-        '@media (prefers-color-scheme: dark)': {
-          background: '#1e1e1e',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-        },
-      },
-      name: {
-        fontSize: '1.5rem',
-        fontWeight: 600,
-        margin: '0 0 1.5rem',
-        color: '#1a1a1a',
-        '@media (prefers-color-scheme: dark)': {
-          color: '#ffffff',
-        },
-      },
-      infoContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-      },
-      field: {
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0.5rem 0',
-        borderBottom: '1px solid #eee',
-        '@media (prefers-color-scheme: dark)': {
-          borderBottomColor: '#333',
-        },
-        '&:last-child': {
-          borderBottom: 'none',
-        },
-      },
-      label: {
-        fontWeight: 500,
-        color: '#666',
-        width: '120px',
-        flexShrink: 0,
-        '@media (prefers-color-scheme: dark)': {
-          color: '#999',
-        },
-      },
-      value: {
-        color: '#1a1a1a',
-        flex: 1,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        '@media (prefers-color-scheme: dark)': {
-          color: '#ffffff',
-        },
-      },
-    }),
-    [],
-  );
-};
+import {FC, ReactElement} from 'react';
+import useAsgardeo from '../../hooks/useAsgardeo';
+import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
 
 /**
  * Props for the UserProfile component.
+ * Extends BaseUserProfileProps but makes the user prop optional since it will be obtained from useAsgardeo
  */
-export interface UserProfileProps {
-  /**
-   * Optional element to render when no user is signed in.
-   */
-  fallback?: ReactElement;
-  /**
-   * Optional className for the profile container.
-   */
-  className?: string;
-  /**
-   * Determines if the profile should display in a card layout.
-   */
-  cardLayout?: boolean;
-  user: any;
-}
+export type UserProfileProps = Omit<BaseUserProfileProps, 'user'>;
 
 /**
  * UserProfile component displays the authenticated user's profile information in a
  * structured and styled format. It shows user details such as display name, email,
  * username, and other available profile information from Asgardeo.
  *
+ * This component is the React-specific implementation that uses the BaseUserProfile
+ * and automatically retrieves the user data from Asgardeo context if not provided.
+ *
  * @example
  * ```tsx
- * // Basic usage
+ * // Basic usage - will use user from Asgardeo context
  * <UserProfile />
+ *
+ * // With explicit user data
+ * <UserProfile user={specificUser} />
  *
  * // With card layout and custom fallback
  * <UserProfile
@@ -127,59 +49,10 @@ export interface UserProfileProps {
  * />
  * ```
  */
-const UserProfile: FC<UserProfileProps> = ({
-  fallback = <div>Please sign in to view your profile</div>,
-  className = '',
-  cardLayout = true,
-  user,
-}): ReactElement => {
-  if (!user) {
-    return fallback;
-  }
+const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactElement => {
+  const {user} = useAsgardeo();
 
-  const styles = useStyles();
-
-  const renderUserInfo = (label: string, value?: string) => {
-    if (!value) return null;
-
-    return (
-      <div style={styles.field}>
-        <span style={styles.label}>{label}:</span>
-        <span style={styles.value}>{value}</span>
-      </div>
-    );
-  };
-
-  const formatLabel = (key: string): string => {
-    // Convert camelCase or snake_case to Title Case
-    return key
-      .split(/(?=[A-Z])|_/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
-  };
-
-  const containerStyle = {
-    ...styles.root,
-    ...(cardLayout ? styles.card : {}),
-  };
-
-  // List of properties to exclude from dynamic rendering
-  const excludedProps = ['displayName'];
-
-  return (
-    <div style={containerStyle} className={className}>
-      {user.displayName && <h2 style={styles.name}>{user.displayName}</h2>}
-      <div style={styles.infoContainer}>
-        {Object.entries(user)
-          .filter(([key]) => !excludedProps.includes(key) && user[key])
-          .map(([key, value]) => {
-            // Handle different value types
-            const displayValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
-            return renderUserInfo(formatLabel(key), displayValue);
-          })}
-      </div>
-    </div>
-  );
+  return <BaseUserProfile user={user} {...rest} />;
 };
 
 export default UserProfile;
