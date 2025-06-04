@@ -28,23 +28,23 @@ export * from './hooks/useAsgardeo';
 export {default as useBrowserUrl} from './hooks/useBrowserUrl';
 export * from './hooks/useBrowserUrl';
 
-export {default as BaseSignInButton} from './components/SignInButton/BaseSignInButton';
-export * from './components/SignInButton/BaseSignInButton';
+export {default as BaseSignInButton} from './components/actions/SignInButton/BaseSignInButton';
+export * from './components/actions/SignInButton/BaseSignInButton';
 
-export {default as SignInButton} from './components/SignInButton/SignInButton';
-export * from './components/SignInButton/SignInButton';
+export {default as SignInButton} from './components/actions/SignInButton/SignInButton';
+export * from './components/actions/SignInButton/SignInButton';
 
-export {default as BaseSignOutButton} from './components/SignOutButton/BaseSignOutButton';
-export * from './components/SignOutButton/BaseSignOutButton';
+export {default as BaseSignOutButton} from './components/actions/SignOutButton/BaseSignOutButton';
+export * from './components/actions/SignOutButton/BaseSignOutButton';
 
-export {default as SignOutButton} from './components/SignOutButton/SignOutButton';
-export * from './components/SignOutButton/SignOutButton';
+export {default as SignOutButton} from './components/actions/SignOutButton/SignOutButton';
+export * from './components/actions/SignOutButton/SignOutButton';
 
-export {default as BaseSignUpButton} from './components/SignUpButton/BaseSignUpButton';
-export * from './components/SignUpButton/BaseSignUpButton';
+export {default as BaseSignUpButton} from './components/actions/SignUpButton/BaseSignUpButton';
+export * from './components/actions/SignUpButton/BaseSignUpButton';
 
-export {default as SignUpButton} from './components/SignUpButton/SignUpButton';
-export * from './components/SignUpButton/SignUpButton';
+export {default as SignUpButton} from './components/actions/SignUpButton/SignUpButton';
+export * from './components/actions/SignUpButton/SignUpButton';
 
 export {default as SignedIn} from './components/control/SignedIn';
 export * from './components/control/SignedIn';
