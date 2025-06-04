@@ -20,11 +20,9 @@ import {CSSProperties, FC, ReactElement, useMemo, useState} from 'react';
 import {Popover} from '../../primitives/Popover/Popover';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 
-type StyleRecord = Record<string, CSSProperties>;
-
 const useStyles = () => {
   return useMemo(
-    (): StyleRecord => ({
+    () => ({
       root: {
         padding: '1rem',
         maxWidth: '600px',

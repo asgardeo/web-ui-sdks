@@ -16,9 +16,38 @@
  * under the License.
  */
 
-import {FC, ReactNode, useEffect, useState} from 'react';
+import {FC, ReactNode, useEffect, useMemo, useState} from 'react';
 import {createPortal} from 'react-dom';
-import useStyles from './styles';
+
+const useStyles = () => {
+  return {
+    overlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      zIndex: 999,
+    },
+    content: {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      zIndex: 1000,
+      maxHeight: '90vh',
+      overflowY: 'auto',
+      background: '#ffffff',
+      borderRadius: '8px',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+      '@media (prefers-color-scheme: dark)': {
+        background: '#1e1e1e',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+      },
+    },
+  };
+};
 
 export interface PopoverProps {
   /**

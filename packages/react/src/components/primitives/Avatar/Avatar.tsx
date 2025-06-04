@@ -41,12 +41,12 @@ export interface AvatarProps {
   className?: string;
 }
 
-export const Avatar: FC<AvatarProps> = ({imageUrl, alt = 'User avatar', size = 64, name, className = ''}) => {
-  const styles = useMemo(
-    (): Record<string, CSSProperties> => ({
+const useStyles = ({size}) => {
+  return useMemo(
+    () => ({
       avatar: {
-        width: size,
-        height: size,
+        width: `${size}px`,
+        height: `${size}px`,
         borderRadius: '50%',
         overflow: 'hidden',
         backgroundColor: '#e0e0e0',
@@ -65,6 +65,10 @@ export const Avatar: FC<AvatarProps> = ({imageUrl, alt = 'User avatar', size = 6
     }),
     [size],
   );
+};
+
+export const Avatar: FC<AvatarProps> = ({imageUrl, alt = 'User avatar', size = 64, name, className = ''}) => {
+  const styles = useStyles({size});
 
   const getInitials = (name: string): string => {
     return name
