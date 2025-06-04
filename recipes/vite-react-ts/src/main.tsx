@@ -12,23 +12,7 @@ createRoot(document.getElementById('root')!).render(
       scopes={['openid', 'address', 'email', 'profile']}
       preferences={{
         theme: {
-          mode: 'dark', // or 'light' or 'system'
-          overrides: {
-            colors: {
-              surface: '#2d2d2d',
-              text: {
-                primary: '#ffffff',
-                secondary: '#b3b3b3',
-              },
-              border: '#404040',
-            },
-            spacing: {
-              unit: 10, // larger spacing
-            },
-            borderRadius: {
-              medium: '12px', // more rounded corners
-            },
-          },
+          mode: 'dark',
         },
       }}
     >
