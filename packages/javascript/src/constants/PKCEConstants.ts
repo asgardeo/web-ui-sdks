@@ -17,21 +17,41 @@
  */
 
 /**
- * Constants used for PKCE (Proof Key for Code Exchange) implementation.
+ * Constants related to Proof Key for Code Exchange (PKCE) implementation.
+ * This object contains all the necessary constants for implementing PKCE
+ * flow in the OAuth 2.0 authorization code grant.
+ *
+ * @remarks
+ * PKCE is an extension to the authorization code flow to prevent CSRF and
+ * authorization code injection attacks. The constants are organized into
+ * storage-related sections for managing PKCE state.
+ *
+ * @example
+ * ```typescript
+ * // Using storage keys
+ * const codeVerifierKey = PKCEConstants.Storage.StorageKeys.CODE_VERIFIER;
+ * const separator = PKCEConstants.Storage.StorageKeys.SEPARATOR;
+ * ```
  */
 const PKCEConstants = {
+  /**
+   * Storage-related constants for managing PKCE state
+   */
   Storage: {
     /**
-     * Storage keys used for PKCE-related data persistence.
+     * Collection of storage keys used in PKCE implementation
      */
     StorageKeys: {
       /**
-       * Key used to store the PKCE code verifier in the storage.
+       * Key used to store the PKCE code verifier in temporary storage.
+       * The code verifier is a cryptographically random string that is
+       * used to generate the code challenge.
        */
       CODE_VERIFIER: 'pkce_code_verifier',
 
       /**
-       * Separator character used in storage keys.
+       * Separator used in storage keys to create unique identifiers
+       * by combining different parts of the key.
        */
       SEPARATOR: '#',
     },

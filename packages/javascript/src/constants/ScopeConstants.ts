@@ -17,27 +17,31 @@
  */
 
 /**
- * Standard OpenID Connect (OIDC) scopes used for authentication and authorization.
- * These scopes determine what user information the client application can access.
- * @see {@link https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims OpenID Connect Core Specification}
+ * Constants for OAuth 2.0 and OpenID Connect scopes.
+ * These scopes define the level of access that the client application
+ * is requesting from the authorization server.
+ *
+ * @remarks
+ * Scopes are space-separated strings that represent different permissions.
+ * The 'openid' scope is required for OpenID Connect flows, while other
+ * scopes provide access to different resources or user information.
+ *
+ * @example
+ * ```typescript
+ * // Requesting OpenID Connect authentication
+ * const scope = [ScopeConstants.OPENID];
+ * 
+ * // Requesting profile information
+ * const scopes = [ScopeConstants.OPENID, ScopeConstants.PROFILE];
+ * ```
  */
 const ScopeConstants = {
   /**
-   * The basic scope required for OpenID Connect authentication.
-   * Requests an ID token containing basic user information.
+   * The base OpenID Connect scope.
+   * Required for all OpenID Connect flows. Indicates that the client
+   * is initiating an OpenID Connect authentication request.
    */
   OPENID: 'openid',
-
-  /**
-   * Requests access to the user's basic profile information.
-   * May include name, preferred username, picture, etc.
-   */
-  PROFILE: 'profile',
-
-  /**
-   * Requests access to the user's email address and email verification status.
-   */
-  EMAIL: 'email',
 } as const;
 
 export default ScopeConstants;

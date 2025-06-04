@@ -45,9 +45,24 @@ const OIDCRequestConstants = {
      */
     SIGN_OUT_SUCCESS: 'sign_out_success',
   },
+  
+  /**
+   * Sign-out related constants for managing the end-session flow in OIDC.
+   */
   SignOut: {
+    /**
+     * Storage-related constants for managing sign-out state.
+     */
     Storage: {
+      /**
+       * Collection of storage keys used in sign-out implementation
+       */
       StorageKeys: {
+        /**
+         * Storage key for the sign-out URL.
+         * Used to store the complete URL where the user should be redirected after
+         * completing the OIDC logout process.
+         */
         SIGN_OUT_URL: 'sign_out_url',
       },
     },
