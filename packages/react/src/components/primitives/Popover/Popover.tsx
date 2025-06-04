@@ -16,11 +16,14 @@
  * under the License.
  */
 
-import {FC, ReactNode, useEffect, useMemo, useState} from 'react';
+import {CSSProperties, FC, ReactNode, useEffect, useMemo, useState} from 'react';
 import {createPortal} from 'react-dom';
+import {useTheme} from '../../../theme/useTheme';
 
 const useStyles = () => {
-  return {
+  const {theme, isDark} = useTheme();
+
+  return useMemo(() => ({
     overlay: {
       position: 'fixed',
       top: 0,
@@ -29,7 +32,7 @@ const useStyles = () => {
       bottom: 0,
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
       zIndex: 999,
-    },
+    } as CSSProperties,
     content: {
       position: 'fixed',
       top: '50%',
@@ -38,15 +41,11 @@ const useStyles = () => {
       zIndex: 1000,
       maxHeight: '90vh',
       overflowY: 'auto',
-      background: '#ffffff',
-      borderRadius: '8px',
-      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-      '@media (prefers-color-scheme: dark)': {
-        background: '#1e1e1e',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-      },
-    },
-  };
+      background: theme.colors.surface,
+      borderRadius: theme.borderRadius.medium,
+      boxShadow: `0 2px 8px ${isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
+    } as CSSProperties,
+  }), [theme, isDark]);
 };
 
 export interface PopoverProps {
@@ -80,6 +79,7 @@ export const Popover: FC<PopoverProps> = ({
   portalId = 'wso2-popover-root',
 }) => {
   const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
+  const styles = useStyles();
 
   useEffect(() => {
     const existing = document.getElementById(portalId);
@@ -114,8 +114,6 @@ export const Popover: FC<PopoverProps> = ({
   if (!isOpen || !portalEl) {
     return null;
   }
-
-  const styles = useStyles();
 
   return createPortal(
     <div>
