@@ -45,7 +45,7 @@ export interface AvatarProps {
 }
 
 const useStyles = ({size}) => {
-  const {theme, isDark} = useTheme();
+  const {theme, colorScheme} = useTheme();
 
   return useMemo(
     () => ({
@@ -62,7 +62,7 @@ const useStyles = ({size}) => {
         fontWeight: 500,
         color: theme.colors.text.primary,
         border: `1px solid ${theme.colors.border}`,
-        boxShadow: isDark ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.1)',
+        boxShadow: colorScheme === 'dark' ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.1)',
       } as CSSProperties,
       image: {
         width: '100%',
@@ -70,7 +70,7 @@ const useStyles = ({size}) => {
         objectFit: 'cover',
       } as CSSProperties,
     }),
-    [size, theme, isDark],
+    [size, theme, colorScheme],
   );
 };
 

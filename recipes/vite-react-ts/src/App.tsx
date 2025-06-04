@@ -1,4 +1,4 @@
-import {SignInButton, SignedOut, SignOutButton, SignedIn, User, UserProfile} from '@asgardeo/react';
+import {UserDropdown, SignInButton, SignedOut, SignOutButton, SignedIn, User, UserProfile} from '@asgardeo/react';
 import './App.css';
 
 function App() {
@@ -18,6 +18,22 @@ function App() {
             </div>
           )}
         </User>
+        <UserDropdown
+          menuItems={[
+            {
+              label: 'Manage Profile',
+              icon: null,
+              onClick: () => null,
+            },
+            {
+              label: 'Logout',
+              icon: null,
+              onClick: () => null,
+            },
+          ]}
+          showUsername={true}
+          portalId="custom-dropdown"
+        />
         <UserProfile mode="popup" />
         <SignOutButton>Logout</SignOutButton>
       </SignedIn>

@@ -23,7 +23,7 @@ import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 
 const useStyles = () => {
-  const {theme, isDark} = useTheme();
+  const {theme, colorScheme} = useTheme();
 
   return useMemo(
     () => ({
@@ -46,11 +46,9 @@ const useStyles = () => {
         overflowY: 'auto',
         background: theme.colors.surface,
         borderRadius: theme.borderRadius.medium,
-        boxShadow: `0 2px 8px ${isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
+        boxShadow: `0 2px 8px ${colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
       } as CSSProperties,
-      contentBody: {
-        padding: `${theme.spacing.unit * 1.5}px`,
-      } as CSSProperties,
+      contentBody: {} as CSSProperties,
       header: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -76,7 +74,7 @@ const useStyles = () => {
         },
       } as CSSProperties,
     }),
-    [theme, isDark],
+    [theme, colorScheme],
   );
 };
 

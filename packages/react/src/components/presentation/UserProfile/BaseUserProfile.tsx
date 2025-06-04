@@ -32,7 +32,7 @@ const useStyles = () => {
   return useMemo(
     () => ({
       root: {
-        padding: theme.spacing.unit + 'px',
+        padding: theme.spacing.unit * 4 + 'px',
         maxWidth: '600px',
         margin: '0 auto',
       } as CSSProperties,

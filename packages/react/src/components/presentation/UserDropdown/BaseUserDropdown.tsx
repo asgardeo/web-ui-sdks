@@ -50,14 +50,23 @@ const useStyles = () => {
         minWidth: '200px',
         maxWidth: '300px',
       } as CSSProperties,
+      dropdownMenu: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+      } as CSSProperties,
       menuItem: {
         display: 'flex',
         alignItems: 'center',
         gap: theme.spacing.unit + 'px',
-        padding: `${theme.spacing.unit * 0.75}px ${theme.spacing.unit}px`,
+        padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
+        width: '100%',
         color: theme.colors.text.primary,
         textDecoration: 'none',
+        border: 'none',
+        background: 'none',
         cursor: 'pointer',
+        fontSize: '0.875rem',
         '&:hover': {
           backgroundColor: theme.colors.background,
         },
@@ -123,9 +132,13 @@ export interface BaseUserDropdownProps {
    */
   menuItems?: MenuItem[];
   /**
-   * Show username next to avatar
+   * Show user's display name next to avatar in the trigger button
    */
-  showUsername?: boolean;
+  showTriggerLable?: boolean;
+  /**
+   * Show dropdown header with user information
+   */
+  showDropdownHeader?: boolean;
   /**
    * Optional size for the avatar
    */
@@ -154,7 +167,8 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
   user,
   portalId = 'asgardeo-user-dropdown',
   menuItems = [],
-  showUsername = true,
+  showTriggerLable = false,
+  showDropdownHeader = true,
   avatarSize = 32,
   attributeMapping = {},
 }): ReactElement => {
@@ -209,54 +223,58 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
           size={avatarSize}
           alt={`${getDisplayName()}'s avatar`}
         />
-        {showUsername && <span style={styles.userName}>{getDisplayName()}</span>}
+        {showTriggerLable && <span style={styles.userName}>{getDisplayName()}</span>}
       </button>
 
       <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} portalId={portalId} mode="dropdown">
         <Popover.Content>
           <div style={styles.dropdownContent}>
-            <div className={withVendorCSSClassPrefix('user-dropdown-header')} style={styles.dropdownHeader}>
-              <Avatar
-                imageUrl={getMappedValue('picture')}
-                name={getDisplayName()}
-                size={avatarSize * 1.25}
-                alt={`${getDisplayName()}'s avatar`}
-              />
-              <div className={withVendorCSSClassPrefix('user-dropdown-header-info')} style={styles.headerInfo}>
-                <span className={withVendorCSSClassPrefix('user-dropdown-header-name')} style={styles.headerName}>
-                  {getDisplayName()}
-                </span>
-                {getMappedValue('email') !== getDisplayName() && getMappedValue('email') && (
-                  <span className={withVendorCSSClassPrefix('user-dropdown-header-email')} style={styles.headerEmail}>
-                    {getMappedValue('email')}
+            {showDropdownHeader && (
+              <div className={withVendorCSSClassPrefix('user-dropdown-header')} style={styles.dropdownHeader}>
+                <Avatar
+                  imageUrl={getMappedValue('picture')}
+                  name={getDisplayName()}
+                  size={avatarSize * 1.25}
+                  alt={`${getDisplayName()}'s avatar`}
+                />
+                <div className={withVendorCSSClassPrefix('user-dropdown-header-info')} style={styles.headerInfo}>
+                  <span className={withVendorCSSClassPrefix('user-dropdown-header-name')} style={styles.headerName}>
+                    {getDisplayName()}
                   </span>
-                )}
+                  {getMappedValue('email') !== getDisplayName() && getMappedValue('email') && (
+                    <span className={withVendorCSSClassPrefix('user-dropdown-header-email')} style={styles.headerEmail}>
+                      {getMappedValue('email')}
+                    </span>
+                  )}
+                </div>
               </div>
+            )}
+            <div className={withVendorCSSClassPrefix('user-dropdown-menu')} style={styles.dropdownMenu}>
+              {menuItems.map((item, index) => (
+                <div key={index}>
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      style={styles.menuItem}
+                      className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
+                    >
+                      {item.icon}
+                      {item.label}
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => handleMenuItemClick(item)}
+                      style={styles.menuItem}
+                      className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
+                    >
+                      {item.icon}
+                      {item.label}
+                    </button>
+                  )}
+                  {index < menuItems.length - 1 && <div style={styles.divider} />}
+                </div>
+              ))}
             </div>
-            {menuItems.map((item, index) => (
-              <div key={index}>
-                {item.href ? (
-                  <a
-                    href={item.href}
-                    style={styles.menuItem}
-                    className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
-                  >
-                    {item.icon}
-                    {item.label}
-                  </a>
-                ) : (
-                  <button
-                    onClick={() => handleMenuItemClick(item)}
-                    style={styles.menuItem}
-                    className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
-                  >
-                    {item.icon}
-                    {item.label}
-                  </button>
-                )}
-                {index < menuItems.length - 1 && <div style={styles.divider} />}
-              </div>
-            ))}
           </div>
         </Popover.Content>
       </Popover>
