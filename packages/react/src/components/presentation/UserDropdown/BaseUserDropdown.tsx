@@ -226,9 +226,11 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                 <span className={withVendorCSSClassPrefix('user-dropdown-header-name')} style={styles.headerName}>
                   {getDisplayName()}
                 </span>
-                <span className={withVendorCSSClassPrefix('user-dropdown-header-email')} style={styles.headerEmail}>
-                  {getMappedValue('email') || getMappedValue('username')}
-                </span>
+                {getMappedValue('email') !== getDisplayName() && getMappedValue('email') && (
+                  <span className={withVendorCSSClassPrefix('user-dropdown-header-email')} style={styles.headerEmail}>
+                    {getMappedValue('email')}
+                  </span>
+                )}
               </div>
             </div>
             {menuItems.map((item, index) => (
