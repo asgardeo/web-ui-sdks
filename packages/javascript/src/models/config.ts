@@ -46,6 +46,20 @@ export interface BaseConfig<T = unknown> {
    * Not recommended for public clients like browser applications.
    */
   clientSecret?: string | undefined;
+
+  /**
+   * The scopes to request during authentication.
+   * Accepts either a space-separated string or an array of strings.
+   *
+   * These define what access the token should grant (e.g., openid, profile, email).
+   * If not provided, defaults to `["openid"]`.
+   *
+   * @example
+   * scopes: "openid profile email"
+   * @example
+   * scopes: ["openid", "profile", "email"]
+   */
+  scopes?: string | string[] | undefined;
 }
 
 export type Config<T = unknown> = BaseConfig<T>;

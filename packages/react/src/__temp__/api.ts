@@ -29,9 +29,8 @@ import {
   HttpResponse,
   OIDCEndpoints,
   SignInConfig,
-  User,
+  SPACustomGrantConfig,
 } from '@asgardeo/browser';
-import {SPACustomGrantConfig} from '@asgardeo/browser/src/models/request-custom-grant';
 import {AuthStateInterface} from './models';
 
 class AuthAPI {
@@ -41,7 +40,6 @@ class AuthAPI {
   private _client: AsgardeoSPAClient;
 
   private _isLoading: boolean;
-  private user: Promise<User>;
 
   constructor(spaClient?: AsgardeoSPAClient) {
     this._client = spaClient ?? AsgardeoSPAClient.getInstance();
@@ -51,14 +49,6 @@ class AuthAPI {
     this.signIn = this.signIn.bind(this);
     this.signOut = this.signOut.bind(this);
     this.updateState = this.updateState.bind(this);
-  }
-
-  public setUser(user: Promise<User>): void {
-    this.user = user;
-  }
-
-  public getUser(): Promise<User> {
-    return this.user;
   }
 
   public _setIsLoading(isLoading: boolean): void {
@@ -145,12 +135,6 @@ class AuthAPI {
           this.updateState(stateToUpdate);
 
           // dispatch({...state, ...stateToUpdate});
-          this.setUser({
-            ...this.user,
-            displayName: response.displayName,
-            email: response.email,
-            username: response.username,
-          });
           this._setIsLoading(false);
 
           if (callback) {

@@ -33,6 +33,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   baseUrl,
   clientId,
   children,
+  scopes
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const asgardeo: AsgardeoReactClient = useMemo(() => new AsgardeoReactClient(), []);
@@ -47,6 +48,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         afterSignInUrl,
         baseUrl,
         clientId,
+        scopes
       });
     })();
   }, []);
@@ -132,7 +134,6 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const signIn = async (options?: SignInOptions): Promise<User> => {
     try {
       const response = await asgardeo.signIn(options);
-
       setUser(await asgardeo.getUser());
 
       return response;

@@ -57,7 +57,7 @@ export type AsgardeoContextProps = {
  */
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
   isLoading: true,
-  isSignedIn: Promise.resolve(false),
+  isSignedIn: false,
   signIn: null,
   signOut: null,
   signUp: null,

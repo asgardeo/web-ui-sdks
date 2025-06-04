@@ -12,9 +12,9 @@ function App() {
           {user => (
             <div className="user-info">
               <h1>
-                Welcome, {user.firstName} {user.lastName}!
+                Welcome, {user?.firstName} {user?.lastName}!
               </h1>
-              <p>Email: {user.email}</p>
+              <p>Email: {user?.email}</p>
             </div>
           )}
         </User>
