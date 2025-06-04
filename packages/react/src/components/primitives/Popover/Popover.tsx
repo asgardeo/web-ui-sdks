@@ -23,29 +23,32 @@ import {useTheme} from '../../../theme/useTheme';
 const useStyles = () => {
   const {theme, isDark} = useTheme();
 
-  return useMemo(() => ({
-    overlay: {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      zIndex: 999,
-    } as CSSProperties,
-    content: {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      zIndex: 1000,
-      maxHeight: '90vh',
-      overflowY: 'auto',
-      background: theme.colors.surface,
-      borderRadius: theme.borderRadius.medium,
-      boxShadow: `0 2px 8px ${isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
-    } as CSSProperties,
-  }), [theme, isDark]);
+  return useMemo(
+    () => ({
+      overlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 999,
+      } as CSSProperties,
+      content: {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 1000,
+        maxHeight: '90vh',
+        overflowY: 'auto',
+        background: theme.colors.surface,
+        borderRadius: theme.borderRadius.medium,
+        boxShadow: `0 2px 8px ${isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
+      } as CSSProperties,
+    }),
+    [theme, isDark],
+  );
 };
 
 export interface PopoverProps {
