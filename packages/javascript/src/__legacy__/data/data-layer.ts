@@ -20,9 +20,9 @@ import {Stores} from '../../models/store';
 import {Store} from '../../models/store';
 import {AuthClientConfig, SessionData} from '../models';
 import {TemporaryStore, TemporaryStoreValue} from '../../models/store';
-import {OIDCDiscoveryResponse} from '../../models/oidc-discovery';
+import {OIDCDiscoveryApiResponse} from '../../models/oidc-discovery';
 
-type PartialData<T> = Partial<AuthClientConfig<T> | OIDCDiscoveryResponse | SessionData | TemporaryStore>;
+type PartialData<T> = Partial<AuthClientConfig<T> | OIDCDiscoveryApiResponse | SessionData | TemporaryStore>;
 
 export const ASGARDEO_SESSION_ACTIVE: string = 'asgardeo-session-active';
 
@@ -46,7 +46,7 @@ export class DataLayer<T> {
 
   protected async setValue(
     key: string,
-    attribute: keyof AuthClientConfig<T> | keyof OIDCDiscoveryResponse | keyof SessionData | keyof TemporaryStore,
+    attribute: keyof AuthClientConfig<T> | keyof OIDCDiscoveryApiResponse | keyof SessionData | keyof TemporaryStore,
     value: TemporaryStoreValue,
   ): Promise<void> {
     const existingDataJSON: string = (await this._store.getData(key)) ?? null;
@@ -60,7 +60,7 @@ export class DataLayer<T> {
 
   protected async removeValue(
     key: string,
-    attribute: keyof AuthClientConfig<T> | keyof OIDCDiscoveryResponse | keyof SessionData | keyof TemporaryStore,
+    attribute: keyof AuthClientConfig<T> | keyof OIDCDiscoveryApiResponse | keyof SessionData | keyof TemporaryStore,
   ): Promise<void> {
     const existingDataJSON: string = (await this._store.getData(key)) ?? null;
     const existingData: PartialData<T> = existingDataJSON && JSON.parse(existingDataJSON);
@@ -95,7 +95,7 @@ export class DataLayer<T> {
     await this.setDataInBulk(this._resolveKey(Stores.ConfigData), config);
   }
 
-  public async setOIDCProviderMetaData(oidcProviderMetaData: Partial<OIDCDiscoveryResponse>): Promise<void> {
+  public async setOIDCProviderMetaData(oidcProviderMetaData: Partial<OIDCDiscoveryApiResponse>): Promise<void> {
     this.setDataInBulk(this._resolveKey(Stores.OIDCProviderMetaData), oidcProviderMetaData);
   }
 
@@ -115,7 +115,7 @@ export class DataLayer<T> {
     return JSON.parse((await this._store.getData(this._resolveKey(Stores.ConfigData))) ?? null);
   }
 
-  public async getOIDCProviderMetaData(): Promise<OIDCDiscoveryResponse> {
+  public async getOIDCProviderMetaData(): Promise<OIDCDiscoveryApiResponse> {
     return JSON.parse((await this._store.getData(this._resolveKey(Stores.OIDCProviderMetaData))) ?? null);
   }
 
@@ -166,7 +166,7 @@ export class DataLayer<T> {
     return data && JSON.parse(data)[key];
   }
 
-  public async getOIDCProviderMetaDataParameter(key: keyof OIDCDiscoveryResponse): Promise<TemporaryStoreValue> {
+  public async getOIDCProviderMetaDataParameter(key: keyof OIDCDiscoveryApiResponse): Promise<TemporaryStoreValue> {
     const data: string = await this._store.getData(this._resolveKey(Stores.OIDCProviderMetaData));
 
     return data && JSON.parse(data)[key];
@@ -189,7 +189,7 @@ export class DataLayer<T> {
   }
 
   public async setOIDCProviderMetaDataParameter(
-    key: keyof OIDCDiscoveryResponse,
+    key: keyof OIDCDiscoveryApiResponse,
     value: TemporaryStoreValue,
   ): Promise<void> {
     await this.setValue(this._resolveKey(Stores.OIDCProviderMetaData), key, value);
@@ -215,7 +215,7 @@ export class DataLayer<T> {
     await this.removeValue(this._resolveKey(Stores.ConfigData), key);
   }
 
-  public async removeOIDCProviderMetaDataParameter(key: keyof OIDCDiscoveryResponse): Promise<void> {
+  public async removeOIDCProviderMetaDataParameter(key: keyof OIDCDiscoveryApiResponse): Promise<void> {
     await this.removeValue(this._resolveKey(Stores.OIDCProviderMetaData), key);
   }
 
