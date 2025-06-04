@@ -34,8 +34,6 @@ const useStyles = () => {
       card: {
         background: theme.colors.surface,
         borderRadius: theme.borderRadius.medium,
-        boxShadow: `0 2px 4px ${isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
-        padding: theme.spacing.unit * 1.5 + 'px',
       } as CSSProperties,
       header: {
         display: 'flex',
@@ -87,6 +85,20 @@ const useStyles = () => {
         maxHeight: '90vh',
         overflowY: 'auto',
       } as CSSProperties,
+      popupHeader: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: theme.spacing.unit * 1.5 + 'px',
+        borderBottom: `1px solid ${theme.colors.border}`,
+        paddingBottom: theme.spacing.unit + 'px',
+      } as CSSProperties,
+      popupTitle: {
+        margin: 0,
+        fontSize: '1.2rem',
+        fontWeight: 600,
+        color: theme.colors.text.primary,
+      } as CSSProperties,
       overlay: {
         position: 'fixed',
         top: 0,
@@ -129,6 +141,10 @@ export interface BaseUserProfileProps {
    * The HTML element ID where the portal should be mounted
    */
   portalId?: string;
+  /**
+   * Optional title for the profile popup
+   */
+  title?: string;
 }
 
 /**
@@ -144,6 +160,7 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   user,
   mode = 'inline',
   portalId = 'asgardeo-user-profile',
+  title = 'User Profile',
 }): ReactElement => {
   const styles = useStyles();
   const [isOpen, setIsOpen] = useState(mode === 'popup');
@@ -195,7 +212,8 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   if (mode === 'popup') {
     return (
       <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} portalId={portalId}>
-        {profileContent}
+        <Popover.Header>{title}</Popover.Header>
+        <Popover.Content>{profileContent}</Popover.Content>
       </Popover>
     );
   }

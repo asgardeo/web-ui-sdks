@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactNode, useEffect, useMemo, useState} from 'react';
+import React, {CSSProperties, FC, ReactNode, useEffect, useMemo, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {useTheme} from '../../../theme/useTheme';
 
@@ -46,9 +46,71 @@ const useStyles = () => {
         borderRadius: theme.borderRadius.medium,
         boxShadow: `0 2px 8px ${isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
       } as CSSProperties,
+      contentBody: {
+        padding: `${theme.spacing.unit * 1.5}px`,
+      } as CSSProperties,
+      header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px`,
+        borderBottom: `1px solid ${theme.colors.border}`,
+      } as CSSProperties,
+      headerTitle: {
+        margin: 0,
+        fontSize: '1.2rem',
+        fontWeight: 600,
+        color: theme.colors.text.primary,
+      } as CSSProperties,
+      closeButton: {
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        padding: theme.spacing.unit / 2 + 'px',
+        color: theme.colors.text.secondary,
+        fontSize: '1.2rem',
+        '&:hover': {
+          color: theme.colors.text.primary,
+        },
+      } as CSSProperties,
     }),
     [theme, isDark],
   );
+};
+
+interface PopoverContextType {
+  onClose?: () => void;
+}
+
+const PopoverContext = React.createContext<PopoverContextType>({});
+
+interface PopoverHeaderProps {
+  children?: ReactNode;
+}
+
+const PopoverHeader: FC<PopoverHeaderProps> = ({children}) => {
+  const styles = useStyles();
+  const {onClose} = React.useContext(PopoverContext);
+
+  return (
+    <div style={styles.header}>
+      {children && <h3 style={styles.headerTitle}>{children}</h3>}
+      {onClose && (
+        <button style={styles.closeButton} onClick={onClose} aria-label="Close">
+          ×
+        </button>
+      )}
+    </div>
+  );
+};
+
+interface PopoverContentProps {
+  children: ReactNode;
+}
+
+const PopoverContent: FC<PopoverContentProps> = ({children}) => {
+  const styles = useStyles();
+  return <div style={styles.contentBody}>{children}</div>;
 };
 
 export interface PopoverProps {
@@ -74,13 +136,10 @@ export interface PopoverProps {
   portalId?: string;
 }
 
-export const Popover: FC<PopoverProps> = ({
-  isOpen,
-  children,
-  onClose,
-  className = '',
-  portalId = 'wso2-popover-root',
-}) => {
+export const Popover: FC<PopoverProps> & {
+  Header: typeof PopoverHeader;
+  Content: typeof PopoverContent;
+} = ({isOpen, children, onClose, className = '', portalId = 'wso2-popover-root'}) => {
   const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
   const styles = useStyles();
 
@@ -119,14 +178,19 @@ export const Popover: FC<PopoverProps> = ({
   }
 
   return createPortal(
-    <div>
-      <div style={styles['overlay']} onClick={onClose} />
-      <div className={className} style={styles['content']}>
-        {children}
+    <PopoverContext.Provider value={{onClose}}>
+      <div>
+        <div style={styles['overlay']} onClick={onClose} />
+        <div className={className} style={styles['content']}>
+          {children}
+        </div>
       </div>
-    </div>,
+    </PopoverContext.Provider>,
     portalEl,
   );
 };
+
+Popover.Header = PopoverHeader;
+Popover.Content = PopoverContent;
 
 export default Popover;
