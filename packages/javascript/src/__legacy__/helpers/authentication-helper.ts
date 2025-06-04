@@ -17,13 +17,7 @@
  */
 
 import {CryptoHelper} from './crypto-helper';
-import {
-  CLIENT_ID_TAG,
-  CLIENT_SECRET_TAG,
-  SCOPE_TAG,
-  TOKEN_TAG,
-  USERNAME_TAG,
-} from '../constants';
+import {CLIENT_ID_TAG, CLIENT_SECRET_TAG, SCOPE_TAG, TOKEN_TAG, USERNAME_TAG} from '../constants';
 import {DataLayer} from '../data';
 import {AsgardeoAuthException} from '../exception';
 import {
@@ -76,14 +70,14 @@ export class AuthenticationHelper<T> {
     const configData: StrictAuthClientConfig = await this._config();
 
     const requiredEndpoints: string[] = [
-      OidcMetadataConstants.StorageKeys.Endpoints.AUTHORIZATION,
-      OidcMetadataConstants.StorageKeys.Endpoints.END_SESSION,
-      OidcMetadataConstants.StorageKeys.Endpoints.JWKS,
-      OidcMetadataConstants.StorageKeys.Endpoints.SESSION_IFRAME,
-      OidcMetadataConstants.StorageKeys.Endpoints.REVOCATION,
-      OidcMetadataConstants.StorageKeys.Endpoints.TOKEN,
-      OidcMetadataConstants.StorageKeys.Endpoints.ISSUER,
-      OidcMetadataConstants.StorageKeys.Endpoints.USERINFO,
+      OidcMetadataConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION,
+      OidcMetadataConstants.Storage.StorageKeys.Endpoints.END_SESSION,
+      OidcMetadataConstants.Storage.StorageKeys.Endpoints.JWKS,
+      OidcMetadataConstants.Storage.StorageKeys.Endpoints.SESSION_IFRAME,
+      OidcMetadataConstants.Storage.StorageKeys.Endpoints.REVOCATION,
+      OidcMetadataConstants.Storage.StorageKeys.Endpoints.TOKEN,
+      OidcMetadataConstants.Storage.StorageKeys.Endpoints.ISSUER,
+      OidcMetadataConstants.Storage.StorageKeys.Endpoints.USERINFO,
     ];
 
     const isRequiredEndpointsContains: boolean = configData.endpoints
@@ -142,14 +136,20 @@ export class AuthenticationHelper<T> {
       });
 
     const defaultEndpoints: OIDCProviderMetaData = {
-      [OidcMetadataConstants.StorageKeys.Endpoints.AUTHORIZATION]: `${baseUrl}${OidcMetadataConstants.Endpoints.AUTHORIZATION}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.END_SESSION]: `${baseUrl}${OidcMetadataConstants.Endpoints.END_SESSION}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.ISSUER]: `${baseUrl}${OidcMetadataConstants.Endpoints.ISSUER}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.JWKS]: `${baseUrl}${OidcMetadataConstants.Endpoints.JWKS}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.SESSION_IFRAME]: `${baseUrl}${OidcMetadataConstants.Endpoints.SESSION_IFRAME}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.REVOCATION]: `${baseUrl}${OidcMetadataConstants.Endpoints.REVOCATION}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.TOKEN]: `${baseUrl}${OidcMetadataConstants.Endpoints.TOKEN}`,
-      [OidcMetadataConstants.StorageKeys.Endpoints.USERINFO]: `${baseUrl}${OidcMetadataConstants.Endpoints.USERINFO}`,
+      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
+        .AUTHORIZATION]: `${baseUrl}${OidcMetadataConstants.Endpoints.AUTHORIZATION}`,
+      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
+        .END_SESSION]: `${baseUrl}${OidcMetadataConstants.Endpoints.END_SESSION}`,
+      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
+        .ISSUER]: `${baseUrl}${OidcMetadataConstants.Endpoints.ISSUER}`,
+      [OidcMetadataConstants.Storage.StorageKeys.Endpoints.JWKS]: `${baseUrl}${OidcMetadataConstants.Endpoints.JWKS}`,
+      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
+        .SESSION_IFRAME]: `${baseUrl}${OidcMetadataConstants.Endpoints.SESSION_IFRAME}`,
+      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
+        .REVOCATION]: `${baseUrl}${OidcMetadataConstants.Endpoints.REVOCATION}`,
+      [OidcMetadataConstants.Storage.StorageKeys.Endpoints.TOKEN]: `${baseUrl}${OidcMetadataConstants.Endpoints.TOKEN}`,
+      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
+        .USERINFO]: `${baseUrl}${OidcMetadataConstants.Endpoints.USERINFO}`,
     };
 
     return {...defaultEndpoints, ...oidcProviderMetaData};

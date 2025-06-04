@@ -196,7 +196,7 @@ export class AsgardeoAuthClient<T> {
 
     if (
       await this._dataLayer.getTemporaryDataParameter(
-        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {
       return this._authenticationCore.getAuthorizationURLParams(authRequestConfig, userID);
@@ -237,7 +237,7 @@ export class AsgardeoAuthClient<T> {
 
     if (
       await this._dataLayer.getTemporaryDataParameter(
-        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {
       return this._authenticationCore.getAuthorizationURL(authRequestConfig, userID);
@@ -284,7 +284,7 @@ export class AsgardeoAuthClient<T> {
   ): Promise<TokenResponse> {
     if (
       await this._dataLayer.getTemporaryDataParameter(
-        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {
       return this._authenticationCore.requestAccessToken(

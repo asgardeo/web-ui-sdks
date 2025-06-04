@@ -129,7 +129,7 @@ export class AuthenticationCore<T> {
 
   public async getAuthorizationURL(config?: AuthorizationURLParams, userID?: string): Promise<string> {
     const authorizeEndpoint: string = (await this._dataLayer.getOIDCProviderMetaDataParameter(
-      OidcMetadataConstants.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCProviderMetaData,
+      OidcMetadataConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCProviderMetaData,
     )) as string;
 
     if (!authorizeEndpoint || authorizeEndpoint.trim().length === 0) {
@@ -485,7 +485,7 @@ export class AuthenticationCore<T> {
     if (
       !forceInit &&
       (await this._dataLayer.getTemporaryDataParameter(
-        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       ))
     ) {
       return Promise.resolve();
@@ -513,7 +513,7 @@ export class AuthenticationCore<T> {
         await this._authenticationHelper.resolveEndpoints(await response.json()),
       );
       await this._dataLayer.setTemporaryDataParameter(
-        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
 
@@ -529,7 +529,7 @@ export class AuthenticationCore<T> {
         );
       }
       await this._dataLayer.setTemporaryDataParameter(
-        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
 
@@ -538,7 +538,7 @@ export class AuthenticationCore<T> {
       await this._dataLayer.setOIDCProviderMetaData(await this._authenticationHelper.resolveEndpointsExplicitly());
 
       await this._dataLayer.setTemporaryDataParameter(
-        OidcMetadataConstants.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
 
