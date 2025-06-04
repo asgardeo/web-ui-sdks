@@ -1,7 +1,8 @@
-import {AsgardeoNextClient} from '@asgardeo/nextjs';
+import {AsgardeoNext} from '@asgardeo/nextjs';
 import {NextRequest} from 'next/server';
 
-const asgardeo = new AsgardeoNextClient();
+const asgardeo = new AsgardeoNext();
+
 asgardeo.initialize({
   baseUrl: process.env.NEXT_PUBLIC_ASGARDEO_BASE_URL,
   clientId: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_ID,

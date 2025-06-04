@@ -20,6 +20,11 @@
     "import": "./dist/index.js",
     "require": "./dist/cjs/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",

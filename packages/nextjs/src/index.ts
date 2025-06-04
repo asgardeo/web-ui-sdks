@@ -37,4 +37,4 @@ export type {SignOutButtonProps} from './client/components/actions/SignOutButton
 export {default as AsgardeoContext} from './client/contexts/AsgardeoContext';
 export type {AsgardeoContextProps} from './client/contexts/AsgardeoContext';
 
-export {default as AsgardeoNextClient} from './AsgardeoNextClient';
+export {default as AsgardeoNext} from './AsgardeoNextClient';
