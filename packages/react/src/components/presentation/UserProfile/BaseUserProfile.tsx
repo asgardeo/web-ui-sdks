@@ -79,7 +79,14 @@ const useStyles = () => {
         color: theme.colors.text.primary,
         flex: 1,
         overflow: 'hidden',
-        textOverflow: 'ellipsis',
+        wordBreak: 'break-word',
+        '& table': {
+          backgroundColor: theme.colors.background,
+          borderRadius: theme.borderRadius.small,
+        },
+        '& td': {
+          borderColor: theme.colors.border,
+        },
       } as CSSProperties,
       popup: {
         position: 'fixed',
@@ -185,10 +192,10 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const defaultAttributeMappings = {
     picture: 'profile',
     firstName: 'given_name',
-    lastName: 'family_name'
+    lastName: 'family_name',
   };
 
-  const mergedMappings = { ...defaultAttributeMappings, ...attributeMapping };
+  const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};
 
   const getMappedValue = (key: string) => {
     const mappedKey = mergedMappings[key];
@@ -210,12 +217,49 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
     return fallback;
   }
 
-  const renderUserInfo = (label: string, value?: string) => {
+  const renderNestedValue = (data: unknown): ReactElement => {
+    if (typeof data !== 'object' || data === null) {
+      return <span>{String(data)}</span>;
+    }
+
+    const nestedFieldStyle = {
+      ...styles.field,
+      borderBottom: 'none', // Remove border for nested fields
+    };
+
+    return (
+      <div>
+        {Object.entries(data).map(([key, value]) => (
+          <div key={key} style={nestedFieldStyle}>
+            <span style={styles.label}>{formatLabel(key)}</span>
+            <div style={styles.value}>{typeof value === 'object' ? renderNestedValue(value) : String(value)}</div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderUserInfo = (label: string, value: unknown) => {
     if (!value) return null;
+
+    let displayValue: ReactElement | string;
+    if (typeof value === 'object' || (typeof value === 'string' && value.trim().startsWith('{'))) {
+      try {
+        // If it's a stringified JSON, parse it first
+        const objectValue = typeof value === 'string' ? JSON.parse(value) : value;
+        displayValue = renderNestedValue(objectValue);
+      } catch {
+        // If JSON parsing fails, use the value as is
+        displayValue = String(value);
+      }
+    } else {
+      displayValue = String(value);
+    }
+
     return (
       <div style={styles.field}>
         <span style={styles.label}>{label}</span>
-        <span style={styles.value}>{value}</span>
+        <div style={styles.value}>{displayValue}</div>
       </div>
     );
   };
@@ -248,13 +292,34 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
       <div style={styles.infoContainer}>
         {Object.entries(user)
           .filter(([key]) => !excludedProps.includes(key) && user[key])
-          .map(([key, value]) => {
-            const displayValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
-            return renderUserInfo(formatLabel(key), displayValue);
-          })}
+          .map(([key, value]) => renderUserInfo(formatLabel(key), value))}
       </div>
     </div>
   );
+
+  const ObjectDisplay: FC<{data: unknown}> = ({data}) => {
+    if (typeof data !== 'object' || data === null) {
+      return <span>{String(data)}</span>;
+    }
+
+    return (
+      <ul
+        style={{
+          listStyle: 'none',
+          margin: 0,
+          padding: 0,
+          paddingLeft: '1rem',
+        }}
+      >
+        {Object.entries(data).map(([key, value]) => (
+          <li key={key} style={{marginBottom: '0.25rem'}}>
+            <strong>{formatLabel(key)}:</strong>{' '}
+            {typeof value === 'object' ? <ObjectDisplay data={value} /> : String(value)}
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   if (mode === 'popup') {
     return (
