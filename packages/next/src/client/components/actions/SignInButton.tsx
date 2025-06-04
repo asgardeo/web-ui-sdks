@@ -19,12 +19,12 @@
 'use client';
 
 import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
-import InternalAuthAPIRoutesConfig from '../../configs/InternalAuthAPIRoutesConfig';
+import InternalAuthAPIRoutesConfig from '../../../configs/InternalAuthAPIRoutesConfig';
 
 /**
- * Interface for SignInButton component props.
+ * Props interface of {@link SignInButton}
  */
-export type SignUpButtonProps = HTMLAttributes<HTMLButtonElement>;
+export type SignInButtonProps = HTMLAttributes<HTMLButtonElement>;
 
 /**
  * SignInButton component. This button initiates the sign-in process when clicked.
@@ -43,15 +43,15 @@ export type SignUpButtonProps = HTMLAttributes<HTMLButtonElement>;
  * }
  * ```
  */
-const SignUpButton: FC<PropsWithChildren<SignUpButtonProps>> = forwardRef<
+const SignInButton: FC<PropsWithChildren<SignInButtonProps>> = forwardRef<
   HTMLButtonElement,
-  PropsWithChildren<SignUpButtonProps>
+  PropsWithChildren<SignInButtonProps>
 >(
   (
-    {children = 'Sign Up', className, style, ...rest}: PropsWithChildren<SignUpButtonProps>,
+    {children = 'Sign In', className, style, ...rest}: PropsWithChildren<SignInButtonProps>,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => (
-    <form action={InternalAuthAPIRoutesConfig.signUp}>
+    <form action={InternalAuthAPIRoutesConfig.signIn}>
       <button ref={ref} className={className} style={style} type="submit" {...rest}>
         {children}
       </button>
@@ -59,4 +59,4 @@ const SignUpButton: FC<PropsWithChildren<SignUpButtonProps>> = forwardRef<
   ),
 );
 
-export default SignUpButton;
+export default SignInButton;

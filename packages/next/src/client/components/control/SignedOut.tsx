@@ -19,7 +19,7 @@
 'use client';
 
 import {FC, PropsWithChildren, ReactNode, useEffect, useState} from 'react';
-import isSignedIn from '../../server/actions/isSignedIn';
+import isSignedIn from '../../../server/actions/isSignedIn';
 
 /**
  * Props interface of {@link SignedOut}
