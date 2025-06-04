@@ -18,7 +18,7 @@
 
 import {User as AsgardeoUser} from '@asgardeo/browser';
 import {FC, ReactElement, ReactNode} from 'react';
-import useAsgardeo from '../hooks/useAsgardeo';
+import useAsgardeo from '../../hooks/useAsgardeo';
 
 /**
  * Props for the User component.

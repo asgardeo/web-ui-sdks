@@ -52,13 +52,13 @@ export * from './components/control/SignedIn';
 export {default as SignedOut} from './components/control/SignedOut';
 export * from './components/control/SignedOut';
 
-export {default as User} from './components/User';
-export * from './components/User';
+export {default as User} from './components/presentation/User';
+export * from './components/presentation/User';
 
-export {default as BaseUserProfile} from './components/UserProfile/BaseUserProfile';
-export * from './components/UserProfile/BaseUserProfile';
+export {default as BaseUserProfile} from './components/presentation/UserProfile/BaseUserProfile';
+export * from './components/presentation/UserProfile/BaseUserProfile';
 
-export {default as UserProfile} from './components/UserProfile/UserProfile';
-export * from './components/UserProfile/UserProfile';
+export {default as UserProfile} from './components/presentation/UserProfile/UserProfile';
+export * from './components/presentation/UserProfile/UserProfile';
 
 export * from '@asgardeo/browser';

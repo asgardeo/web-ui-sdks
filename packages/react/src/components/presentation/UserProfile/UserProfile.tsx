@@ -17,7 +17,7 @@
  */
 
 import {FC, ReactElement} from 'react';
-import useAsgardeo from '../../hooks/useAsgardeo';
+import useAsgardeo from '../../../hooks/useAsgardeo';
 import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
 
 /**
