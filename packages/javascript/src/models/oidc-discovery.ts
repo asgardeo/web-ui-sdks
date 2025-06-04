@@ -306,6 +306,34 @@ export interface OIDCDiscoveryApiResponse {
   backchannel_logout_session_supported?: boolean;
 }
 
+/**
+ * Essential OpenID Connect (OIDC) Provider endpoints configuration.
+ * This interface represents the core set of endpoints that an OpenID Provider
+ * must expose for basic OIDC functionality.
+ *
+ * @remarks
+ * These endpoints form the foundation of OIDC operations and are organized into categories:
+ * 1. Authentication Flow - Authorization and token endpoints
+ * 2. User Data - UserInfo and session management
+ * 3. Security - Key management and token operations
+ * 4. Session Management - Logout and session state
+ *
+ * While all fields are optional in the interface, an OIDC Provider typically
+ * implements most of these endpoints for full OIDC compliance.
+ *
+ * @see {@link OIDCDiscoveryApiResponse} For the complete provider metadata
+ * @see {@link https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata Provider Metadata Specification}
+ *
+ * @example
+ * ```typescript
+ * const endpoints: OIDCDiscoveryEndpointsApiResponse = {
+ *   issuer: "https://identity.example.com",
+ *   authorization_endpoint: "https://identity.example.com/oauth2/authorize",
+ *   token_endpoint: "https://identity.example.com/oauth2/token",
+ *   userinfo_endpoint: "https://identity.example.com/oauth2/userinfo"
+ * };
+ * ```
+ */
 export interface OIDCDiscoveryEndpointsApiResponse {
   // ====================================
   // Core Endpoints
