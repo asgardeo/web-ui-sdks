@@ -25,7 +25,7 @@ import {
   JWKInterface,
   OIDCEndpointsInternal,
   OIDCProviderMetaData,
-  RawTokenResponse,
+  RawAccessTokenResponse,
   SessionData,
   StrictAuthClientConfig,
   TokenResponse,
@@ -265,7 +265,7 @@ export class AuthenticationHelper<T> {
     }
 
     //Get the response in JSON
-    const parsedResponse: RawTokenResponse = (await response.json()) as RawTokenResponse;
+    const parsedResponse: RawAccessTokenResponse = (await response.json()) as RawAccessTokenResponse;
 
     parsedResponse.created_at = new Date().getTime();
 

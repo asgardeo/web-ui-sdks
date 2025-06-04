@@ -16,25 +16,22 @@
  * under the License.
  */
 
-/**
- * Interface of the OAuth2/OIDC tokens.
- */
 export interface TokenResponse {
-    accessToken: string;
-    idToken: string;
-    expiresIn: string;
-    scope: string;
-    refreshToken: string;
-    tokenType: string;
-    createdAt: number;
+  accessToken: string;
+  idToken: string;
+  expiresIn: string;
+  scope: string;
+  refreshToken: string;
+  tokenType: string;
+  createdAt: number;
 }
 
-export interface RawTokenResponse {
-    access_token: string;
-    id_token: string;
-    expires_in: string;
-    scope: string;
-    refresh_token: string;
-    token_type: string;
-    created_at: number;
+export interface RawAccessTokenResponse {
+  access_token: string;
+  expires_in: string;
+  created_at: number;
+  id_token: string;
+  refresh_token: string;
+  scope: string;
+  token_type: string;
 }
