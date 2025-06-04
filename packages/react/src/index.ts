@@ -55,4 +55,7 @@ export * from './components/SignedOut';
 export {default as User} from './components/User';
 export * from './components/User';
 
+export {default as UserProfile} from './components/UserProfile/UserProfile';
+export * from './components/UserProfile/UserProfile';
+
 export * from '@asgardeo/browser';
