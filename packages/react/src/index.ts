@@ -46,11 +46,11 @@ export * from './components/SignUpButton/BaseSignUpButton';
 export {default as SignUpButton} from './components/SignUpButton/SignUpButton';
 export * from './components/SignUpButton/SignUpButton';
 
-export {default as SignedIn} from './components/SignedIn';
-export * from './components/SignedIn';
+export {default as SignedIn} from './components/control/SignedIn';
+export * from './components/control/SignedIn';
 
-export {default as SignedOut} from './components/SignedOut';
-export * from './components/SignedOut';
+export {default as SignedOut} from './components/control/SignedOut';
+export * from './components/control/SignedOut';
 
 export {default as User} from './components/User';
 export * from './components/User';

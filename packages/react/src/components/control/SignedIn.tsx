@@ -17,7 +17,7 @@
  */
 
 import {FC, PropsWithChildren, ReactNode} from 'react';
-import useAsgardeo from '../hooks/useAsgardeo';
+import useAsgardeo from '../../hooks/useAsgardeo';
 
 /**
  * Props for the SignedIn component.
