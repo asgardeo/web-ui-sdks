@@ -46,80 +46,6 @@
  * ```
  */
 export interface OIDCDiscoveryApiResponse {
-  // ====================================
-  // Core Endpoints
-  // ====================================
-
-  /**
-   * HTTPS URL that the OP asserts as its Issuer Identifier.
-   * Must not contain query or fragment components.
-   *
-   * @remarks
-   * This is a crucial identifier for the OpenID Provider and should
-   * match the iss claim in issued JWT tokens.
-   */
-  issuer?: string;
-
-  /**
-   * OAuth 2.0 Authorization Endpoint URL.
-   * Used to initiate the authentication and authorization process.
-   *
-   * @remarks
-   * The client redirects the user to this endpoint to begin the auth flow.
-   * Supports various response_type values for different OAuth 2.0 flows.
-   */
-  authorization_endpoint?: string;
-
-  /**
-   * OAuth 2.0 Token Endpoint URL.
-   * Used to obtain tokens using various grant types.
-   *
-   * @remarks
-   * Clients use this endpoint to exchange authorization codes for tokens
-   * and to refresh expired access tokens.
-   */
-  token_endpoint?: string;
-
-  // ====================================
-  // User Information & Key Management
-  // ====================================
-
-  /**
-   * UserInfo Endpoint URL.
-   * Returns claims about the authenticated end-user.
-   *
-   * @remarks
-   * Requires a valid access token with appropriate scope.
-   * May return claims in JWT format if signing/encryption is configured.
-   */
-  userinfo_endpoint?: string;
-
-  /**
-   * JSON Web Key Set (JWKS) document URL.
-   * Contains the cryptographic keys used to secure communications.
-   *
-   * @remarks
-   * Used by clients to:
-   * - Validate signatures on JWT tokens
-   * - Encrypt requests to the OP
-   * - Establish secure communications
-   */
-  jwks_uri?: string;
-
-  // ====================================
-  // Registration & Dynamic Configuration
-  // ====================================
-
-  /**
-   * Dynamic Client Registration Endpoint URL.
-   * Allows automated registration of OAuth 2.0 clients.
-   *
-   * @remarks
-   * If supported, enables automated client setup and configuration.
-   * May require initial authentication or access tokens.
-   */
-  registration_endpoint?: string;
-
   /**
    * Supported OAuth 2.0 scope values.
    * Lists the permission scopes this server can handle.
@@ -331,12 +257,6 @@ export interface OIDCDiscoveryApiResponse {
   op_tos_uri?: string;
 
   /**
-   * URL of the authorization server's OAuth 2.0 revocation
-   * endpoint.
-   */
-  revocation_endpoint?: string;
-
-  /**
    * JSON array containing a list of client authentication
    * methods supported by this revocation endpoint.
    */
@@ -350,12 +270,6 @@ export interface OIDCDiscoveryApiResponse {
    * "client_secret_jwt" authentication methods.
    */
   revocation_endpoint_auth_signing_alg_values_supported?: string[];
-
-  /**
-   * URL of the authorization server's OAuth 2.0
-   * introspection endpoint.
-   */
-  introspection_endpoint?: string;
 
   /**
    * JSON array containing a list of client authentication
@@ -380,18 +294,6 @@ export interface OIDCDiscoveryApiResponse {
   code_challenge_methods_supported?: string[];
 
   /**
-   * URL of an OP iframe that supports cross-origin communications for session state information with the RP
-   * Client, using the HTML5 postMessage API.
-   */
-  check_session_iframe?: string;
-
-  /**
-   * URL at the OP to which an RP can perform a redirect to request that the End-User be logged out at the
-   * OP.
-   */
-  end_session_endpoint?: string;
-
-  /**
    * Boolean value specifying whether the OP supports back-channel logout, with true indicating support.
    * If omitted, the default value is false.
    */
@@ -405,14 +307,101 @@ export interface OIDCDiscoveryApiResponse {
 }
 
 export interface OIDCDiscoveryEndpointsApiResponse {
-  authorization_endpoint?: string;
-  token_endpoint?: string;
-  userinfo_endpoint?: string;
-  jwks_uri?: string;
-  registration_endpoint?: string;
-  revocation_endpoint?: string;
-  introspection_endpoint?: string;
-  check_session_iframe?: string;
-  end_session_endpoint?: string;
+  // ====================================
+  // Core Endpoints
+  // ====================================
+
+  /**
+   * HTTPS URL that the OP asserts as its Issuer Identifier.
+   * Must not contain query or fragment components.
+   *
+   * @remarks
+   * This is a crucial identifier for the OpenID Provider and should
+   * match the iss claim in issued JWT tokens.
+   */
   issuer?: string;
+
+  /**
+   * OAuth 2.0 Authorization Endpoint URL.
+   * Used to initiate the authentication and authorization process.
+   *
+   * @remarks
+   * The client redirects the user to this endpoint to begin the auth flow.
+   * Supports various response_type values for different OAuth 2.0 flows.
+   */
+  authorization_endpoint?: string;
+
+  /**
+   * OAuth 2.0 Token Endpoint URL.
+   * Used to obtain tokens using various grant types.
+   *
+   * @remarks
+   * Clients use this endpoint to exchange authorization codes for tokens
+   * and to refresh expired access tokens.
+   */
+  token_endpoint?: string;
+
+  // ====================================
+  // User Information & Key Management
+  // ====================================
+
+  /**
+   * UserInfo Endpoint URL.
+   * Returns claims about the authenticated end-user.
+   *
+   * @remarks
+   * Requires a valid access token with appropriate scope.
+   * May return claims in JWT format if signing/encryption is configured.
+   */
+  userinfo_endpoint?: string;
+
+  /**
+   * JSON Web Key Set (JWKS) document URL.
+   * Contains the cryptographic keys used to secure communications.
+   *
+   * @remarks
+   * Used by clients to:
+   * - Validate signatures on JWT tokens
+   * - Encrypt requests to the OP
+   * - Establish secure communications
+   */
+  jwks_uri?: string;
+
+  // ====================================
+  // Registration & Dynamic Configuration
+  // ====================================
+
+  /**
+   * Dynamic Client Registration Endpoint URL.
+   * Allows automated registration of OAuth 2.0 clients.
+   *
+   * @remarks
+   * If supported, enables automated client setup and configuration.
+   * May require initial authentication or access tokens.
+   */
+  registration_endpoint?: string;
+
+  /**
+   * URL at the OP to which an RP can perform a redirect to request that the End-User be logged out at the
+   * OP.
+   */
+  end_session_endpoint?: string;
+
+  /**
+   * URL of an OP iframe that supports cross-origin communications for session state information with the RP
+   * Client, using the HTML5 postMessage API.
+   */
+  check_session_iframe?: string;
+
+  /**
+   * URL of the authorization server's OAuth 2.0
+   * introspection endpoint.
+   */
+  introspection_endpoint?: string;
+
+  /**
+   * URL of the authorization server's OAuth 2.0 revocation
+   * endpoint.
+   */
+  revocation_endpoint?: string;
 }
