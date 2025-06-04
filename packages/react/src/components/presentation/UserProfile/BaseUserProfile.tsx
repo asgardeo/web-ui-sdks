@@ -3,7 +3,10 @@
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
+ * in compliance wi      <div style={styles.header}>
+        <Avatar imageUrl={getMappedValue('profileUrl')} name={getMappedValue('displayName')} size={80} alt={`${getMappedValue('displayName')}'s avatar`} />
+        <div style={styles.profileInfo}>{getMappedValue('displayName') && <h2 style={styles.name}>{getMappedValue('displayName')}</h2>}</div>
+      </div>he License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -147,6 +150,17 @@ export interface BaseUserProfileProps {
    * Optional title for the profile popup
    */
   title?: string;
+  /**
+   * Mapping of component attribute names to identity provider field names.
+   * Allows customizing which user profile fields should be used for each attribute.
+   */
+  attributeMapping?: {
+    picture?: string;
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+    [key: string]: string | undefined;
+  };
 }
 
 /**
@@ -163,9 +177,34 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   mode = 'inline',
   portalId = 'asgardeo-user-profile',
   title = 'User Profile',
+  attributeMapping = {},
 }): ReactElement => {
   const styles = useStyles();
   const [isOpen, setIsOpen] = useState(mode === 'popup');
+
+  const defaultAttributeMappings = {
+    picture: 'profile',
+    firstName: 'given_name',
+    lastName: 'family_name'
+  };
+
+  const mergedMappings = { ...defaultAttributeMappings, ...attributeMapping };
+
+  const getMappedValue = (key: string) => {
+    const mappedKey = mergedMappings[key];
+    return mappedKey ? user[mappedKey] : user[key];
+  };
+
+  const getDisplayName = () => {
+    const firstName = getMappedValue('firstName');
+    const lastName = getMappedValue('lastName');
+
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`;
+    }
+
+    return getMappedValue('username') || '';
+  };
 
   if (!user) {
     return fallback;
@@ -192,13 +231,19 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
     ...(cardLayout ? styles.card : {}),
   };
 
-  const excludedProps = ['displayName', 'profileUrl'];
+  // Get the component attributes that are being used in the Avatar
+  const avatarAttributes = ['picture'];
+  const excludedProps = avatarAttributes.map(attr => mergedMappings[attr] || attr);
 
   const profileContent = (
     <div style={containerStyle} className={clsx(withVendorCSSClassPrefix('user-profile'), className)}>
       <div style={styles.header}>
-        <Avatar imageUrl={user.profileUrl} name={user.displayName} size={80} alt={`${user.displayName}'s avatar`} />
-        <div style={styles.profileInfo}>{user.displayName && <h2 style={styles.name}>{user.displayName}</h2>}</div>
+        <Avatar
+          imageUrl={getMappedValue('picture')}
+          name={getDisplayName()}
+          size={80}
+          alt={`${getDisplayName()}'s avatar`}
+        />
       </div>
       <div style={styles.infoContainer}>
         {Object.entries(user)
