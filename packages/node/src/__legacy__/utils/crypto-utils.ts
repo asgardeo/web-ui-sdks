@@ -16,13 +16,13 @@
  * under the License.
  */
 
-import {CryptoUtils, JWKInterface} from '@asgardeo/javascript';
+import {Crypto, JWKInterface} from '@asgardeo/javascript';
 import base64url from 'base64url';
 import sha256 from 'fast-sha256';
 import * as jose from 'jose';
 import randombytes from 'secure-random-bytes';
 
-export class NodeCryptoUtils implements CryptoUtils<Buffer | string> {
+export class NodeCryptoUtils implements Crypto<Buffer | string> {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public constructor() {}
 

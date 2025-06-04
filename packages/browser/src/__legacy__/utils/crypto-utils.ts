@@ -17,13 +17,13 @@
  */
 
 import {Buffer} from 'buffer';
-import {AsgardeoAuthException, CryptoUtils, JWKInterface} from '@asgardeo/javascript';
+import {AsgardeoAuthException, Crypto, JWKInterface} from '@asgardeo/javascript';
 import base64url from 'base64url';
 import sha256 from 'fast-sha256';
 import {createLocalJWKSet, jwtVerify} from 'jose';
 import randombytes from 'randombytes';
 
-export class SPACryptoUtils implements CryptoUtils<Buffer | string> {
+export class SPACryptoUtils implements Crypto<Buffer | string> {
   /**
    * Get URL encoded string.
    *

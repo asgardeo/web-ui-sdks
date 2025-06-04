@@ -23,5 +23,5 @@ export * from "./token";
 export * from "./custom-grant";
 export * from "./authorization-url";
 export * from "./user";
-export * from "./crypto";
+export * from "../../models/crypto";
 export * from "./fetch";

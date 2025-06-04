@@ -25,7 +25,7 @@ import {
   AuthenticatedUserInfo,
   AuthorizationURLParams,
   BasicUserInfo,
-  CryptoUtils,
+  Crypto,
   CustomGrantConfig,
   FetchRequestConfig,
   FetchResponse,
@@ -47,10 +47,10 @@ export class AuthenticationCore<T> {
   private _config: () => Promise<AuthClientConfig>;
   private _oidcProviderMetaData: () => Promise<OIDCProviderMetaData>;
   private _authenticationHelper: AuthenticationHelper<T>;
-  private _cryptoUtils: CryptoUtils;
+  private _cryptoUtils: Crypto;
   private _cryptoHelper: CryptoHelper;
 
-  public constructor(dataLayer: DataLayer<T>, cryptoUtils: CryptoUtils) {
+  public constructor(dataLayer: DataLayer<T>, cryptoUtils: Crypto) {
     this._cryptoUtils = cryptoUtils;
     this._cryptoHelper = new CryptoHelper(cryptoUtils);
     this._authenticationHelper = new AuthenticationHelper(dataLayer, this._cryptoHelper);

@@ -21,7 +21,7 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   BasicUserInfo,
-  CryptoUtils,
+  Crypto,
   CustomGrantConfig,
   DataLayer,
   IdTokenPayload,
@@ -38,7 +38,7 @@ import {NodeCryptoUtils} from '../utils/crypto-utils';
 
 export class AsgardeoNodeCore<T> {
   private _auth: AsgardeoAuthClient<T>;
-  private _cryptoUtils: CryptoUtils;
+  private _cryptoUtils: Crypto;
   private _store: Store;
   private _dataLayer: DataLayer<T>;
 

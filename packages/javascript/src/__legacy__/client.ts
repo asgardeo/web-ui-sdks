@@ -22,7 +22,7 @@ import {CryptoHelper} from './helpers';
 import {
   AuthClientConfig,
   BasicUserInfo,
-  CryptoUtils,
+  Crypto,
   CustomGrantConfig,
   FetchResponse,
   GetAuthURLConfig,
@@ -98,7 +98,7 @@ export class AsgardeoAuthClient<T> {
   public async initialize(
     config: AuthClientConfig<T>,
     store: Store,
-    cryptoUtils: CryptoUtils,
+    cryptoUtils: Crypto,
     instanceID?: number,
   ): Promise<void> {
     const clientId: string = config.clientID;

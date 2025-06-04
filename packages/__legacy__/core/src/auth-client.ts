@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, Store, CryptoUtils, ResponseMode} from '@asgardeo/auth-js';
+import {AsgardeoAuthClient, Store, Crypto, ResponseMode} from '@asgardeo/auth-js';
 import {UIAuthClient, UIAuthConfig} from './models/auth-config';
 import {BrandingPreferenceTypes} from './models/branding-api-response';
 
@@ -38,10 +38,10 @@ export class AuthClient {
    *
    * @param {UIAuthConfig} authClientConfig - The configuration for the `UIAuthClient`.
    * @param {Store} store - The store for the `UIAuthClient`.
-   * @param {CryptoUtils} cryptoUtils - The crypto utilities for the `UIAuthClient`.
+   * @param {Crypto} cryptoUtils - The crypto utilities for the `UIAuthClient`.
    * @returns {UIAuthClient} The singleton instance of `UIAuthClient`.
    */
-  static getInstance(authClientConfig?: UIAuthConfig, store?: Store, cryptoUtils?: CryptoUtils): UIAuthClient {
+  static getInstance(authClientConfig?: UIAuthConfig, store?: Store, cryptoUtils?: Crypto): UIAuthClient {
     if (!AuthClient.instance) {
       const DEFAULT_NAME: string = 'carbon.super';
 
@@ -63,4 +63,4 @@ export class AuthClient {
 }
 
 /* Interfaces, classes and enums required from the auth-js package */
-export {CryptoUtils, JWKInterface, Store, AsgardeoAuthClient, TokenResponse, ResponseMode} from '@asgardeo/auth-js';
+export {Crypto, JWKInterface, Store, AsgardeoAuthClient, TokenResponse, ResponseMode} from '@asgardeo/auth-js';

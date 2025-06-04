@@ -19,7 +19,7 @@
 import {
   AuthApiResponse,
   AuthClient,
-  CryptoUtils,
+  Crypto,
   MeAPIResponse,
   Store,
   UIAuthClient,
@@ -81,7 +81,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
 
   const storeInstance: Store = store || new SessionStore();
 
-  const spaUtils: CryptoUtils = new SPACryptoUtils();
+  const spaUtils: Crypto = new SPACryptoUtils();
 
   const authClient: UIAuthClient = AuthClient.getInstance(config, storeInstance, spaUtils);
 

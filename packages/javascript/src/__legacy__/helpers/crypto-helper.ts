@@ -17,14 +17,14 @@
  */
 
 import {AsgardeoAuthException} from '../exception';
-import {CryptoUtils, JWKInterface} from '../models';
+import {Crypto, JWKInterface} from '../models';
 import {IdTokenPayload} from '../../models/id-token';
 import TokenConstants from '../../constants/TokenConstants';
 
 export class CryptoHelper<T = any> {
-  private _cryptoUtils: CryptoUtils<T>;
+  private _cryptoUtils: Crypto<T>;
 
-  public constructor(cryptoUtils: CryptoUtils<T>) {
+  public constructor(cryptoUtils: Crypto<T>) {
     this._cryptoUtils = cryptoUtils;
   }
 
