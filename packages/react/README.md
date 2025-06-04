@@ -10,71 +10,105 @@ npm install @asgardeo/react
 
 ## Quick Start
 
-1. Wrap your app with the `AsgardeoProvider`:
+1. Add `<AsgardeoProvider />` to your app
 
-```jsx
-// App.jsx
-import { AsgardeoProvider } from "@asgardeo/react";
+```tsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+import { AsgardeoProvider } from '@asgardeo/react'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <AsgardeoProvider
+      baseUrl: '<your-organization-name>'
+      clientId: '<your-app-client-id>'
+    >
+      <App />
+    </AsgardeoProvider>
+  </StrictMode>
+)
+```
+
+2. Add signed-in and signed-out to your app
+
+```tsx
+import { SignedIn, SignedOut, SignInButton, SignOutButton } from '@asgardeo/react'
+import './App.css'
 
 function App() {
-    return (
-        <AsgardeoProvider
-            config={{
-                signInRedirectURL: "http://localhost:3000",
-                clientID: "<your_client_id>",
-                baseUrl: "https://api.asgardeo.io/t/<org_name>"
-            }}
-        >
-            <YourApp />
-        </AsgardeoProvider>
-    );
+  return (
+    <>
+      <SignedIn>
+        <SignOutButton />
+      </SignedIn>
+      <SignedOut>
+        <SignInButton />
+      </SignedOut>
+    </>
+  )
 }
+
+export default App
 ```
 
-2. Use the authentication hooks in your components:
+3. Start using other drop-in components like `User`, `UserProfile`, etc.
 
-```jsx
-import { useAsgardeo } from "@asgardeo/react";
+```tsx
+import { User, UserProfile } from '@asgardeo/react'
+import './App.css'
 
-function LoginPage() {
-    const { signIn, signOut, isAuthenticated, user } = useAsgardeo();
+function App() {
+  return (
+    <>
+      <User>
+        {({ user }) => (
+          <div>
+            <h1>Welcome, {user.username}</h1>
+            <UserProfile />
+          </div>
+        )}
+      </User>
+      
+      <UserProfile />
+    </>
+  )
+}
+export default App
+```
 
-    return (
+## Using the `useAsgardeo` Hook (For Programmatic Control)
+
+For more granular control, you can use the useAsgardeo hook. This hook provides direct access to SDK's functions and state:
+
+```tsx
+import { useAsgardeo } from '@asgardeo/react'
+import './App.css'
+
+function App() {
+  const { user, signIn, signOut, isSignedIn, isLoading } = useAsgardeo()
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  return (
+    <div>
+      {isSignedIn ? (
         <div>
-            {isAuthenticated ? (
-                <>
-                    <p>Welcome, {user.username}</p>
-                    <button onClick={() => signOut()}>Sign Out</button>
-                </>
-            ) : (
-                <button onClick={() => signIn()}>Sign In</button>
-            )}
+          <div>
+            <img src={user.photourl} alt={user.username} />
+            <p>Welcome back, {user.givenname}</p>
+          </div>
+          <button onClick={() => signOut()}>Sign Out</button>
         </div>
-    );
+      ) : (
+        <button onClick={() => signIn()}>Sign In</button>
+      )}
+    </div>
+  )
 }
-```
-
-## Hooks
-
-- `useAsgardeo()`: Main hook for authentication functionality
-- `useAuthContext()`: Hook to access the raw auth context
-- `useIsAuthenticated()`: Hook to check authentication status
-
-## Development
-
-1. Install dependencies:
-```bash
-pnpm install
-```
-
-2. Build:
-```bash
-pnpm build
-```
-
-3. Run tests:
-```bash
-pnpm test
 ```
 
 ## License
