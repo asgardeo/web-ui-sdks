@@ -635,6 +635,8 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
         return basicUserInfo;
       }
     }
+    
+    return Promise.resolve(undefined);
   }
 
   public async attachTokenToRequestConfig(request: HttpRequestConfig): Promise<void> {
@@ -675,7 +677,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
   }
 
   public async getOIDCServiceEndpoints(): Promise<OIDCEndpoints> {
-    return this._authenticationClient.getOIDCServiceEndpoints();
+    return this._authenticationClient.getOIDCServiceEndpoints() as any;
   }
 
   public async getAccessToken(): Promise<string> {

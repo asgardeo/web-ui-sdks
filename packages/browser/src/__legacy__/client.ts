@@ -400,7 +400,7 @@ export class AsgardeoSPAClient {
     // Discontinues the execution of this method if `config.callOnlyOnRedirect` is true and the `signIn` method
     // is not being called on redirect.
     if (!SPAUtils.canContinueSignIn(Boolean(config?.callOnlyOnRedirect), authorizationCode)) {
-      return;
+      return undefined;
     }
 
     delete config?.callOnlyOnRedirect;
@@ -442,7 +442,7 @@ export class AsgardeoSPAClient {
 
     // checks if the `signIn` method has been called.
     if (SPAUtils.wasSignInCalled()) {
-      return;
+      return undefined;
     }
 
     return this._client

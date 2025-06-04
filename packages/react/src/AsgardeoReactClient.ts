@@ -41,7 +41,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       baseUrl: config.baseUrl,
       clientID: config.clientId,
       signInRedirectURL: config.afterSignInUrl,
-      scope: config.scopes
+      scope: Array.isArray(config.scopes) ? config.scopes : config.scopes.split(' '),
     });
   }
 

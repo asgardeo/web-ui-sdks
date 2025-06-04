@@ -226,7 +226,7 @@ export const WebWorkerClient = async (
      * Reference: https://github.com/whatwg/xhr/issues/55
      */
     if (config?.data && config?.data instanceof FormData) {
-      config.data = {...Object.fromEntries(config?.data.entries()), formData: true};
+      config.data = {...Object.fromEntries((config?.data as any).entries()), formData: true};
     }
 
     const message: Message<HttpRequestConfig> = {
@@ -539,6 +539,8 @@ export const WebWorkerClient = async (
 
       return getBasicUserInfo();
     }
+    
+    return Promise.resolve(undefined);
   };
 
   /**
@@ -634,7 +636,7 @@ export const WebWorkerClient = async (
       } else {
         window.location.href = SPAUtils.getSignOutURL(config.clientID, instanceID);
 
-        SPAUtils.waitTillPageRedirect().then(() => {
+        return SPAUtils.waitTillPageRedirect().then(() => {
           return Promise.resolve(true);
         });
       }

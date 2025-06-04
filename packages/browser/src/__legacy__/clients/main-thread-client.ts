@@ -152,7 +152,7 @@ export const MainThreadClient = async (
   };
 
   const checkSession = async (): Promise<void> => {
-    const oidcEndpoints: OIDCEndpoints = await _authenticationClient.getOIDCServiceEndpoints();
+    const oidcEndpoints: OIDCEndpoints = await _authenticationClient.getOIDCServiceEndpoints() as OIDCEndpoints;
     const config = await _dataLayer.getConfigData();
 
     _authenticationHelper.initializeSessionManger(

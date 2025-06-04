@@ -148,7 +148,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     throw new Error('Not implemented');
   };
 
-  const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<boolean> =>
+  const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<string> =>
     asgardeo.signOut(options, afterSignOut);
 
   const isDarkMode = useMemo(() => {
