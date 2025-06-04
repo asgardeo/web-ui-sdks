@@ -18,6 +18,8 @@
 
 import {CSSProperties, FC, useMemo} from 'react';
 import {useTheme} from '../../../theme/useTheme';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import clsx from 'clsx';
 
 export interface AvatarProps {
   /**
@@ -85,7 +87,7 @@ export const Avatar: FC<AvatarProps> = ({imageUrl, alt = 'User avatar', size = 6
   };
 
   return (
-    <div style={styles.avatar} className={className}>
+    <div style={styles.avatar} className={clsx(withVendorCSSClassPrefix('avatar'), className)}>
       {imageUrl ? <img src={imageUrl} alt={alt} style={styles.image} /> : name ? getInitials(name) : '?'}
     </div>
   );

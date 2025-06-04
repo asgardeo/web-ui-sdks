@@ -20,6 +20,8 @@ import {CSSProperties, FC, ReactElement, useMemo, useState} from 'react';
 import {Popover} from '../../primitives/Popover/Popover';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import {useTheme} from '../../../theme/useTheme';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import clsx from 'clsx';
 
 const useStyles = () => {
   const {theme, isDark} = useTheme();
@@ -193,7 +195,7 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const excludedProps = ['displayName', 'profileUrl'];
 
   const profileContent = (
-    <div style={containerStyle} className={className}>
+    <div style={containerStyle} className={clsx(withVendorCSSClassPrefix('user-profile'), className)}>
       <div style={styles.header}>
         <Avatar imageUrl={user.profileUrl} name={user.displayName} size={80} alt={`${user.displayName}'s avatar`} />
         <div style={styles.profileInfo}>{user.displayName && <h2 style={styles.name}>{user.displayName}</h2>}</div>

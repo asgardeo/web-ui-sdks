@@ -19,6 +19,8 @@
 import React, {CSSProperties, FC, ReactNode, useEffect, useMemo, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {useTheme} from '../../../theme/useTheme';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import clsx from 'clsx';
 
 const useStyles = () => {
   const {theme, isDark} = useTheme();
@@ -179,9 +181,9 @@ export const Popover: FC<PopoverProps> & {
 
   return createPortal(
     <PopoverContext.Provider value={{onClose}}>
-      <div>
-        <div style={styles['overlay']} onClick={onClose} />
-        <div className={className} style={styles['content']}>
+      <div className={clsx(withVendorCSSClassPrefix('popover'), className)}>
+        <div className={withVendorCSSClassPrefix('popover-overlay')} style={styles['overlay']} onClick={onClose} />
+        <div className={withVendorCSSClassPrefix('popover-content')} style={styles['content']}>
           {children}
         </div>
       </div>
