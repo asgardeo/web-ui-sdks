@@ -19,78 +19,65 @@
 import {CSSProperties, FC, ReactElement, useMemo, useState} from 'react';
 import {Popover} from '../../primitives/Popover/Popover';
 import {Avatar} from '../../primitives/Avatar/Avatar';
+import {useTheme} from '../../../theme';
 
 const useStyles = () => {
+  const {theme, isDark} = useTheme();
+
   return useMemo(
     () => ({
       root: {
-        padding: '1rem',
+        padding: theme.spacing.unit + 'px',
         maxWidth: '600px',
         margin: '0 auto',
-      },
+      } as CSSProperties,
       card: {
-        background: '#ffffff',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        padding: '1.5rem',
-      },
-      darkCard: {
-        background: '#1e1e1e',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-      },
+        background: theme.colors.surface,
+        borderRadius: theme.borderRadius.medium,
+        boxShadow: `0 2px 4px ${isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
+        padding: theme.spacing.unit * 1.5 + 'px',
+      } as CSSProperties,
       header: {
         display: 'flex',
         alignItems: 'center',
-        gap: '1.5rem',
-        marginBottom: '1.5rem',
-      },
+        gap: theme.spacing.unit * 1.5 + 'px',
+        marginBottom: theme.spacing.unit * 1.5 + 'px',
+      } as CSSProperties,
       profileInfo: {
         flex: 1,
-      },
+      } as CSSProperties,
       name: {
         fontSize: '1.5rem',
         fontWeight: 600,
         margin: '0',
-        color: '#1a1a1a',
-      },
-      darkName: {
-        color: '#ffffff',
-      },
+        color: theme.colors.text.primary,
+      } as CSSProperties,
       infoContainer: {
         display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-      },
+        flexDirection: 'column' as const,
+        gap: theme.spacing.unit + 'px',
+      } as CSSProperties,
       field: {
         display: 'flex',
         alignItems: 'center',
-        padding: '0.5rem 0',
-        borderBottom: '1px solid #eee',
-      },
-      darkField: {
-        borderBottomColor: '#333',
-      },
+        padding: theme.spacing.unit * 0.5 + 'px 0',
+        borderBottom: `1px solid ${theme.colors.border}`,
+      } as CSSProperties,
       lastField: {
         borderBottom: 'none',
-      },
+      } as CSSProperties,
       label: {
         fontWeight: 500,
-        color: '#666',
+        color: theme.colors.text.secondary,
         width: '120px',
         flexShrink: 0,
-      },
-      darkLabel: {
-        color: '#999',
-      },
+      } as CSSProperties,
       value: {
-        color: '#1a1a1a',
+        color: theme.colors.text.primary,
         flex: 1,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-      },
-      darkValue: {
-        color: '#ffffff',
-      },
+      } as CSSProperties,
       popup: {
         position: 'fixed',
         top: '50%',
@@ -99,7 +86,7 @@ const useStyles = () => {
         zIndex: 1000,
         maxHeight: '90vh',
         overflowY: 'auto',
-      },
+      } as CSSProperties,
       overlay: {
         position: 'fixed',
         top: 0,
@@ -108,9 +95,9 @@ const useStyles = () => {
         bottom: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         zIndex: 999,
-      },
+      } as CSSProperties,
     }),
-    [],
+    [theme, isDark],
   );
 };
 
@@ -160,7 +147,6 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
 }): ReactElement => {
   const styles = useStyles();
   const [isOpen, setIsOpen] = useState(mode === 'popup');
-  const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   if (!user) {
     return fallback;
@@ -169,9 +155,9 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const renderUserInfo = (label: string, value?: string) => {
     if (!value) return null;
     return (
-      <div style={{...styles.field, ...(isDarkMode ? styles.darkField : {})}}>
-        <span style={{...styles.label, ...(isDarkMode ? styles.darkLabel : {})}}>{label}</span>
-        <span style={{...styles.value, ...(isDarkMode ? styles.darkValue : {})}}>{value}</span>
+      <div style={styles.field}>
+        <span style={styles.label}>{label}</span>
+        <span style={styles.value}>{value}</span>
       </div>
     );
   };
@@ -184,7 +170,7 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
   const containerStyle = {
     ...styles.root,
-    ...(cardLayout ? {...styles.card, ...(isDarkMode ? styles.darkCard : {})} : {}),
+    ...(cardLayout ? styles.card : {}),
   };
 
   const excludedProps = ['displayName', 'profileUrl'];
@@ -194,9 +180,7 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
       <div style={styles.header}>
         <Avatar imageUrl={user.profileUrl} name={user.displayName} size={80} alt={`${user.displayName}'s avatar`} />
         <div style={styles.profileInfo}>
-          {user.displayName && (
-            <h2 style={{...styles.name, ...(isDarkMode ? styles.darkName : {})}}>{user.displayName}</h2>
-          )}
+          {user.displayName && <h2 style={styles.name}>{user.displayName}</h2>}
         </div>
       </div>
       <div style={styles.infoContainer}>
