@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {GetAuthURLConfig} from '../..';
+import {GetAuthURLConfig} from '@asgardeo/javascript';
 
 export interface SessionManagementHelperInterface {
   initialize(
