@@ -1,11 +1,24 @@
-# @asgardeo/node
-
-Node.js SDK for Asgardeo - Authentication and Identity Management.
+<p align="center" style="color: #343a40">
+  <h1 align="center">@asgardeo/node</h1>
+</p>
+<p align="center" style="font-size: 1.2rem;">Node.js SDK for Asgardeo</p>
+<div align="center">
+  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@asgardeo/node">
+  <img alt="npm" src="https://img.shields.io/npm/dw/@asgardeo/node">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+</div>
 
 ## Installation
 
 ```bash
+# Using npm
 npm install @asgardeo/node
+
+# or using pnpm
+pnpm add @asgardeo/node
+
+# or using yarn
+yarn add @asgardeo/node
 ```
 
 ## Quick Start
@@ -52,23 +65,6 @@ app.get("/userinfo", async (req, res) => {
         res.status(401).send("Unauthorized");
     }
 });
-```
-
-## Development
-
-1. Install dependencies:
-```bash
-pnpm install
-```
-
-2. Build:
-```bash
-pnpm build
-```
-
-3. Run tests:
-```bash
-pnpm test
 ```
 
 ## License

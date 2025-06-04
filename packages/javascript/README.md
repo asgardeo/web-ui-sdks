@@ -1,11 +1,24 @@
-# @asgardeo/javascript
-
-Core JavaScript SDK for Asgardeo - Authentication and Identity Management.
+<p align="center" style="color: #343a40">
+  <h1 align="center">@asgardeo/javascript</h1>
+</p>
+<p align="center" style="font-size: 1.2rem;">Framework Agnostic JavaScript SDK for Asgardeo</p>
+<div align="center">
+  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@asgardeo/javascript">
+  <img alt="npm" src="https://img.shields.io/npm/dw/@asgardeo/javascript">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+</div>
 
 ## Installation
 
 ```bash
+# Using npm
 npm install @asgardeo/javascript
+
+# or using pnpm
+pnpm add @asgardeo/javascript
+
+# or using yarn
+yarn add @asgardeo/javascript
 ```
 
 ## Quick Start
@@ -37,23 +50,6 @@ auth.getBasicUserInfo()
 
 // Sign out
 auth.signOut();
-```
-
-## Development
-
-1. Install dependencies:
-```bash
-pnpm install
-```
-
-2. Build:
-```bash
-pnpm build
-```
-
-3. Run tests:
-```bash
-pnpm test
 ```
 
 ## License

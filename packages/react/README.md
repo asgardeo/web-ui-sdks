@@ -1,11 +1,24 @@
-# @asgardeo/react
-
-React SDK for Asgardeo - Authentication and Identity Management.
+<p align="center" style="color: #343a40">
+  <h1 align="center">@asgardeo/react</h1>
+</p>
+<p align="center" style="font-size: 1.2rem;">React SDK for Asgardeo</p>
+<div align="center">
+  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@asgardeo/react">
+  <img alt="npm" src="https://img.shields.io/npm/dw/@asgardeo/react">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+</div>
 
 ## Installation
 
 ```bash
+# Using npm
 npm install @asgardeo/react
+
+# or using pnpm
+pnpm add @asgardeo/react
+
+# or using yarn
+yarn add @asgardeo/react
 ```
 
 ## Quick Start
