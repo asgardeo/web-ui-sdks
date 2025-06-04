@@ -43,9 +43,9 @@ const TokenConstants = {
    */
   Storage: {
     /**
-     * Timer-related storage keys.
+     * Storage keys.
      */
-    TimerKeys: {
+    StorageKeys: {
       /**
        * Key used to store the refresh token timer identifier.
        */

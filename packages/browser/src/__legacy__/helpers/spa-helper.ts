@@ -49,17 +49,17 @@ export class SPAHelper<T extends MainThreadClientConfig | WebWorkerClientConfig>
       }, time * 1000);
 
       await this._dataLayer.setTemporaryDataParameter(
-        TokenConstants.Storage.TimerKeys.REFRESH_TOKEN_TIMER,
+        TokenConstants.Storage.StorageKeys.REFRESH_TOKEN_TIMER,
         JSON.stringify(timer),
       );
     }
   }
 
   public async getRefreshTimeoutTimer(): Promise<number> {
-    if (await this._dataLayer.getTemporaryDataParameter(TokenConstants.Storage.TimerKeys.REFRESH_TOKEN_TIMER)) {
+    if (await this._dataLayer.getTemporaryDataParameter(TokenConstants.Storage.StorageKeys.REFRESH_TOKEN_TIMER)) {
       return JSON.parse(
         (await this._dataLayer.getTemporaryDataParameter(
-          TokenConstants.Storage.TimerKeys.REFRESH_TOKEN_TIMER,
+          TokenConstants.Storage.StorageKeys.REFRESH_TOKEN_TIMER,
         )) as string,
       );
     }
