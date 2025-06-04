@@ -17,7 +17,6 @@
  */
 
 import {
-  AUTHORIZATION_CODE,
   AsgardeoAuthClient,
   AsgardeoAuthException,
   AuthClientConfig,
@@ -29,8 +28,7 @@ import {
   GetAuthURLConfig,
   OIDCEndpoints,
   ResponseMode,
-  SESSION_STATE,
-  STATE,
+  OidcRequestConstants,
   Store,
   extractPkceStorageKeyFromState,
 } from '@asgardeo/javascript';
@@ -408,7 +406,7 @@ export const WebWorkerClient = async (
     const response: AuthorizationResponse = await communicate<GetAuthURLConfig, AuthorizationResponse>(message);
 
     const pkceKey: string = extractPkceStorageKeyFromState(
-      new URL(response.authorizationURL).searchParams.get(STATE) ?? '',
+      new URL(response.authorizationURL).searchParams.get(OidcRequestConstants.Params.STATE) ?? '',
     );
 
     response.pkce && config.enablePKCE && SPAUtils.setPKCE(pkceKey, response.pkce);
@@ -461,7 +459,7 @@ export const WebWorkerClient = async (
       async (response: AuthorizationResponse) => {
         if (response.pkce && config.enablePKCE) {
           const pkceKey: string = extractPkceStorageKeyFromState(
-            new URL(response.authorizationURL).searchParams.get(STATE) ?? '',
+            new URL(response.authorizationURL).searchParams.get(OidcRequestConstants.Params.STATE) ?? '',
           );
 
           SPAUtils.setPKCE(pkceKey, response.pkce);
@@ -575,9 +573,9 @@ export const WebWorkerClient = async (
         resolvedSessionState = sessionState ?? '';
         resolvedState = state ?? '';
       } else {
-        resolvedAuthorizationCode = new URL(window.location.href).searchParams.get(AUTHORIZATION_CODE) ?? '';
-        resolvedSessionState = new URL(window.location.href).searchParams.get(SESSION_STATE) ?? '';
-        resolvedState = new URL(window.location.href).searchParams.get(STATE) ?? '';
+        resolvedAuthorizationCode = new URL(window.location.href).searchParams.get(OidcRequestConstants.Params.AUTHORIZATION_CODE) ?? '';
+        resolvedSessionState = new URL(window.location.href).searchParams.get(OidcRequestConstants.Params.SESSION_STATE) ?? '';
+        resolvedState = new URL(window.location.href).searchParams.get(OidcRequestConstants.Params.STATE) ?? '';
 
         SPAUtils.removeAuthorizationCode();
       }

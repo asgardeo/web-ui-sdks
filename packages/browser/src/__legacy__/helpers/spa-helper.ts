@@ -18,8 +18,8 @@
 
 import {AsgardeoAuthClient, DataLayer, TokenConstants} from '@asgardeo/javascript';
 
-import {AuthenticationHelper} from '../helper/authentication-helper';
-import {MainThreadClientConfig, WebWorkerClientConfig} from '../models/config';
+import {AuthenticationHelper} from '../helpers/authentication-helper';
+import {MainThreadClientConfig, WebWorkerClientConfig} from '../models/client-config';
 
 export class SPAHelper<T extends MainThreadClientConfig | WebWorkerClientConfig> {
   private _authenticationClient: AsgardeoAuthClient<T>;

@@ -17,7 +17,6 @@
  */
 
 import {
-  AUTHORIZATION_CODE,
   AsgardeoAuthClient,
   AuthClientConfig,
   BasicUserInfo,
@@ -28,8 +27,7 @@ import {
   GetAuthURLConfig,
   OIDCEndpoints,
   ResponseMode,
-  SESSION_STATE,
-  STATE,
+  OidcRequestConstants,
   SessionData,
   Store,
   extractPkceStorageKeyFromState,
@@ -78,7 +76,10 @@ export const MainThreadClient = async (
     },
     (config.storage as Storage) ?? Storage.SessionStorage,
     (sessionState: string) =>
-      _dataLayer.setSessionDataParameter(SESSION_STATE as keyof SessionData, sessionState ?? ''),
+      _dataLayer.setSessionDataParameter(
+        OidcRequestConstants.Params.SESSION_STATE as keyof SessionData,
+        sessionState ?? '',
+      ),
   );
 
   const _authenticationHelper = getAuthHelper(_authenticationClient, _spaHelper);
@@ -165,7 +166,10 @@ export const MainThreadClient = async (
 
   const shouldStopAuthn = async (): Promise<boolean> => {
     return await _sessionManagementHelper.receivePromptNoneResponse(async (sessionState: string | null) => {
-      await _dataLayer.setSessionDataParameter(SESSION_STATE as keyof SessionData, sessionState ?? '');
+      await _dataLayer.setSessionDataParameter(
+        OidcRequestConstants.Params.SESSION_STATE as keyof SessionData,
+        sessionState ?? '',
+      );
       return;
     });
   };
@@ -200,9 +204,11 @@ export const MainThreadClient = async (
         resolvedSessionState = sessionState ?? '';
         resolvedState = state ?? '';
       } else {
-        resolvedAuthorizationCode = new URL(window.location.href).searchParams.get(AUTHORIZATION_CODE) ?? '';
-        resolvedSessionState = new URL(window.location.href).searchParams.get(SESSION_STATE) ?? '';
-        resolvedState = new URL(window.location.href).searchParams.get(STATE) ?? '';
+        resolvedAuthorizationCode =
+          new URL(window.location.href).searchParams.get(OidcRequestConstants.Params.AUTHORIZATION_CODE) ?? '';
+        resolvedSessionState =
+          new URL(window.location.href).searchParams.get(OidcRequestConstants.Params.SESSION_STATE) ?? '';
+        resolvedState = new URL(window.location.href).searchParams.get(OidcRequestConstants.Params.STATE) ?? '';
 
         SPAUtils.removeAuthorizationCode();
       }
@@ -332,7 +338,7 @@ export const MainThreadClient = async (
     const url: string = urlObject.toString();
 
     if (config.storage === Storage.BrowserMemory && config.enablePKCE) {
-      const state = urlObject.searchParams.get(STATE);
+      const state = urlObject.searchParams.get(OidcRequestConstants.Params.STATE);
 
       SPAUtils.setPKCE(
         extractPkceStorageKeyFromState(state ?? ''),

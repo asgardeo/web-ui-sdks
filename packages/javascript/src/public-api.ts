@@ -36,6 +36,8 @@ export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 export {BaseConfig, Config} from './models/config';
 export {IdTokenPayload} from './models/id-token';
+export {OIDCEndpoints} from './models/oidc-endpoints';
+export {Store} from './models/store';
 export {User} from './models/user';
 
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, GetAuthURLConfig, SESSION_STATE} from '@asgardeo/javascript';
+import {AsgardeoAuthClient, GetAuthURLConfig, OidcRequestConstants} from '@asgardeo/javascript';
 import {
   CHECK_SESSION_SIGNED_IN,
   CHECK_SESSION_SIGNED_OUT,
@@ -172,7 +172,7 @@ export const SessionManagementHelper = (() => {
     setSessionState?: (sessionState: string | null) => Promise<void>,
   ): Promise<boolean> => {
     const state = new URL(window.location.href).searchParams.get(STATE_QUERY);
-    const sessionState = new URL(window.location.href).searchParams.get(SESSION_STATE);
+    const sessionState = new URL(window.location.href).searchParams.get(OidcRequestConstants.Params.SESSION_STATE);
     const parent = window.parent.parent;
 
     if (state !== null && (state.includes(STATE) || state.includes(SILENT_SIGN_IN_STATE))) {
