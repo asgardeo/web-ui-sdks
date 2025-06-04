@@ -40,12 +40,12 @@ import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 import ScopeConstants from '../../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../../constants/OIDCRequestConstants';
-import {OIDCProviderMetaData} from '../../models/oidc-discovery';
+import {OIDCDiscoveryResponse} from '../../models/oidc-discovery';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
   private _config: () => Promise<AuthClientConfig>;
-  private _oidcProviderMetaData: () => Promise<OIDCProviderMetaData>;
+  private _oidcProviderMetaData: () => Promise<OIDCDiscoveryResponse>;
   private _authenticationHelper: AuthenticationHelper<T>;
   private _cryptoUtils: Crypto;
   private _cryptoHelper: CryptoHelper;
@@ -129,7 +129,7 @@ export class AuthenticationCore<T> {
 
   public async getAuthorizationURL(config?: AuthorizationURLParams, userID?: string): Promise<string> {
     const authorizeEndpoint: string = (await this._dataLayer.getOIDCProviderMetaDataParameter(
-      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCProviderMetaData,
+      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCDiscoveryResponse,
     )) as string;
 
     if (!authorizeEndpoint || authorizeEndpoint.trim().length === 0) {
@@ -365,7 +365,7 @@ export class AuthenticationCore<T> {
     customGrantParams: CustomGrantConfig,
     userID?: string,
   ): Promise<TokenResponse | FetchResponse> {
-    const oidcProviderMetadata: OIDCProviderMetaData = await this._oidcProviderMetaData();
+    const oidcProviderMetadata: OIDCDiscoveryResponse = await this._oidcProviderMetaData();
     const configData: StrictAuthClientConfig = await this._config();
 
     let tokenEndpoint: string | undefined;
@@ -548,7 +548,7 @@ export class AuthenticationCore<T> {
 
   // TODO: Remove `Partial<OIDCEndpoints>` once the refactoring is done.
   public async getOIDCServiceEndpoints(): Promise<Partial<OIDCEndpoints>> {
-    const oidcProviderMetaData: OIDCProviderMetaData = await this._oidcProviderMetaData();
+    const oidcProviderMetaData: OIDCDiscoveryResponse = await this._oidcProviderMetaData();
 
     return {
       authorizationEndpoint: oidcProviderMetaData.authorization_endpoint ?? '',

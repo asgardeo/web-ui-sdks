@@ -19,7 +19,7 @@
 /**
  * The interface of the OpenID Provider Metadata values used by OIDC.
  */
-export interface OIDCProviderMetaData {
+export interface OIDCDiscoveryResponse {
   /**
    * URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier.
    */

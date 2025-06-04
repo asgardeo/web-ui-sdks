@@ -35,12 +35,12 @@ import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdTok
 import ScopeConstants from '../../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import TokenExchangeConstants from '../../constants/TokenExchangeConstants';
-import {OIDCEndpointsInternal, OIDCProviderMetaData} from '../../models/oidc-discovery';
+import {OIDCEndpointsInternal, OIDCDiscoveryResponse} from '../../models/oidc-discovery';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;
   private _config: () => Promise<AuthClientConfig>;
-  private _oidcProviderMetaData: () => Promise<OIDCProviderMetaData>;
+  private _oidcProviderMetaData: () => Promise<OIDCDiscoveryResponse>;
   private _cryptoHelper: CryptoHelper;
 
   public constructor(dataLayer: DataLayer<T>, cryptoHelper: CryptoHelper) {
@@ -50,8 +50,8 @@ export class AuthenticationHelper<T> {
     this._cryptoHelper = cryptoHelper;
   }
 
-  public async resolveEndpoints(response: OIDCProviderMetaData): Promise<OIDCProviderMetaData> {
-    const oidcProviderMetaData: OIDCProviderMetaData = {};
+  public async resolveEndpoints(response: OIDCDiscoveryResponse): Promise<OIDCDiscoveryResponse> {
+    const oidcProviderMetaData: OIDCDiscoveryResponse = {};
     const configData: StrictAuthClientConfig = await this._config();
 
     configData.endpoints &&
@@ -65,7 +65,7 @@ export class AuthenticationHelper<T> {
   }
 
   public async resolveEndpointsExplicitly(): Promise<OIDCEndpointsInternal> {
-    const oidcProviderMetaData: OIDCProviderMetaData = {};
+    const oidcProviderMetaData: OIDCDiscoveryResponse = {};
     const configData: StrictAuthClientConfig = await this._config();
 
     const requiredEndpoints: string[] = [
@@ -134,7 +134,7 @@ export class AuthenticationHelper<T> {
         oidcProviderMetaData[snakeCasedName] = configData?.endpoints ? configData.endpoints[endpointName] : '';
       });
 
-    const defaultEndpoints: OIDCProviderMetaData = {
+    const defaultEndpoints: OIDCDiscoveryResponse = {
       [OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints
         .AUTHORIZATION]: `${baseUrl}${OIDCDiscoveryConstants.Endpoints.AUTHORIZATION}`,
       [OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints
