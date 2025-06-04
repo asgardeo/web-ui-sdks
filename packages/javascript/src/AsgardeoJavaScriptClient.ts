@@ -73,7 +73,7 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
    * @param afterSignOut - Callback function to be executed after sign-out is complete.
    * @returns A promise that resolves to true if sign-out is successful
    */
-  abstract signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<boolean>;
+  abstract signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
 
   /**
    * Signs out the currently signed-in user with an optional session ID.
@@ -88,7 +88,7 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
     options?: SignOutOptions,
     sessionId?: string,
     afterSignOut?: (redirectUrl: string) => void,
-  ): Promise<boolean>;
+  ): Promise<string>;
 }
 
 export default AsgardeoJavaScriptClient;

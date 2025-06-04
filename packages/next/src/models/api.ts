@@ -26,14 +26,22 @@ export interface InternalAuthAPIRoutes {
    * This route should return the current signed-in status.
    */
   session: string;
+
   /**
    * Route for handling sign-in requests.
    * This route should handle the sign-in flow and redirect users to the appropriate authentication endpoint.
    */
   signIn: string;
+
   /**
    * Route for handling sign-out requests.
    * This route should handle the sign-out flow and clean up any authentication state.
    */
   signOut: string;
+
+  /**
+   * Route for handling sign-up requests.
+   * This route should handle the sign-up flow and redirect users to the appropriate registration endpoint.
+   */
+  signUp?: string;
 }

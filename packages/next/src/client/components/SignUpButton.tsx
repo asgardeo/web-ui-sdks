@@ -19,7 +19,7 @@
 'use client';
 
 import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
-import InternalAuthAPIRoutesConfig from '../configs/InternalAuthAPIRoutesConfig';
+import InternalAuthAPIRoutesConfig from '../../configs/InternalAuthAPIRoutesConfig';
 
 /**
  * Interface for SignInButton component props.

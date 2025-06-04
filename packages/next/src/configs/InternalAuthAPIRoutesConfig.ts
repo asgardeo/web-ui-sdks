@@ -22,6 +22,7 @@ const InternalAuthAPIRoutesConfig: InternalAuthAPIRoutes = {
   session: '/api/auth/session',
   signIn: '/api/auth/signin',
   signOut: '/api/auth/signout',
+  signUp: undefined
 };
 
 export default InternalAuthAPIRoutesConfig;

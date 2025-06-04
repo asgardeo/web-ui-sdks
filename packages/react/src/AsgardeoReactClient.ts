@@ -61,18 +61,20 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     return this.asgardeo.signIn(options as any) as unknown as Promise<User>;
   }
 
-  override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<boolean>;
+  override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
   override signOut(
     options?: SignOutOptions,
     sessionId?: string,
     afterSignOut?: (redirectUrl: string) => void,
-  ): Promise<boolean>;
-  override signOut(...args: any[]): Promise<boolean> {
+  ): Promise<string>;
+  override async signOut(...args: any[]): Promise<string> {
     if (args[1] && typeof args[1] !== 'function') {
       throw new Error('The second argument must be a function.');
     }
 
-    return this.asgardeo.signOut(args[1]);
+    const response: boolean = await this.asgardeo.signOut(args[1]);
+
+    return Promise.resolve(String(response));
   }
 }
 

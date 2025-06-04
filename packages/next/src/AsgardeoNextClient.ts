@@ -125,17 +125,17 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     if ((method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) || searchParams.get('code')) {
       console.log('[AsgardeoNextClient] Handling sign-in request', searchParams.get('code'));
 
-      let response: NextResponse;
+      let response: NextResponse | undefined;
 
       await this.signIn(
         {},
         undefined,
         (redirectUrl: string) => {
-          response = NextResponse.redirect(redirectUrl, 302);
+          return response = NextResponse.redirect(redirectUrl, 302);
         },
-        searchParams.get('code'),
-        searchParams.get('session_state'),
-        searchParams.get('state'),
+        searchParams.get('code') as string,
+        searchParams.get('session_state')as string,
+        searchParams.get('state')as string,
       );
 
       // If we already redirected via the callback, return that
