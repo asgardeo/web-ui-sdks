@@ -33,7 +33,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   baseUrl,
   clientId,
   children,
-  scopes
+  scopes,
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const asgardeo: AsgardeoReactClient = useMemo(() => new AsgardeoReactClient(), []);
@@ -48,7 +48,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         afterSignInUrl,
         baseUrl,
         clientId,
-        scopes
+        scopes,
       });
     })();
   }, []);

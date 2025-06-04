@@ -1,4 +1,4 @@
-import {SignInButton, SignedOut, SignOutButton, SignedIn, User} from '@asgardeo/react';
+import {SignInButton, SignedOut, SignOutButton, SignedIn, User, UserProfile} from '@asgardeo/react';
 import './App.css';
 
 function App() {
@@ -18,6 +18,7 @@ function App() {
             </div>
           )}
         </User>
+        <UserProfile />
         <SignOutButton>Logout</SignOutButton>
       </SignedIn>
     </>

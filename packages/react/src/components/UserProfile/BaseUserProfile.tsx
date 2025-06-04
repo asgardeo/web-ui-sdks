@@ -16,7 +16,8 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactElement, useMemo} from 'react';
+import {CSSProperties, FC, ReactElement, useEffect, useMemo, useState} from 'react';
+import {createPortal} from 'react-dom';
 
 interface StyleMap extends Record<string, CSSProperties> {
   '@media (prefers-color-scheme: dark)'?: Record<string, CSSProperties>;
@@ -28,7 +29,6 @@ const useStyles = () => {
     (): Record<string, StyleMap> => ({
       root: {
         padding: '1rem',
-        width: '100%',
         maxWidth: '600px',
         margin: '0 auto',
       },
@@ -41,6 +41,24 @@ const useStyles = () => {
           background: '#1e1e1e',
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
         },
+      },
+      popup: {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 1000,
+        maxHeight: '90vh',
+        overflowY: 'auto',
+      },
+      overlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 999,
       },
       name: {
         fontSize: '1.5rem',
@@ -111,6 +129,14 @@ export interface BaseUserProfileProps {
    * The user object containing profile information
    */
   user: any;
+  /**
+   * Display mode for the profile. Use 'popup' to render in a portal
+   */
+  mode?: 'inline' | 'popup';
+  /**
+   * The HTML element ID where the portal should be mounted
+   */
+  portalId?: string;
 }
 
 /**
@@ -124,16 +150,34 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   className = '',
   cardLayout = true,
   user,
+  mode = 'inline',
+  portalId = 'asgardeo-user-profile',
 }): ReactElement => {
+  const styles = useStyles();
+  const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
+
+  // Safe client-side creation of portal root
+  useEffect(() => {
+    if (mode !== 'popup') return;
+
+    const existing = document.getElementById(portalId);
+    if (existing) {
+      setPortalEl(existing);
+      return;
+    }
+
+    const el = document.createElement('div');
+    el.id = portalId;
+    document.body.appendChild(el);
+    setPortalEl(el);
+  }, [mode, portalId]);
+
   if (!user) {
     return fallback;
   }
 
-  const styles = useStyles();
-
   const renderUserInfo = (label: string, value?: string) => {
     if (!value) return null;
-
     return (
       <div style={styles.field}>
         <span style={styles.label}>{label}:</span>
@@ -142,22 +186,20 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
     );
   };
 
-  const formatLabel = (key: string): string => {
-    return key
+  const formatLabel = (key: string): string =>
+    key
       .split(/(?=[A-Z])|_/)
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ');
-  };
 
   const containerStyle = {
     ...styles.root,
     ...(cardLayout ? styles.card : {}),
   };
 
-  // List of properties to exclude from dynamic rendering
   const excludedProps = ['displayName'];
 
-  return (
+  const profileContent = (
     <div style={containerStyle} className={className}>
       {user.displayName && <h2 style={styles.name}>{user.displayName}</h2>}
       <div style={styles.infoContainer}>
@@ -170,6 +212,20 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
       </div>
     </div>
   );
+
+  if (mode === 'popup') {
+    if (!portalEl) return fallback;
+
+    return createPortal(
+      <>
+        <div style={styles.overlay} />
+        <div style={styles.popup}>{profileContent}</div>
+      </>,
+      portalEl,
+    );
+  }
+
+  return profileContent;
 };
 
 export default BaseUserProfile;
