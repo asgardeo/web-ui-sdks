@@ -189,7 +189,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
         {showUsername && <span style={styles.userName}>{getDisplayName()}</span>}
       </button>
 
-      <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} portalId={portalId}>
+      <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} portalId={portalId} mode="dropdown">
         <Popover.Content>
           <div style={styles.dropdownContent}>
             {menuItems.map((item, index) => (

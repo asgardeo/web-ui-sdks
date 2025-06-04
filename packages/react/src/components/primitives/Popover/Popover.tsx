@@ -136,12 +136,18 @@ export interface PopoverProps {
    * The HTML element ID where the portal should be mounted
    */
   portalId?: string;
+  /**
+   * The display mode of the popover
+   * 'modal' - shows overlay and centers content
+   * 'dropdown' - no overlay, content positioned relative to trigger
+   */
+  mode?: 'modal' | 'dropdown';
 }
 
 export const Popover: FC<PopoverProps> & {
   Header: typeof PopoverHeader;
   Content: typeof PopoverContent;
-} = ({isOpen, children, onClose, className = '', portalId = 'wso2-popover-root'}) => {
+} = ({isOpen, children, onClose, className = '', portalId = 'wso2-popover-root', mode = 'modal'}) => {
   const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
   const styles = useStyles();
 
@@ -182,7 +188,9 @@ export const Popover: FC<PopoverProps> & {
   return createPortal(
     <PopoverContext.Provider value={{onClose}}>
       <div className={clsx(withVendorCSSClassPrefix('popover'), className)}>
-        <div className={withVendorCSSClassPrefix('popover-overlay')} style={styles['overlay']} onClick={onClose} />
+        {mode === 'modal' && (
+          <div className={withVendorCSSClassPrefix('popover-overlay')} style={styles['overlay']} onClick={onClose} />
+        )}
         <div className={withVendorCSSClassPrefix('popover-content')} style={styles['content']}>
           {children}
         </div>
