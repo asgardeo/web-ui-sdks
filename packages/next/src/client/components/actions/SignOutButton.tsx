@@ -20,6 +20,7 @@
 
 import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
 import InternalAuthAPIRoutesConfig from '../../../configs/InternalAuthAPIRoutesConfig';
+import {BaseSignOutButton} from '@asgardeo/react';
 
 /**
  * Interface for SignInButton component props.
@@ -52,9 +53,9 @@ const SignOutButton: FC<PropsWithChildren<SignOutButtonProps>> = forwardRef<
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => (
     <form action={InternalAuthAPIRoutesConfig.signOut}>
-      <button ref={ref} className={className} style={style} type="submit" {...rest}>
+      <BaseSignOutButton className={className} style={style} ref={ref} type="submit" {...rest}>
         {children}
-      </button>
+      </BaseSignOutButton>
     </form>
   ),
 );
