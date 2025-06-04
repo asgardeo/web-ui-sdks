@@ -20,8 +20,7 @@ import {build} from 'esbuild';
 
 const commonOptions = {
   bundle: false,
-  entryPoints: ['src/index.ts', 'src/public-api.ts'],
-  outdir: 'dist',
+  entryPoints: ['src/index.ts'],
   platform: 'node',
   target: ['node18'],
 };
@@ -29,13 +28,13 @@ const commonOptions = {
 await build({
   ...commonOptions,
   format: 'esm',
-  outdir: 'dist',
+  outfile: 'dist/index.js',
   sourcemap: true,
 });
 
 await build({
   ...commonOptions,
   format: 'cjs',
-  outdir: 'dist/cjs',
+  outfile: 'dist/cjs/index.js',
   sourcemap: true,
 });

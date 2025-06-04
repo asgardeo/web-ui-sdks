@@ -26,4 +26,18 @@ if (!globalThis.fetch) {
     globalThis.Response = Response;
 }
 
-export * from "./public-api";
+export {AsgardeoNodeClient as LegacyAsgardeoNodeClient} from './__legacy__/client';
+export * from './__legacy__/models';
+export * from './__legacy__/utils/logger-utils';
+
+export {default as CookieConfig} from './constants/CookieConfig';
+
+export {AsgardeoNodeConfig} from './models/config';
+export {CookieOptions} from './models/cookies';
+
+export {default as generateSessionId} from './utils/generateSessionId';
+export {default as getSessionCookieOptions} from './utils/getSessionCookieOptions';
+
+export {default as AsgardeoNodeClient} from './AsgardeoNodeClient';
+
+export * from '@asgardeo/javascript';

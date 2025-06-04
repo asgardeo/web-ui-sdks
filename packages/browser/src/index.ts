@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2019, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,8 +14,42 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
 
-// Export the public API.
-export * from "./public-api";
+/**
+ * Entry point for all public APIs of this SDK.
+ */
+export * from './__legacy__/client';
+export * from './__legacy__/models';
+
+// Utils
+export * from './__legacy__/utils/spa-utils';
+
+// Constants
+export * from './__legacy__/constants/storage';
+export * from './__legacy__/constants/hooks';
+
+// clients
+export * from './__legacy__/clients/main-thread-client';
+export * from './__legacy__/clients/web-worker-client';
+
+// models
+export * from './__legacy__/models/request-custom-grant';
+
+// helpers
+export * from './__legacy__/helpers/authentication-helper';
+export * from './__legacy__/helpers/spa-helper';
+
+// worker receiver
+export * from './__legacy__/worker/worker-receiver';
+
+export {default as StyleConstants} from './constants/StyleConstants';
+
+export {AsgardeoBrowserConfig} from './models/config';
+
+export {default as hasAuthParamsInUrl} from './utils/hasAuthParamsInUrl';
+export {default as withVendorCSSClassPrefix} from './utils/withVendorCSSClassPrefix';
+
+export {default as AsgardeoBrowserClient} from './AsgardeoBrowserClient';
+
+export * from '@asgardeo/javascript';

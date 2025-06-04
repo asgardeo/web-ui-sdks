@@ -16,4 +16,25 @@
  * under the License.
  */
 
-export * from './public-api';
+export {default as AsgardeoProvider} from './server/AsgardeoProvider';
+export * from './server/AsgardeoProvider';
+
+export {default as isSignedIn} from './server/actions/isSignedIn';
+export * from './server/actions/isSignedIn';
+
+export {default as SignedIn} from './client/components/SignedIn';
+export * from './client/components/SignedIn';
+
+export {default as SignedOut} from './client/components/SignedOut';
+export * from './client/components/SignedOut';
+
+export {default as SignInButton} from './client/components/SignInButton';
+export type {SignInButtonProps} from './client/components/SignInButton';
+
+export {default as SignOutButton} from './client/components/SignOutButton';
+export type {SignOutButtonProps} from './client/components/SignOutButton';
+
+export {default as AsgardeoContext} from './client/contexts/AsgardeoContext';
+export type {AsgardeoContextProps} from './client/contexts/AsgardeoContext';
+
+export {default as AsgardeoNextClient} from './AsgardeoNextClient';
