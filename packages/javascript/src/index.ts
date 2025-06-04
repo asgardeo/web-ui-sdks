@@ -34,8 +34,8 @@ export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
 
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 export {BaseConfig, Config, Preferences, ThemePreferences} from './models/config';
-export {TokenResponse, JWKInterface} from './models/token';
-export {Crypto} from './models/crypto';
+export {TokenResponse} from './models/token';
+export {Crypto, JWKInterface} from './models/crypto';
 export {IdTokenPayload} from './models/id-token';
 export {OIDCEndpoints} from './models/oidc-endpoints';
 export {Store} from './models/store';
