@@ -22,11 +22,15 @@ import AsgardeoReactClient from '../AsgardeoReactClient';
 import AsgardeoContext from '../contexts/AsgardeoContext';
 import useBrowserUrl from '../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../models/config';
+import {ThemeConfig, ThemeProvider} from '../theme';
 
 /**
  * Props interface of {@link AsgardeoProvider}
  */
-export type AsgardeoProviderProps = AsgardeoReactConfig;
+export interface AsgardeoProviderProps extends AsgardeoReactConfig {
+  theme?: Partial<ThemeConfig>;
+  defaultDark?: boolean;
+}
 
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   afterSignInUrl = window.location.origin,
@@ -34,6 +38,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   clientId,
   children,
   scopes,
+  theme,
+  defaultDark,
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const asgardeo: AsgardeoReactClient = useMemo(() => new AsgardeoReactClient(), []);
@@ -151,9 +157,21 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
   return (
     <AsgardeoContext.Provider
-      value={{isSignedIn: isSignedInSync, signIn, signOut, signUp, isLoading: asgardeo.isLoading(), user}}
+      value={{
+        isLoading: false,
+        isSignedIn: isSignedInSync,
+        signIn,
+        signOut,
+        signUp: () => {
+          // TODO: Implement signUp functionality
+          throw new Error('Sign up functionality not implemented yet');
+        },
+        user,
+      }}
     >
-      {children}
+      <ThemeProvider theme={theme} defaultDark={defaultDark}>
+        {children}
+      </ThemeProvider>
     </AsgardeoContext.Provider>
   );
 };

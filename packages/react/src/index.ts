@@ -62,3 +62,6 @@ export {default as UserProfile} from './components/presentation/UserProfile/User
 export * from './components/presentation/UserProfile/UserProfile';
 
 export * from '@asgardeo/browser';
+
+// Theme exports
+export * from './theme';
