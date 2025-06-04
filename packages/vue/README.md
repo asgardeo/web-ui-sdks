@@ -26,6 +26,8 @@ yarn add @asgardeo/vue
 
 ## Basic Setup
 
+1. Configure the authentication plugin:
+
 ```typescript
 import { createApp } from 'vue'
 import { AsgardeoAuth } from '@asgardeo/vue'
@@ -43,6 +45,61 @@ app.use(AsgardeoAuth, {
 app.mount('#app')
 ```
 
+2. Use in your components:
+
+```vue
+<template>
+  <div>
+    <div v-if="auth.isAuthenticated">
+      <p>Welcome, {{ auth.user?.username }}</p>
+      <button @click="auth.signOut">Sign Out</button>
+    </div>
+    <button v-else @click="auth.signIn">Sign In</button>
+  </div>
+</template>
+
+<script setup>
+import { useAsgardeo } from '@asgardeo/vue'
+
+const auth = useAsgardeo()
+</script>
+```
+
+## Composables
+
+- `useAsgardeo()`: Main composable that provides:
+  - `isAuthenticated`: Boolean indicating authentication status
+  - `user`: Current user information
+  - `signIn()`: Function to initiate sign in
+  - `signOut()`: Function to sign out
+  - `getAccessToken()`: Function to get the current access token
+  - `getBasicUserInfo()`: Function to get basic user information
+  
+- `useAuthContext()`: Composable to access the raw authentication context
+- `useIsAuthenticated()`: Composable to check authentication status
+
+## Development
+
+1. Install dependencies:
+```bash
+pnpm install
+```
+
+2. Build:
+```bash
+pnpm build
+```
+
+3. Run tests:
+```bash
+pnpm test
+```
+
+4. Run development server:
+```bash
+pnpm dev
+```
+
 ## License
 
-Licenses this source under the Apache License, Version 2.0 [LICENSE](./LICENSE), You may not use this file except in compliance with the License.
+Apache License, Version 2.0 - see [LICENSE](./LICENSE) for details.
