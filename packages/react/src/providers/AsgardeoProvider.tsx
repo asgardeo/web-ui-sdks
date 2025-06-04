@@ -22,14 +22,17 @@ import AsgardeoReactClient from '../AsgardeoReactClient';
 import AsgardeoContext from '../contexts/AsgardeoContext';
 import useBrowserUrl from '../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../models/config';
+import {AsgardeoPreferences} from '../models/preferences';
 import {ThemeConfig, ThemeProvider} from '../theme';
 
 /**
  * Props interface of {@link AsgardeoProvider}
  */
 export interface AsgardeoProviderProps extends AsgardeoReactConfig {
-  theme?: Partial<ThemeConfig>;
-  defaultDark?: boolean;
+  /**
+   * Preferences for customizing the Asgardeo UI components
+   */
+  preferences?: AsgardeoPreferences;
 }
 
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
@@ -38,8 +41,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   clientId,
   children,
   scopes,
-  theme,
-  defaultDark,
+  preferences,
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const asgardeo: AsgardeoReactClient = useMemo(() => new AsgardeoReactClient(), []);
@@ -155,6 +157,13 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<boolean> =>
     asgardeo.signOut(options, afterSignOut);
 
+  const isDarkMode = useMemo(() => {
+    if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return preferences.theme.mode === 'dark';
+  }, [preferences?.theme?.mode]);
+
   return (
     <AsgardeoContext.Provider
       value={{
@@ -169,7 +178,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         user,
       }}
     >
-      <ThemeProvider theme={theme} defaultDark={defaultDark}>
+      <ThemeProvider theme={preferences?.theme?.overrides} defaultDark={isDarkMode}>
         {children}
       </ThemeProvider>
     </AsgardeoContext.Provider>
