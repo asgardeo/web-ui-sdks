@@ -191,8 +191,8 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
   const defaultAttributeMappings = {
     picture: 'profile',
-    firstName: 'given_name',
-    lastName: 'family_name',
+    firstName: 'givenName',
+    lastName: 'familyName',
   };
 
   const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};

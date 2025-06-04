@@ -66,6 +66,29 @@ const useStyles = () => {
         margin: `${theme.spacing.unit * 0.5}px 0`,
         borderBottom: `1px solid ${theme.colors.border}`,
       } as CSSProperties,
+      dropdownHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: theme.spacing.unit + 'px',
+        padding: `${theme.spacing.unit * 1.5}px`,
+        borderBottom: `1px solid ${theme.colors.border}`,
+      } as CSSProperties,
+      headerInfo: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: theme.spacing.unit / 2 + 'px',
+      } as CSSProperties,
+      headerName: {
+        color: theme.colors.text.primary,
+        fontSize: '1rem',
+        fontWeight: 500,
+        margin: 0,
+      } as CSSProperties,
+      headerEmail: {
+        color: theme.colors.text.secondary,
+        fontSize: '0.875rem',
+        margin: 0,
+      } as CSSProperties,
     }),
     [theme],
   );
@@ -140,8 +163,8 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
 
   const defaultAttributeMappings = {
     picture: 'profile',
-    firstName: 'given_name',
-    lastName: 'family_name',
+    firstName: 'givenName',
+    lastName: 'familyName',
   };
 
   const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};
@@ -192,6 +215,22 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
       <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} portalId={portalId} mode="dropdown">
         <Popover.Content>
           <div style={styles.dropdownContent}>
+            <div className={withVendorCSSClassPrefix('user-dropdown-header')} style={styles.dropdownHeader}>
+              <Avatar
+                imageUrl={getMappedValue('picture')}
+                name={getDisplayName()}
+                size={avatarSize * 1.25}
+                alt={`${getDisplayName()}'s avatar`}
+              />
+              <div className={withVendorCSSClassPrefix('user-dropdown-header-info')} style={styles.headerInfo}>
+                <span className={withVendorCSSClassPrefix('user-dropdown-header-name')} style={styles.headerName}>
+                  {getDisplayName()}
+                </span>
+                <span className={withVendorCSSClassPrefix('user-dropdown-header-email')} style={styles.headerEmail}>
+                  {getMappedValue('email') || getMappedValue('username')}
+                </span>
+              </div>
+            </div>
             {menuItems.map((item, index) => (
               <div key={index}>
                 {item.href ? (
