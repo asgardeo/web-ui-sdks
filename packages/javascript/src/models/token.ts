@@ -23,8 +23,6 @@
  *
  * The properties in this interface follow JavaScript/TypeScript naming conventions
  * and provide a more ergonomic API for client applications.
- *
- * @interface TokenResponse
  */
 export interface TokenResponse {
   /**
@@ -84,10 +82,8 @@ export interface TokenResponse {
  *
  * The properties in this interface exactly match the OAuth2/OIDC server response
  * format before any transformation or normalization is applied.
- *
- * @interface RawAccessTokenResponse
  */
-export interface RawAccessTokenResponse {
+export interface AccessTokenApiResponse {
   /**
    * Raw access token string from the server.
    * This is the bearer token in its original format

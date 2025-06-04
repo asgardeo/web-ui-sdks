@@ -23,7 +23,7 @@ import {
   AuthClientConfig,
   AuthenticatedUserInfo,
   JWKInterface,
-  RawAccessTokenResponse,
+  AccessTokenApiResponse,
   SessionData,
   StrictAuthClientConfig,
   TokenResponse,
@@ -265,7 +265,7 @@ export class AuthenticationHelper<T> {
     }
 
     //Get the response in JSON
-    const parsedResponse: RawAccessTokenResponse = (await response.json()) as RawAccessTokenResponse;
+    const parsedResponse: AccessTokenApiResponse = (await response.json()) as AccessTokenApiResponse;
 
     parsedResponse.created_at = new Date().getTime();
 
