@@ -31,7 +31,6 @@ function App() {
               onClick: () => null,
             },
           ]}
-          showUsername={true}
           portalId="custom-dropdown"
         />
         <UserProfile mode="popup" />

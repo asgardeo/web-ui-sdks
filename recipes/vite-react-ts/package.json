@@ -1,6 +1,6 @@
 {
-  "name": "vite-react-ts",
   "private": true,
+  "name": "@asgardep/vite-react-ts",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

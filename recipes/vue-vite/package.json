@@ -1,7 +1,7 @@
 {
-  "name": "vue-vite",
-  "version": "0.0.1",
   "private": true,
+  "name": "@asgardeo/vue-vite",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
