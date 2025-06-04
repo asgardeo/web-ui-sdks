@@ -17,13 +17,12 @@
  */
 
 import {FC, PropsWithChildren, ReactElement, useEffect, useMemo, useState} from 'react';
-import {Theme, ThemeConfig} from './types';
-import {createTheme} from './createTheme';
+import {createTheme, Theme, ThemeConfig} from '@asgardeo/browser';
 import ThemeContext from './ThemeContext';
 
 export interface ThemeProviderProps {
   theme?: Partial<ThemeConfig>;
-  defaultDark?: boolean;
+  defaultColorScheme?: 'light' | 'dark';
 }
 
 const applyThemeToDOM = (theme: Theme) => {
@@ -35,14 +34,14 @@ const applyThemeToDOM = (theme: Theme) => {
 export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
   theme: themeConfig,
-  defaultDark = false,
+  defaultColorScheme = 'light',
 }: PropsWithChildren<ThemeProviderProps>): ReactElement => {
-  const [isDark, setIsDark] = useState(defaultDark);
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>(defaultColorScheme);
 
-  const theme = useMemo(() => createTheme(themeConfig, isDark), [themeConfig, isDark]);
+  const theme = useMemo(() => createTheme(themeConfig, colorScheme === 'dark'), [themeConfig, colorScheme]);
 
   const toggleTheme = () => {
-    setIsDark(prev => !prev);
+    setColorScheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
   useEffect(() => {
@@ -51,7 +50,7 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
 
   const value = {
     theme,
-    isDark,
+    colorScheme,
     toggleTheme,
   };
 

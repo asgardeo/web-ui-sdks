@@ -22,18 +22,12 @@ import AsgardeoReactClient from '../AsgardeoReactClient';
 import AsgardeoContext from '../contexts/AsgardeoContext';
 import useBrowserUrl from '../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../models/config';
-import {AsgardeoPreferences} from '../models/preferences';
 import {ThemeProvider} from '../theme/ThemeProvider';
 
 /**
  * Props interface of {@link AsgardeoProvider}
  */
-export interface AsgardeoProviderProps extends AsgardeoReactConfig {
-  /**
-   * Preferences for customizing the Asgardeo UI components
-   */
-  preferences?: AsgardeoPreferences;
-}
+export type AsgardeoProviderProps = AsgardeoReactConfig;
 
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   afterSignInUrl = window.location.origin,
@@ -178,7 +172,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         user,
       }}
     >
-      <ThemeProvider theme={preferences?.theme?.overrides} defaultDark={isDarkMode}>
+      <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
         {children}
       </ThemeProvider>
     </AsgardeoContext.Provider>

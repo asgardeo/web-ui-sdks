@@ -16,24 +16,31 @@
  * under the License.
  */
 
-import {ThemeConfig} from '../theme/types';
+export interface ThemeColors {
+  primary: string;
+  background: string;
+  surface: string;
+  text: {
+    primary: string;
+    secondary: string;
+  };
+  border: string;
+}
+
+export interface ThemeConfig {
+  colors: ThemeColors;
+  spacing: {
+    unit: number;
+  };
+  borderRadius: {
+    small: string;
+    medium: string;
+    large: string;
+  };
+}
+
+export interface Theme extends ThemeConfig {
+  cssVariables: Record<string, string>;
+}
 
 export type ThemeMode = 'light' | 'dark' | 'system';
-
-export interface AsgardeoThemePreferences {
-  /**
-   * The theme mode to use. Defaults to 'system'.
-   */
-  mode?: ThemeMode;
-  /**
-   * Theme overrides to customize the default theme
-   */
-  overrides?: Partial<ThemeConfig>;
-}
-
-export interface AsgardeoPreferences {
-  /**
-   * Theme preferences for the Asgardeo UI components
-   */
-  theme?: AsgardeoThemePreferences;
-}

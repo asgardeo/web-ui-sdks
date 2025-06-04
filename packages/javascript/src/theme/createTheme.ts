@@ -82,7 +82,7 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
   return cssVars;
 };
 
-export const createTheme = (config: Partial<ThemeConfig> = {}, isDark = false): Theme => {
+const createTheme = (config: Partial<ThemeConfig> = {}, isDark = false): Theme => {
   const baseTheme = isDark ? darkTheme : lightTheme;
   const mergedConfig = {
     ...baseTheme,
@@ -106,3 +106,5 @@ export const createTheme = (config: Partial<ThemeConfig> = {}, isDark = false): 
     cssVariables: toCssVariables(mergedConfig),
   };
 };
+
+export default createTheme;

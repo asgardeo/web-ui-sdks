@@ -17,11 +17,11 @@
  */
 
 import {createContext} from 'react';
-import {Theme} from './types';
+import {Theme} from '@asgardeo/browser';
 
 export interface ThemeContextValue {
   theme: Theme;
-  isDark: boolean;
+  colorScheme: 'light' | 'dark';
   toggleTheme: () => void;
 }
 

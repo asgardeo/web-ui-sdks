@@ -16,6 +16,8 @@
  * under the License.
  */
 
+import {ThemeConfig, ThemeMode} from '../theme/types';
+
 export interface BaseConfig<T = unknown> {
   /**
    * Optional URL where the authorization server should redirect after authentication.
@@ -60,6 +62,29 @@ export interface BaseConfig<T = unknown> {
    * scopes: ["openid", "profile", "email"]
    */
   scopes?: string | string[] | undefined;
+
+  /**
+   * Preferences for customizing the Asgardeo UI components
+   */
+  preferences?: Preferences;
 }
 
 export type Config<T = unknown> = BaseConfig<T>;
+
+export interface ThemePreferences {
+  /**
+   * The theme mode to use. Defaults to 'system'.
+   */
+  mode?: ThemeMode;
+  /**
+   * Theme overrides to customize the default theme
+   */
+  overrides?: Partial<ThemeConfig>;
+}
+
+export interface Preferences {
+  /**
+   * Theme preferences for the Asgardeo UI components
+   */
+  theme?: ThemePreferences;
+}

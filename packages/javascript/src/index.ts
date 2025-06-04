@@ -33,13 +33,16 @@ export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';
 export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
 
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
-export {BaseConfig, Config} from './models/config';
+export {BaseConfig, Config, Preferences, ThemePreferences} from './models/config';
 export {IdTokenPayload} from './models/id-token';
 export {OIDCEndpoints} from './models/oidc-endpoints';
 export {Store} from './models/store';
 export {User} from './models/user';
 
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
+
+export {default as createTheme} from './theme/createTheme';
+export {ThemeColors, ThemeConfig, Theme, ThemeMode} from './theme/types';
 
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
 export {default as extractPkceStorageKeyFromState} from './utils/extractPkceStorageKeyFromState';

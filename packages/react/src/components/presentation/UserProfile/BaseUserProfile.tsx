@@ -24,7 +24,7 @@ import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 
 const useStyles = () => {
-  const {theme, isDark} = useTheme();
+  const {theme, colorScheme} = useTheme();
 
   return useMemo(
     () => ({
@@ -111,7 +111,7 @@ const useStyles = () => {
         zIndex: 999,
       } as CSSProperties,
     }),
-    [theme, isDark],
+    [theme, colorScheme],
   );
 };
 
