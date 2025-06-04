@@ -34,7 +34,7 @@ import PkceConstants from '../constants/PkceConstants';
  * // Returns: "request_1"
  */
 const generateStateParamForRequestCorrelation = (pkceKey: string, state?: string): string => {
-  const index: number = parseInt(pkceKey.split(PkceConstants.PkceStorageKeys.SEPARATOR)[1]);
+  const index: number = parseInt(pkceKey.split(PkceConstants.Storage.StorageKeys.SEPARATOR)[1]);
 
   return state ? `${state}_request_${index}` : `request_${index}`;
 };
