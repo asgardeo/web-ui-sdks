@@ -17,9 +17,7 @@
  */
 
 /**
- * Represents a user in the Asgardeo system
- *
- * @template User - Core user interface for authentication
+ * Represents a user in the Asgardeo system.
  *
  * @remarks
  * This interface defines the basic user properties needed for authentication

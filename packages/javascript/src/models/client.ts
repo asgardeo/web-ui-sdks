@@ -24,8 +24,6 @@ export type SignOutOptions = Record<string, unknown>;
 /**
  * Interface defining the core functionality for Asgardeo authentication clients.
  *
- * @template T - Type parameter for client-specific configuration
- *
  * @example
  * ```typescript
  * class AsgardeoNodeClient implements AsgardeoClient<NodeConfig> {
