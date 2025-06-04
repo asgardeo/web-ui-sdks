@@ -29,13 +29,13 @@
  * @example
  * ```typescript
  * // Using an endpoint
- * const authEndpoint = OIDCMetadataConstants.Endpoints.AUTHORIZATION;
+ * const authEndpoint = OIDCDiscoveryConstants.Endpoints.AUTHORIZATION;
  *
  * // Using a storage key
- * const tokenKey = OIDCMetadataConstants.Storage.StorageKeys.Endpoints.TOKEN;
+ * const tokenKey = OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.TOKEN;
  * ```
  */
-const OIDCMetadataConstants = {
+const OIDCDiscoveryConstants = {
   /**
    * Collection of standard OIDC endpoint paths used for authentication flows.
    * These endpoints are relative paths that should be appended to the base URL
@@ -172,4 +172,4 @@ const OIDCMetadataConstants = {
   },
 } as const;
 
-export default OIDCMetadataConstants;
+export default OIDCDiscoveryConstants;

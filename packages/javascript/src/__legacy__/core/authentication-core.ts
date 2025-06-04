@@ -39,7 +39,7 @@ import {TemporaryStore} from '../../models/store';
 import {OIDCEndpoints} from '../../models/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 import ScopeConstants from '../../constants/ScopeConstants';
-import OIDCMetadataConstants from '../../constants/OIDCMetadataConstants';
+import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../../constants/OIDCRequestConstants';
 
 export class AuthenticationCore<T> {
@@ -129,7 +129,7 @@ export class AuthenticationCore<T> {
 
   public async getAuthorizationURL(config?: AuthorizationURLParams, userID?: string): Promise<string> {
     const authorizeEndpoint: string = (await this._dataLayer.getOIDCProviderMetaDataParameter(
-      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCProviderMetaData,
+      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCProviderMetaData,
     )) as string;
 
     if (!authorizeEndpoint || authorizeEndpoint.trim().length === 0) {
@@ -485,7 +485,7 @@ export class AuthenticationCore<T> {
     if (
       !forceInit &&
       (await this._dataLayer.getTemporaryDataParameter(
-        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       ))
     ) {
       return Promise.resolve();
@@ -513,7 +513,7 @@ export class AuthenticationCore<T> {
         await this._authenticationHelper.resolveEndpoints(await response.json()),
       );
       await this._dataLayer.setTemporaryDataParameter(
-        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
 
@@ -529,7 +529,7 @@ export class AuthenticationCore<T> {
         );
       }
       await this._dataLayer.setTemporaryDataParameter(
-        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
 
@@ -538,7 +538,7 @@ export class AuthenticationCore<T> {
       await this._dataLayer.setOIDCProviderMetaData(await this._authenticationHelper.resolveEndpointsExplicitly());
 
       await this._dataLayer.setTemporaryDataParameter(
-        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
 

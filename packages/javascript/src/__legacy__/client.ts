@@ -33,7 +33,7 @@ import {OIDCEndpoints} from '../models/oidc-endpoints';
 import {Store} from '../models/store';
 import {ResponseMode} from '../models/oauth-response';
 import ScopeConstants from '../constants/ScopeConstants';
-import OIDCMetadataConstants from '../constants/OIDCMetadataConstants';
+import OIDCDiscoveryConstants from '../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../constants/OIDCRequestConstants';
 
 /**
@@ -196,7 +196,7 @@ export class AsgardeoAuthClient<T> {
 
     if (
       await this._dataLayer.getTemporaryDataParameter(
-        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {
       return this._authenticationCore.getAuthorizationURLParams(authRequestConfig, userID);
@@ -237,7 +237,7 @@ export class AsgardeoAuthClient<T> {
 
     if (
       await this._dataLayer.getTemporaryDataParameter(
-        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {
       return this._authenticationCore.getAuthorizationURL(authRequestConfig, userID);
@@ -284,7 +284,7 @@ export class AsgardeoAuthClient<T> {
   ): Promise<TokenResponse> {
     if (
       await this._dataLayer.getTemporaryDataParameter(
-        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {
       return this._authenticationCore.requestAccessToken(

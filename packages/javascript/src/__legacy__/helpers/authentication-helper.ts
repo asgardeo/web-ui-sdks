@@ -35,7 +35,7 @@ import PKCEConstants from '../../constants/PKCEConstants';
 import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
 import ScopeConstants from '../../constants/ScopeConstants';
-import OIDCMetadataConstants from '../../constants/OIDCMetadataConstants';
+import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import TokenExchangeConstants from '../../constants/TokenExchangeConstants';
 
 export class AuthenticationHelper<T> {
@@ -70,14 +70,14 @@ export class AuthenticationHelper<T> {
     const configData: StrictAuthClientConfig = await this._config();
 
     const requiredEndpoints: string[] = [
-      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION,
-      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.END_SESSION,
-      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.JWKS,
-      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.SESSION_IFRAME,
-      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.REVOCATION,
-      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.TOKEN,
-      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.ISSUER,
-      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.USERINFO,
+      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION,
+      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.END_SESSION,
+      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.JWKS,
+      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.SESSION_IFRAME,
+      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.REVOCATION,
+      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.TOKEN,
+      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.ISSUER,
+      OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.USERINFO,
     ];
 
     const isRequiredEndpointsContains: boolean = configData.endpoints
@@ -136,20 +136,21 @@ export class AuthenticationHelper<T> {
       });
 
     const defaultEndpoints: OIDCProviderMetaData = {
-      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
-        .AUTHORIZATION]: `${baseUrl}${OIDCMetadataConstants.Endpoints.AUTHORIZATION}`,
-      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
-        .END_SESSION]: `${baseUrl}${OIDCMetadataConstants.Endpoints.END_SESSION}`,
-      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
-        .ISSUER]: `${baseUrl}${OIDCMetadataConstants.Endpoints.ISSUER}`,
-      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints.JWKS]: `${baseUrl}${OIDCMetadataConstants.Endpoints.JWKS}`,
-      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
-        .SESSION_IFRAME]: `${baseUrl}${OIDCMetadataConstants.Endpoints.SESSION_IFRAME}`,
-      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
-        .REVOCATION]: `${baseUrl}${OIDCMetadataConstants.Endpoints.REVOCATION}`,
-      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints.TOKEN]: `${baseUrl}${OIDCMetadataConstants.Endpoints.TOKEN}`,
-      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
-        .USERINFO]: `${baseUrl}${OIDCMetadataConstants.Endpoints.USERINFO}`,
+      [OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints
+        .AUTHORIZATION]: `${baseUrl}${OIDCDiscoveryConstants.Endpoints.AUTHORIZATION}`,
+      [OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints
+        .END_SESSION]: `${baseUrl}${OIDCDiscoveryConstants.Endpoints.END_SESSION}`,
+      [OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints
+        .ISSUER]: `${baseUrl}${OIDCDiscoveryConstants.Endpoints.ISSUER}`,
+      [OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.JWKS]: `${baseUrl}${OIDCDiscoveryConstants.Endpoints.JWKS}`,
+      [OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints
+        .SESSION_IFRAME]: `${baseUrl}${OIDCDiscoveryConstants.Endpoints.SESSION_IFRAME}`,
+      [OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints
+        .REVOCATION]: `${baseUrl}${OIDCDiscoveryConstants.Endpoints.REVOCATION}`,
+      [OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints
+        .TOKEN]: `${baseUrl}${OIDCDiscoveryConstants.Endpoints.TOKEN}`,
+      [OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints
+        .USERINFO]: `${baseUrl}${OIDCDiscoveryConstants.Endpoints.USERINFO}`,
     };
 
     return {...defaultEndpoints, ...oidcProviderMetaData};
