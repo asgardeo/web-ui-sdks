@@ -20,7 +20,6 @@ export * from './__legacy__/client';
 export * from './__legacy__/models';
 export * from './models/oauth-response';
 export * from './__legacy__/constants/custom-grant-template-tags';
-export * from './__legacy__/constants/parameters';
 export * from './__legacy__/helpers/crypto-helper';
 export * from './__legacy__/exception';
 export * from './__legacy__/data';
@@ -28,6 +27,7 @@ export * from './__legacy__/data';
 export {default as getUserInfo} from './api/getUserInfo';
 
 export {default as TokenConstants} from './constants/TokenConstants';
+export {default as OidcRequestConstants} from './constants/OidcRequestConstants';
 
 export {default as AsgardeoError} from './errors/AsgardeoError';
 export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';

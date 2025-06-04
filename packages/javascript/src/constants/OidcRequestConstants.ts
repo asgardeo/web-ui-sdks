@@ -45,6 +45,13 @@ const OidcRequestConstants = {
      */
     SIGN_OUT_SUCCESS: 'sign_out_success',
   },
+  SignOut: {
+    Storage: {
+      StorageKeys: {
+        SIGN_OUT_URL: 'sign_out_url',
+      },
+    },
+  },
 } as const;
 
 export default OidcRequestConstants;

@@ -17,4 +17,3 @@
  */
 
 export * from './custom-grant-template-tags';
-export * from './parameters';

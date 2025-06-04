@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, SIGN_OUT_SUCCESS_PARAM, SIGN_OUT_URL} from '@asgardeo/javascript';
+import {AsgardeoAuthClient, OidcRequestConstants} from '@asgardeo/javascript';
 import {SignOutError} from '../..';
 import {
   ERROR,
@@ -46,11 +46,18 @@ export class SPAUtils {
   }
 
   public static setSignOutURL(url: string, clientID: string, instanceID: number): void {
-    sessionStorage.setItem(`${SIGN_OUT_URL}-instance_${instanceID}-${clientID}`, url);
+    sessionStorage.setItem(
+      `${OidcRequestConstants.SignOut.Storage.StorageKeys.SIGN_OUT_URL}-instance_${instanceID}-${clientID}`,
+      url,
+    );
   }
 
   public static getSignOutURL(clientID: string, instanceID: number): string {
-    return sessionStorage.getItem(`${SIGN_OUT_URL}-instance_${instanceID}-${clientID}`) ?? '';
+    return (
+      sessionStorage.getItem(
+        `${OidcRequestConstants.SignOut.Storage.StorageKeys.SIGN_OUT_URL}-instance_${instanceID}-${clientID}`,
+      ) ?? ''
+    );
   }
 
   public static removePKCE(pkceKey: string): void {
@@ -171,7 +178,10 @@ export class SPAUtils {
    */
   public static hasErrorInURL(url: string = window.location.href): boolean {
     const urlObject: URL = new URL(url);
-    return !!urlObject.searchParams.get(ERROR) && urlObject.searchParams.get(STATE_QUERY) !== SIGN_OUT_SUCCESS_PARAM;
+    return (
+      !!urlObject.searchParams.get(ERROR) &&
+      urlObject.searchParams.get(STATE_QUERY) !== OidcRequestConstants.Params.SIGN_OUT_SUCCESS
+    );
   }
 
   /**
