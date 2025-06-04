@@ -26,7 +26,7 @@ import {
   IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
-  OidcRequestConstants,
+  OIDCRequestConstants,
   SessionData,
   Store,
 } from '@asgardeo/javascript';
@@ -104,7 +104,7 @@ export const WebWorkerCore = async (
       .getAuthorizationURL(params)
       .then(async (url: string) => {
         const urlObject: URL = new URL(url);
-        const state: string = urlObject.searchParams.get(OidcRequestConstants.Params.STATE) ?? '';
+        const state: string = urlObject.searchParams.get(OIDCRequestConstants.Params.STATE) ?? '';
         const pkce: string = await _authenticationClient.getPKCECode(state);
 
         return {authorizationURL: url, pkce: pkce};
@@ -195,7 +195,10 @@ export const WebWorkerCore = async (
   };
 
   const setSessionState = async (sessionState: string): Promise<void> => {
-    await _dataLayer.setSessionDataParameter(OidcRequestConstants.Params.SESSION_STATE as keyof SessionData, sessionState);
+    await _dataLayer.setSessionDataParameter(
+      OIDCRequestConstants.Params.SESSION_STATE as keyof SessionData,
+      sessionState,
+    );
 
     return;
   };

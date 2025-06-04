@@ -18,26 +18,26 @@
 
 import {describe, expect, it} from 'vitest';
 import extractPkceStorageKeyFromState from '../extractPkceStorageKeyFromState';
-import PkceConstants from '../../constants/PkceConstants';
+import PKCEConstants from '../../constants/PKCEConstants';
 
 describe('extractPkceStorageKeyFromState', (): void => {
   it('should extract PKCE key from state parameter', (): void => {
     const state: string = 'request_1';
-    const expectedKey: string = `${PkceConstants.Storage.StorageKeys.CODE_VERIFIER}${PkceConstants.Storage.StorageKeys.SEPARATOR}1`;
+    const expectedKey: string = `${PKCEConstants.Storage.StorageKeys.CODE_VERIFIER}${PKCEConstants.Storage.StorageKeys.SEPARATOR}1`;
 
     expect(extractPkceStorageKeyFromState(state)).toBe(expectedKey);
   });
 
   it('should handle state with prefix', (): void => {
     const state: string = 'myState_request_2';
-    const expectedKey: string = `${PkceConstants.Storage.StorageKeys.CODE_VERIFIER}${PkceConstants.Storage.StorageKeys.SEPARATOR}2`;
+    const expectedKey: string = `${PKCEConstants.Storage.StorageKeys.CODE_VERIFIER}${PKCEConstants.Storage.StorageKeys.SEPARATOR}2`;
 
     expect(extractPkceStorageKeyFromState(state)).toBe(expectedKey);
   });
 
   it('should extract index from complex state string', (): void => {
     const state: string = 'custom_state_with_request_3';
-    const expectedKey: string = `${PkceConstants.Storage.StorageKeys.CODE_VERIFIER}${PkceConstants.Storage.StorageKeys.SEPARATOR}3`;
+    const expectedKey: string = `${PKCEConstants.Storage.StorageKeys.CODE_VERIFIER}${PKCEConstants.Storage.StorageKeys.SEPARATOR}3`;
 
     expect(extractPkceStorageKeyFromState(state)).toBe(expectedKey);
   });

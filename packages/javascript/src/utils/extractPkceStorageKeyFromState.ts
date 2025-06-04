@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import PkceConstants from '../constants/PkceConstants';
+import PKCEConstants from '../constants/PKCEConstants';
 
 /**
  * Extracts the PKCE key from a state parameter string.
@@ -34,7 +34,7 @@ import PkceConstants from '../constants/PkceConstants';
 const extractPkceStorageKeyFromState = (state: string): string => {
   const index: number = parseInt(state.split('request_')[1]);
 
-  return `${PkceConstants.Storage.StorageKeys.CODE_VERIFIER}${PkceConstants.Storage.StorageKeys.SEPARATOR}${index}`;
+  return `${PKCEConstants.Storage.StorageKeys.CODE_VERIFIER}${PKCEConstants.Storage.StorageKeys.SEPARATOR}${index}`;
 };
 
 export default extractPkceStorageKeyFromState;

@@ -33,8 +33,8 @@ import {OIDCEndpoints} from '../models/oidc-endpoints';
 import {Store} from '../models/store';
 import {ResponseMode} from '../models/oauth-response';
 import ScopeConstants from '../constants/ScopeConstants';
-import OidcMetadataConstants from '../constants/OidcMetadataConstants';
-import OidcRequestConstants from '../constants/OidcRequestConstants';
+import OIDCMetadataConstants from '../constants/OIDCMetadataConstants';
+import OIDCRequestConstants from '../constants/OIDCRequestConstants';
 
 /**
  * Default configurations.
@@ -196,7 +196,7 @@ export class AsgardeoAuthClient<T> {
 
     if (
       await this._dataLayer.getTemporaryDataParameter(
-        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {
       return this._authenticationCore.getAuthorizationURLParams(authRequestConfig, userID);
@@ -237,7 +237,7 @@ export class AsgardeoAuthClient<T> {
 
     if (
       await this._dataLayer.getTemporaryDataParameter(
-        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {
       return this._authenticationCore.getAuthorizationURL(authRequestConfig, userID);
@@ -284,7 +284,7 @@ export class AsgardeoAuthClient<T> {
   ): Promise<TokenResponse> {
     if (
       await this._dataLayer.getTemporaryDataParameter(
-        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {
       return this._authenticationCore.requestAccessToken(
@@ -625,10 +625,10 @@ export class AsgardeoAuthClient<T> {
    */
   public static isSignOutSuccessful(signOutRedirectURL: string): boolean {
     const url: URL = new URL(signOutRedirectURL);
-    const stateParam: string | null = url.searchParams.get(OidcRequestConstants.Params.STATE);
+    const stateParam: string | null = url.searchParams.get(OIDCRequestConstants.Params.STATE);
     const error: boolean = Boolean(url.searchParams.get('error'));
 
-    return stateParam ? stateParam === OidcRequestConstants.Params.SIGN_OUT_SUCCESS && !error : false;
+    return stateParam ? stateParam === OIDCRequestConstants.Params.SIGN_OUT_SUCCESS && !error : false;
   }
 
   /**
@@ -647,10 +647,10 @@ export class AsgardeoAuthClient<T> {
    */
   public static didSignOutFail(signOutRedirectURL: string): boolean {
     const url: URL = new URL(signOutRedirectURL);
-    const stateParam: string | null = url.searchParams.get(OidcRequestConstants.Params.STATE);
+    const stateParam: string | null = url.searchParams.get(OIDCRequestConstants.Params.STATE);
     const error: boolean = Boolean(url.searchParams.get('error'));
 
-    return stateParam ? stateParam === OidcRequestConstants.Params.SIGN_OUT_SUCCESS && error : false;
+    return stateParam ? stateParam === OIDCRequestConstants.Params.SIGN_OUT_SUCCESS && error : false;
   }
 
   /**

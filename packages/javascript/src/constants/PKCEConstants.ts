@@ -19,7 +19,7 @@
 /**
  * Constants used for PKCE (Proof Key for Code Exchange) implementation.
  */
-const PkceConstants = {
+const PKCEConstants = {
   Storage: {
     /**
      * Storage keys used for PKCE-related data persistence.
@@ -29,6 +29,7 @@ const PkceConstants = {
        * Key used to store the PKCE code verifier in the storage.
        */
       CODE_VERIFIER: 'pkce_code_verifier',
+
       /**
        * Separator character used in storage keys.
        */
@@ -37,4 +38,4 @@ const PkceConstants = {
   },
 } as const;
 
-export default PkceConstants;
+export default PKCEConstants;

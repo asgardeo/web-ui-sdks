@@ -39,8 +39,8 @@ import {TemporaryStore} from '../../models/store';
 import {OIDCEndpoints} from '../../models/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 import ScopeConstants from '../../constants/ScopeConstants';
-import OidcMetadataConstants from '../../constants/OidcMetadataConstants';
-import OidcRequestConstants from '../../constants/OidcRequestConstants';
+import OIDCMetadataConstants from '../../constants/OIDCMetadataConstants';
+import OIDCRequestConstants from '../../constants/OIDCRequestConstants';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
@@ -110,17 +110,17 @@ export class AuthenticationCore<T> {
 
     if (customParams) {
       for (const [key, value] of Object.entries(customParams)) {
-        if (key != '' && value != '' && key !== OidcRequestConstants.Params.STATE) {
+        if (key != '' && value != '' && key !== OIDCRequestConstants.Params.STATE) {
           authorizeRequestParams.set(key, value.toString());
         }
       }
     }
 
     authorizeRequestParams.set(
-      OidcRequestConstants.Params.STATE,
+      OIDCRequestConstants.Params.STATE,
       generateStateParamForRequestCorrelation(
         pkceKey,
-        customParams ? customParams[OidcRequestConstants.Params.STATE]?.toString() : '',
+        customParams ? customParams[OIDCRequestConstants.Params.STATE]?.toString() : '',
       ),
     );
 
@@ -129,7 +129,7 @@ export class AuthenticationCore<T> {
 
   public async getAuthorizationURL(config?: AuthorizationURLParams, userID?: string): Promise<string> {
     const authorizeEndpoint: string = (await this._dataLayer.getOIDCProviderMetaDataParameter(
-      OidcMetadataConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCProviderMetaData,
+      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCProviderMetaData,
     )) as string;
 
     if (!authorizeEndpoint || authorizeEndpoint.trim().length === 0) {
@@ -175,7 +175,7 @@ export class AuthenticationCore<T> {
 
     sessionState &&
       (await this._dataLayer.setSessionDataParameter(
-        OidcRequestConstants.Params.SESSION_STATE as keyof SessionData,
+        OIDCRequestConstants.Params.SESSION_STATE as keyof SessionData,
         sessionState,
         userID,
       ));
@@ -485,7 +485,7 @@ export class AuthenticationCore<T> {
     if (
       !forceInit &&
       (await this._dataLayer.getTemporaryDataParameter(
-        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       ))
     ) {
       return Promise.resolve();
@@ -513,7 +513,7 @@ export class AuthenticationCore<T> {
         await this._authenticationHelper.resolveEndpoints(await response.json()),
       );
       await this._dataLayer.setTemporaryDataParameter(
-        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
 
@@ -529,7 +529,7 @@ export class AuthenticationCore<T> {
         );
       }
       await this._dataLayer.setTemporaryDataParameter(
-        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
 
@@ -538,7 +538,7 @@ export class AuthenticationCore<T> {
       await this._dataLayer.setOIDCProviderMetaData(await this._authenticationHelper.resolveEndpointsExplicitly());
 
       await this._dataLayer.setTemporaryDataParameter(
-        OidcMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
+        OIDCMetadataConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
 
@@ -606,7 +606,7 @@ export class AuthenticationCore<T> {
       queryParams.set('client_id', configData.clientID);
     }
 
-    queryParams.set('state', OidcRequestConstants.Params.SIGN_OUT_SUCCESS);
+    queryParams.set('state', OIDCRequestConstants.Params.SIGN_OUT_SUCCESS);
 
     return `${logoutEndpoint}?${queryParams.toString()}`;
   }

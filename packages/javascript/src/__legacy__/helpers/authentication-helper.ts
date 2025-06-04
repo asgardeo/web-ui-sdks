@@ -31,11 +31,11 @@ import {
   TokenResponse,
 } from '../models';
 import {IdTokenPayload} from '../../models/id-token';
-import PkceConstants from '../../constants/PkceConstants';
+import PKCEConstants from '../../constants/PKCEConstants';
 import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
 import ScopeConstants from '../../constants/ScopeConstants';
-import OidcMetadataConstants from '../../constants/OidcMetadataConstants';
+import OIDCMetadataConstants from '../../constants/OIDCMetadataConstants';
 import TokenExchangeConstants from '../../constants/TokenExchangeConstants';
 
 export class AuthenticationHelper<T> {
@@ -70,14 +70,14 @@ export class AuthenticationHelper<T> {
     const configData: StrictAuthClientConfig = await this._config();
 
     const requiredEndpoints: string[] = [
-      OidcMetadataConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION,
-      OidcMetadataConstants.Storage.StorageKeys.Endpoints.END_SESSION,
-      OidcMetadataConstants.Storage.StorageKeys.Endpoints.JWKS,
-      OidcMetadataConstants.Storage.StorageKeys.Endpoints.SESSION_IFRAME,
-      OidcMetadataConstants.Storage.StorageKeys.Endpoints.REVOCATION,
-      OidcMetadataConstants.Storage.StorageKeys.Endpoints.TOKEN,
-      OidcMetadataConstants.Storage.StorageKeys.Endpoints.ISSUER,
-      OidcMetadataConstants.Storage.StorageKeys.Endpoints.USERINFO,
+      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION,
+      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.END_SESSION,
+      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.JWKS,
+      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.SESSION_IFRAME,
+      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.REVOCATION,
+      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.TOKEN,
+      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.ISSUER,
+      OIDCMetadataConstants.Storage.StorageKeys.Endpoints.USERINFO,
     ];
 
     const isRequiredEndpointsContains: boolean = configData.endpoints
@@ -136,20 +136,20 @@ export class AuthenticationHelper<T> {
       });
 
     const defaultEndpoints: OIDCProviderMetaData = {
-      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
-        .AUTHORIZATION]: `${baseUrl}${OidcMetadataConstants.Endpoints.AUTHORIZATION}`,
-      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
-        .END_SESSION]: `${baseUrl}${OidcMetadataConstants.Endpoints.END_SESSION}`,
-      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
-        .ISSUER]: `${baseUrl}${OidcMetadataConstants.Endpoints.ISSUER}`,
-      [OidcMetadataConstants.Storage.StorageKeys.Endpoints.JWKS]: `${baseUrl}${OidcMetadataConstants.Endpoints.JWKS}`,
-      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
-        .SESSION_IFRAME]: `${baseUrl}${OidcMetadataConstants.Endpoints.SESSION_IFRAME}`,
-      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
-        .REVOCATION]: `${baseUrl}${OidcMetadataConstants.Endpoints.REVOCATION}`,
-      [OidcMetadataConstants.Storage.StorageKeys.Endpoints.TOKEN]: `${baseUrl}${OidcMetadataConstants.Endpoints.TOKEN}`,
-      [OidcMetadataConstants.Storage.StorageKeys.Endpoints
-        .USERINFO]: `${baseUrl}${OidcMetadataConstants.Endpoints.USERINFO}`,
+      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
+        .AUTHORIZATION]: `${baseUrl}${OIDCMetadataConstants.Endpoints.AUTHORIZATION}`,
+      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
+        .END_SESSION]: `${baseUrl}${OIDCMetadataConstants.Endpoints.END_SESSION}`,
+      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
+        .ISSUER]: `${baseUrl}${OIDCMetadataConstants.Endpoints.ISSUER}`,
+      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints.JWKS]: `${baseUrl}${OIDCMetadataConstants.Endpoints.JWKS}`,
+      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
+        .SESSION_IFRAME]: `${baseUrl}${OIDCMetadataConstants.Endpoints.SESSION_IFRAME}`,
+      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
+        .REVOCATION]: `${baseUrl}${OIDCMetadataConstants.Endpoints.REVOCATION}`,
+      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints.TOKEN]: `${baseUrl}${OIDCMetadataConstants.Endpoints.TOKEN}`,
+      [OIDCMetadataConstants.Storage.StorageKeys.Endpoints
+        .USERINFO]: `${baseUrl}${OIDCMetadataConstants.Endpoints.USERINFO}`,
     };
 
     return {...defaultEndpoints, ...oidcProviderMetaData};
@@ -241,7 +241,10 @@ export class AuthenticationHelper<T> {
 
     return text
       .replace(TokenExchangeConstants.Placeholders.TOKEN, sessionData.access_token)
-      .replace(TokenExchangeConstants.Placeholders.USERNAME, this.getAuthenticatedUserInfo(sessionData.id_token).username)
+      .replace(
+        TokenExchangeConstants.Placeholders.USERNAME,
+        this.getAuthenticatedUserInfo(sessionData.id_token).username,
+      )
       .replace(TokenExchangeConstants.Placeholders.SCOPE, scope)
       .replace(TokenExchangeConstants.Placeholders.CLIENT_ID, configData.clientID)
       .replace(TokenExchangeConstants.Placeholders.CLIENT_SECRET, configData.clientSecret ?? '');

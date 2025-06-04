@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, OidcRequestConstants} from '@asgardeo/javascript';
+import {AsgardeoAuthClient, OIDCRequestConstants} from '@asgardeo/javascript';
 import {SignOutError} from '../..';
 import {
   ERROR,
@@ -47,7 +47,7 @@ export class SPAUtils {
 
   public static setSignOutURL(url: string, clientID: string, instanceID: number): void {
     sessionStorage.setItem(
-      `${OidcRequestConstants.SignOut.Storage.StorageKeys.SIGN_OUT_URL}-instance_${instanceID}-${clientID}`,
+      `${OIDCRequestConstants.SignOut.Storage.StorageKeys.SIGN_OUT_URL}-instance_${instanceID}-${clientID}`,
       url,
     );
   }
@@ -55,7 +55,7 @@ export class SPAUtils {
   public static getSignOutURL(clientID: string, instanceID: number): string {
     return (
       sessionStorage.getItem(
-        `${OidcRequestConstants.SignOut.Storage.StorageKeys.SIGN_OUT_URL}-instance_${instanceID}-${clientID}`,
+        `${OIDCRequestConstants.SignOut.Storage.StorageKeys.SIGN_OUT_URL}-instance_${instanceID}-${clientID}`,
       ) ?? ''
     );
   }
@@ -180,7 +180,7 @@ export class SPAUtils {
     const urlObject: URL = new URL(url);
     return (
       !!urlObject.searchParams.get(ERROR) &&
-      urlObject.searchParams.get(STATE_QUERY) !== OidcRequestConstants.Params.SIGN_OUT_SUCCESS
+      urlObject.searchParams.get(STATE_QUERY) !== OIDCRequestConstants.Params.SIGN_OUT_SUCCESS
     );
   }
 

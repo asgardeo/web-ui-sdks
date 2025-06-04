@@ -26,7 +26,7 @@ export * from './__legacy__/data';
 export {default as getUserInfo} from './api/getUserInfo';
 
 export {default as TokenConstants} from './constants/TokenConstants';
-export {default as OidcRequestConstants} from './constants/OidcRequestConstants';
+export {default as OIDCRequestConstants} from './constants/OIDCRequestConstants';
 
 export {default as AsgardeoError} from './errors/AsgardeoError';
 export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';

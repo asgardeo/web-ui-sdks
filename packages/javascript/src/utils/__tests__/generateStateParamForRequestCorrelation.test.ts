@@ -18,30 +18,30 @@
 
 import {describe, expect, it} from 'vitest';
 import generateStateParamForRequestCorrelation from '../generateStateParamForRequestCorrelation';
-import PkceConstants from '../../constants/PkceConstants';
+import PKCEConstants from '../../constants/PKCEConstants';
 
 describe('generateStateParamForRequestCorrelation', (): void => {
   it('should generate state parameter with custom state', (): void => {
-    const pkceKey: string = `${PkceConstants.Storage.StorageKeys.CODE_VERIFIER}${PkceConstants.Storage.StorageKeys.SEPARATOR}1`;
+    const pkceKey: string = `${PKCEConstants.Storage.StorageKeys.CODE_VERIFIER}${PKCEConstants.Storage.StorageKeys.SEPARATOR}1`;
     const customState: string = 'myState';
 
     expect(generateStateParamForRequestCorrelation(pkceKey, customState)).toBe('myState_request_1');
   });
 
   it('should generate state parameter without custom state', (): void => {
-    const pkceKey: string = `${PkceConstants.Storage.StorageKeys.CODE_VERIFIER}${PkceConstants.Storage.StorageKeys.SEPARATOR}2`;
+    const pkceKey: string = `${PKCEConstants.Storage.StorageKeys.CODE_VERIFIER}${PKCEConstants.Storage.StorageKeys.SEPARATOR}2`;
 
     expect(generateStateParamForRequestCorrelation(pkceKey)).toBe('request_2');
   });
 
   it('should handle different index values', (): void => {
-    const pkceKey: string = `${PkceConstants.Storage.StorageKeys.CODE_VERIFIER}${PkceConstants.Storage.StorageKeys.SEPARATOR}999`;
+    const pkceKey: string = `${PKCEConstants.Storage.StorageKeys.CODE_VERIFIER}${PKCEConstants.Storage.StorageKeys.SEPARATOR}999`;
 
     expect(generateStateParamForRequestCorrelation(pkceKey)).toBe('request_999');
   });
 
   it('should combine custom state with request index correctly', (): void => {
-    const pkceKey: string = `${PkceConstants.Storage.StorageKeys.CODE_VERIFIER}${PkceConstants.Storage.StorageKeys.SEPARATOR}5`;
+    const pkceKey: string = `${PKCEConstants.Storage.StorageKeys.CODE_VERIFIER}${PKCEConstants.Storage.StorageKeys.SEPARATOR}5`;
     const customState: string = 'complex_state_123';
 
     expect(generateStateParamForRequestCorrelation(pkceKey, customState)).toBe('complex_state_123_request_5');

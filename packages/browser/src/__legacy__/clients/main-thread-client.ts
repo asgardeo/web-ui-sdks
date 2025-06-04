@@ -27,7 +27,7 @@ import {
   GetAuthURLConfig,
   OIDCEndpoints,
   ResponseMode,
-  OidcRequestConstants,
+  OIDCRequestConstants,
   SessionData,
   Store,
   extractPkceStorageKeyFromState,
@@ -77,7 +77,7 @@ export const MainThreadClient = async (
     (config.storage as Storage) ?? Storage.SessionStorage,
     (sessionState: string) =>
       _dataLayer.setSessionDataParameter(
-        OidcRequestConstants.Params.SESSION_STATE as keyof SessionData,
+        OIDCRequestConstants.Params.SESSION_STATE as keyof SessionData,
         sessionState ?? '',
       ),
   );
@@ -167,7 +167,7 @@ export const MainThreadClient = async (
   const shouldStopAuthn = async (): Promise<boolean> => {
     return await _sessionManagementHelper.receivePromptNoneResponse(async (sessionState: string | null) => {
       await _dataLayer.setSessionDataParameter(
-        OidcRequestConstants.Params.SESSION_STATE as keyof SessionData,
+        OIDCRequestConstants.Params.SESSION_STATE as keyof SessionData,
         sessionState ?? '',
       );
       return;
@@ -205,10 +205,10 @@ export const MainThreadClient = async (
         resolvedState = state ?? '';
       } else {
         resolvedAuthorizationCode =
-          new URL(window.location.href).searchParams.get(OidcRequestConstants.Params.AUTHORIZATION_CODE) ?? '';
+          new URL(window.location.href).searchParams.get(OIDCRequestConstants.Params.AUTHORIZATION_CODE) ?? '';
         resolvedSessionState =
-          new URL(window.location.href).searchParams.get(OidcRequestConstants.Params.SESSION_STATE) ?? '';
-        resolvedState = new URL(window.location.href).searchParams.get(OidcRequestConstants.Params.STATE) ?? '';
+          new URL(window.location.href).searchParams.get(OIDCRequestConstants.Params.SESSION_STATE) ?? '';
+        resolvedState = new URL(window.location.href).searchParams.get(OIDCRequestConstants.Params.STATE) ?? '';
 
         SPAUtils.removeAuthorizationCode();
       }
@@ -338,7 +338,7 @@ export const MainThreadClient = async (
     const url: string = urlObject.toString();
 
     if (config.storage === Storage.BrowserMemory && config.enablePKCE) {
-      const state = urlObject.searchParams.get(OidcRequestConstants.Params.STATE);
+      const state = urlObject.searchParams.get(OIDCRequestConstants.Params.STATE);
 
       SPAUtils.setPKCE(
         extractPkceStorageKeyFromState(state ?? ''),

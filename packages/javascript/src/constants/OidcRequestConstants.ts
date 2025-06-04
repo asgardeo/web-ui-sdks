@@ -20,7 +20,7 @@
  * Constants representing standard OpenID Connect (OIDC) request and response parameters.
  * These parameters are commonly used during authorization, token exchange, and logout flows.
  */
-const OidcRequestConstants = {
+const OIDCRequestConstants = {
   Params: {
     /**
      * The authorization code returned from the authorization endpoint.
@@ -54,4 +54,4 @@ const OidcRequestConstants = {
   },
 } as const;
 
-export default OidcRequestConstants;
+export default OIDCRequestConstants;

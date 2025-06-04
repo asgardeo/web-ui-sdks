@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import PkceConstants from '../constants/PkceConstants';
+import PKCEConstants from '../constants/PKCEConstants';
 import {TemporaryStore} from '../models/store';
 
 /**
@@ -37,15 +37,15 @@ const generatePkceStorageKey = (tempStore: TemporaryStore): string => {
   const keys: string[] = [];
 
   Object.keys(tempStore).forEach((key: string) => {
-    if (key.startsWith(PkceConstants.Storage.StorageKeys.CODE_VERIFIER)) {
+    if (key.startsWith(PKCEConstants.Storage.StorageKeys.CODE_VERIFIER)) {
       keys.push(key);
     }
   });
 
   const lastKey: string | undefined = keys.sort().pop();
-  const index: number = parseInt(lastKey?.split(PkceConstants.Storage.StorageKeys.SEPARATOR)[1] ?? '-1');
+  const index: number = parseInt(lastKey?.split(PKCEConstants.Storage.StorageKeys.SEPARATOR)[1] ?? '-1');
 
-  return `${PkceConstants.Storage.StorageKeys.CODE_VERIFIER}${PkceConstants.Storage.StorageKeys.SEPARATOR}${index + 1}`;
+  return `${PKCEConstants.Storage.StorageKeys.CODE_VERIFIER}${PKCEConstants.Storage.StorageKeys.SEPARATOR}${index + 1}`;
 };
 
 export default generatePkceStorageKey;
