@@ -32,7 +32,7 @@ This repository contains the source code of JavaScript SDKs that can be used to 
 | --- | --- |
 | [![@asgardeo/javascript](https://img.shields.io/npm/v/@asgardeo/javascript?color=%234B32C3&label=%40asgardeo%2Fjavascript&logo=javascript)](./packages/javascript/) | Framework-agnostic JavaScript Core SDK |
 | [![@asgardeo/browser](https://img.shields.io/npm/v/@asgardeo/browser?color=%234B32C3&label=%40asgardeo%2Fbrowser&logo=firefox)](./packages/browser/) | Browser-based JavaScript SDK |
-| [![@asgardeo/next](https://img.shields.io/npm/v/@asgardeo/next?color=%23000000&label=%40asgardeo%2Fnext&logo=next.js)](./packages/next/) | Next.js SDK for building applications with Asgardeo |
+| [![@asgardeo/nextjs](https://img.shields.io/npm/v/@asgardeo/nextjs?color=%23000000&label=%40asgardeo%2Fnext&logo=next.js)](./packages/next/) | Next.js SDK for building applications with Asgardeo |
 | [![@asgardeo/node](https://img.shields.io/npm/v/@asgardeo/node?color=%23339933&label=%40asgardeo%2Fnode&logo=node.js)](./packages/node/) | Node.js SDK for server-side integration |
 | [![@asgardeo/nuxt](https://img.shields.io/npm/v/@asgardeo/nuxt?color=%2300DC82&label=%40asgardeo%2Fnuxt&logo=nuxt)](./packages/nuxt/) | Nuxt.js SDK for building applications with Asgardeo |
 | [![@asgardeo/react](https://img.shields.io/npm/v/@asgardeo/react?color=%2361DAFB&label=%40asgardeo%2Freact&logo=react)](./packages/react/) | React SDK for building applications with Asgardeo |

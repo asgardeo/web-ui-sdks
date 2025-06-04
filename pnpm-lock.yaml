@@ -161,7 +161,7 @@ importers:
         specifier: ^3.1.3
         version: 3.1.3(@types/node@22.15.18)(@vitest/browser@3.1.3)(jiti@2.4.2)(jsdom@26.1.0)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0)
 
-  packages/next:
+  packages/nextjs:
     dependencies:
       '@asgardeo/node':
         specifier: workspace:^
@@ -178,7 +178,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: ^22.15.3
-        version: 22.15.18
+        version: 22.15.29
       '@wso2/eslint-plugin':
         specifier: 'catalog:'
         version: https://gitpkg.vercel.app/brionmario/wso2-ui-configs/packages/eslint-plugin?a1fc6eb570653c999828aea9f5027cba06af4391(eslint@8.57.0)(typescript@5.7.3)
@@ -208,7 +208,7 @@ importers:
         version: 5.7.3
       vitest:
         specifier: ^3.1.3
-        version: 3.1.3(@types/node@22.15.18)(@vitest/browser@3.1.3)(jiti@2.4.2)(jsdom@26.1.0)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0)
+        version: 3.1.3(@types/node@22.15.29)(@vitest/browser@3.1.3)(jiti@2.4.2)(jsdom@26.1.0)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0)
 
   packages/node:
     dependencies:
@@ -492,9 +492,9 @@ importers:
 
   recipes/create-next-app-ts-app-router:
     dependencies:
-      '@asgardeo/next':
+      '@asgardeo/nextjs':
         specifier: workspace:^
-        version: link:../../packages/next
+        version: link:../../packages/nextjs
       next:
         specifier: 15.3.2
         version: 15.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.89.0)

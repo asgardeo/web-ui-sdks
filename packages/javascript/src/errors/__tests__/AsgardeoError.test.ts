@@ -45,7 +45,7 @@ describe('AsgardeoError', (): void => {
     const origins: string[] = ['react', 'next', 'javascript'];
     const expectedNames: string[] = [
       'Asgardeo - @asgardeo/react',
-      'Asgardeo - @asgardeo/next',
+      'Asgardeo - @asgardeo/nextjs',
       'Asgardeo - @asgardeo/javascript',
     ];
 

@@ -1,4 +1,4 @@
-import {AsgardeoNextClient} from '@asgardeo/next';
+import {AsgardeoNextClient} from '@asgardeo/nextjs';
 import {NextRequest} from 'next/server';
 
 const asgardeo = new AsgardeoNextClient();

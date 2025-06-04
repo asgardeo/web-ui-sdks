@@ -1,5 +1,5 @@
 import styles from './page.module.css';
-import {SignInButton, SignedIn, SignOutButton, SignedOut} from '@asgardeo/next';
+import {SignInButton, SignedIn, SignOutButton, SignedOut} from '@asgardeo/nextjs';
 
 export default function Home() {
   return (
