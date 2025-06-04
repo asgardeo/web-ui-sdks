@@ -45,7 +45,7 @@
  * };
  * ```
  */
-export interface OIDCDiscoveryApiResponse {
+export interface OIDCDiscoveryApiResponse extends OIDCDiscoveryEndpointsApiResponse {
   /**
    * Supported OAuth 2.0 scope values.
    * Lists the permission scopes this server can handle.
