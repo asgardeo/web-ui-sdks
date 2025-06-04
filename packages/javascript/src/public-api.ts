@@ -19,7 +19,7 @@
 export * from './__legacy__/client';
 export * from './__legacy__/models';
 export * from './models/oauth-response';
-export * from './__legacy__/helpers/crypto-helper';
+export * from './IsomorphicCrypto';
 export * from './__legacy__/exception';
 export * from './__legacy__/data';
 

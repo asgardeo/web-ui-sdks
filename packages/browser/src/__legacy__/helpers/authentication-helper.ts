@@ -21,7 +21,7 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   BasicUserInfo,
-  CryptoHelper,
+  IsomorphicCrypto,
   CustomGrantConfig,
   DataLayer,
   IdTokenPayload,
@@ -666,7 +666,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     return this._authenticationClient.getDecodedIDToken();
   }
 
-  public async getCryptoHelper(): Promise<CryptoHelper> {
+  public async getCryptoHelper(): Promise<IsomorphicCrypto> {
     return this._authenticationClient.getCryptoHelper();
   }
 

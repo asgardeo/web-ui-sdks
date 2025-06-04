@@ -21,7 +21,7 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   BasicUserInfo,
-  CryptoHelper,
+  IsomorphicCrypto,
   CustomGrantConfig,
   IdTokenPayload,
   FetchResponse,
@@ -731,12 +731,12 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getCryptoHelper = (): Promise<CryptoHelper> => {
+  const getCryptoHelper = (): Promise<IsomorphicCrypto> => {
     const message: Message<null> = {
       type: GET_CRYPTO_HELPER,
     };
 
-    return communicate<null, CryptoHelper>(message)
+    return communicate<null, IsomorphicCrypto>(message)
       .then(response => {
         return Promise.resolve(response);
       })

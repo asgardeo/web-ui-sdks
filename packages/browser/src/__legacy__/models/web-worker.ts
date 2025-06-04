@@ -20,7 +20,7 @@ import {
   AuthClientConfig,
   AuthorizationURLParams,
   BasicUserInfo,
-  CryptoHelper,
+  IsomorphicCrypto,
   CustomGrantConfig,
   IdTokenPayload,
   FetchResponse,
@@ -60,7 +60,7 @@ export interface WebWorkerCoreInterface {
   getBasicUserInfo(): Promise<BasicUserInfo>;
   getDecodedIDToken(): Promise<IdTokenPayload>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
-  getCryptoHelper(): Promise<CryptoHelper>;
+  getCryptoHelper(): Promise<IsomorphicCrypto>;
   getIDToken(): Promise<string>;
   getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
   getAccessToken(): Promise<string>;

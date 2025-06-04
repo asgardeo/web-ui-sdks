@@ -20,7 +20,7 @@ import {
   AsgardeoAuthClient,
   AuthClientConfig,
   BasicUserInfo,
-  CryptoHelper,
+  IsomorphicCrypto,
   DataLayer,
   IdTokenPayload,
   FetchResponse,
@@ -377,7 +377,7 @@ export const MainThreadClient = async (
     return _authenticationHelper.getDecodedIDToken();
   };
 
-  const getCryptoHelper = async (): Promise<CryptoHelper> => {
+  const getCryptoHelper = async (): Promise<IsomorphicCrypto> => {
     return _authenticationHelper.getCryptoHelper();
   };
 

@@ -19,7 +19,7 @@ import extractPkceStorageKeyFromState from '../../utils/extractPkceStorageKeyFro
 import generateStateParamForRequestCorrelation from '../../utils/generateStateParamForRequestCorrelation';
 import {DataLayer} from '../data';
 import {AsgardeoAuthException} from '../exception';
-import {AuthenticationHelper, CryptoHelper} from '../helpers';
+import {AuthenticationHelper} from '../helpers';
 import {
   AuthClientConfig,
   AuthenticatedUserInfo,
@@ -41,6 +41,7 @@ import ScopeConstants from '../../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../../constants/OIDCRequestConstants';
 import {OIDCDiscoveryApiResponse} from '../../models/oidc-discovery';
+import { IsomorphicCrypto } from '../../IsomorphicCrypto';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
@@ -48,11 +49,11 @@ export class AuthenticationCore<T> {
   private _oidcProviderMetaData: () => Promise<OIDCDiscoveryApiResponse>;
   private _authenticationHelper: AuthenticationHelper<T>;
   private _cryptoUtils: Crypto;
-  private _cryptoHelper: CryptoHelper;
+  private _cryptoHelper: IsomorphicCrypto;
 
   public constructor(dataLayer: DataLayer<T>, cryptoUtils: Crypto) {
     this._cryptoUtils = cryptoUtils;
-    this._cryptoHelper = new CryptoHelper(cryptoUtils);
+    this._cryptoHelper = new IsomorphicCrypto(cryptoUtils);
     this._authenticationHelper = new AuthenticationHelper(dataLayer, this._cryptoHelper);
     this._dataLayer = dataLayer;
     this._config = async () => await this._dataLayer.getConfigData();
@@ -471,7 +472,7 @@ export class AuthenticationCore<T> {
     return payload;
   }
 
-  public async getCryptoHelper(): Promise<CryptoHelper> {
+  public async getCryptoHelper(): Promise<IsomorphicCrypto> {
     return this._cryptoHelper;
   }
 

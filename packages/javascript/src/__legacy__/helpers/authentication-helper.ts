@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {CryptoHelper} from './crypto-helper';
+import {IsomorphicCrypto} from '../../IsomorphicCrypto';
 import {DataLayer} from '../data';
 import {AsgardeoAuthException} from '../exception';
 import {
@@ -41,9 +41,9 @@ export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;
   private _config: () => Promise<AuthClientConfig>;
   private _oidcProviderMetaData: () => Promise<OIDCDiscoveryApiResponse>;
-  private _cryptoHelper: CryptoHelper;
+  private _cryptoHelper: IsomorphicCrypto;
 
-  public constructor(dataLayer: DataLayer<T>, cryptoHelper: CryptoHelper) {
+  public constructor(dataLayer: DataLayer<T>, cryptoHelper: IsomorphicCrypto) {
     this._dataLayer = dataLayer;
     this._config = async () => await this._dataLayer.getConfigData();
     this._oidcProviderMetaData = async () => await this._dataLayer.getOIDCProviderMetaData();

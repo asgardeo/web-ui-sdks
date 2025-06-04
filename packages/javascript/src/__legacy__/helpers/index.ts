@@ -16,5 +16,4 @@
  * under the License.
  */
 
-export * from "./authentication-helper";
-export * from "./crypto-helper";
+export * from './authentication-helper';

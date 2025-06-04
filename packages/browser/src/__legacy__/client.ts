@@ -21,7 +21,7 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   BasicUserInfo,
-  CryptoHelper,
+  IsomorphicCrypto,
   CustomGrantConfig,
   DataLayer,
   IdTokenPayload,
@@ -757,10 +757,10 @@ export class AsgardeoSPAClient {
   }
 
   /**
-   * This method returns the CryptoHelper instance.
+   * This method returns the IsomorphicCrypto instance.
    *
    * @return {Promise<DecodedIdTokenPayloadInterface>} - A Promise that resolves with
-   * the CryptoHelper instance.
+   * the IsomorphicCrypto instance.
    *
    * @example
    * ```
@@ -776,7 +776,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getCryptoHelper(): Promise<CryptoHelper | undefined> {
+  public async getCryptoHelper(): Promise<IsomorphicCrypto | undefined> {
     await this._validateMethod();
 
     return this._client?.getCryptoHelper();

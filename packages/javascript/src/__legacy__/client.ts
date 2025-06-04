@@ -18,7 +18,6 @@
 
 import {AuthenticationCore} from './core';
 import {DataLayer} from './data';
-import {CryptoHelper} from './helpers';
 import {
   AuthClientConfig,
   BasicUserInfo,
@@ -35,6 +34,7 @@ import {ResponseMode} from '../models/oauth-response';
 import ScopeConstants from '../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../constants/OIDCRequestConstants';
+import { IsomorphicCrypto } from '../IsomorphicCrypto';
 
 /**
  * Default configurations.
@@ -414,18 +414,18 @@ export class AsgardeoAuthClient<T> {
   /**
    * This method returns the crypto helper object.
    *
-   * @returns - A Promise that resolves with a CryptoHelper object.
+   * @returns - A Promise that resolves with a IsomorphicCrypto object.
    *
    * @example
    * ```
-   * const cryptoHelper = await auth.CryptoHelper();
+   * const cryptoHelper = await auth.IsomorphicCrypto();
    * ```
    *
    * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getCryptoHelper}
    *
    * @preserve
    */
-  public async getCryptoHelper(): Promise<CryptoHelper> {
+  public async getCryptoHelper(): Promise<IsomorphicCrypto> {
     return this._authenticationCore.getCryptoHelper();
   }
 

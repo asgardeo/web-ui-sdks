@@ -16,12 +16,12 @@
  * under the License.
  */
 
-import {AsgardeoAuthException} from '../exception';
-import {Crypto, JWKInterface} from '../models';
-import {IdTokenPayload} from '../../models/id-token';
-import TokenConstants from '../../constants/TokenConstants';
+import {AsgardeoAuthException} from './__legacy__/exception';
+import {Crypto, JWKInterface} from './__legacy__/models';
+import {IdTokenPayload} from './models/id-token';
+import TokenConstants from './constants/TokenConstants';
 
-export class CryptoHelper<T = any> {
+export class IsomorphicCrypto<T = any> {
   private _cryptoUtils: Crypto<T>;
 
   public constructor(cryptoUtils: Crypto<T>) {

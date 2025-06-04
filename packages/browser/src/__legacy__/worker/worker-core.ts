@@ -21,7 +21,7 @@ import {
   AuthClientConfig,
   AuthorizationURLParams,
   BasicUserInfo,
-  CryptoHelper,
+  IsomorphicCrypto,
   CustomGrantConfig,
   IdTokenPayload,
   FetchResponse,
@@ -171,7 +171,7 @@ export const WebWorkerCore = async (
     return _authenticationHelper.getDecodedIDToken();
   };
 
-  const getCryptoHelper = async (): Promise<CryptoHelper> => {
+  const getCryptoHelper = async (): Promise<IsomorphicCrypto> => {
     return _authenticationHelper.getCryptoHelper();
   };
 
