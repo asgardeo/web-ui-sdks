@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactElement, useEffect, useMemo, useState} from 'react';
-import {createPortal} from 'react-dom';
+import {CSSProperties, FC, ReactElement, useMemo, useState} from 'react';
+import {Popover} from '../../primitives/Popover/Popover';
 
 interface StyleMap extends Record<string, CSSProperties> {
   '@media (prefers-color-scheme: dark)'?: Record<string, CSSProperties>;
@@ -154,23 +154,7 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   portalId = 'asgardeo-user-profile',
 }): ReactElement => {
   const styles = useStyles();
-  const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
-
-  // Safe client-side creation of portal root
-  useEffect(() => {
-    if (mode !== 'popup') return;
-
-    const existing = document.getElementById(portalId);
-    if (existing) {
-      setPortalEl(existing);
-      return;
-    }
-
-    const el = document.createElement('div');
-    el.id = portalId;
-    document.body.appendChild(el);
-    setPortalEl(el);
-  }, [mode, portalId]);
+  const [isOpen, setIsOpen] = useState(mode === 'popup');
 
   if (!user) {
     return fallback;
@@ -214,14 +198,10 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   );
 
   if (mode === 'popup') {
-    if (!portalEl) return fallback;
-
-    return createPortal(
-      <>
-        <div style={styles.overlay} />
-        <div style={styles.popup}>{profileContent}</div>
-      </>,
-      portalEl,
+    return (
+      <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} portalId={portalId}>
+        {profileContent}
+      </Popover>
     );
   }
 

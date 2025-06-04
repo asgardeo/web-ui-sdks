@@ -18,7 +18,7 @@ function App() {
             </div>
           )}
         </User>
-        <UserProfile />
+        <UserProfile mode="popup" />
         <SignOutButton>Logout</SignOutButton>
       </SignedIn>
     </>
