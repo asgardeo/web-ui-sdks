@@ -19,7 +19,7 @@
 import {CSSProperties, FC, ReactElement, useMemo, useState} from 'react';
 import {Popover} from '../../primitives/Popover/Popover';
 import {Avatar} from '../../primitives/Avatar/Avatar';
-import {useTheme} from '../../../theme';
+import {useTheme} from '../../../theme/useTheme';
 
 const useStyles = () => {
   const {theme, isDark} = useTheme();
@@ -179,9 +179,7 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
     <div style={containerStyle} className={className}>
       <div style={styles.header}>
         <Avatar imageUrl={user.profileUrl} name={user.displayName} size={80} alt={`${user.displayName}'s avatar`} />
-        <div style={styles.profileInfo}>
-          {user.displayName && <h2 style={styles.name}>{user.displayName}</h2>}
-        </div>
+        <div style={styles.profileInfo}>{user.displayName && <h2 style={styles.name}>{user.displayName}</h2>}</div>
       </div>
       <div style={styles.infoContainer}>
         {Object.entries(user)

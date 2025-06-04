@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {ThemeConfig} from '../theme';
+import {ThemeConfig} from '../theme/types';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 

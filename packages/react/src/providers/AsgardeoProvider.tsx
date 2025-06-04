@@ -23,7 +23,7 @@ import AsgardeoContext from '../contexts/AsgardeoContext';
 import useBrowserUrl from '../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../models/config';
 import {AsgardeoPreferences} from '../models/preferences';
-import {ThemeConfig, ThemeProvider} from '../theme';
+import {ThemeProvider} from '../theme/ThemeProvider';
 
 /**
  * Props interface of {@link AsgardeoProvider}
