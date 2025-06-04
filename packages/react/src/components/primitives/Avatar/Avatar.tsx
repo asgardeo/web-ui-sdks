@@ -17,6 +17,7 @@
  */
 
 import {CSSProperties, FC, useMemo} from 'react';
+import {useTheme} from '../../../theme/useTheme';
 
 export interface AvatarProps {
   /**
@@ -42,6 +43,8 @@ export interface AvatarProps {
 }
 
 const useStyles = ({size}) => {
+  const {theme, isDark} = useTheme();
+
   return useMemo(
     () => ({
       avatar: {
@@ -49,21 +52,23 @@ const useStyles = ({size}) => {
         height: `${size}px`,
         borderRadius: '50%',
         overflow: 'hidden',
-        backgroundColor: '#e0e0e0',
+        backgroundColor: theme.colors.surface,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         fontSize: `${size * 0.4}px`,
         fontWeight: 500,
-        color: '#666',
-      },
+        color: theme.colors.text.primary,
+        border: `1px solid ${theme.colors.border}`,
+        boxShadow: isDark ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.1)',
+      } as CSSProperties,
       image: {
         width: '100%',
         height: '100%',
         objectFit: 'cover',
-      },
+      } as CSSProperties,
     }),
-    [size],
+    [size, theme, isDark],
   );
 };
 
