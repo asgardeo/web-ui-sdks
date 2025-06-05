@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import {User} from '../models/user';
-import AsgardeoAPIError from '../errors/AsgardeoAPIError';
+import {User} from '../../models/user';
+import AsgardeoAPIError from '../../errors/AsgardeoAPIError';
 
 /**
  * Retrieves the user information from the specified OIDC userinfo endpoint.

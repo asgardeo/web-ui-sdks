@@ -18,8 +18,8 @@
 
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import getUserInfo from '../getUserInfo';
-import {User} from '../../models/user';
-import AsgardeoAPIError from '../../errors/AsgardeoAPIError';
+import {User} from '../../../models/user';
+import AsgardeoAPIError from '../../../errors/AsgardeoAPIError';
 
 describe('getUserInfo', (): void => {
   beforeEach((): void => {

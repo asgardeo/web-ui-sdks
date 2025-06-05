@@ -23,7 +23,7 @@ export * from './IsomorphicCrypto';
 export * from './__legacy__/exception';
 export * from './__legacy__/data';
 
-export {default as getUserInfo} from './api/getUserInfo';
+export {default as getUserInfo} from './api/oidc/getUserInfo';
 
 export {default as TokenConstants} from './constants/TokenConstants';
 export {default as OIDCRequestConstants} from './constants/OIDCRequestConstants';
