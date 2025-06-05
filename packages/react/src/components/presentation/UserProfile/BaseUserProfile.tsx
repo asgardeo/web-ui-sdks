@@ -19,9 +19,13 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactElement, useMemo, useState} from 'react';
+import {CSSProperties, FC, ReactElement, useMemo, useState, useCallback} from 'react';
 import {Popover} from '../../primitives/Popover/Popover';
 import {Avatar} from '../../primitives/Avatar/Avatar';
+import {TextField} from '../../primitives/TextField/TextField';
+import {DatePicker} from '../../primitives/DatePicker/DatePicker';
+import {Checkbox} from '../../primitives/Checkbox/Checkbox';
+import {Select} from '../../primitives/Select/Select';
 import {useTheme} from '../../../theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
@@ -184,6 +188,26 @@ export interface BaseUserProfileProps {
     username?: string | string[];
     [key: string]: string | string[] | undefined;
   };
+  /**
+   * Whether the profile is in edit mode
+   */
+  editable?: boolean;
+  /**
+   * Callback when a field value changes
+   */
+  onChange?: (field: string, value: any) => void;
+  /**
+   * Callback when profile edit is submitted
+   */
+  onSubmit?: (data: any) => void;
+  /**
+   * Optional custom button text for save button
+   */
+  saveButtonText?: string;
+  /**
+   * Optional custom button text for cancel button
+   */
+  cancelButtonText?: string;
 }
 
 /**
@@ -201,9 +225,69 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   portalId = 'asgardeo-user-profile',
   title = 'User Profile',
   attributeMapping = {},
+  editable = true,
+  onChange,
+  onSubmit,
+  saveButtonText = 'Save Changes',
+  cancelButtonText = 'Cancel',
 }): ReactElement => {
-  const styles = useStyles();
+  const {theme} = useTheme();
   const [isOpen, setIsOpen] = useState(mode === 'popup');
+  const [editedUser, setEditedUser] = useState(user);
+  const [isEditing, setIsEditing] = useState(editable);
+
+  const handleFieldChange = useCallback(
+    (field: string, value: any) => {
+      setEditedUser((prev: any) => ({
+        ...prev,
+        [field]: value,
+      }));
+      onChange?.(field, value);
+    },
+    [onChange],
+  );
+
+  const handleSubmit = useCallback(() => {
+    onSubmit?.(editedUser);
+    setIsEditing(false);
+  }, [editedUser, onSubmit]);
+
+  const handleCancel = useCallback(() => {
+    setEditedUser(user);
+    setIsEditing(false);
+  }, [user]);
+
+  const styles = useStyles();
+  const buttonStyle = useMemo(
+    () => ({
+      padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+      margin: `${theme.spacing.unit}px`,
+      borderRadius: theme.borderRadius.small,
+      border: 'none',
+      cursor: 'pointer',
+      fontSize: '0.875rem',
+      fontWeight: 500,
+    }),
+    [theme],
+  );
+
+  const saveButtonStyle = useMemo(
+    () => ({
+      ...buttonStyle,
+      backgroundColor: theme.colors.primary.main,
+      color: theme.colors.primary.contrastText,
+    }),
+    [theme, buttonStyle],
+  );
+
+  const cancelButtonStyle = useMemo(
+    () => ({
+      ...buttonStyle,
+      backgroundColor: theme.colors.background.surface,
+      border: `1px solid ${theme.colors.border}`,
+    }),
+    [theme, buttonStyle],
+  );
 
   const defaultAttributeMappings = {
     picture: ['profile', 'profileUrl'],
@@ -212,49 +296,6 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   };
 
   const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};
-
-  const getDisplayName = () => {
-    const firstName = getMappedUserProfileValue('firstName', mergedMappings, user);
-    const lastName = getMappedUserProfileValue('lastName', mergedMappings, user);
-
-    if (firstName && lastName) {
-      return `${firstName} ${lastName}`;
-    }
-
-    return getMappedUserProfileValue('username', mergedMappings, user) || '';
-  };
-
-  if (!user) {
-    return fallback;
-  }
-
-  const renderNestedValue = (data: unknown): ReactElement => {
-    if (typeof data !== 'object' || data === null) {
-      return <span>{String(data)}</span>;
-    }
-
-    const nestedFieldStyle = {
-      ...styles.field,
-      borderBottom: 'none', // Remove border for nested fields
-    };
-
-    return (
-      <div>
-        {Object.entries(data).map(([key, value]) => (
-          <div key={key} style={nestedFieldStyle}>
-            <span style={styles.label}>{formatLabel(key)}</span>
-            <div style={styles.value}>{typeof value === 'object' ? renderNestedValue(value) : String(value)}</div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const formatLabel = (key: string): string =>
-    key
-      .split(/(?=[A-Z])|_/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
 
   const renderSchemaValue = (schema: Schema): ReactElement | null => {
     if (!schema) return null;
@@ -266,7 +307,7 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
       return (
         <>
           {subAttributes.map((subAttr, index) => (
-            <div key={index}>
+            <div key={index} style={styles.field}>
               <span style={styles.label}>{subAttr.displayName || subAttr.description || ''}</span>
               <div style={styles.value}>
                 {Array.isArray(subAttr.value)
@@ -296,7 +337,6 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
       );
     }
 
-    let displayValue = value;
     if (type === 'COMPLEX' && typeof value === 'object') {
       return renderNestedValue(value);
     }
@@ -304,15 +344,91 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
     return (
       <>
         <span style={styles.label}>{displayName || description || ''}</span>
-        <div style={styles.value}>{String(displayValue)}</div>
+        <div style={styles.value}>{String(value)}</div>
       </>
     );
+  };
+
+  const getDisplayName = () => {
+    const firstName = getMappedUserProfileValue('firstName', mergedMappings, user);
+    const lastName = getMappedUserProfileValue('lastName', mergedMappings, user);
+
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`;
+    }
+
+    return getMappedUserProfileValue('username', mergedMappings, user) || '';
+  };
+
+  if (!user) {
+    return fallback;
+  }
+
+  const renderEditableField = (schema: Schema, onChange: (value: any) => void): ReactElement | null => {
+    if (!schema) return null;
+
+    const {value, displayName, name, type, required, mutability} = schema;
+
+    // Don't render editable field if mutability is READ_ONLY
+    if (mutability === 'READ_ONLY') {
+      return (
+        <>
+          <span style={styles.label}>{displayName || name}</span>
+          <div style={styles.value}>{String(value)}</div>
+        </>
+      );
+    }
+
+    const commonProps = {
+      label: displayName || name,
+      required: required,
+      value: value || '',
+      onChange: (e: any) => onChange(e.target.value),
+    };
+
+    switch (type) {
+      case 'STRING':
+        return <TextField {...commonProps} />;
+      case 'DATE_TIME':
+        return <DatePicker {...commonProps} />;
+      case 'BOOLEAN':
+        return <Checkbox {...commonProps} checked={value} onChange={e => onChange(e.target.checked)} />;
+      case 'COMPLEX':
+        if (Array.isArray(value)) {
+          // For array values, render multiple fields
+          return (
+            <>
+              {value.map((item, index) => (
+                <TextField
+                  key={index}
+                  {...commonProps}
+                  value={item}
+                  onChange={e => {
+                    const newValue = [...value];
+                    newValue[index] = e.target.value;
+                    onChange(newValue);
+                  }}
+                />
+              ))}
+            </>
+          );
+        }
+        return <TextField {...commonProps} />;
+      default:
+        return <TextField {...commonProps} />;
+    }
   };
 
   const renderUserInfo = (schema: Schema) => {
     if (!schema || !schema.name) return null;
 
-    return <div style={styles.field}>{renderSchemaValue(schema)}</div>;
+    return (
+      <div style={styles.field}>
+        {isEditing
+          ? renderEditableField(schema, value => handleFieldChange(schema.name!, value))
+          : renderSchemaValue(schema)}
+      </div>
+    );
   };
 
   const containerStyle = {
@@ -320,7 +436,6 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
     ...(cardLayout ? styles.card : {}),
   };
 
-  // Get the component attributes that are being used in the Avatar
   const avatarAttributes = ['picture'];
   const excludedProps = avatarAttributes.map(attr => mergedMappings[attr] || attr);
 
@@ -333,6 +448,11 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
           size={80}
           alt={`${getDisplayName()}'s avatar`}
         />
+        {editable && !isEditing && (
+          <button style={buttonStyle} onClick={() => setIsEditing(true)}>
+            Edit Profile
+          </button>
+        )}
       </div>
       <div style={styles.infoContainer}>
         {Array.isArray(user)
@@ -349,6 +469,16 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 }),
               )}
       </div>
+      {isEditing && (
+        <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: theme.spacing.unit * 2}}>
+          <button style={cancelButtonStyle} onClick={handleCancel}>
+            {cancelButtonText}
+          </button>
+          <button style={saveButtonStyle} onClick={handleSubmit}>
+            {saveButtonText}
+          </button>
+        </div>
+      )}
     </div>
   );
 
@@ -375,6 +505,34 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
       </ul>
     );
   };
+
+  const renderNestedValue = (data: unknown): ReactElement => {
+    if (typeof data !== 'object' || data === null) {
+      return <span>{String(data)}</span>;
+    }
+
+    const nestedFieldStyle = {
+      ...styles.field,
+      borderBottom: 'none', // Remove border for nested fields
+    };
+
+    return (
+      <div>
+        {Object.entries(data).map(([key, value]) => (
+          <div key={key} style={nestedFieldStyle}>
+            <span style={styles.label}>{formatLabel(key)}</span>
+            <div style={styles.value}>{typeof value === 'object' ? renderNestedValue(value) : String(value)}</div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const formatLabel = (key: string): string =>
+    key
+      .split(/(?=[A-Z])|_/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
 
   if (mode === 'popup') {
     return (

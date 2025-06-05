@@ -20,8 +20,21 @@ import {Theme, ThemeConfig} from './types';
 
 const lightTheme: ThemeConfig = {
   colors: {
-    primary: '#1a73e8',
-    background: '#ffffff',
+    primary: {
+      main: '#1a73e8',
+      contrastText: '#ffffff',
+    },
+    background: {
+      surface: '#f5f5f5',
+      disabled: '#f0f0f0',
+      body: {
+        main: '#1a1a1a',
+      },
+    },
+    error: {
+      main: '#d32f2f',
+      contrastText: '#ffffff',
+    },
     surface: '#f5f5f5',
     text: {
       primary: '#1a1a1a',
@@ -41,8 +54,21 @@ const lightTheme: ThemeConfig = {
 
 const darkTheme: ThemeConfig = {
   colors: {
-    primary: '#3ea6ff',
-    background: '#1a1a1a',
+    primary: {
+      main: '#1a73e8',
+      contrastText: '#ffffff',
+    },
+    background: {
+      surface: '#121212',
+      disabled: '#1f1f1f',
+      body: {
+        main: '#ffffff',
+      },
+    },
+    error: {
+      main: '#d32f2f',
+      contrastText: '#ffffff',
+    },
     surface: '#2d2d2d',
     text: {
       primary: '#ffffff',
@@ -64,8 +90,13 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
   const cssVars: Record<string, string> = {};
 
   // Colors
-  cssVars['--asgardeo-color-primary'] = theme.colors.primary;
-  cssVars['--asgardeo-color-background'] = theme.colors.background;
+  cssVars['--asgardeo-color-primary-main'] = theme.colors.primary.main;
+  cssVars['--asgardeo-color-primary-contrastText'] = theme.colors.primary.contrastText;
+  cssVars['--asgardeo-color-background-surface'] = theme.colors.background.surface;
+  cssVars['--asgardeo-color-background-disabled'] = theme.colors.background.disabled;
+  cssVars['--asgardeo-color-background-body-main'] = theme.colors.background.body.main;
+  cssVars['--asgardeo-color-error-main'] = theme.colors.error.main;
+  cssVars['--asgardeo-color-error-contrastText'] = theme.colors.error.contrastText;
   cssVars['--asgardeo-color-surface'] = theme.colors.surface;
   cssVars['--asgardeo-color-text-primary'] = theme.colors.text.primary;
   cssVars['--asgardeo-color-text-secondary'] = theme.colors.text.secondary;

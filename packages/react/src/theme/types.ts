@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -17,27 +17,14 @@
  */
 
 export interface ThemeColors {
-  primary: {
-    main: string;
-    contrastText: string;
-  };
-  background: {
-    surface: string;
-    disabled: string;
-    body: {
-      main: string;
-    };
-  };
+  primary: string;
+  background: string;
   surface: string;
   text: {
     primary: string;
     secondary: string;
   };
   border: string;
-  error: {
-    main: string;
-    contrastText: string;
-  };
 }
 
 export interface ThemeConfig {
@@ -55,5 +42,3 @@ export interface ThemeConfig {
 export interface Theme extends ThemeConfig {
   cssVariables: Record<string, string>;
 }
-
-export type ThemeMode = 'light' | 'dark' | 'system';
