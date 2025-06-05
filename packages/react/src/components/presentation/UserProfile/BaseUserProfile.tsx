@@ -215,16 +215,29 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const getMappedValue = (key: string) => {
     const mappedKey = mergedMappings[key];
 
-    if (Array.isArray(mappedKey)) {
-      // Try each possible field name in order until we find one that exists
-      for (const field of mappedKey) {
-        if (user[field] !== undefined) {
-          return user[field];
+    if (Array.isArray(user)) {
+      // If user is an array, find the first matching schema attribute
+      if (Array.isArray(mappedKey)) {
+        // Try each possible field name in order
+        for (const field of mappedKey) {
+          const found = user.find(u => u.name === field);
+          if (found?.value !== undefined) {
+            return found.value;
+          }
+        }
+      } else {
+        // Look for single mapped key
+        const found = user.find(u => u.name === mappedKey);
+        if (found?.value !== undefined) {
+          return found.value;
         }
       }
-      return user[key]; // Fallback to the original key if none of the mapped fields exist
+      // Fallback to original key if no mapped fields exist
+      const found = user.find(u => u.name === key);
+      return found?.value;
     }
 
+    // For single user object, return the mapped key or original key
     return mappedKey ? user[mappedKey] : user[key];
   };
 
@@ -285,12 +298,12 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
               <span style={styles.label}>{subAttr.displayName || subAttr.description || ''}</span>
               <div style={styles.value}>
                 {Array.isArray(subAttr.value)
-                  ? subAttr.value.map(item => 
-                      typeof item === 'object' ? JSON.stringify(item) : String(item)
-                    ).join(', ')
+                  ? subAttr.value
+                      .map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item)))
+                      .join(', ')
                   : typeof subAttr.value === 'object'
-                    ? JSON.stringify(subAttr.value)
-                    : String(subAttr.value)}
+                  ? JSON.stringify(subAttr.value)
+                  : String(subAttr.value)}
               </div>
             </div>
           ))}

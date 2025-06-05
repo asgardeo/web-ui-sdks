@@ -45,11 +45,13 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
   }
 
   override initialize(config: T): Promise<boolean> {
+    const scopes: string[] = Array.isArray(config.scopes) ? config.scopes : config.scopes.split(' ');
+
     return this.asgardeo.init({
       baseUrl: config.baseUrl,
       clientID: config.clientId,
       signInRedirectURL: config.afterSignInUrl,
-      scope: Array.isArray(config.scopes) ? config.scopes : config.scopes.split(' '),
+      scope: [...scopes, 'internal_login'],
     });
   }
 

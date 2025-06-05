@@ -9,7 +9,7 @@ createRoot(document.getElementById('root')!).render(
     <AsgardeoProvider
       baseUrl={import.meta.env.VITE_ASGARDEO_BASE_URL}
       clientId={import.meta.env.VITE_ASGARDEO_CLIENT_ID}
-      scopes={['openid', 'address', 'email', 'profile', 'internal_login']}
+      scopes={['openid', 'address', 'email', 'profile']}
       preferences={{
         theme: {
           mode: 'dark',

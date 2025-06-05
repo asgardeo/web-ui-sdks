@@ -80,7 +80,7 @@ const getUserProfile = async ({baseUrl}): Promise<any> => {
             if (complexValue[subAttr.name] !== undefined) {
               result.push({
                 ...subAttr,
-                value: complexValue[subAttr.name]
+                value: complexValue[subAttr.name],
               });
             }
           }
