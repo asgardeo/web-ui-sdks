@@ -276,20 +276,29 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
     const {value, displayName, description, type, subAttributes} = schema;
 
+    // If there are subAttributes, render them directly instead of nesting
     if (subAttributes && Array.isArray(subAttributes)) {
       return (
-        <div style={{marginLeft: '1rem'}}>
+        <>
           {subAttributes.map((subAttr, index) => (
-            <div key={index} style={styles.field}>
-              {renderSchemaValue(subAttr)}
+            <div key={index}>
+              <span style={styles.label}>{subAttr.displayName || subAttr.description || ''}</span>
+              <div style={styles.value}>
+                {Array.isArray(subAttr.value)
+                  ? subAttr.value.map(item => 
+                      typeof item === 'object' ? JSON.stringify(item) : String(item)
+                    ).join(', ')
+                  : typeof subAttr.value === 'object'
+                    ? JSON.stringify(subAttr.value)
+                    : String(subAttr.value)}
+              </div>
             </div>
           ))}
-        </div>
+        </>
       );
     }
 
     if (Array.isArray(value)) {
-      // Handle array values by joining them with commas
       const displayValue = value
         .map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item)))
         .join(', ');

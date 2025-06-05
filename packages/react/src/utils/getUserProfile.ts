@@ -73,21 +73,26 @@ const getUserProfile = async ({baseUrl}): Promise<any> => {
       for (const attr of schema.attributes || []) {
         const {name, type, subAttributes, multiValued} = attr;
 
-        let value;
-
         if (type === 'COMPLEX' && subAttributes?.length && typeof source[name] === 'object') {
-          // Complex attribute with sub-attributes — optionally flatten or pass as-is
-          value = source[name];
+          // For complex attributes with subAttributes, create an entry for each subAttribute
+          const complexValue = source[name];
+          for (const subAttr of subAttributes) {
+            if (complexValue[subAttr.name] !== undefined) {
+              result.push({
+                ...subAttr,
+                value: complexValue[subAttr.name]
+              });
+            }
+          }
         } else {
-          value = source[name];
-        }
-
-        // Only include if value exists
-        if (value !== undefined) {
-          result.push({
-            ...attr,
-            value,
-          });
+          const value = source[name];
+          // Only include if value exists
+          if (value !== undefined) {
+            result.push({
+              ...attr,
+              value,
+            });
+          }
         }
       }
     }
