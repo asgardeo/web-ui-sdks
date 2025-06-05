@@ -45,7 +45,7 @@ const useStyles = () => {
         maxHeight: '90vh',
         overflowY: 'auto',
         background: theme.colors.surface,
-        borderRadius: theme.borderRadius.medium,
+        borderRadius: theme.borderRadius.large,
         boxShadow: `0 2px 8px ${colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
       } as CSSProperties,
       contentBody: {} as CSSProperties,
@@ -53,7 +53,7 @@ const useStyles = () => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px`,
+        padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 4.5}px`,
         borderBottom: `1px solid ${theme.colors.border}`,
       } as CSSProperties,
       headerTitle: {

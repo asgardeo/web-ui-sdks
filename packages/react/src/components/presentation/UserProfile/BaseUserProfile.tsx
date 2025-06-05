@@ -335,9 +335,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                   margin: 0,
                   padding: theme.spacing.unit / 2 + 'px',
                   color: theme.colors.text.secondary,
-                  '&:hover': {
-                    color: theme.colors.text.primary,
-                  },
                 }}
                 onClick={() => toggleFieldEdit(schema.name!)}
                 title="Edit"
@@ -447,7 +444,7 @@ const useStyles = () => {
       } as CSSProperties,
       card: {
         background: theme.colors.surface,
-        borderRadius: theme.borderRadius.medium,
+        borderRadius: theme.borderRadius.large,
       } as CSSProperties,
       header: {
         display: 'flex',
