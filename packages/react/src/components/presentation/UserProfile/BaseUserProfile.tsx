@@ -442,7 +442,7 @@ const useStyles = () => {
     () => ({
       root: {
         padding: theme.spacing.unit * 4 + 'px',
-        maxWidth: '600px',
+        minWidth: '600px',
         margin: '0 auto',
       } as CSSProperties,
       card: {
