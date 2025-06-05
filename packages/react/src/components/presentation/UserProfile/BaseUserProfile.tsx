@@ -26,6 +26,21 @@ import {useTheme} from '../../../theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 
+interface Schema {
+  caseExact?: boolean;
+  description?: string;
+  displayName?: string;
+  multiValued?: boolean;
+  mutability?: string;
+  name?: string;
+  required?: boolean;
+  returned?: string;
+  type?: string;
+  uniqueness?: string;
+  value?: any;
+  subAttributes?: Schema[];
+}
+
 const useStyles = () => {
   const {theme, colorScheme} = useTheme();
 
@@ -162,11 +177,11 @@ export interface BaseUserProfileProps {
    * Allows customizing which user profile fields should be used for each attribute.
    */
   attributeMapping?: {
-    picture?: string;
-    firstName?: string;
-    lastName?: string;
-    username?: string;
-    [key: string]: string | undefined;
+    picture?: string | string[];
+    firstName?: string | string[];
+    lastName?: string | string[];
+    username?: string | string[];
+    [key: string]: string | string[] | undefined;
   };
 }
 
@@ -190,7 +205,7 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const [isOpen, setIsOpen] = useState(mode === 'popup');
 
   const defaultAttributeMappings = {
-    picture: 'profile',
+    picture: ['profile', 'profileUrl'],
     firstName: 'givenName',
     lastName: 'familyName',
   };
@@ -199,6 +214,17 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
   const getMappedValue = (key: string) => {
     const mappedKey = mergedMappings[key];
+
+    if (Array.isArray(mappedKey)) {
+      // Try each possible field name in order until we find one that exists
+      for (const field of mappedKey) {
+        if (user[field] !== undefined) {
+          return user[field];
+        }
+      }
+      return user[key]; // Fallback to the original key if none of the mapped fields exist
+    }
+
     return mappedKey ? user[mappedKey] : user[key];
   };
 
@@ -239,36 +265,61 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
     );
   };
 
-  const renderUserInfo = (label: string, value: unknown) => {
-    if (!value) return null;
-
-    let displayValue: ReactElement | string;
-    if (typeof value === 'object' || (typeof value === 'string' && value.trim().startsWith('{'))) {
-      try {
-        // If it's a stringified JSON, parse it first
-        const objectValue = typeof value === 'string' ? JSON.parse(value) : value;
-        displayValue = renderNestedValue(objectValue);
-      } catch {
-        // If JSON parsing fails, use the value as is
-        displayValue = String(value);
-      }
-    } else {
-      displayValue = String(value);
-    }
-
-    return (
-      <div style={styles.field}>
-        <span style={styles.label}>{label}</span>
-        <div style={styles.value}>{displayValue}</div>
-      </div>
-    );
-  };
-
   const formatLabel = (key: string): string =>
     key
       .split(/(?=[A-Z])|_/)
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ');
+
+  const renderSchemaValue = (schema: Schema): ReactElement | null => {
+    if (!schema) return null;
+
+    const {value, displayName, description, type, subAttributes} = schema;
+
+    if (subAttributes && Array.isArray(subAttributes)) {
+      return (
+        <div style={{marginLeft: '1rem'}}>
+          {subAttributes.map((subAttr, index) => (
+            <div key={index} style={styles.field}>
+              {renderSchemaValue(subAttr)}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (Array.isArray(value)) {
+      // Handle array values by joining them with commas
+      const displayValue = value
+        .map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item)))
+        .join(', ');
+
+      return (
+        <>
+          <span style={styles.label}>{displayName || description || ''}</span>
+          <div style={styles.value}>{displayValue}</div>
+        </>
+      );
+    }
+
+    let displayValue = value;
+    if (type === 'COMPLEX' && typeof value === 'object') {
+      return renderNestedValue(value);
+    }
+
+    return (
+      <>
+        <span style={styles.label}>{displayName || description || ''}</span>
+        <div style={styles.value}>{String(displayValue)}</div>
+      </>
+    );
+  };
+
+  const renderUserInfo = (schema: Schema) => {
+    if (!schema || !schema.name) return null;
+
+    return <div style={styles.field}>{renderSchemaValue(schema)}</div>;
+  };
 
   const containerStyle = {
     ...styles.root,
@@ -290,9 +341,19 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
         />
       </div>
       <div style={styles.infoContainer}>
-        {Object.entries(user)
-          .filter(([key]) => !excludedProps.includes(key) && user[key])
-          .map(([key, value]) => renderUserInfo(formatLabel(key), value))}
+        {Array.isArray(user)
+          ? user
+              .filter(schema => !excludedProps.includes(schema.name) && schema.value)
+              .map((schema, index) => <div key={index}>{renderUserInfo(schema)}</div>)
+          : Object.entries(user)
+              .filter(([key]) => !excludedProps.includes(key) && user[key])
+              .map(([key, value]) =>
+                renderUserInfo({
+                  name: key,
+                  value: value,
+                  displayName: formatLabel(key),
+                }),
+              )}
       </div>
     </div>
   );

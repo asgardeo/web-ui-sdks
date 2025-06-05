@@ -16,9 +16,17 @@
  * under the License.
  */
 
-import {AsgardeoBrowserClient, extractUserClaimsFromIdToken, getUserInfo, SignInOptions, SignOutOptions, User} from '@asgardeo/browser';
+import {
+  AsgardeoBrowserClient,
+  extractUserClaimsFromIdToken,
+  getUserInfo,
+  SignInOptions,
+  SignOutOptions,
+  User,
+} from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import {AsgardeoReactConfig} from './models/config';
+import getUserProfile from './utils/getUserProfile';
 
 /**
  * Client for mplementing Asgardeo in React applications.
@@ -46,7 +54,10 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
   }
 
   override async getUser(): Promise<any> {
-    return extractUserClaimsFromIdToken(await this.asgardeo.getDecodedIDToken());
+    const baseUrl = await (await this.asgardeo.getConfigData()).baseUrl;
+    const profile = await getUserProfile({baseUrl});
+
+    return profile;
   }
 
   override isLoading(): boolean {

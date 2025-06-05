@@ -16,61 +16,62 @@
  * under the License.
  */
 
-import {User} from '../../models/user';
-import AsgardeoAPIError from '../../errors/AsgardeoAPIError';
+import {Schema, AsgardeoAPIError, HttpInstance, AsgardeoSPAClient, HttpRequestConfig} from '@asgardeo/browser';
+
+const httpClient: HttpInstance = AsgardeoSPAClient.getInstance().httpRequest.bind(AsgardeoSPAClient.getInstance());
 
 /**
- * Retrieves the user information from the specified OIDC userinfo endpoint.
+ * Retrieves the SCIM2 schemas from the specified endpoint.
  *
  * @param requestConfig - Request configuration object.
- * @returns A promise that resolves with the user information.
- * @throw
- *   const userInfo = await getUserInfo({
- *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/oauth2/userinfo",
+ * @returns A promise that resolves with the SCIM2 schemas information.
+ * @example
+ * ```typescript
+ * try {
+ *   const schemas = await getSchemas({
+ *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/scim2/Schemas",
  *   });
- *   console.log(userInfo);
+ *   console.log(schemas);
  * } catch (error) {
  *   if (error instanceof AsgardeoAPIError) {
- *     console.error('Failed to get user info:', error.message);
+ *     console.error('Failed to get schemas:', error.message);
  *   }
  * }
  * ```
  */
-const getUserInfo = async ({url, ...requestConfig}: Partial<Request>): Promise<User> => {
+const getSchemas = async ({url}: Partial<Request>): Promise<Schema[]> => {
   try {
     new URL(url);
   } catch (error) {
     throw new AsgardeoAPIError(
       'Invalid endpoint URL provided',
-      'getUserInfo-ValidationError-001',
+      'getSchemas-ValidationError-001',
       'javascript',
       400,
       'Invalid Request',
     );
   }
 
-  const response: Response = await fetch(url, {
+  const response = await httpClient({
+    url,
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-    },
-    ...requestConfig,
-  });
+    }
+  } as HttpRequestConfig);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-
+  if (!response.data) {
     throw new AsgardeoAPIError(
-      `Failed to fetch user info: ${errorText}`,
-      'getUserInfo-ResponseError-001',
+      `Failed to fetch SCIM2 schemas`,
+      'getSchemas-ResponseError-001',
       'javascript',
       response.status,
       response.statusText,
     );
   }
 
-  return await response.json() as User;
+  return response.data;
 };
 
-export default getUserInfo;
+export default getSchemas;

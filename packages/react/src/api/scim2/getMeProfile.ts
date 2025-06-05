@@ -16,61 +16,64 @@
  * under the License.
  */
 
-import {User} from '../../models/user';
-import AsgardeoAPIError from '../../errors/AsgardeoAPIError';
+import {User, AsgardeoAPIError, HttpInstance, AsgardeoSPAClient, HttpRequestConfig} from '@asgardeo/browser';
+
+const httpClient: HttpInstance = AsgardeoSPAClient.getInstance().httpRequest.bind(AsgardeoSPAClient.getInstance());
 
 /**
- * Retrieves the user information from the specified OIDC userinfo endpoint.
+ * Retrieves the user profile information from the specified selfcare profile endpoint.
  *
  * @param requestConfig - Request configuration object.
- * @returns A promise that resolves with the user information.
- * @throw
- *   const userInfo = await getUserInfo({
- *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/oauth2/userinfo",
+ * @returns A promise that resolves with the user profile information.
+ * @example
+ * ```typescript
+ * try {
+ *   const userProfile = await getUserProfile({
+ *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/scim2/Me",
  *   });
- *   console.log(userInfo);
+ *   console.log(userProfile);
  * } catch (error) {
  *   if (error instanceof AsgardeoAPIError) {
- *     console.error('Failed to get user info:', error.message);
+ *     console.error('Failed to get user profile:', error.message);
  *   }
  * }
  * ```
  */
-const getUserInfo = async ({url, ...requestConfig}: Partial<Request>): Promise<User> => {
+const getMeProfile = async ({url, ...requestConfig}: Partial<Request>): Promise<User> => {
   try {
     new URL(url);
   } catch (error) {
     throw new AsgardeoAPIError(
       'Invalid endpoint URL provided',
-      'getUserInfo-ValidationError-001',
+      'getMeProfile-ValidationError-001',
       'javascript',
       400,
       'Invalid Request',
     );
   }
 
-  const response: Response = await fetch(url, {
+  const response: any = await httpClient({
+    url,
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/scim+json',
       Accept: 'application/json',
     },
-    ...requestConfig,
-  });
+  } as HttpRequestConfig);
 
-  if (!response.ok) {
+  if (!response.data) {
     const errorText = await response.text();
 
     throw new AsgardeoAPIError(
-      `Failed to fetch user info: ${errorText}`,
-      'getUserInfo-ResponseError-001',
+      `Failed to fetch user profile: ${errorText}`,
+      'getMeProfile-ResponseError-001',
       'javascript',
       response.status,
       response.statusText,
     );
   }
 
-  return await response.json() as User;
+  return response.data;
 };
 
-export default getUserInfo;
+export default getMeProfile;

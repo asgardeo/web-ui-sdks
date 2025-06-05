@@ -16,5 +16,5 @@
     "**/*.spec.jsx",
     "**/*.test.jsx"
   ],
-  "include": ["src/**/*.js", "src/**/*.ts", "types/**/*.d.ts"]
+  "include": ["src/**/*.js", "src/**/*.ts", "types/**/*.d.ts", "../react/src/getUserProfile.ts"]
 }
