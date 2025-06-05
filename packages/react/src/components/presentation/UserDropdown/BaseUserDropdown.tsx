@@ -22,6 +22,7 @@ import clsx from 'clsx';
 import {useTheme} from '../../../theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import {Popover} from '../../primitives/Popover/Popover';
+import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 
 const useStyles = () => {
   const {theme} = useTheme();
@@ -148,11 +149,11 @@ export interface BaseUserDropdownProps {
    * Allows customizing which user profile fields should be used for each attribute.
    */
   attributeMapping?: {
-    picture?: string;
-    firstName?: string;
-    lastName?: string;
-    username?: string;
-    [key: string]: string | undefined;
+    picture?: string | string[];
+    firstName?: string | string[];
+    lastName?: string | string[];
+    username?: string | string[];
+    [key: string]: string | string[] | undefined;
   };
 }
 
@@ -176,7 +177,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const defaultAttributeMappings = {
-    picture: 'profile',
+    picture: ['profile', 'profileUrl'],
     firstName: 'givenName',
     lastName: 'familyName',
   };
@@ -218,7 +219,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
         onClick={() => setIsOpen(!isOpen)}
       >
         <Avatar
-          imageUrl={getMappedValue('picture')}
+          imageUrl={getMappedUserProfileValue('picture', mergedMappings, user)}
           name={getDisplayName()}
           size={avatarSize}
           alt={`${getDisplayName()}'s avatar`}
@@ -232,7 +233,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
             {showDropdownHeader && (
               <div className={withVendorCSSClassPrefix('user-dropdown-header')} style={styles.dropdownHeader}>
                 <Avatar
-                  imageUrl={getMappedValue('picture')}
+                  imageUrl={getMappedUserProfileValue('picture', mergedMappings, user)}
                   name={getDisplayName()}
                   size={avatarSize * 1.25}
                   alt={`${getDisplayName()}'s avatar`}

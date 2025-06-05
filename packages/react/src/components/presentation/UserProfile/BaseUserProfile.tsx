@@ -25,6 +25,7 @@ import {Avatar} from '../../primitives/Avatar/Avatar';
 import {useTheme} from '../../../theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
+import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 
 interface Schema {
   caseExact?: boolean;
@@ -212,44 +213,15 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
   const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};
 
-  const getMappedValue = (key: string) => {
-    const mappedKey = mergedMappings[key];
-
-    if (Array.isArray(user)) {
-      // If user is an array, find the first matching schema attribute
-      if (Array.isArray(mappedKey)) {
-        // Try each possible field name in order
-        for (const field of mappedKey) {
-          const found = user.find(u => u.name === field);
-          if (found?.value !== undefined) {
-            return found.value;
-          }
-        }
-      } else {
-        // Look for single mapped key
-        const found = user.find(u => u.name === mappedKey);
-        if (found?.value !== undefined) {
-          return found.value;
-        }
-      }
-      // Fallback to original key if no mapped fields exist
-      const found = user.find(u => u.name === key);
-      return found?.value;
-    }
-
-    // For single user object, return the mapped key or original key
-    return mappedKey ? user[mappedKey] : user[key];
-  };
-
   const getDisplayName = () => {
-    const firstName = getMappedValue('firstName');
-    const lastName = getMappedValue('lastName');
+    const firstName = getMappedUserProfileValue('firstName', mergedMappings, user);
+    const lastName = getMappedUserProfileValue('lastName', mergedMappings, user);
 
     if (firstName && lastName) {
       return `${firstName} ${lastName}`;
     }
 
-    return getMappedValue('username') || '';
+    return getMappedUserProfileValue('username', mergedMappings, user) || '';
   };
 
   if (!user) {
@@ -356,7 +328,7 @@ export const BaseUserProfile: FC<BaseUserProfileProps> = ({
     <div style={containerStyle} className={clsx(withVendorCSSClassPrefix('user-profile'), className)}>
       <div style={styles.header}>
         <Avatar
-          imageUrl={getMappedValue('picture')}
+          imageUrl={getMappedUserProfileValue('picture', mergedMappings, user)}
           name={getDisplayName()}
           size={80}
           alt={`${getDisplayName()}'s avatar`}
