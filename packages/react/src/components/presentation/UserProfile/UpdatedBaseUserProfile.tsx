@@ -64,7 +64,7 @@ export interface BaseUserProfileProps {
   cancelButtonText?: string;
 }
 
-const BaseUserProfile: FC<BaseUserProfileProps> = ({
+export const BaseUserProfile: FC<BaseUserProfileProps> = ({
   fallback = <div>Please sign in to view your profile</div>,
   className = '',
   cardLayout = true,
@@ -478,5 +478,3 @@ const useStyles = () => {
     [theme, colorScheme],
   );
 };
-
-export default BaseUserProfile;
