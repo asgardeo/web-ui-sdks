@@ -84,6 +84,21 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const [editedUser, setEditedUser] = useState(user);
   const [editingFields, setEditingFields] = useState<Record<string, boolean>>({});
 
+  const PencilIcon = () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    </svg>
+  );
+
   const toggleFieldEdit = useCallback((fieldName: string) => {
     setEditingFields(prev => ({
       ...prev,
@@ -313,10 +328,21 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
               </>
             ) : (
               <button
-                style={{...actionButtonStyle, backgroundColor: theme.colors.background.surface}}
+                style={{
+                  ...actionButtonStyle,
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  margin: 0,
+                  padding: theme.spacing.unit / 2 + 'px',
+                  color: theme.colors.text.secondary,
+                  '&:hover': {
+                    color: theme.colors.text.primary,
+                  },
+                }}
                 onClick={() => toggleFieldEdit(schema.name!)}
+                title="Edit"
               >
-                Edit
+                <PencilIcon />
               </button>
             )}
           </div>
@@ -453,6 +479,7 @@ const useStyles = () => {
         borderBottom: 'none',
       } as CSSProperties,
       label: {
+        fontSize: '0.875rem',
         fontWeight: 500,
         color: theme.colors.text.secondary,
         width: '120px',
@@ -462,10 +489,13 @@ const useStyles = () => {
         color: theme.colors.text.primary,
         flex: 1,
         overflow: 'hidden',
-        wordBreak: 'break-word',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        maxWidth: 'calc(100% - 120px)', // Subtracting label width
         '& table': {
           backgroundColor: theme.colors.background,
           borderRadius: theme.borderRadius.small,
+          whiteSpace: 'normal', // Allow tables to wrap
         },
         '& td': {
           borderColor: theme.colors.border,
