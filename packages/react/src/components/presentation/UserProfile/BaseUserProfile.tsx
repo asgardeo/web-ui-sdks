@@ -235,10 +235,12 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     }
     // If editing, show field instead of value
     if (isEditing && onEditValue && mutability !== 'READ_ONLY') {
+      // Use editedUser value if available
+      const fieldValue = editedUser && name && editedUser[name] !== undefined ? editedUser[name] : value || '';
       const commonProps = {
         label: undefined, // Don't show label in field, we render it outside
         required: required,
-        value: value || '',
+        value: fieldValue,
         onChange: (e: any) => onEditValue(e.target ? e.target.value : e),
         style: {
           marginBottom: 0,
@@ -253,7 +255,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           field = <DatePicker {...commonProps} />;
           break;
         case 'BOOLEAN':
-          field = <Checkbox {...commonProps} checked={value} onChange={e => onEditValue(e.target.checked)} />;
+          field = <Checkbox {...commonProps} checked={!!fieldValue} onChange={e => onEditValue(e.target.checked)} />;
           break;
         case 'COMPLEX':
           field = <TextField {...commonProps} />;
