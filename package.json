@@ -23,6 +23,7 @@
     "fix:lint": "nx run-many --target=fix:lint --all --parallel",
     "lint": "nx run-many --target=lint --all --parallel",
     "publish:packages": "changeset publish",
+    "test": "nx run-many --target=test --all --parallel",
     "version:packages": "changeset version && pnpm install --lockfile-only"
   },
   "devDependencies": {

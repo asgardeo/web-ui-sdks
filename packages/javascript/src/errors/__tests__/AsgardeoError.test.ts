@@ -42,7 +42,7 @@ describe('AsgardeoError', (): void => {
   it('should format different SDK origins correctly', (): void => {
     const message: string = 'Test error message';
     const code: string = 'TEST_ERROR';
-    const origins: string[] = ['react', 'next', 'javascript'];
+    const origins: string[] = ['react', 'nextjs', 'javascript'];
     const expectedNames: string[] = [
       'Asgardeo - @asgardeo/react',
       'Asgardeo - @asgardeo/nextjs',
