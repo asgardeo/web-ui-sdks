@@ -71,17 +71,23 @@ const getUserProfile = async ({baseUrl}): Promise<any> => {
       const source = schemaId.startsWith('urn:ietf:params:scim:schemas:core:2.0') ? profile : profile[schemaId] ?? {};
 
       for (const attr of schema.attributes || []) {
-        const {name, type, subAttributes, multiValued} = attr;
+        const {name, type, subAttributes, multiValued, caseExact, returned} = attr;
 
         if (type === 'COMPLEX' && subAttributes?.length && typeof source[name] === 'object') {
           // For complex attributes with subAttributes, create an entry for each subAttribute
           const complexValue = source[name];
           for (const subAttr of subAttributes) {
             if (complexValue[subAttr.name] !== undefined) {
+              const {subAttributes, ...attrWithoutSubAttrs} = attr;
+
               result.push({
-                id: schemaId,
+                schemaId,
                 ...subAttr,
                 value: complexValue[subAttr.name],
+                parent: {
+                  ...attrWithoutSubAttrs,
+                },
+                path: `${name}.${subAttr.name}`,
               });
             }
           }
@@ -90,9 +96,10 @@ const getUserProfile = async ({baseUrl}): Promise<any> => {
           // Only include if value exists
           if (value !== undefined) {
             result.push({
-              id: schemaId,
+              schemaId,
               ...attr,
               value,
+              path: name,
             });
           }
         }

@@ -27,8 +27,12 @@ import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 
-interface Schema {
-  id?: string;
+interface ExtendedFlatSchema {
+  schemaId?: string;
+  path?: string;
+}
+
+interface Schema extends ExtendedFlatSchema {
   caseExact?: boolean;
   description?: string;
   displayName?: string;
@@ -109,25 +113,40 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     }));
   }, []);
 
+  function set(obj: Record<string, any>, path: string, value: any): void {
+    const keys = path.split('.');
+    let current = obj;
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+
+      // If last key, set the value
+      if (i === keys.length - 1) {
+        current[key] = value;
+      } else {
+        // If the next level does not exist or is not an object, create an object
+        if (!current[key] || typeof current[key] !== 'object') {
+          current[key] = {};
+        }
+        current = current[key];
+      }
+    }
+  }
+
   const handleFieldSave = useCallback(
     (schema: Schema) => {
       let payload = {};
+      const fieldName = schema.name;
+      const fieldValue =
+        editedUser && fieldName && editedUser[fieldName] !== undefined ? editedUser[fieldName] : schema.value;
 
-      if (schema.multiValued) {
-        payload = {
-          [schema.id]: {
-            [schema.name]: schema.value,
-          },
-        };
-      } else {
-        payload = {
-          [schema.name]: schema.value,
-        };
-      }
+      set(payload, schema.path, fieldValue);
 
       onUpdate(payload);
+      // Optionally, exit edit mode for this field after save
+      toggleFieldEdit(fieldName!);
     },
-    [onChange, onSubmit, editedUser, toggleFieldEdit],
+    [editedUser, onUpdate, toggleFieldEdit],
   );
 
   const handleFieldCancel = useCallback(
