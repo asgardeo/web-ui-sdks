@@ -71,7 +71,7 @@ export interface BaseUserProfileProps {
 }
 
 const BaseUserProfile: FC<BaseUserProfileProps> = ({
-  fallback = <div>Please sign in to view your profile</div>,
+  fallback = null,
   className = '',
   cardLayout = true,
   user,

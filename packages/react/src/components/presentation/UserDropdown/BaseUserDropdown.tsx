@@ -163,7 +163,7 @@ export interface BaseUserDropdownProps {
  * This component serves as the base for framework-specific implementations.
  */
 export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
-  fallback = <div>Please sign in</div>,
+  fallback = null,
   className = '',
   user,
   portalId = 'asgardeo-user-dropdown',
