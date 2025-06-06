@@ -37,7 +37,7 @@ export {BaseConfig, Config, Preferences, ThemePreferences} from './models/config
 export {TokenResponse} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';
 export {IdTokenPayload} from './models/id-token';
-export {OIDCEndpoints} from './models/oidc-endpoints';
+export {OIDCEndpoints} from './models/oidc/oidc-endpoints';
 export {Store} from './models/store';
 export {User} from './models/user';
 export {Schema, SchemaAttribute, WellKnownSchemaIds} from './models/scim2-schema';

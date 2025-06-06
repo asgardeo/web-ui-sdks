@@ -35,13 +35,13 @@ import {TokenResponse} from '../../models/token';
 import {Crypto} from '../../models/crypto';
 import {IdTokenPayload} from '../../models/id-token';
 import {TemporaryStore} from '../../models/store';
-import {OIDCEndpoints} from '../../models/oidc-endpoints';
+import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 import generatePkceStorageKey from '../../utils/generatePkceStorageKey';
 import ScopeConstants from '../../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../../constants/OIDCRequestConstants';
-import {OIDCDiscoveryApiResponse} from '../../models/oidc-discovery';
-import { IsomorphicCrypto } from '../../IsomorphicCrypto';
+import {OIDCDiscoveryApiResponse} from '../../models/oidc/oidc-discovery';
+import {IsomorphicCrypto} from '../../IsomorphicCrypto';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;

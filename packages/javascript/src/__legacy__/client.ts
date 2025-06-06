@@ -18,23 +18,17 @@
 
 import {AuthenticationCore} from './core';
 import {DataLayer} from './data';
-import {
-  AuthClientConfig,
-  BasicUserInfo,
-  CustomGrantConfig,
-  FetchResponse,
-  GetAuthURLConfig,
-} from './models';
+import {AuthClientConfig, BasicUserInfo, CustomGrantConfig, FetchResponse, GetAuthURLConfig} from './models';
 import {Crypto} from '../models/crypto';
 import {TokenResponse} from '../models/token';
 import {IdTokenPayload} from '../models/id-token';
-import {OIDCEndpoints} from '../models/oidc-endpoints';
+import {OIDCEndpoints} from '../models/oidc/oidc-endpoints';
 import {Store} from '../models/store';
 import {ResponseMode} from '../models/oauth-response';
 import ScopeConstants from '../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../constants/OIDCRequestConstants';
-import { IsomorphicCrypto } from '../IsomorphicCrypto';
+import {IsomorphicCrypto} from '../IsomorphicCrypto';
 
 /**
  * Default configurations.

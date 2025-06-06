@@ -17,7 +17,7 @@
  */
 
 import {ResponseMode} from '../../models/oauth-response';
-import {OIDCEndpoints} from '../../models/oidc-endpoints';
+import {OIDCEndpoints} from '../../models/oidc/oidc-endpoints';
 
 export interface DefaultAuthClientConfig {
   signInRedirectURL: string;
