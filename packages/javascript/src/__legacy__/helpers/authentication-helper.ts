@@ -22,14 +22,14 @@ import {AsgardeoAuthException} from '../exception';
 import {AuthClientConfig, AuthenticatedUserInfo, SessionData, StrictAuthClientConfig} from '../models';
 import {JWKInterface} from '../../models/crypto';
 import {TokenResponse, AccessTokenApiResponse} from '../../models/token';
-import {IdTokenPayload} from '../../models/id-token';
+import {IdTokenPayload} from '../../models/token';
 import PKCEConstants from '../../constants/PKCEConstants';
 import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
 import ScopeConstants from '../../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import TokenExchangeConstants from '../../constants/TokenExchangeConstants';
-import {OIDCDiscoveryEndpointsApiResponse, OIDCDiscoveryApiResponse} from '../../models/auth/oidc-discovery';
+import {OIDCDiscoveryEndpointsApiResponse, OIDCDiscoveryApiResponse} from '../../models/oidc-discovery';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;

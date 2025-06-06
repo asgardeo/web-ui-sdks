@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {IdTokenPayload} from '../models/id-token';
+import {IdTokenPayload} from '../models/token';
 
 /**
  * Extracts the tenant domain from the ID token payload.
