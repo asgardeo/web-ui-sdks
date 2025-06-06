@@ -180,24 +180,20 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
     picture: ['profile', 'profileUrl'],
     firstName: 'givenName',
     lastName: 'familyName',
+    email: 'emails',
   };
 
   const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};
 
-  const getMappedValue = (key: string) => {
-    const mappedKey = mergedMappings[key];
-    return mappedKey ? user[mappedKey] : user[key];
-  };
-
   const getDisplayName = () => {
-    const firstName = getMappedValue('firstName');
-    const lastName = getMappedValue('lastName');
+    const firstName = getMappedUserProfileValue('firstName', mergedMappings, user);
+    const lastName = getMappedUserProfileValue('lastName', mergedMappings, user);
 
     if (firstName && lastName) {
       return `${firstName} ${lastName}`;
     }
 
-    return getMappedValue('username') || '';
+    return getMappedUserProfileValue('username', mergedMappings, user) || '';
   };
 
   if (!user) {
@@ -242,11 +238,15 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                   <span className={withVendorCSSClassPrefix('user-dropdown-header-name')} style={styles.headerName}>
                     {getDisplayName()}
                   </span>
-                  {getMappedValue('email') !== getDisplayName() && getMappedValue('email') && (
-                    <span className={withVendorCSSClassPrefix('user-dropdown-header-email')} style={styles.headerEmail}>
-                      {getMappedValue('email')}
-                    </span>
-                  )}
+                  {getMappedUserProfileValue('email', mergedMappings, user) !== getDisplayName() &&
+                    getMappedUserProfileValue('email', mergedMappings, user) && (
+                      <span
+                        className={withVendorCSSClassPrefix('user-dropdown-header-email')}
+                        style={styles.headerEmail}
+                      >
+                        {getMappedUserProfileValue('email', mergedMappings, user)}
+                      </span>
+                    )}
                 </div>
               </div>
             )}
