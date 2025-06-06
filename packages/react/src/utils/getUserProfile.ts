@@ -80,6 +80,12 @@ const getUserProfile = async ({baseUrl}): Promise<any> => {
             if (complexValue[subAttr.name] !== undefined) {
               const {subAttributes, ...attrWithoutSubAttrs} = attr;
 
+              // UPDATED PATH: prefix with schemaId except for core user schema
+              const basePath =
+                schemaId === 'urn:ietf:params:scim:schemas:core:2.0:User'
+                  ? `${name}.${subAttr.name}`
+                  : `${schemaId}.${name}.${subAttr.name}`;
+
               result.push({
                 schemaId,
                 ...subAttr,
@@ -87,19 +93,23 @@ const getUserProfile = async ({baseUrl}): Promise<any> => {
                 parent: {
                   ...attrWithoutSubAttrs,
                 },
-                path: `${name}.${subAttr.name}`,
+                path: basePath,
               });
             }
           }
         } else {
           const value = source[name];
           // Only include if value exists
+
           if (value !== undefined) {
+            // UPDATED PATH: prefix with schemaId except for core user schema
+            const basePath = schemaId === 'urn:ietf:params:scim:schemas:core:2.0:User' ? name : `${schemaId}.${name}`;
+
             result.push({
               schemaId,
               ...attr,
               value,
-              path: name,
+              path: basePath,
             });
           }
         }
