@@ -59,12 +59,14 @@ export const DatePicker: FC<DatePickerProps> = ({
   disabled,
   helperText,
   dateFormat = 'yyyy-MM-dd',
+  style = {},
   ...rest
 }) => {
   const {theme} = useTheme();
 
   const containerStyle: CSSProperties = {
     marginBottom: theme.spacing.unit * 2 + 'px',
+    ...style
   };
 
   const labelStyle: CSSProperties = {

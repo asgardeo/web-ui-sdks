@@ -43,13 +43,14 @@ export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement
   helperText?: string;
 }
 
-export const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperText, ...rest}) => {
+export const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperText, style = {}, ...rest}) => {
   const {theme} = useTheme();
 
   const containerStyle: CSSProperties = {
     marginBottom: theme.spacing.unit * 2 + 'px',
     display: 'flex',
     alignItems: 'center',
+    ...style
   };
 
   const inputStyle: CSSProperties = {

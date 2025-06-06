@@ -47,11 +47,12 @@ export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   helperText?: string;
 }
 
-export const TextField: FC<TextFieldProps> = ({label, error, required, className, disabled, helperText, ...rest}) => {
+export const TextField: FC<TextFieldProps> = ({label, error, required, className, disabled, helperText, style = {}, ...rest}) => {
   const {theme} = useTheme();
 
   const containerStyle: CSSProperties = {
     marginBottom: theme.spacing.unit * 2 + 'px',
+    ...style
   };
 
   const labelStyle: CSSProperties = {

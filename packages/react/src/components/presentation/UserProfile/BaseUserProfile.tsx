@@ -177,11 +177,17 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
   const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};
 
-  const renderSchemaValue = (schema: Schema): ReactElement | null => {
+  // Combines label and value/field rendering for both view and edit modes
+  const renderSchemaField = (
+    schema: Schema,
+    isEditing: boolean,
+    onEditValue?: (value: any) => void,
+  ): ReactElement | null => {
     if (!schema) return null;
+    const {value, displayName, description, name, type, required, mutability, subAttributes} = schema;
+    const label = displayName || description || name || '';
 
-    const {value, displayName, description, type, subAttributes} = schema;
-
+    // If complex or subAttributes, fallback to original renderSchemaValue
     if (subAttributes && Array.isArray(subAttributes)) {
       return (
         <>
@@ -202,83 +208,62 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         </>
       );
     }
-
     if (Array.isArray(value)) {
       const displayValue = value
         .map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item)))
         .join(', ');
-
       return (
         <>
-          <span style={styles.label}>{displayName || description || ''}</span>
+          <span style={styles.label}>{label}</span>
           <div style={styles.value}>{displayValue}</div>
         </>
       );
     }
-
     if (type === 'COMPLEX' && typeof value === 'object') {
       return <ObjectDisplay data={value} />;
     }
-
-    return (
-      <>
-        <span style={styles.label}>{displayName || description || ''}</span>
-        <div style={styles.value}>{String(value)}</div>
-      </>
-    );
-  };
-
-  const renderEditableField = (schema: Schema, onChange: (value: any) => void): ReactElement | null => {
-    if (!schema) return null;
-
-    const {value, displayName, name, type, required, mutability} = schema;
-
-    if (mutability === 'READ_ONLY') {
+    // If editing, show field instead of value
+    if (isEditing && onEditValue && mutability !== 'READ_ONLY') {
+      const commonProps = {
+        label: undefined, // Don't show label in field, we render it outside
+        required: required,
+        value: value || '',
+        onChange: (e: any) => onEditValue(e.target ? e.target.value : e),
+        style: {
+          marginBottom: 0,
+        },
+      };
+      let field: ReactElement;
+      switch (type) {
+        case 'STRING':
+          field = <TextField {...commonProps} />;
+          break;
+        case 'DATE_TIME':
+          field = <DatePicker {...commonProps} />;
+          break;
+        case 'BOOLEAN':
+          field = <Checkbox {...commonProps} checked={value} onChange={e => onEditValue(e.target.checked)} />;
+          break;
+        case 'COMPLEX':
+          field = <TextField {...commonProps} />;
+          break;
+        default:
+          field = <TextField {...commonProps} />;
+      }
       return (
         <>
-          <span style={styles.label}>{displayName || name}</span>
-          <div style={styles.value}>{String(value)}</div>
+          <span style={styles.label}>{label}</span>
+          <div style={styles.value}>{field}</div>
         </>
       );
     }
-
-    const commonProps = {
-      label: displayName || name,
-      required: required,
-      value: value || '',
-      onChange: (e: any) => onChange(e.target.value),
-    };
-
-    switch (type) {
-      case 'STRING':
-        return <TextField {...commonProps} />;
-      case 'DATE_TIME':
-        return <DatePicker {...commonProps} />;
-      case 'BOOLEAN':
-        return <Checkbox {...commonProps} checked={value} onChange={e => onChange(e.target.checked)} />;
-      case 'COMPLEX':
-        if (Array.isArray(value)) {
-          return (
-            <>
-              {value.map((item, index) => (
-                <TextField
-                  key={index}
-                  {...commonProps}
-                  value={item}
-                  onChange={e => {
-                    const newValue = [...value];
-                    newValue[index] = e.target.value;
-                    onChange(newValue);
-                  }}
-                />
-              ))}
-            </>
-          );
-        }
-        return <TextField {...commonProps} />;
-      default:
-        return <TextField {...commonProps} />;
-    }
+    // Default: view mode
+    return (
+      <>
+        <span style={styles.label}>{label}</span>
+        <div style={styles.value}>{String(value)}</div>
+      </>
+    );
   };
 
   const renderUserInfo = (schema: Schema) => {
@@ -288,7 +273,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     const fieldStyle = {
       ...styles.field,
       display: 'flex',
-      alignItems: 'flex-start',
+      alignItems: 'center',
       gap: theme.spacing.unit + 'px',
     };
     const actionButtonStyle = {
@@ -300,17 +285,22 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
     return (
       <div style={fieldStyle}>
-        <div style={{flex: 1}}>
-          {isFieldEditing
-            ? renderEditableField(schema, value => {
-                const tempEditedUser = {...editedUser};
-                tempEditedUser[schema.name!] = value;
-                setEditedUser(tempEditedUser);
-              })
-            : renderSchemaValue(schema)}
+        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: theme.spacing.unit + 'px'}}>
+          {renderSchemaField(schema, isFieldEditing, value => {
+            const tempEditedUser = {...editedUser};
+            tempEditedUser[schema.name!] = value;
+            setEditedUser(tempEditedUser);
+          })}
         </div>
         {editable && schema.mutability !== 'READ_ONLY' && (
-          <div style={{display: 'flex', gap: theme.spacing.unit / 2 + 'px', alignSelf: 'center'}}>
+          <div
+            style={{
+              display: 'flex',
+              gap: theme.spacing.unit / 2 + 'px',
+              alignItems: 'center',
+              marginLeft: theme.spacing.unit + 'px',
+            }}
+          >
             {isFieldEditing ? (
               <>
                 <button
@@ -469,8 +459,9 @@ const useStyles = () => {
       field: {
         display: 'flex',
         alignItems: 'center',
-        padding: theme.spacing.unit * 0.5 + 'px 0',
+        padding: theme.spacing.unit + 'px 0',
         borderBottom: `1px solid ${theme.colors.border}`,
+        minHeight: '32px',
       } as CSSProperties,
       lastField: {
         borderBottom: 'none',
@@ -481,18 +472,25 @@ const useStyles = () => {
         color: theme.colors.text.secondary,
         width: '120px',
         flexShrink: 0,
+        lineHeight: '32px',
       } as CSSProperties,
       value: {
         color: theme.colors.text.primary,
         flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        gap: theme.spacing.unit + 'px',
         overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        maxWidth: 'calc(100% - 120px)', // Subtracting label width
+        minHeight: '32px',
+        '& input, & .MuiInputBase-root': {
+          height: '32px',
+          margin: 0,
+        },
+        lineHeight: '32px',
         '& table': {
           backgroundColor: theme.colors.background,
           borderRadius: theme.borderRadius.small,
-          whiteSpace: 'normal', // Allow tables to wrap
+          whiteSpace: 'normal',
         },
         '& td': {
           borderColor: theme.colors.border,

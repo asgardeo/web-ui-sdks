@@ -70,12 +70,14 @@ export const Select: FC<SelectProps> = ({
   disabled,
   helperText,
   options,
+  style = {},
   ...rest
 }) => {
   const {theme} = useTheme();
 
   const containerStyle: CSSProperties = {
     marginBottom: theme.spacing.unit * 2 + 'px',
+    ...style,
   };
 
   const labelStyle: CSSProperties = {
