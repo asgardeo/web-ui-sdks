@@ -1,30 +1,29 @@
-# @asgardeo/vue
-
-<p align="center" style="font-size: 1.2rem;">Vue Wrapper to build customizable login UIs for Asgardeo or Identity Server</p>
-
+<p align="center" style="color: #343a40">
+  <h1 align="center">@asgardeo/vue</h1>
+</p>
+<p align="center" style="font-size: 1.2rem;">Vue.js SDK for Asgardeo</p>
 <div align="center">
   <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@asgardeo/vue">
   <img alt="npm" src="https://img.shields.io/npm/dw/@asgardeo/vue">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
 </div>
 
-## Prerequisites
-- Vue.js 3.4.0 or higher
-
 ## Installation
 
 ```bash
-# With npm
+# Using npm
 npm install @asgardeo/vue
 
-# With pnpm
+# or using pnpm
 pnpm add @asgardeo/vue
 
-# With yarn
+# or using yarn
 yarn add @asgardeo/vue
 ```
 
 ## Basic Setup
+
+1. Configure the authentication plugin:
 
 ```typescript
 import { createApp } from 'vue'
@@ -43,6 +42,61 @@ app.use(AsgardeoAuth, {
 app.mount('#app')
 ```
 
+2. Use in your components:
+
+```vue
+<template>
+  <div>
+    <div v-if="auth.isAuthenticated">
+      <p>Welcome, {{ auth.user?.username }}</p>
+      <button @click="auth.signOut">Sign Out</button>
+    </div>
+    <button v-else @click="auth.signIn">Sign In</button>
+  </div>
+</template>
+
+<script setup>
+import { useAsgardeo } from '@asgardeo/vue'
+
+const auth = useAsgardeo()
+</script>
+```
+
+## Composables
+
+- `useAsgardeo()`: Main composable that provides:
+  - `isAuthenticated`: Boolean indicating authentication status
+  - `user`: Current user information
+  - `signIn()`: Function to initiate sign in
+  - `signOut()`: Function to sign out
+  - `getAccessToken()`: Function to get the current access token
+  - `getBasicUserInfo()`: Function to get basic user information
+  
+- `useAuthContext()`: Composable to access the raw authentication context
+- `useIsAuthenticated()`: Composable to check authentication status
+
+## Development
+
+1. Install dependencies:
+```bash
+pnpm install
+```
+
+2. Build:
+```bash
+pnpm build
+```
+
+3. Run tests:
+```bash
+pnpm test
+```
+
+4. Run development server:
+```bash
+pnpm dev
+```
+
 ## License
 
-Licenses this source under the Apache License, Version 2.0 [LICENSE](./LICENSE), You may not use this file except in compliance with the License.
+Apache License, Version 2.0 - see [LICENSE](./LICENSE) for details.

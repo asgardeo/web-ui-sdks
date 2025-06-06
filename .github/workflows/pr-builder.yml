@@ -118,6 +118,10 @@ jobs:
       - name: 🧩 Install Dependencies
         id: install-dependencies
         run: pnpm install
+        
+      - name: 🏗️ Build
+        id: build
+        run: pnpm build
 
       - name: ☄️ Check Type Errors
         run: pnpm nx affected --target=typecheck --parallel=3 --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
@@ -166,6 +170,10 @@ jobs:
       - name: 🧩 Install Dependencies
         id: install-dependencies
         run: pnpm install
+        
+      - name: 🏗️ Build
+        id: build
+        run: pnpm build
 
       - name: 🃏 Run Jest & Collect Coverage
         id: run-jest-test-and-coverage

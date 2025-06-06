@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,170 +16,166 @@
  * under the License.
  */
 
-import {
-  AuthApiResponse,
-  AuthClient,
-  CryptoUtils,
-  MeAPIResponse,
-  Store,
-  UIAuthClient,
-  getProfileInformation,
-} from '@asgardeo/js';
-import {FC, PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import BrandingPreferenceProvider from './BrandingPreferenceProvider';
-import I18nProvider from './I18nProvider';
-import AsgardeoContext from '../contexts/asgardeo-context';
-import AsgardeoProviderProps from '../models/asgardeo-provider-props';
-import AuthContext from '../models/auth-context';
-import SPACryptoUtils from '../utils/crypto-utils';
-import SessionStore from '../utils/session-store';
+import {SignInOptions, SignOutOptions, User} from '@asgardeo/browser';
+import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, use} from 'react';
+import AsgardeoReactClient from '../AsgardeoReactClient';
+import AsgardeoContext from '../contexts/AsgardeoContext';
+import useBrowserUrl from '../hooks/useBrowserUrl';
+import {AsgardeoReactConfig} from '../models/config';
+import {ThemeProvider} from '../theme/ThemeProvider';
 
 /**
- * `AsgardeoProvider` is a component that provides an Asgardeo context to all its children.
- * It takes an object of type `AsgardeProviderProps` as props, which includes the children to render,
- * a configuration object, a store instance, and a branding object.
- *
- * @param {PropsWithChildren<AsgardeoProviderProps>} props - The properties passed to the component.
- * @param {ReactNode} props.children - The children to render inside the provider.
- * @param {Config} props.config - The configuration object for the Asgardeo context.
- * @param {Store} [props.store] - An optional store instance. If not provided, a new SessionStore will be created.
- * @param {Branding} props.branding - The branding object for the Asgardeo context.
- *
- * @returns {ReactElement} A React element that provides the Asgardeo context to all its children.
+ * Props interface of {@link AsgardeoProvider}
  */
-const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
-  props: PropsWithChildren<AsgardeoProviderProps>,
-) => {
-  const {children, config, store, branding} = props;
+export type AsgardeoProviderProps = AsgardeoReactConfig;
 
-  const [accessToken, setAccessToken] = useState<string>('');
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
-  const [user, setUser] = useState<MeAPIResponse>();
-  const [isBrandingLoading, setIsBrandingLoading] = useState<boolean>(true);
-  const [isTextLoading, setIsTextLoading] = useState<boolean>(true);
-  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
-  const [isComponentLoading, setIsComponentLoading] = useState<boolean>(true);
-  const [authResponse, setAuthResponse] = useState<AuthApiResponse>();
-  const [username, setUsername] = useState<string>('');
+const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
+  afterSignInUrl = window.location.origin,
+  baseUrl,
+  clientId,
+  children,
+  scopes,
+  preferences,
+}: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
+  const reRenderCheckRef: RefObject<boolean> = useRef(false);
+  const asgardeo: AsgardeoReactClient = useMemo(() => new AsgardeoReactClient(), []);
+  const {hasAuthParams} = useBrowserUrl();
+  const [user, setUser] = useState<any | null>(null);
 
-  const onSignInRef: React.MutableRefObject<Function> = useRef<Function>();
-  const onSignOutRef: React.MutableRefObject<Function> = useRef<Function>();
-
-  const setOnSignIn: (newOnSignIn: Function) => void = useCallback(
-    (newOnSignIn: Function): void => {
-      onSignInRef.current = newOnSignIn;
-    },
-    [], // Add any dependencies here...
-  );
-
-  const setOnSignOut: (newOnSignOut: Function) => void = useCallback(
-    (newOnSignOut: Function): void => {
-      onSignOutRef.current = newOnSignOut;
-    },
-    [], // Add any dependencies here...
-  );
-
-  const storeInstance: Store = store || new SessionStore();
-
-  const spaUtils: CryptoUtils = new SPACryptoUtils();
-
-  const authClient: UIAuthClient = AuthClient.getInstance(config, storeInstance, spaUtils);
-
-  /**
-   * Sets the authentication status and access token.
-   */
-  const setAuthentication: () => void = useCallback((): void => {
-    authClient.isAuthenticated().then((isAuth: boolean) => {
-      setIsAuthenticated(isAuth);
-
-      if (isAuth) {
-        authClient.getAccessToken().then((accessTokenFromClient: string) => {
-          if (accessTokenFromClient) {
-            setAccessToken(accessTokenFromClient);
-
-            getProfileInformation().then((response: MeAPIResponse) => {
-              setUser(response);
-            });
-
-            if (onSignInRef.current) {
-              onSignInRef.current();
-            }
-          }
-        });
-      }
-    });
-  }, [authClient]);
+  const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
 
   useEffect(() => {
-    setAuthentication();
+    (async (): Promise<void> => {
+      await asgardeo.initialize({
+        afterSignInUrl,
+        baseUrl,
+        clientId,
+        scopes,
+      });
+    })();
+  }, []);
 
-    /**
-     * This script is added so that the popup window can send the code and state to the parent window
-     */
-    const url: URL = new URL(window.location.href);
-    if (url.searchParams.has('code') && url.searchParams.has('state')) {
-      const code: string = url.searchParams.get('code');
-      const state: string = url.searchParams.get('state');
-
-      /**
-       * Send the 'code' and 'state' to the parent window and close the current window (popup)
-       */
-      window.opener.postMessage({code, state}, config.signInRedirectURL);
-      window.close();
+  /**
+   * Try signing in when the component is mounted.
+   */
+  useEffect(() => {
+    // React 18.x Strict.Mode has a new check for `Ensuring reusable state` to facilitate an upcoming react feature.
+    // https://reactjs.org/docs/strict-mode.html#ensuring-reusable-state
+    // This will remount all the useEffects to ensure that there are no unexpected side effects.
+    // When react remounts the signIn hook of the AuthProvider, it will cause a race condition. Hence, we have to
+    // prevent the re-render of this hook as suggested in the following discussion.
+    // https://github.com/reactwg/react-18/discussions/18#discussioncomment-795623
+    if (reRenderCheckRef.current) {
+      return;
     }
-  }, [config.signInRedirectURL, setAuthentication]);
 
-  const value: AuthContext = useMemo(
-    () => ({
-      accessToken,
-      authResponse,
-      config,
-      isAuthLoading,
-      isAuthenticated,
-      isBrandingLoading,
-      isComponentLoading,
-      isGlobalLoading: isAuthLoading || isBrandingLoading || isComponentLoading || isTextLoading,
-      isTextLoading,
-      onSignOutRef,
-      setAuthResponse,
-      setAuthentication,
-      setIsAuthLoading,
-      setIsBrandingLoading,
-      setIsComponentLoading,
-      setIsTextLoading,
-      setOnSignIn,
-      setOnSignOut,
-      setUsername,
-      user,
-      username,
-    }),
-    [
-      accessToken,
-      authResponse,
-      config,
-      isAuthLoading,
-      isAuthenticated,
-      isBrandingLoading,
-      isComponentLoading,
-      isTextLoading,
-      setAuthResponse,
-      setAuthentication,
-      setIsComponentLoading,
-      setOnSignIn,
-      setOnSignOut,
-      setUsername,
-      user,
-      username,
-    ],
-  );
+    reRenderCheckRef.current = true;
+
+    (async (): Promise<void> => {
+      // User is already authenticated. Skip...
+      if (await asgardeo.isSignedIn()) {
+        setUser(await asgardeo.getUser());
+
+        return;
+      }
+
+      if (hasAuthParams(new URL(window.location.href), afterSignInUrl)) {
+        try {
+          await signIn(
+            {callOnlyOnRedirect: true},
+            // authParams?.authorizationCode,
+            // authParams?.sessionState,
+            // authParams?.state,
+          );
+
+          // setError(null);
+        } catch (error) {
+          debugger;
+          if (error && Object.prototype.hasOwnProperty.call(error, 'code')) {
+            // setError(error);
+          }
+        }
+      }
+    })();
+  }, []);
+
+  /**
+   * Check if the user is signed in and update the state accordingly.
+   * This will also set an interval to check for the sign-in status every second
+   * until the user is signed in.
+   */
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    (async () => {
+      try {
+        const status = await asgardeo.isSignedIn();
+        setIsSignedInSync(status);
+
+        if (!status) {
+          interval = setInterval(async () => {
+            const newStatus = await asgardeo.isSignedIn();
+            if (newStatus) {
+              setIsSignedInSync(true);
+              clearInterval(interval);
+            }
+          }, 1000);
+        }
+      } catch (error) {
+        setIsSignedInSync(false);
+      }
+    })();
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [asgardeo]);
+
+  const signIn = async (options?: SignInOptions): Promise<User> => {
+    try {
+      const response = await asgardeo.signIn(options);
+      setUser(await asgardeo.getUser());
+
+      return response;
+    } catch (error) {
+      throw new Error(`Error while signing in: ${error}`);
+    }
+  };
+
+  const signUp = (): void => {
+    throw new Error('Not implemented');
+  };
+
+  const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<string> =>
+    asgardeo.signOut(options, afterSignOut);
+
+  const isDarkMode = useMemo(() => {
+    if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return preferences.theme.mode === 'dark';
+  }, [preferences?.theme?.mode]);
 
   return (
-    <AsgardeoContext.Provider value={value}>
-      <BrandingPreferenceProvider branding={branding}>
-        <I18nProvider providerLocaleOverride={branding?.locale} providerTextOverrides={branding?.preference?.text}>
-          {children}
-        </I18nProvider>
-      </BrandingPreferenceProvider>
+    <AsgardeoContext.Provider
+      value={{
+        isLoading: false,
+        isSignedIn: isSignedInSync,
+        signIn,
+        signOut,
+        signUp: () => {
+          // TODO: Implement signUp functionality
+          throw new Error('Sign up functionality not implemented yet');
+        },
+        user,
+        baseUrl
+      }}
+    >
+      <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
+        {children}
+      </ThemeProvider>
     </AsgardeoContext.Provider>
   );
 };

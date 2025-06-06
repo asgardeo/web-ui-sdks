@@ -20,7 +20,7 @@ import {
   AuthClientConfig,
   BasicUserInfo,
   Config,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   FetchResponse,
   Hooks,
   HttpClientInstance,
@@ -213,9 +213,9 @@ describe('asgardeoPlugin', () => {
     expect(mockAuthAPI.getAccessToken).toHaveBeenCalled();
     expect(accessTokenValue).toBe(accessToken);
 
-    const decodedIDToken: DecodedIDTokenPayload = {aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'};
+    const decodedIDToken: IdTokenPayload = {aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'};
     mockAuthAPI.getDecodedIDToken.mockResolvedValueOnce(decodedIDToken);
-    const idToken: DecodedIDTokenPayload = await authContext.getDecodedIDToken();
+    const idToken: IdTokenPayload = await authContext.getDecodedIDToken();
     expect(mockAuthAPI.getDecodedIDToken).toHaveBeenCalled();
     expect(idToken).toMatchObject(decodedIDToken);
   });
