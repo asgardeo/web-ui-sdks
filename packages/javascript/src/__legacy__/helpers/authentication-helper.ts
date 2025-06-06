@@ -29,7 +29,7 @@ import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdTok
 import ScopeConstants from '../../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import TokenExchangeConstants from '../../constants/TokenExchangeConstants';
-import {OIDCDiscoveryEndpointsApiResponse, OIDCDiscoveryApiResponse} from '../../models/oidc/oidc-discovery';
+import {OIDCDiscoveryEndpointsApiResponse, OIDCDiscoveryApiResponse} from '../../models/auth/oidc-discovery';
 
 export class AuthenticationHelper<T> {
   private _dataLayer: DataLayer<T>;

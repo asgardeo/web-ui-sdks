@@ -18,7 +18,7 @@
 
 export * from './__legacy__/client';
 export * from './__legacy__/models';
-export * from './models/oauth/oauth-response';
+export * from './models/auth/oauth-response';
 export * from './IsomorphicCrypto';
 export * from './__legacy__/exception';
 export * from './__legacy__/data';
@@ -37,7 +37,7 @@ export {BaseConfig, Config, Preferences, ThemePreferences} from './models/config
 export {TokenResponse} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';
 export {IdTokenPayload} from './models/id-token';
-export {OIDCEndpoints} from './models/oidc/oidc-endpoints';
+export {OIDCEndpoints} from './models/auth/oidc-endpoints';
 export {Store} from './models/store';
 export {User} from './models/user';
 export {Schema, SchemaAttribute, WellKnownSchemaIds} from './models/scim2-schema';

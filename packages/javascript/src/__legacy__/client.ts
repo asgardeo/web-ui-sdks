@@ -22,7 +22,7 @@ import {AuthClientConfig, BasicUserInfo, CustomGrantConfig, FetchResponse, GetAu
 import {Crypto} from '../models/crypto';
 import {TokenResponse} from '../models/token';
 import {IdTokenPayload} from '../models/id-token';
-import {OIDCEndpoints} from '../models/oidc/oidc-endpoints';
+import {OIDCEndpoints} from '../models/auth/oidc-endpoints';
 import {Store} from '../models/store';
 import ScopeConstants from '../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../constants/OIDCDiscoveryConstants';

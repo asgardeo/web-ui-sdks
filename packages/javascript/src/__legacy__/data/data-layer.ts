@@ -20,7 +20,7 @@ import {Stores} from '../../models/store';
 import {Store} from '../../models/store';
 import {AuthClientConfig, SessionData} from '../models';
 import {TemporaryStore, TemporaryStoreValue} from '../../models/store';
-import {OIDCDiscoveryApiResponse} from '../../models/oidc/oidc-discovery';
+import {OIDCDiscoveryApiResponse} from '../../models/auth/oidc-discovery';
 
 type PartialData<T> = Partial<AuthClientConfig<T> | OIDCDiscoveryApiResponse | SessionData | TemporaryStore>;
 
