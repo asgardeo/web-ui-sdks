@@ -83,14 +83,12 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     authorizationCode?: string,
     sessionState?: string,
     state?: string,
-  ): Promise<NextResponse> {
+  ): Promise<User> {
     let resolvedSessionId: string = sessionId || ((await getSessionId()) as string);
 
     if (!resolvedSessionId) {
       resolvedSessionId = await setSessionId(sessionId);
     }
-
-    console.log('[AsgardeoNextClient] signIn called with options:', options, 'sessionId:', resolvedSessionId);
 
     return this.asgardeo.signIn(
       beforeSignIn as any,
@@ -98,7 +96,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       authorizationCode,
       sessionState,
       state,
-    ) as unknown as NextResponse;
+    ) as unknown as User;
   }
 
   override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
@@ -123,8 +121,6 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     const {method} = req;
 
     if ((method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) || searchParams.get('code')) {
-      console.log('[AsgardeoNextClient] Handling sign-in request', searchParams.get('code'));
-
       let response: NextResponse | undefined;
 
       await this.signIn(
@@ -156,19 +152,16 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     }
 
     if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.session) {
-      console.log('[AsgardeoNextClient] Checking session status');
       try {
         const isAuthenticated: boolean = await this.isSignedIn();
 
         return NextResponse.json({isSignedIn: isAuthenticated});
       } catch (error) {
-        console.error('[AsgardeoNextClient] Session check error:', error);
         return NextResponse.json({error: 'Failed to check session'}, {status: 500});
       }
     }
 
     if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signOut) {
-      console.log('[AsgardeoNextClient] Handling sign-out request');
       try {
         const afterSignOutUrl: string = await this.signOut();
 
