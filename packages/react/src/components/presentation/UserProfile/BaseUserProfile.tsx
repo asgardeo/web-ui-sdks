@@ -28,6 +28,7 @@ import clsx from 'clsx';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 
 interface Schema {
+  id?: string;
   caseExact?: boolean;
   description?: string;
   displayName?: string;
@@ -62,6 +63,7 @@ export interface BaseUserProfileProps {
   onSubmit?: (data: any) => void;
   saveButtonText?: string;
   cancelButtonText?: string;
+  onUpdate: (payload: any) => Promise<void>;
 }
 
 const BaseUserProfile: FC<BaseUserProfileProps> = ({
@@ -76,6 +78,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   editable = true,
   onChange,
   onSubmit,
+  onUpdate,
   saveButtonText = 'Save Changes',
   cancelButtonText = 'Cancel',
 }): ReactElement => {
@@ -107,14 +110,22 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   }, []);
 
   const handleFieldSave = useCallback(
-    (fieldName: string, value: any) => {
-      setEditedUser(prev => ({
-        ...prev,
-        [fieldName]: value,
-      }));
-      onChange?.(fieldName, value);
-      toggleFieldEdit(fieldName);
-      onSubmit?.({...editedUser, [fieldName]: value});
+    (schema: Schema) => {
+      let payload = {};
+
+      if (schema.multiValued) {
+        payload = {
+          [schema.id]: {
+            [schema.name]: schema.value,
+          },
+        };
+      } else {
+        payload = {
+          [schema.name]: schema.value,
+        };
+      }
+
+      onUpdate(payload);
     },
     [onChange, onSubmit, editedUser, toggleFieldEdit],
   );
@@ -303,10 +314,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           >
             {isFieldEditing ? (
               <>
-                <button
-                  style={{...actionButtonStyle, ...saveButtonStyle}}
-                  onClick={() => handleFieldSave(schema.name!, editedUser[schema.name!])}
-                >
+                <button style={{...actionButtonStyle, ...saveButtonStyle}} onClick={() => handleFieldSave(schema)}>
                   Save
                 </button>
                 <button

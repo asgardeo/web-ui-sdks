@@ -19,6 +19,7 @@
 import {FC, ReactElement} from 'react';
 import useAsgardeo from '../../../hooks/useAsgardeo';
 import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
+import updateMeProfile from 'packages/react/src/api/scim2/updateMeProfile';
 
 /**
  * Props for the UserProfile component.
@@ -50,9 +51,13 @@ export type UserProfileProps = Omit<BaseUserProfileProps, 'user'>;
  * ```
  */
 const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactElement => {
-  const {user} = useAsgardeo();
+  const {user, baseUrl} = useAsgardeo();
 
-  return <BaseUserProfile user={user} {...rest} />;
+  const handleProfileUpdate = async (payload: any): Promise<void> => {
+    updateMeProfile({url: `${baseUrl}/scim2/Me`, payload});
+  };
+
+  return <BaseUserProfile user={user} onUpdate={handleProfileUpdate} {...rest} />;
 };
 
 export default UserProfile;

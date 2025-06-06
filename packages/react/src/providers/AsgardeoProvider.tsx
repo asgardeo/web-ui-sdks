@@ -170,6 +170,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
           throw new Error('Sign up functionality not implemented yet');
         },
         user,
+        baseUrl
       }}
     >
       <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>

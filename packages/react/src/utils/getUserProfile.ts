@@ -79,6 +79,7 @@ const getUserProfile = async ({baseUrl}): Promise<any> => {
           for (const subAttr of subAttributes) {
             if (complexValue[subAttr.name] !== undefined) {
               result.push({
+                id: schemaId,
                 ...subAttr,
                 value: complexValue[subAttr.name],
               });
@@ -89,6 +90,7 @@ const getUserProfile = async ({baseUrl}): Promise<any> => {
           // Only include if value exists
           if (value !== undefined) {
             result.push({
+              id: schemaId,
               ...attr,
               value,
             });
