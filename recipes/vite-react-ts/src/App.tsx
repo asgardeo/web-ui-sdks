@@ -1,42 +1,112 @@
-import {UserDropdown, SignInButton, SignedOut, SignOutButton, SignedIn, User, UserProfile} from '@asgardeo/react';
-import './App.css';
+'use client';
+
+import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+import {useState, createContext, useContext} from 'react';
+import Header from './components/Header';
+import DashboardPage from './pages/Dashboard';
+import ProfilePage from './pages/Profile';
+import OrganizationsPage from './pages/Organizations';
+import CreateOrganizationPage from './pages/CreateOrganization';
+import SignInPage from './pages/SignIn';
+
+// Types
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  username: string;
+}
+
+export interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  avatar: string;
+  role: 'owner' | 'admin' | 'member';
+  memberCount: number;
+}
+
+// Context
+interface AppContextType {
+  user: User | null;
+  currentOrg: Organization | null;
+  organizations: Organization[];
+  setCurrentOrg: (org: Organization) => void;
+  addOrganization: (org: Organization) => void;
+}
+
+const AppContext = createContext<AppContextType | null>(null);
+
+export const useApp = () => {
+  const context = useContext(AppContext);
+  if (!context) throw new Error('useApp must be used within AppProvider');
+  return context;
+};
+
+// Mock data
+const mockUser: User = {
+  id: '1',
+  name: 'John Doe',
+  email: 'john@example.com',
+  avatar: '/placeholder.svg?height=32&width=32',
+  username: 'johndoe',
+};
+
+const mockOrganizations: Organization[] = [
+  {
+    id: '1',
+    name: 'Acme Corp',
+    slug: 'acme-corp',
+    avatar: '/placeholder.svg?height=32&width=32',
+    role: 'owner',
+    memberCount: 12,
+  },
+  {
+    id: '2',
+    name: 'Tech Startup',
+    slug: 'tech-startup',
+    avatar: '/placeholder.svg?height=32&width=32',
+    role: 'admin',
+    memberCount: 8,
+  },
+];
 
 function App() {
+  const [user] = useState<User>(mockUser);
+  const [currentOrg, setCurrentOrg] = useState<Organization>(mockOrganizations[0]);
+  const [organizations, setOrganizations] = useState<Organization[]>(mockOrganizations);
+
+  const addOrganization = (org: Organization) => {
+    setOrganizations(prev => [...prev, org]);
+  };
+
   return (
-    <>
-      <SignedOut>
-        <SignInButton>Sign In</SignInButton>
-      </SignedOut>
-      <SignedIn>
-        <User>
-          {user => (
-            <div className="user-info">
-              <h1>
-                Welcome, {user?.firstName} {user?.lastName}!
-              </h1>
-              <p>Email: {user?.email}</p>
-            </div>
-          )}
-        </User>
-        <UserDropdown
-          menuItems={[
-            {
-              label: 'Manage Profile',
-              icon: null,
-              onClick: () => null,
-            },
-            {
-              label: 'Logout',
-              icon: null,
-              onClick: () => null,
-            },
-          ]}
-          portalId="custom-dropdown"
-        />
-        <UserProfile mode="popup" />
-        <SignOutButton>Logout</SignOutButton>
-      </SignedIn>
-    </>
+    <AppContext.Provider
+      value={{
+        user,
+        currentOrg,
+        organizations,
+        setCurrentOrg,
+        addOrganization,
+      }}
+    >
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
+          <main>
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/signin" element={<SignInPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/organizations" element={<OrganizationsPage />} />
+              <Route path="/organizations/new" element={<CreateOrganizationPage />} />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </AppContext.Provider>
   );
 }
 
