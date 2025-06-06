@@ -24,7 +24,6 @@ import {TokenResponse} from '../models/token';
 import {IdTokenPayload} from '../models/id-token';
 import {OIDCEndpoints} from '../models/oidc/oidc-endpoints';
 import {Store} from '../models/store';
-import {ResponseMode} from '../models/oauth-response';
 import ScopeConstants from '../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../constants/OIDCRequestConstants';
@@ -36,7 +35,7 @@ import {IsomorphicCrypto} from '../IsomorphicCrypto';
 const DefaultConfig: Partial<AuthClientConfig<unknown>> = {
   clockTolerance: 300,
   enablePKCE: true,
-  responseMode: ResponseMode.Query,
+  responseMode: 'query',
   scope: [ScopeConstants.OPENID],
   sendCookiesInRequests: true,
   validateIDToken: true,

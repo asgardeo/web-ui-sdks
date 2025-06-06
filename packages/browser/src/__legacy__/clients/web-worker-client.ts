@@ -27,7 +27,6 @@ import {
   FetchResponse,
   GetAuthURLConfig,
   OIDCEndpoints,
-  ResponseMode,
   OIDCRequestConstants,
   Store,
   extractPkceStorageKeyFromState,
@@ -570,7 +569,7 @@ export const WebWorkerClient = async (
       let resolvedSessionState: string;
       let resolvedState: string;
 
-      if (config?.responseMode === ResponseMode.FormPost && authorizationCode) {
+      if (config?.responseMode === 'form_post' && authorizationCode) {
         resolvedAuthorizationCode = authorizationCode;
         resolvedSessionState = sessionState ?? '';
         resolvedState = state ?? '';

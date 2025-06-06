@@ -26,7 +26,6 @@ import {
   FetchResponse,
   GetAuthURLConfig,
   OIDCEndpoints,
-  ResponseMode,
   OIDCRequestConstants,
   SessionData,
   Store,
@@ -199,7 +198,7 @@ export const MainThreadClient = async (
         params: Record<string, unknown>;
       } = {params: {}};
 
-      if (config?.responseMode === ResponseMode.FormPost && authorizationCode) {
+      if (config?.responseMode === 'form_post' && authorizationCode) {
         resolvedAuthorizationCode = authorizationCode;
         resolvedSessionState = sessionState ?? '';
         resolvedState = state ?? '';
