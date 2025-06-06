@@ -67,7 +67,7 @@ export interface BaseUserProfileProps {
   onSubmit?: (data: any) => void;
   saveButtonText?: string;
   cancelButtonText?: string;
-  onUpdate: (payload: any) => Promise<void>;
+  onUpdate?: (payload: any) => Promise<void>;
 }
 
 const BaseUserProfile: FC<BaseUserProfileProps> = ({
@@ -193,7 +193,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const cancelButtonStyle = useMemo(
     () => ({
       ...buttonStyle,
-      backgroundColor: theme.colors.background.surface,
+      backgroundColor: theme.colors.secondary.main,
       border: `1px solid ${theme.colors.border}`,
     }),
     [theme, buttonStyle],

@@ -17,6 +17,7 @@
  */
 
 import {ThemeConfig, ThemeMode} from '../theme/types';
+import { RecursivePartial } from './utility-types';
 
 export interface BaseConfig<T = unknown> {
   /**
@@ -79,7 +80,7 @@ export interface ThemePreferences {
   /**
    * Theme overrides to customize the default theme
    */
-  overrides?: Partial<ThemeConfig>;
+  overrides?: RecursivePartial<ThemeConfig>;
 }
 
 export interface Preferences {

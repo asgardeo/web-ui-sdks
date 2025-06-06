@@ -16,12 +16,17 @@
  * under the License.
  */
 
+import { RecursivePartial } from '../models/utility-types';
 import {Theme, ThemeConfig} from './types';
 
 const lightTheme: ThemeConfig = {
   colors: {
     primary: {
       main: '#1a73e8',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      main: '#424242',
       contrastText: '#ffffff',
     },
     background: {
@@ -58,6 +63,10 @@ const darkTheme: ThemeConfig = {
       main: '#1a73e8',
       contrastText: '#ffffff',
     },
+    secondary: {
+      main: '#424242',
+      contrastText: '#ffffff',
+    },
     background: {
       surface: '#121212',
       disabled: '#1f1f1f',
@@ -86,12 +95,14 @@ const darkTheme: ThemeConfig = {
   },
 };
 
-const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
+const toCssVariables = (theme: RecursivePartial<ThemeConfig>): Record<string, string> => {
   const cssVars: Record<string, string> = {};
 
   // Colors
   cssVars['--asgardeo-color-primary-main'] = theme.colors.primary.main;
   cssVars['--asgardeo-color-primary-contrastText'] = theme.colors.primary.contrastText;
+  cssVars['--asgardeo-color-secondary-main'] = theme.colors.secondary.main;
+  cssVars['--asgardeo-color-secondary-contrastText'] = theme.colors.secondary.contrastText;
   cssVars['--asgardeo-color-background-surface'] = theme.colors.background.surface;
   cssVars['--asgardeo-color-background-disabled'] = theme.colors.background.disabled;
   cssVars['--asgardeo-color-background-body-main'] = theme.colors.background.body.main;
@@ -113,7 +124,7 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
   return cssVars;
 };
 
-const createTheme = (config: Partial<ThemeConfig> = {}, isDark = false): Theme => {
+const createTheme = (config: RecursivePartial<ThemeConfig> = {}, isDark = false): Theme => {
   const baseTheme = isDark ? darkTheme : lightTheme;
   const mergedConfig = {
     ...baseTheme,
@@ -121,6 +132,10 @@ const createTheme = (config: Partial<ThemeConfig> = {}, isDark = false): Theme =
     colors: {
       ...baseTheme.colors,
       ...config.colors,
+      secondary: {
+        ...baseTheme.colors.secondary,
+        ...(config.colors?.secondary || {}),
+      },
     },
     spacing: {
       ...baseTheme.spacing,
@@ -130,7 +145,7 @@ const createTheme = (config: Partial<ThemeConfig> = {}, isDark = false): Theme =
       ...baseTheme.borderRadius,
       ...config.borderRadius,
     },
-  };
+  } as ThemeConfig;
 
   return {
     ...mergedConfig,

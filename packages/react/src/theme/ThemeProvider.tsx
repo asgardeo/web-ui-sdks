@@ -17,11 +17,11 @@
  */
 
 import {FC, PropsWithChildren, ReactElement, useEffect, useMemo, useState} from 'react';
-import {createTheme, Theme, ThemeConfig} from '@asgardeo/browser';
+import {createTheme, Theme, ThemeConfig, RecursivePartial} from '@asgardeo/browser';
 import ThemeContext from './ThemeContext';
 
 export interface ThemeProviderProps {
-  theme?: Partial<ThemeConfig>;
+  theme?: RecursivePartial<ThemeConfig>;
   defaultColorScheme?: 'light' | 'dark';
 }
 

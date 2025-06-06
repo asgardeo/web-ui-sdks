@@ -13,6 +13,14 @@ createRoot(document.getElementById('root')!).render(
       preferences={{
         theme: {
           mode: 'dark',
+          overrides: {
+            colors: {
+              primary: {
+                main: '#6200ea',
+                contrastText: '#ffffff',
+              },
+            },
+          },
         },
       }}
     >

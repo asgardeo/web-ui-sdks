@@ -21,6 +21,10 @@ export interface ThemeColors {
     main: string;
     contrastText: string;
   };
+  secondary: {
+    main: string;
+    contrastText: string;
+  };
   background: {
     surface: string;
     disabled: string;
