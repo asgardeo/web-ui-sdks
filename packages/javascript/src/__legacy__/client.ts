@@ -18,7 +18,8 @@
 
 import {AuthenticationCore} from './core';
 import {DataLayer} from './data';
-import {AuthClientConfig, BasicUserInfo, CustomGrantConfig, FetchResponse, GetAuthURLConfig} from './models';
+import {AuthClientConfig, BasicUserInfo, CustomGrantConfig, FetchResponse} from './models';
+import {ExtendedAuthorizeRequestUrlParams} from '../models/oauth-request';
 import {Crypto} from '../models/crypto';
 import {TokenResponse, IdTokenPayload} from '../models/token';
 import {OIDCEndpoints} from '../models/oidc-endpoints';
@@ -181,8 +182,11 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getAuthorizationURLParams(config?: GetAuthURLConfig, userID?: string): Promise<Map<string, string>> {
-    const authRequestConfig: GetAuthURLConfig = {...config};
+  public async getAuthorizationURLParams(
+    config?: ExtendedAuthorizeRequestUrlParams,
+    userID?: string,
+  ): Promise<Map<string, string>> {
+    const authRequestConfig: ExtendedAuthorizeRequestUrlParams = {...config};
 
     delete authRequestConfig?.forceInit;
 
@@ -222,8 +226,8 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getAuthorizationURL(config?: GetAuthURLConfig, userID?: string): Promise<string> {
-    const authRequestConfig: GetAuthURLConfig = {...config};
+  public async getAuthorizationURL(config?: ExtendedAuthorizeRequestUrlParams, userID?: string): Promise<string> {
+    const authRequestConfig: ExtendedAuthorizeRequestUrlParams = {...config};
 
     delete authRequestConfig?.forceInit;
 

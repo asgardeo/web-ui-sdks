@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, GetAuthURLConfig, OIDCRequestConstants} from '@asgardeo/javascript';
+import {AsgardeoAuthClient, ExtendedAuthorizeRequestUrlParams, OIDCRequestConstants} from '@asgardeo/javascript';
 import {
   CHECK_SESSION_SIGNED_IN,
   CHECK_SESSION_SIGNED_OUT,
@@ -45,7 +45,7 @@ export const SessionManagementHelper = (() => {
   let _checkSessionIntervalTimeout: number;
   let _storage: Storage;
   let _setSessionState: (sessionState: string) => void;
-  let _getAuthorizationURL: (params?: GetAuthURLConfig) => Promise<string>;
+  let _getAuthorizationURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>;
 
   const initialize = (
     clientID: string,
@@ -54,7 +54,7 @@ export const SessionManagementHelper = (() => {
     interval: number,
     sessionRefreshInterval: number,
     redirectURL: string,
-    getAuthorizationURL: (params?: GetAuthURLConfig) => Promise<string>,
+    getAuthorizationURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>,
   ): void => {
     _clientID = clientID;
     _checkSessionEndpoint = checkSessionEndpoint;

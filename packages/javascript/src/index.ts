@@ -36,6 +36,11 @@ export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 export {BaseConfig, Config, Preferences, ThemePreferences} from './models/config';
 export {TokenResponse, IdTokenPayload} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';
+export {
+  AuthorizeRequestUrlParams,
+  KnownExtendedAuthorizeRequestUrlParams,
+  ExtendedAuthorizeRequestUrlParams,
+} from './models/oauth-request';
 export {OIDCEndpoints} from './models/oidc-endpoints';
 export {Store} from './models/store';
 export {User} from './models/user';

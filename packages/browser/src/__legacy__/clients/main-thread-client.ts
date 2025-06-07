@@ -24,7 +24,7 @@ import {
   DataLayer,
   IdTokenPayload,
   FetchResponse,
-  GetAuthURLConfig,
+  ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   OIDCRequestConstants,
   SessionData,
@@ -151,14 +151,15 @@ export const MainThreadClient = async (
   };
 
   const checkSession = async (): Promise<void> => {
-    const oidcEndpoints: OIDCEndpoints = await _authenticationClient.getOIDCServiceEndpoints() as OIDCEndpoints;
+    const oidcEndpoints: OIDCEndpoints = (await _authenticationClient.getOIDCServiceEndpoints()) as OIDCEndpoints;
     const config = await _dataLayer.getConfigData();
 
     _authenticationHelper.initializeSessionManger(
       config,
       oidcEndpoints,
       async () => (await _authenticationClient.getBasicUserInfo()).sessionState,
-      async (params?: GetAuthURLConfig): Promise<string> => _authenticationClient.getAuthorizationURL(params),
+      async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> =>
+        _authenticationClient.getAuthorizationURL(params),
       _sessionManagementHelper,
     );
   };
@@ -178,7 +179,7 @@ export const MainThreadClient = async (
   };
 
   const signIn = async (
-    signInConfig?: GetAuthURLConfig,
+    signInConfig?: ExtendedAuthorizeRequestUrlParams,
     authorizationCode?: string,
     sessionState?: string,
     state?: string,

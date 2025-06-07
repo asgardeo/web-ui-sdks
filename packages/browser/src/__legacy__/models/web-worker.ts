@@ -18,7 +18,7 @@
 
 import {
   AuthClientConfig,
-  AuthorizationURLParams,
+  AuthorizeRequestUrlParams,
   BasicUserInfo,
   IsomorphicCrypto,
   CustomGrantConfig,
@@ -45,7 +45,7 @@ export interface WebWorkerCoreInterface {
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse[] | undefined>;
   enableHttpHandler(): void;
   disableHttpHandler(): void;
-  getAuthorizationURL(params?: AuthorizationURLParams, signInRedirectURL?: string): Promise<AuthorizationResponse>;
+  getAuthorizationURL(params?: AuthorizeRequestUrlParams, signInRedirectURL?: string): Promise<AuthorizationResponse>;
   requestAccessToken(
     authorizationCode?: string,
     sessionState?: string,

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {GetAuthURLConfig} from '@asgardeo/javascript';
+import {ExtendedAuthorizeRequestUrlParams} from '@asgardeo/javascript';
 
 export interface SessionManagementHelperInterface {
   initialize(
@@ -26,7 +26,7 @@ export interface SessionManagementHelperInterface {
     interval: number,
     sessionRefreshInterval: number,
     redirectURL: string,
-    getAuthorizationURL: (params?: GetAuthURLConfig) => Promise<string>,
+    getAuthorizationURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>,
   ): void;
   receivePromptNoneResponse(setSessionState?: (sessionState: string | null) => Promise<void>): Promise<boolean>;
   reset();

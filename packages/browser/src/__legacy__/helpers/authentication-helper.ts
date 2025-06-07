@@ -26,7 +26,7 @@ import {
   DataLayer,
   IdTokenPayload,
   FetchResponse,
-  GetAuthURLConfig,
+  ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   TokenResponse,
   extractPkceStorageKeyFromState,
@@ -86,7 +86,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     config: AuthClientConfig<T>,
     oidcEndpoints: OIDCEndpoints,
     getSessionState: () => Promise<string>,
-    getAuthzURL: (params?: GetAuthURLConfig) => Promise<string>,
+    getAuthzURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>,
     sessionManagementHelper: SessionManagementHelperInterface,
   ): void {
     sessionManagementHelper.initialize(
@@ -635,7 +635,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
         return basicUserInfo;
       }
     }
-    
+
     return Promise.resolve(undefined);
   }
 

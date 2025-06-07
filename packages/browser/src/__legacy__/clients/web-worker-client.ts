@@ -25,7 +25,7 @@ import {
   CustomGrantConfig,
   IdTokenPayload,
   FetchResponse,
-  GetAuthURLConfig,
+  ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   OIDCRequestConstants,
   Store,
@@ -386,14 +386,15 @@ export const WebWorkerClient = async (
       config,
       oidcEndpoints,
       async () => (await getBasicUserInfo()).sessionState,
-      async (params?: GetAuthURLConfig): Promise<string> => (await getAuthorizationURL(params)).authorizationURL,
+      async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> =>
+        (await getAuthorizationURL(params)).authorizationURL,
       _sessionManagementHelper,
     );
   };
 
   const constructSilentSignInUrl = async (additionalParams: Record<string, string | boolean> = {}): Promise<string> => {
     const config: AuthClientConfig<WebWorkerClientConfig> = await getConfigData();
-    const message: Message<GetAuthURLConfig> = {
+    const message: Message<ExtendedAuthorizeRequestUrlParams> = {
       data: {
         prompt: 'none',
         state: SILENT_SIGN_IN_STATE,
@@ -402,7 +403,9 @@ export const WebWorkerClient = async (
       type: GET_AUTH_URL,
     };
 
-    const response: AuthorizationResponse = await communicate<GetAuthURLConfig, AuthorizationResponse>(message);
+    const response: AuthorizationResponse = await communicate<ExtendedAuthorizeRequestUrlParams, AuthorizationResponse>(
+      message,
+    );
 
     const pkceKey: string = extractPkceStorageKeyFromState(
       new URL(response.authorizationURL).searchParams.get(OIDCRequestConstants.Params.STATE) ?? '',
@@ -443,18 +446,18 @@ export const WebWorkerClient = async (
   /**
    * Generates an authorization URL.
    *
-   * @param {GetAuthURLConfig} params Authorization URL params.
+   * @param {ExtendedAuthorizeRequestUrlParams} params Authorization URL params.
    * @returns {Promise<string>} Authorization URL.
    */
-  const getAuthorizationURL = async (params?: GetAuthURLConfig): Promise<AuthorizationResponse> => {
+  const getAuthorizationURL = async (params?: ExtendedAuthorizeRequestUrlParams): Promise<AuthorizationResponse> => {
     const config: AuthClientConfig<WebWorkerClientConfig> = await getConfigData();
 
-    const message: Message<GetAuthURLConfig> = {
+    const message: Message<ExtendedAuthorizeRequestUrlParams> = {
       data: params,
       type: GET_AUTH_URL,
     };
 
-    return communicate<GetAuthURLConfig, AuthorizationResponse>(message).then(
+    return communicate<ExtendedAuthorizeRequestUrlParams, AuthorizationResponse>(message).then(
       async (response: AuthorizationResponse) => {
         if (response.pkce && config.enablePKCE) {
           const pkceKey: string = extractPkceStorageKeyFromState(
@@ -538,7 +541,7 @@ export const WebWorkerClient = async (
 
       return getBasicUserInfo();
     }
-    
+
     return Promise.resolve(undefined);
   };
 
@@ -548,7 +551,7 @@ export const WebWorkerClient = async (
    * @returns {Promise<UserInfo>} A promise that resolves when authentication is successful.
    */
   const signIn = async (
-    params?: GetAuthURLConfig,
+    params?: ExtendedAuthorizeRequestUrlParams,
     authorizationCode?: string,
     sessionState?: string,
     state?: string,

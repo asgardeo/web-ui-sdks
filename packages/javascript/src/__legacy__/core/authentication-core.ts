@@ -23,7 +23,6 @@ import {AuthenticationHelper} from '../helpers';
 import {
   AuthClientConfig,
   AuthenticatedUserInfo,
-  AuthorizationURLParams,
   BasicUserInfo,
   CustomGrantConfig,
   FetchRequestConfig,
@@ -31,6 +30,7 @@ import {
   SessionData,
   StrictAuthClientConfig,
 } from '../models';
+import {AuthorizeRequestUrlParams} from '../../models/oauth-request';
 import {TokenResponse, IdTokenPayload} from '../../models/token';
 import {Crypto} from '../../models/crypto';
 import {TemporaryStore} from '../../models/store';
@@ -60,7 +60,7 @@ export class AuthenticationCore<T> {
   }
 
   public async getAuthorizationURLParams(
-    config?: AuthorizationURLParams,
+    config?: AuthorizeRequestUrlParams,
     userID?: string,
   ): Promise<Map<string, string>> {
     const configData: StrictAuthClientConfig = await this._config();
@@ -102,7 +102,7 @@ export class AuthenticationCore<T> {
       authorizeRequestParams.set('prompt', configData.prompt);
     }
 
-    const customParams: AuthorizationURLParams | undefined = config;
+    const customParams: AuthorizeRequestUrlParams | undefined = config;
 
     if (customParams) {
       for (const [key, value] of Object.entries(customParams)) {
@@ -123,7 +123,7 @@ export class AuthenticationCore<T> {
     return authorizeRequestParams;
   }
 
-  public async getAuthorizationURL(config?: AuthorizationURLParams, userID?: string): Promise<string> {
+  public async getAuthorizationURL(config?: AuthorizeRequestUrlParams, userID?: string): Promise<string> {
     const authorizeEndpoint: string = (await this._dataLayer.getOIDCProviderMetaDataParameter(
       OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCDiscoveryApiResponse,
     )) as string;

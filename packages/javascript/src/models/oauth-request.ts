@@ -16,11 +16,12 @@
  * under the License.
  */
 
-export type AuthorizationURLParams = Omit<GetAuthURLConfig, "forceInit">;
+export type AuthorizeRequestUrlParams = Omit<ExtendedAuthorizeRequestUrlParams, 'forceInit'>;
 
-export interface StrictGetAuthURLConfig {
-    fidp?: string;
-    forceInit?: boolean;
+export interface KnownExtendedAuthorizeRequestUrlParams {
+  fidp?: string;
+  forceInit?: boolean;
 }
 
-export type GetAuthURLConfig = StrictGetAuthURLConfig & Record<string, string | boolean>;
+export type ExtendedAuthorizeRequestUrlParams = KnownExtendedAuthorizeRequestUrlParams &
+  Record<string, string | boolean>;

@@ -19,7 +19,7 @@
 import {
   AsgardeoAuthClient,
   AuthClientConfig,
-  AuthorizationURLParams,
+  AuthorizeRequestUrlParams,
   BasicUserInfo,
   IsomorphicCrypto,
   CustomGrantConfig,
@@ -99,7 +99,7 @@ export const WebWorkerCore = async (
     _authenticationHelper.disableHttpHandler(_httpClient);
   };
 
-  const getAuthorizationURL = async (params?: AuthorizationURLParams): Promise<AuthorizationResponse> => {
+  const getAuthorizationURL = async (params?: AuthorizeRequestUrlParams): Promise<AuthorizationResponse> => {
     return _authenticationClient
       .getAuthorizationURL(params)
       .then(async (url: string) => {
