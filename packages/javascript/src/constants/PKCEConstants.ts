@@ -34,6 +34,7 @@
  * ```
  */
 const PKCEConstants = {
+  DEFAULT_CODE_CHALLENGE_METHOD: 'S256',
   /**
    * Storage-related constants for managing PKCE state
    */

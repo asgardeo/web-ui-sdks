@@ -41,6 +41,8 @@ import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../../constants/OIDCRequestConstants';
 import {OIDCDiscoveryApiResponse} from '../../models/oidc-discovery';
 import {IsomorphicCrypto} from '../../IsomorphicCrypto';
+import getAuthorizeRequestUrlParams from '../../utils/getAuthorizeRequestUrlParams';
+import PKCEConstants from '../../constants/PKCEConstants';
 
 export class AuthenticationCore<T> {
   private _dataLayer: DataLayer<T>;
@@ -59,70 +61,6 @@ export class AuthenticationCore<T> {
     this._oidcProviderMetaData = async () => await this._dataLayer.getOIDCProviderMetaData();
   }
 
-  public async getAuthorizationURLParams(
-    config?: AuthorizeRequestUrlParams,
-    userID?: string,
-  ): Promise<Map<string, string>> {
-    const configData: StrictAuthClientConfig = await this._config();
-
-    const authorizeRequestParams: Map<string, string> = new Map<string, string>();
-
-    authorizeRequestParams.set('response_type', 'code');
-    authorizeRequestParams.set('client_id', configData.clientID);
-
-    let scope: string = ScopeConstants.OPENID;
-
-    if (configData.scope && configData.scope.length > 0) {
-      if (!configData.scope.includes(ScopeConstants.OPENID)) {
-        configData.scope.push(ScopeConstants.OPENID);
-      }
-      scope = configData.scope.join(' ');
-    }
-
-    authorizeRequestParams.set('scope', scope);
-    authorizeRequestParams.set('redirect_uri', configData.signInRedirectURL);
-
-    if (configData.responseMode) {
-      authorizeRequestParams.set('response_mode', configData.responseMode);
-    }
-
-    const tempStore: TemporaryStore = await this._dataLayer.getTemporaryData(userID);
-    const pkceKey: string = await generatePkceStorageKey(tempStore);
-
-    if (configData.enablePKCE) {
-      const codeVerifier: string = this._cryptoHelper?.getCodeVerifier();
-      const codeChallenge: string = this._cryptoHelper?.getCodeChallenge(codeVerifier);
-
-      await this._dataLayer.setTemporaryDataParameter(pkceKey, codeVerifier, userID);
-      authorizeRequestParams.set('code_challenge_method', 'S256');
-      authorizeRequestParams.set('code_challenge', codeChallenge);
-    }
-
-    if (configData.prompt) {
-      authorizeRequestParams.set('prompt', configData.prompt);
-    }
-
-    const customParams: AuthorizeRequestUrlParams | undefined = config;
-
-    if (customParams) {
-      for (const [key, value] of Object.entries(customParams)) {
-        if (key != '' && value != '' && key !== OIDCRequestConstants.Params.STATE) {
-          authorizeRequestParams.set(key, value.toString());
-        }
-      }
-    }
-
-    authorizeRequestParams.set(
-      OIDCRequestConstants.Params.STATE,
-      generateStateParamForRequestCorrelation(
-        pkceKey,
-        customParams ? customParams[OIDCRequestConstants.Params.STATE]?.toString() : '',
-      ),
-    );
-
-    return authorizeRequestParams;
-  }
-
   public async getAuthorizationURL(config?: AuthorizeRequestUrlParams, userID?: string): Promise<string> {
     const authorizeEndpoint: string = (await this._dataLayer.getOIDCProviderMetaDataParameter(
       OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCDiscoveryApiResponse,
@@ -138,8 +76,32 @@ export class AuthenticationCore<T> {
     }
 
     const authorizeRequest: URL = new URL(authorizeEndpoint);
+    const configData: StrictAuthClientConfig = await this._config();
+    const tempStore: TemporaryStore = await this._dataLayer.getTemporaryData(userID);
+    const pkceKey: string = await generatePkceStorageKey(tempStore);
 
-    const authorizeRequestParams: Map<string, string> = await this.getAuthorizationURLParams(config, userID);
+    let codeVerifier: string | undefined;
+    let codeChallenge: string | undefined;
+
+    if (configData.enablePKCE) {
+      codeVerifier = this._cryptoHelper?.getCodeVerifier();
+      codeChallenge = this._cryptoHelper?.getCodeChallenge(codeVerifier);
+      await this._dataLayer.setTemporaryDataParameter(pkceKey, codeVerifier, userID);
+    }
+
+    const authorizeRequestParams: Map<string, string> = getAuthorizeRequestUrlParams(
+      {
+        redirectUri: configData.signInRedirectURL,
+        clientId: configData.clientID,
+        scope: configData.scope as unknown as any,
+        responseMode: configData.responseMode,
+        codeChallengeMethod: PKCEConstants.DEFAULT_CODE_CHALLENGE_METHOD,
+        codeChallenge,
+        prompt: configData.prompt,
+      },
+      {key: pkceKey},
+      config,
+    );
 
     for (const [key, value] of authorizeRequestParams.entries()) {
       authorizeRequest.searchParams.append(key, value);

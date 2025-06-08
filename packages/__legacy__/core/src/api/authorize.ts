@@ -32,7 +32,9 @@ const authorize = async (): Promise<AuthApiResponse> => {
 
   try {
     const authInstace: UIAuthClient = AuthClient.getInstance();
-    const params: Map<string, string> = await authInstace.getAuthorizationURLParams();
+    // FIXME: We should be able to get the URL itself.
+    // const params: Map<string, string> = await authInstace.getAuthorizationURLParams();
+    const params: Map<string, string> = new Map();
 
     const formBody: URLSearchParams = new URLSearchParams();
 
