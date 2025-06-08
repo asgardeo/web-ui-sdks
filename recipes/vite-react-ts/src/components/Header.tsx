@@ -4,7 +4,8 @@ import {useState, useRef, useEffect} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useApp} from '../App';
 import {Users, ChevronDown, Settings, User, LogOut, Plus, Check, Building2} from 'lucide-react';
-import {SignOutButton} from '@asgardeo/react';
+import {SignedOut, SignInButton, SignOutButton} from '@asgardeo/react';
+import {Button} from './ui/button';
 
 export default function Header() {
   const {user, currentOrg, organizations, setCurrentOrg} = useApp();
@@ -64,6 +65,16 @@ export default function Header() {
 
           {/* Right side - Organization switcher and User dropdown */}
           <div className="flex items-center space-x-4">
+            <SignedOut>
+              <SignInButton>
+                {({signIn, isLoading}) => (
+                  <Button onClick={signIn} disabled={isLoading}>
+                    {isLoading ? 'Signing in...' : 'Sign In'}
+                  </Button>
+                )}
+              </SignInButton>
+            </SignedOut>
+
             {/* Organization Switcher */}
             <div className="relative" ref={orgDropdownRef}>
               <button
