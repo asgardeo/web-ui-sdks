@@ -42,7 +42,7 @@ export {
   ExtendedAuthorizeRequestUrlParams,
 } from './models/oauth-request';
 export {OIDCEndpoints} from './models/oidc-endpoints';
-export {Store} from './models/store';
+export {Storage} from './models/store';
 export {User} from './models/user';
 export {Schema, SchemaAttribute, WellKnownSchemaIds} from './models/scim2-schema';
 export {RecursivePartial} from './models/utility-types';

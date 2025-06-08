@@ -28,7 +28,7 @@ import {
   ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   OIDCRequestConstants,
-  Store,
+  Storage,
   extractPkceStorageKeyFromState,
 } from '@asgardeo/javascript';
 import {
@@ -74,18 +74,18 @@ import {
   WebWorkerClientInterface,
 } from '../models';
 import {SPACustomGrantConfig} from '../models/request-custom-grant';
-import {Storage} from '../models/storage';
+import {BrowserStorage} from '../models/storage';
 import {LocalStore, MemoryStore, SessionStore} from '../stores';
 import {SPAUtils} from '../utils';
 import {SPACryptoUtils} from '../utils/crypto-utils';
 
-const initiateStore = (store: Storage | undefined): Store => {
+const initiateStore = (store: BrowserStorage | undefined): Storage => {
   switch (store) {
-    case Storage.LocalStorage:
+    case BrowserStorage.LocalStorage:
       return new LocalStore();
-    case Storage.SessionStorage:
+    case BrowserStorage.SessionStorage:
       return new SessionStore();
-    case Storage.BrowserMemory:
+    case BrowserStorage.BrowserMemory:
       return new MemoryStore();
     default:
       return new SessionStore();
@@ -112,7 +112,7 @@ export const WebWorkerClient = async (
   let _isHttpHandlerEnabled: boolean = true;
   let _getSignOutURLFromSessionStorage: boolean = false;
 
-  const _store: Store = initiateStore(config.storage as Storage);
+  const _store: Storage = initiateStore(config.storage as BrowserStorage);
   const _cryptoUtils: SPACryptoUtils = new SPACryptoUtils();
   const _authenticationClient = new AsgardeoAuthClient<WebWorkerClientConfig>();
   await _authenticationClient.initialize(config, _store, _cryptoUtils, instanceID);
@@ -132,7 +132,7 @@ export const WebWorkerClient = async (
         return SPAUtils.getSignOutURL(config.clientID, instanceID);
       }
     },
-    config.storage as Storage,
+    config.storage as BrowserStorage,
     (sessionState: string) => setSessionState(sessionState),
   );
 

@@ -15,9 +15,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import {Store} from '@asgardeo/javascript';
+import {Storage} from '@asgardeo/javascript';
 
-export class MemoryStore implements Store {
+export class MemoryStore implements Storage {
   private _data: Map<string, string>;
 
   public constructor() {

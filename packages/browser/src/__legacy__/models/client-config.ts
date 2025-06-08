@@ -17,7 +17,7 @@
  */
 
 import {AuthClientConfig} from '@asgardeo/javascript';
-import {Storage} from './storage';
+import {BrowserStorage} from './storage';
 
 export interface SPAConfig {
   /**
@@ -42,9 +42,9 @@ export interface MainThreadClientConfig extends SPAConfig {
    * The storage type to be used for storing the session information.
    */
   storage?:
-    | Storage.SessionStorage
-    | Storage.LocalStorage
-    | Storage.BrowserMemory
+    | BrowserStorage.SessionStorage
+    | BrowserStorage.LocalStorage
+    | BrowserStorage.BrowserMemory
     | 'sessionStorage'
     | 'localStorage'
     | 'browserMemory';
@@ -54,7 +54,7 @@ export interface WebWorkerClientConfig extends SPAConfig {
   /**
    * The storage type to be used for storing the session information.
    */
-  storage: Storage.WebWorker | 'webWorker';
+  storage: BrowserStorage.WebWorker | 'webWorker';
   /**
    * Specifies in seconds how long a request to the web worker should wait before being timed.
    */

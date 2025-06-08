@@ -28,7 +28,7 @@ import {
   OIDCEndpoints,
   OIDCRequestConstants,
   SessionData,
-  Store,
+  Storage,
 } from '@asgardeo/javascript';
 import {AuthenticationHelper, SPAHelper} from '../helpers';
 import {HttpClient, HttpClientInstance} from '../http-client';
@@ -49,7 +49,7 @@ export const WebWorkerCore = async (
     spaHelper: SPAHelper<WebWorkerClientConfig>,
   ) => AuthenticationHelper<WebWorkerClientConfig>,
 ): Promise<WebWorkerCoreInterface> => {
-  const _store: Store = new MemoryStore();
+  const _store: Storage = new MemoryStore();
   const _cryptoUtils: SPACryptoUtils = new SPACryptoUtils();
   const _authenticationClient = new AsgardeoAuthClient<WebWorkerClientConfig>();
   await _authenticationClient.initialize(config, _store, _cryptoUtils);

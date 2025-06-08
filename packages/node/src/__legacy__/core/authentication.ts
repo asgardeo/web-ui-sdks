@@ -28,7 +28,7 @@ import {
   FetchResponse,
   OIDCEndpoints,
   SessionData,
-  Store,
+  Storage,
   TokenResponse,
 } from '@asgardeo/javascript';
 import {AuthURLCallback} from '../models';
@@ -39,10 +39,10 @@ import {NodeCryptoUtils} from '../utils/crypto-utils';
 export class AsgardeoNodeCore<T> {
   private _auth: AsgardeoAuthClient<T>;
   private _cryptoUtils: Crypto;
-  private _store: Store;
+  private _store: Storage;
   private _dataLayer: DataLayer<T>;
 
-  constructor(config: AuthClientConfig<T>, store?: Store) {
+  constructor(config: AuthClientConfig<T>, store?: Storage) {
     //Initialize the default memory cache store if an external store is not passed.
     if (!store) {
       this._store = new MemoryCacheStore();

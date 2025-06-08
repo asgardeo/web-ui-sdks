@@ -24,7 +24,7 @@ import {
   IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
-  Store,
+  Storage,
   TokenResponse,
 } from '@asgardeo/javascript';
 import {AsgardeoNodeCore} from './core';
@@ -43,11 +43,11 @@ export class AsgardeoNodeClient<T> {
     * This is the constructor method that returns an instance of the `AsgardeoNodeClient` class.
     *
     * @param {AuthClientConfig<T>} config - The configuration object.
-    * @param {Store} store - The store object.
+    * @param {Storage} store - The store object.
     *
     * @example
     * ```
-    * const _store: Store = new DataStore();
+    * const _store: Storage = new DataStore();
     * const _config = {
            signInRedirectURL: "http://localhost:3000/sign-in",
            signOutRedirectURL: "http://localhost:3000/dashboard",
@@ -62,7 +62,7 @@ export class AsgardeoNodeClient<T> {
     */
   constructor() {}
 
-  public async initialize(config: AuthClientConfig<T>, store?: Store): Promise<boolean> {
+  public async initialize(config: AuthClientConfig<T>, store?: Storage): Promise<boolean> {
     this._authCore = new AsgardeoNodeCore(config, store);
 
     return Promise.resolve(true);

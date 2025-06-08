@@ -15,9 +15,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import {Store} from '@asgardeo/javascript';
+import {Storage} from '@asgardeo/javascript';
 
-export class SessionStore implements Store {
+export class SessionStore implements Storage {
   public async setData(key: string, value: string): Promise<void> {
     sessionStorage.setItem(key, value);
   }

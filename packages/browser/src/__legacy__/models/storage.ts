@@ -19,21 +19,21 @@
 /**
  * Enum for the different storage types.
  */
-export enum Storage {
+export enum BrowserStorage {
   /**
    * Stores the session information in the local storage
    */
-  LocalStorage = "localStorage",
+  LocalStorage = 'localStorage',
   /**
    * Store the session information in the session storage.
    */
-  SessionStorage = "sessionStorage",
+  SessionStorage = 'sessionStorage',
   /**
    * Store the session information in the web worker.
    */
-  WebWorker = "webWorker",
+  WebWorker = 'webWorker',
   /**
    * Store the session information in the browser memory.
    */
-  BrowserMemory = "browserMemory"
+  BrowserMemory = 'browserMemory',
 }

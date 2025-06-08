@@ -56,7 +56,7 @@ import {
   WebWorkerClientConfig,
 } from '../models';
 import {SPACustomGrantConfig} from '../models/request-custom-grant';
-import {Storage} from '../models/storage';
+import {BrowserStorage} from '../models/storage';
 import {SPAUtils} from '../utils';
 
 export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerClientConfig> {
@@ -456,11 +456,11 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
   ): Promise<BasicUserInfo> {
     const config = await this._dataLayer.getConfigData();
 
-    if (config.storage === Storage.BrowserMemory && config.enablePKCE && sessionState) {
+    if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE && sessionState) {
       const pkce = SPAUtils.getPKCE(extractPkceStorageKeyFromState(sessionState));
 
       await this._authenticationClient.setPKCECode(extractPkceStorageKeyFromState(sessionState), pkce);
-    } else if (config.storage === Storage.WebWorker && pkce) {
+    } else if (config.storage === BrowserStorage.WebWorker && pkce) {
       await this._authenticationClient.setPKCECode(pkce, state ?? '');
     }
 
@@ -472,7 +472,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
           /* if (config.storage === Storage.BrowserMemory) {
                         SPAUtils.setSignOutURL(await _authenticationClient.getSignOutURL());
                     } */
-          if (config.storage !== Storage.WebWorker) {
+          if (config.storage !== BrowserStorage.WebWorker) {
             SPAUtils.setSignOutURL(await this._authenticationClient.getSignOutURL(), config.clientID, this._instanceID);
 
             if (this._spaHelper) {
@@ -601,7 +601,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       });
     }
 
-    if (config.storage !== Storage.WebWorker) {
+    if (config.storage !== BrowserStorage.WebWorker) {
       if (await this._authenticationClient.isAuthenticated()) {
         this._spaHelper.clearRefreshTokenTimeout();
         this._spaHelper.refreshAccessTokenAutomatically(this);
@@ -628,7 +628,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       throw new AsgardeoAuthException('SPA-AUTH_HELPER-SI-SE01', error, errorDescription ?? '');
     }
 
-    if (config.storage === Storage.WebWorker && tryRetrievingUserInfo) {
+    if (config.storage === BrowserStorage.WebWorker && tryRetrievingUserInfo) {
       const basicUserInfo = await tryRetrievingUserInfo();
 
       if (basicUserInfo) {

@@ -17,7 +17,7 @@
  */
 
 import {Stores} from '../../models/store';
-import {Store} from '../../models/store';
+import {Storage} from '../../models/store';
 import {AuthClientConfig, SessionData} from '../models';
 import {TemporaryStore, TemporaryStoreValue} from '../../models/store';
 import {OIDCDiscoveryApiResponse} from '../../models/oidc-discovery';
@@ -28,8 +28,8 @@ export const ASGARDEO_SESSION_ACTIVE: string = 'asgardeo-session-active';
 
 export class DataLayer<T> {
   protected _id: string;
-  protected _store: Store;
-  public constructor(instanceID: string, store: Store) {
+  protected _store: Storage;
+  public constructor(instanceID: string, store: Storage) {
     this._id = instanceID;
     this._store = store;
   }

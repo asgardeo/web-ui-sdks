@@ -30,7 +30,7 @@ import {
   STATE_QUERY,
 } from '../constants';
 import {AuthorizationInfo, Message, SessionManagementHelperInterface} from '../models';
-import {Storage} from '../models/storage';
+import {BrowserStorage} from '../models/storage';
 import {SPAUtils} from '../utils';
 
 export const SessionManagementHelper = (() => {
@@ -43,7 +43,7 @@ export const SessionManagementHelper = (() => {
   let _signOut: () => Promise<string>;
   let _sessionRefreshIntervalTimeout: number;
   let _checkSessionIntervalTimeout: number;
-  let _storage: Storage;
+  let _storage: BrowserStorage;
   let _setSessionState: (sessionState: string) => void;
   let _getAuthorizationURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>;
 
@@ -148,7 +148,7 @@ export const SessionManagementHelper = (() => {
         }
       };
 
-      if (_storage === Storage.BrowserMemory || _storage === Storage.WebWorker) {
+      if (_storage === BrowserStorage.BrowserMemory || _storage === BrowserStorage.WebWorker) {
         window?.addEventListener('message', receiveMessageListener);
       }
 
@@ -203,7 +203,7 @@ export const SessionManagementHelper = (() => {
 
         const newSessionState = new URL(window.location.href).searchParams.get('session_state');
 
-        if (_storage === Storage.LocalStorage || _storage === Storage.SessionStorage) {
+        if (_storage === BrowserStorage.LocalStorage || _storage === BrowserStorage.SessionStorage) {
           setSessionState && (await setSessionState(newSessionState));
         } else {
           const message: Message<string> = {
@@ -257,7 +257,7 @@ export const SessionManagementHelper = (() => {
 
   return async (
     signOut: () => Promise<string>,
-    storage: Storage,
+    storage: BrowserStorage,
     setSessionState: (sessionState: string) => void,
   ): Promise<SessionManagementHelperInterface> => {
     let rpIFrame = document.createElement('iframe');

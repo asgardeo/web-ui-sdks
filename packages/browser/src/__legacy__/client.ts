@@ -45,7 +45,7 @@ import {
   WebWorkerClientConfig,
   WebWorkerClientInterface,
 } from './models';
-import {Storage} from './models/storage';
+import {BrowserStorage} from './models/storage';
 import {SPAUtils} from './utils';
 
 /**
@@ -58,7 +58,7 @@ const DefaultConfig: Partial<AuthClientConfig<Config>> = {
   enableOIDCSessionManagement: false,
   periodicTokenRefresh: false,
   sessionRefreshInterval: 300,
-  storage: Storage.SessionStorage,
+  storage: BrowserStorage.SessionStorage,
 };
 
 /**
@@ -70,7 +70,7 @@ const DefaultConfig: Partial<AuthClientConfig<Config>> = {
 export class AsgardeoSPAClient {
   protected static _instances: Map<number, AsgardeoSPAClient> = new Map<number, AsgardeoSPAClient>();
   protected _client: WebWorkerClientInterface | MainThreadClientInterface | undefined;
-  protected _storage: Storage | undefined;
+  protected _storage: BrowserStorage | undefined;
   protected _authHelper: typeof AuthenticationHelper = AuthenticationHelper;
   protected _worker: new () => Worker = WorkerFile;
   protected _initialized: boolean = false;
@@ -235,7 +235,7 @@ export class AsgardeoSPAClient {
     authHelper?: typeof AuthenticationHelper,
     workerFile?: new () => Worker,
   ): Promise<boolean> {
-    this._storage = (config.storage as Storage) ?? Storage.SessionStorage;
+    this._storage = (config.storage as BrowserStorage) ?? BrowserStorage.SessionStorage;
     this._initialized = false;
     this._startedInitialize = true;
 
@@ -244,7 +244,7 @@ export class AsgardeoSPAClient {
 
     const _config = await this._client?.getConfigData();
 
-    if (!(this._storage === Storage.WebWorker)) {
+    if (!(this._storage === BrowserStorage.WebWorker)) {
       const mainThreadClientConfig = config as AuthClientConfig<MainThreadClientConfig>;
       const defaultConfig = {...DefaultConfig} as Partial<AuthClientConfig<MainThreadClientConfig>>;
       const mergedConfig: AuthClientConfig<MainThreadClientConfig> = {
@@ -710,7 +710,7 @@ export class AsgardeoSPAClient {
    */
   public getHttpClient(): HttpClientInstance {
     if (this._client) {
-      if (this._storage !== Storage.WebWorker) {
+      if (this._storage !== BrowserStorage.WebWorker) {
         const mainThreadClient = this._client as MainThreadClientInterface;
         return mainThreadClient.getHttpClient();
       }
@@ -829,7 +829,7 @@ export class AsgardeoSPAClient {
   public async getAccessToken(): Promise<string> {
     await this._validateMethod();
 
-    if (this._storage && [(Storage.WebWorker, Storage.BrowserMemory)].includes(this._storage)) {
+    if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-GAT-IV01',
@@ -868,7 +868,7 @@ export class AsgardeoSPAClient {
   public async getIDPAccessToken(): Promise<string> {
     await this._validateMethod();
 
-    if (this._storage && [(Storage.WebWorker, Storage.BrowserMemory)].includes(this._storage)) {
+    if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-GIAT-IV01',
@@ -907,7 +907,7 @@ export class AsgardeoSPAClient {
   public async getDataLayer(): Promise<DataLayer<MainThreadClientConfig>> {
     await this._validateMethod();
 
-    if (this._storage && [(Storage.WebWorker, Storage.BrowserMemory)].includes(this._storage)) {
+    if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-GDL-IV01',
@@ -1001,7 +1001,7 @@ export class AsgardeoSPAClient {
   public async isSessionActive(): Promise<boolean | undefined> {
     await this._isInitialized();
 
-    if (this._storage && [(Storage.WebWorker, Storage.BrowserMemory)].includes(this._storage)) {
+    if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-ISA-IV01',
@@ -1158,7 +1158,7 @@ export class AsgardeoSPAClient {
    */
   public async updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void> {
     await this._isInitialized();
-    if (this._storage === Storage.WebWorker) {
+    if (this._storage === BrowserStorage.WebWorker) {
       const client = this._client as WebWorkerClientInterface;
       await client.updateConfig(config as Partial<AuthClientConfig<WebWorkerClientConfig>>);
     } else {

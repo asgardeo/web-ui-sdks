@@ -16,10 +16,10 @@
  * under the License.
  */
 
-import {Store} from '@asgardeo/javascript';
+import {Storage} from '@asgardeo/javascript';
 import cache from 'memory-cache';
 
-export class MemoryCacheStore implements Store {
+export class MemoryCacheStore implements Storage {
   public async setData(key: string, value: string): Promise<void> {
     cache.put(key, value);
   }

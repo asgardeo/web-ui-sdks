@@ -28,7 +28,7 @@ import {
   OIDCEndpoints,
   OIDCRequestConstants,
   SessionData,
-  Store,
+  Storage,
   extractPkceStorageKeyFromState,
 } from '@asgardeo/javascript';
 import {SILENT_SIGN_IN_STATE, TOKEN_REQUEST_CONFIG_KEY} from '../constants';
@@ -36,18 +36,18 @@ import {AuthenticationHelper, SPAHelper, SessionManagementHelper} from '../helpe
 import {HttpClient, HttpClientInstance} from '../http-client';
 import {HttpError, HttpRequestConfig, HttpResponse, MainThreadClientConfig, MainThreadClientInterface} from '../models';
 import {SPACustomGrantConfig} from '../models/request-custom-grant';
-import {Storage} from '../models/storage';
+import {BrowserStorage} from '../models/storage';
 import {LocalStore, MemoryStore, SessionStore} from '../stores';
 import {SPAUtils} from '../utils';
 import {SPACryptoUtils} from '../utils/crypto-utils';
 
-const initiateStore = (store: Storage | undefined): Store => {
+const initiateStore = (store: BrowserStorage | undefined): Storage => {
   switch (store) {
-    case Storage.LocalStorage:
+    case BrowserStorage.LocalStorage:
       return new LocalStore();
-    case Storage.SessionStorage:
+    case BrowserStorage.SessionStorage:
       return new SessionStore();
-    case Storage.BrowserMemory:
+    case BrowserStorage.BrowserMemory:
       return new MemoryStore();
     default:
       return new SessionStore();
@@ -62,7 +62,7 @@ export const MainThreadClient = async (
     spaHelper: SPAHelper<MainThreadClientConfig>,
   ) => AuthenticationHelper<MainThreadClientConfig>,
 ): Promise<MainThreadClientInterface> => {
-  const _store: Store = initiateStore(config.storage as Storage);
+  const _store: Storage = initiateStore(config.storage as BrowserStorage);
   const _cryptoUtils: SPACryptoUtils = new SPACryptoUtils();
   const _authenticationClient = new AsgardeoAuthClient<MainThreadClientConfig>();
   await _authenticationClient.initialize(config, _store, _cryptoUtils, instanceID);
@@ -73,7 +73,7 @@ export const MainThreadClient = async (
     async () => {
       return _authenticationClient.getSignOutURL();
     },
-    (config.storage as Storage) ?? Storage.SessionStorage,
+    (config.storage as BrowserStorage) ?? BrowserStorage.SessionStorage,
     (sessionState: string) =>
       _dataLayer.setSessionDataParameter(
         OIDCRequestConstants.Params.SESSION_STATE as keyof SessionData,
@@ -228,7 +228,7 @@ export const MainThreadClient = async (
       }
 
       return _authenticationClient.getAuthorizationURL(signInConfig).then(async (url: string) => {
-        if (config.storage === Storage.BrowserMemory && config.enablePKCE) {
+        if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE) {
           const pkceKey: string = extractPkceStorageKeyFromState(resolvedState);
 
           SPAUtils.setPKCE(pkceKey, (await _authenticationClient.getPKCECode(resolvedState)) as string);
@@ -337,7 +337,7 @@ export const MainThreadClient = async (
     urlObject.searchParams.set('response_mode', 'query');
     const url: string = urlObject.toString();
 
-    if (config.storage === Storage.BrowserMemory && config.enablePKCE) {
+    if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE) {
       const state = urlObject.searchParams.get(OIDCRequestConstants.Params.STATE);
 
       SPAUtils.setPKCE(

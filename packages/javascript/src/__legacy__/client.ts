@@ -23,7 +23,7 @@ import {ExtendedAuthorizeRequestUrlParams} from '../models/oauth-request';
 import {Crypto} from '../models/crypto';
 import {TokenResponse, IdTokenPayload} from '../models/token';
 import {OIDCEndpoints} from '../models/oidc-endpoints';
-import {Store} from '../models/store';
+import {Storage} from '../models/store';
 import ScopeConstants from '../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../constants/OIDCDiscoveryConstants';
 import OIDCRequestConstants from '../constants/OIDCRequestConstants';
@@ -90,7 +90,7 @@ export class AsgardeoAuthClient<T> {
    */
   public async initialize(
     config: AuthClientConfig<T>,
-    store: Store,
+    store: Storage,
     cryptoUtils: Crypto,
     instanceID?: number,
   ): Promise<void> {
