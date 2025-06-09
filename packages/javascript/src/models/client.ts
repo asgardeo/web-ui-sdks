@@ -16,13 +16,19 @@
  * under the License.
  */
 
-import {User} from './user';
+import { CustomGrantConfig } from '../__legacy__/models/custom-grant';
+import StorageManager from '../StorageManager';
+import {Crypto} from './crypto';
+import {ExtendedAuthorizeRequestUrlParams} from './oauth-request';
+import {OIDCEndpoints} from './oidc-endpoints';
+import {IdTokenPayload, TokenResponse} from './token';
+import {User, UserInfoResolvingStrategy} from './user';
 
 export type SignInOptions = Record<string, unknown>;
 export type SignOutOptions = Record<string, unknown>;
 
 /**
- * Interface defining the core functionality for Asgardeo authentication clients.
+ * Interface defining the core functionality for Asgardeo clients.
  *
  * @example
  * ```typescript
@@ -33,19 +39,83 @@ export type SignOutOptions = Record<string, unknown>;
  */
 export interface AsgardeoClient<T> {
   /**
-   * Gets user information from the session.
+   * Initializes the Asgardeo client with provided configuration.
    *
-   * @returns User object containing user details.
-   */
-  getUser(): Promise<User>;
-
-  /**
-   * Initializes the authentication client with provided configuration.
-   *
-   * @param config - SDK Client instance configuration options.
+   * @param config - SDK instance configuration options.
+   * @param storage - Storage interface for managing session data.
+   * @param crypto - Crypto interface for handling cryptographic operations.
+   * @param instanceId - Unique identifier for the client instance.
    * @returns Promise resolving to boolean indicating success.
    */
-  initialize(config: T): Promise<boolean>;
+  initialize(config: T, storage: Storage, crypto: Crypto, instanceId: number): Promise<boolean>;
+
+  /**
+   * Gets user information based on the specified strategy.
+   * The strategy can be 'SCIM' | 'ID_TOKEN' | 'USER_INFO'.
+   *   - 'SCIM' will fetch user information from the SCIM endpoint.
+   *   - 'ID_TOKEN' will extract user information from the ID token.
+   *   - 'USER_INFO' will fetch user information from the UserInfo endpoint.
+   * If a userId is provided, it will fetch the user information for that specific user in multi-user scenarios.
+   * @param strategy - The strategy to use for fetching user information.
+   * @param userId - Optional user ID to fetch specific user information.
+   *                If not provided, it will fetch the currently signed-in user.
+   * @returns Promise resolving to a User object containing user details.
+   */
+  getUser(strategy: UserInfoResolvingStrategy, userId?: string): Promise<User>;
+
+  /**
+   * Gets the storage manager instance.
+   * @returns StorageManager instance for managing session data.
+   */
+  getStorageManager(): StorageManager<T>;
+
+  /**
+   * Gets the client instance Id.
+   * This is useful for identifying different instances of the client, especially in scenarios where multiple clients are used.
+   * @return Unique identifier for the client instance.
+   */
+  getInstanceId(): number;
+
+  getSignInUrl(requestConfig: ExtendedAuthorizeRequestUrlParams, userId: string): Promise<string>;
+
+  getSignOutUrl(userId: string): Promise<string>;
+
+  loadOpenIDProviderConfiguration(force: boolean): Promise<void>;
+
+  getOpenIDProviderEndpoints(): Promise<Partial<OIDCEndpoints>>;
+
+  requestAccessToken(
+    authorizationCode: string,
+    sessionState: string,
+    state: string,
+    userId?: string,
+    requestConfig?: {
+      params: Record<string, unknown>;
+    },
+  ): Promise<TokenResponse>;
+
+  getIdToken(userId: string, raw: boolean): Promise<string>;
+
+  getCrypto(): Crypto;
+
+  // TODO: Properly define the return type for revokeAccessToken.
+  revokeAccessToken(userId?: string): Promise<any>;
+
+  refreshAccessToken(userId?: string): Promise<TokenResponse>;
+
+  getAccessToken(userId?: string): Promise<string>;
+
+  exchangeToken(requestConfig: CustomGrantConfig, userId?: string): Promise<TokenResponse>;
+  
+  getPKCECode(state: string, userId?: string): Promise<string>;
+  
+  setPKCECode(code: string, state: string, userId?: string): Promise<void>;
+  
+  isSignOutSuccessful(afterSignOutUrl: string): boolean;
+  
+  reInitialize(config: T): Promise<void>;
+  
+  clearSession(userId?: string): Promise<void>;
 
   /**
    * Checks if the client is currently loading.
@@ -61,7 +131,7 @@ export interface AsgardeoClient<T> {
    *
    * @returns Boolean indicating sign-in status.
    */
-  isSignedIn(): Promise<boolean>;
+  isSignedIn(userId?: string): Promise<boolean>;
 
   /**
    * Initiates the sign-in process for the user.

@@ -115,3 +115,5 @@ export interface User {
 }
 
 export default User;
+
+export type UserInfoResolvingStrategy = 'SCIM' | 'ID_TOKEN' | 'USER_INFO';
