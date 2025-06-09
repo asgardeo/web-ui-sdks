@@ -21,6 +21,7 @@ export * from './__legacy__/models';
 
 export * from './IsomorphicCrypto';
 
+export {default as authorize} from './api/authorize';
 export {default as getUserInfo} from './api/getUserInfo';
 
 export {default as TokenConstants} from './constants/TokenConstants';
