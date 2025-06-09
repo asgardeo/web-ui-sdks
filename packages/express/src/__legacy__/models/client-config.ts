@@ -16,21 +16,21 @@
  * under the License.
  */
 
-import { AuthClientConfig } from '@asgardeo/node';
+import {AuthClientConfig} from '@asgardeo/node';
 
 export interface StrictExpressClientConfig {
-    appURL: string,
-    cookieConfig?: {
-        maxAge?: number,
-        httpOnly?: boolean,
-        sameSite?: string;
-        secure?: boolean;
-    },
-    globalAuth?: boolean,
-    loginPath?: string,
-    logoutPath?: string;
-    signInConfig?: Record<string, string | boolean>;
+  appURL: string;
+  cookieConfig?: {
+    maxAge?: number;
+    httpOnly?: boolean;
+    sameSite?: string;
+    secure?: boolean;
+  };
+  globalAuth?: boolean;
+  loginPath?: string;
+  logoutPath?: string;
+  signInConfig?: Record<string, string | boolean>;
 }
 
-export type ExpressClientConfig = Exclude<AuthClientConfig, "signInRedirectURL" | "signOutRedirectURL"> &
-    StrictExpressClientConfig;
+export type ExpressClientConfig = Exclude<AuthClientConfig, 'afterSignInUrl' | 'signOutRedirectURL'> &
+  StrictExpressClientConfig;

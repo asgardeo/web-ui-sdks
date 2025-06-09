@@ -17,14 +17,14 @@
  */
 
 import {
-  AsgardeoNodeClient,
+  LegacyAsgardeoNodeClient,
   AuthClientConfig,
   AuthURLCallback,
   TokenResponse,
   Storage,
   BasicUserInfo,
   OIDCEndpoints,
-  DecodedIDTokenPayload,
+  IdTokenPayload,
   CustomGrantConfig,
   FetchResponse,
   AsgardeoAuthException,
@@ -38,7 +38,7 @@ import {asgardeoExpressAuth, protectRoute} from './middleware';
 import {ExpressUtils} from './utils/express-utils';
 
 export class AsgardeoExpressClient {
-  private _authClient: AsgardeoNodeClient<AuthClientConfig>;
+  private _authClient: LegacyAsgardeoNodeClient<AuthClientConfig>;
   private _storage?: Storage;
   private static _clientConfig: ExpressClientConfig;
 
@@ -48,11 +48,11 @@ export class AsgardeoExpressClient {
     //Set the client config
     AsgardeoExpressClient._clientConfig = {...config};
 
-    //Add the signInRedirectURL and signOutRedirectURL
+    //Add the afterSignInUrl and signOutRedirectURL
     //Add custom paths if the user has already declared any or else use the defaults
     const nodeClientConfig: AuthClientConfig = {
       ...config,
-      signInRedirectURL: config.appURL + (config.loginPath || DEFAULT_LOGIN_PATH),
+      afterSignInUrl: config.appURL + (config.loginPath || DEFAULT_LOGIN_PATH),
       signOutRedirectURL: config.appURL + (config.logoutPath || DEFAULT_LOGOUT_PATH),
     };
 
@@ -63,7 +63,8 @@ export class AsgardeoExpressClient {
     }
 
     //Initialize the Auth Client
-    this._authClient = new AsgardeoNodeClient(nodeClientConfig, this._storage);
+    this._authClient = new LegacyAsgardeoNodeClient();
+    this._authClient.initialize(nodeClientConfig, this._storage);
   }
 
   public static getInstance(config: ExpressClientConfig, storage?: Storage): AsgardeoExpressClient;
@@ -173,7 +174,7 @@ export class AsgardeoExpressClient {
     return this._authClient.getOIDCServiceEndpoints();
   }
 
-  public async getDecodedIDToken(userId?: string): Promise<DecodedIDTokenPayload> {
+  public async getDecodedIDToken(userId?: string): Promise<IdTokenPayload> {
     return this._authClient.getDecodedIDToken(userId);
   }
 
@@ -194,11 +195,11 @@ export class AsgardeoExpressClient {
   }
 
   public static didSignOutFail(signOutRedirectURL: string): boolean {
-    return AsgardeoNodeClient.didSignOutFail(signOutRedirectURL);
+    return LegacyAsgardeoNodeClient.didSignOutFail(signOutRedirectURL);
   }
 
   public static isSignOutSuccessful(signOutRedirectURL: string): boolean {
-    return AsgardeoNodeClient.isSignOutSuccessful(signOutRedirectURL);
+    return LegacyAsgardeoNodeClient.isSignOutSuccessful(signOutRedirectURL);
   }
 
   public static protectRoute(

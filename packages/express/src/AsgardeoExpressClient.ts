@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoNodeClient, SignOutOptions} from '@asgardeo/node';
+import {LegacyAsgardeoNodeClient, SignOutOptions} from '@asgardeo/node';
 import {AsgardeoExpressConfig} from './models/config';
 
 /**
@@ -25,6 +25,6 @@ import {AsgardeoExpressConfig} from './models/config';
  *
  * @typeParam T - Configuration type that extends AsgardeoExpressConfig.
  */
-abstract class AsgardeoExpressClient<T = AsgardeoExpressConfig> extends AsgardeoNodeClient<T> {}
+abstract class AsgardeoExpressClient<T = AsgardeoExpressConfig> extends LegacyAsgardeoNodeClient<T> {}
 
 export default AsgardeoExpressClient;
