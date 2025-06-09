@@ -35,7 +35,7 @@ export interface CommonBaseSignInButtonProps {
   /**
    * Function to initiate the sign-in process
    */
-  signIn?: () => Promise<void>;
+  signIn: () => Promise<void>;
   /**
    * Loading state during sign-in process
    */
@@ -51,7 +51,7 @@ export type BaseSignInButtonRenderProps = CommonBaseSignInButtonProps;
  * Props interface of {@link BaseSignInButton}
  */
 export interface BaseSignInButtonProps
-  extends CommonBaseSignInButtonProps,
+  extends Partial<CommonBaseSignInButtonProps>,
     Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /**
    * Render prop function that receives sign-in props, or traditional ReactNode children
@@ -65,7 +65,7 @@ export interface BaseSignInButtonProps
  * @example Using render props
  * ```tsx
  * <BaseSignInButton>
- *   {({ signIn, isLoading }) => (
+ *   {({signIn, isLoading}) => (
  *     <button onClick={signIn} disabled={isLoading}>
  *       {isLoading ? 'Signing in...' : 'Sign In'}
  *     </button>

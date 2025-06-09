@@ -31,7 +31,7 @@ export type SignOutButtonProps = BaseSignOutButtonProps;
  * @example Using render props pattern
  * ```tsx
  * <SignOutButton>
- *   {({ signOut, isLoading }) => (
+ *   {({signOut, isLoading}) => (
  *     <button onClick={signOut} disabled={isLoading}>
  *       {isLoading ? 'Signing out...' : 'Sign Out'}
  *     </button>

@@ -33,8 +33,8 @@ export type SignInButtonProps = BaseSignInButtonProps;
  * @example Using render props
  * ```tsx
  * <SignInButton>
- *   {({ handleSignIn, isLoading }) => (
- *     <button onClick={handleSignIn} disabled={isLoading}>
+ *   {({signIn, isLoading}) => (
+ *     <button onClick={signIn} disabled={isLoading}>
  *       {isLoading ? 'Signing in...' : 'Sign In'}
  *     </button>
  *   )}

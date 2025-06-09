@@ -35,7 +35,7 @@ export interface CommonBaseSignOutButtonProps {
   /**
    * Function to initiate the sign-out process
    */
-  signOut?: () => Promise<void>;
+  signOut: () => Promise<void>;
   /**
    * Loading state during sign-out process
    */
@@ -51,7 +51,7 @@ export type BaseSignOutButtonRenderProps = CommonBaseSignOutButtonProps;
  * Props interface of {@link BaseSignOutButton}
  */
 export interface BaseSignOutButtonProps
-  extends CommonBaseSignOutButtonProps,
+  extends Partial<CommonBaseSignOutButtonProps>,
     Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /**
    * Render prop function that receives sign-out props, or traditional ReactNode children
@@ -65,7 +65,7 @@ export interface BaseSignOutButtonProps
  * @example Using render props
  * ```tsx
  * <BaseSignOutButton>
- *   {({ signOut, isLoading }) => (
+ *   {({signOut, isLoading}) => (
  *     <button onClick={signOut} disabled={isLoading}>
  *       {isLoading ? 'Signing out...' : 'Sign Out'}
  *     </button>
