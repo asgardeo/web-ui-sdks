@@ -50,7 +50,7 @@ export interface MainThreadClientInterface {
     config?: SignInConfig,
     authorizationCode?: string,
     sessionState?: string,
-    signInRedirectURL?: string,
+    afterSignInUrl?: string,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
@@ -87,7 +87,7 @@ export interface WebWorkerClientInterface {
     params?: SignInConfig,
     authorizationCode?: string,
     sessionState?: string,
-    signInRedirectURL?: string,
+    afterSignInUrl?: string,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },

@@ -49,7 +49,7 @@ export interface ModuleOptions {
    * Must match the URI configured in your Asgardeo app.
    * @default process.env.ASGARDEO_SIGN_IN_REDIRECT_URL
    */
-  signInRedirectURL: string;
+  afterSignInUrl: string;
   /**
    * The absolute URI to redirect to after sign-out completes.
    * @default process.env.ASGARDEO_SIGN_OUT_REDIRECT_URL

@@ -60,7 +60,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       baseUrl,
       clientId: clientId,
       clientSecret,
-      signInRedirectURL: afterSignInUrl,
+      afterSignInUrl: afterSignInUrl,
     } as any);
   }
 

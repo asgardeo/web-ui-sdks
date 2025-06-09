@@ -116,7 +116,7 @@ export const asgardeoPlugin: Plugin = {
 
             if (
               (SPAUtils.hasAuthSearchParamsInURL() &&
-                new URL(url.origin + url.pathname).toString() === new URL(config?.signInRedirectURL).toString()) ||
+                new URL(url.origin + url.pathname).toString() === new URL(config?.afterSignInUrl).toString()) ||
               authParams?.authorizationCode ||
               url.searchParams.get('error')
             ) {

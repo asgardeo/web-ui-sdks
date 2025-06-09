@@ -73,7 +73,7 @@ describe('asgardeoPlugin', () => {
         clientId: 'mock-client-id',
         disableAutoSignIn: true,
         disableTrySignInSilently: true,
-        signInRedirectURL: 'http://localhost:5173/',
+        afterSignInUrl: 'http://localhost:5173/',
         signOutRedirectURL: 'http://localhost:5173/',
       }),
     );

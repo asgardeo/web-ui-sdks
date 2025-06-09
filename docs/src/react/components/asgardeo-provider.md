@@ -38,7 +38,7 @@ import { AsgardeoProvider } from "@asgardeo/react";
 
   - `baseURL`: The base URL of asgardeo.
 
-  - `signInRedirectURL`: The URL where users should be redirected after they sign in. This should be a page in your application.
+  - `afterSignInUrl`: The URL where users should be redirected after they sign in. This should be a page in your application.
 
   - `clientId`: The ID of your application. You get this when you register your application with Asgardeo.
 

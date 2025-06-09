@@ -124,10 +124,10 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
       /**
        * Send the 'code' and 'state' to the parent window and close the current window (popup)
        */
-      window.opener.postMessage({code, state}, config.signInRedirectURL);
+      window.opener.postMessage({code, state}, config.afterSignInUrl);
       window.close();
     }
-  }, [config.signInRedirectURL, setAuthentication]);
+  }, [config.afterSignInUrl, setAuthentication]);
 
   const value: AuthContext = useMemo(
     () => ({

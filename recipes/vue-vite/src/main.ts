@@ -29,7 +29,7 @@ const config: AuthVueConfig = {
   baseUrl: import.meta.env.VITE_ASGARDEO_BASE_URL,
   clientId: import.meta.env.VITE_ASGARDEO_CLIENT_ID,
   scope: ['openid', 'profile', 'email'],
-  signInRedirectURL: import.meta.env.VITE_ASGARDEO_SIGN_IN_REDIRECT_URL,
+  afterSignInUrl: import.meta.env.VITE_ASGARDEO_SIGN_IN_REDIRECT_URL,
   signOutRedirectURL: import.meta.env.VITE_ASGARDEO_SIGN_OUT_REDIRECT_URL,
 }
 

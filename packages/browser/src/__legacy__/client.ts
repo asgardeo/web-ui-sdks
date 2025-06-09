@@ -217,7 +217,7 @@ export class AsgardeoSPAClient {
    * @example
    * ```
    * auth.initialize({
-   *     signInRedirectURL: "http://localhost:3000/sign-in",
+   *     afterSignInUrl: "http://localhost:3000/sign-in",
    *     clientId: "client ID",
    *     baseUrl: "https://api.asgardeo.io"
    * });
@@ -1144,7 +1144,7 @@ export class AsgardeoSPAClient {
    * @example
    * ```
    * const config = {
-   *     signInRedirectURL: "http://localhost:3000/sign-in",
+   *     afterSignInUrl: "http://localhost:3000/sign-in",
    *     clientId: "client ID",
    *     baseUrl: "https://api.asgardeo.io"
    * }

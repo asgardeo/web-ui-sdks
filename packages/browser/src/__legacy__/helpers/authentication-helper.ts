@@ -95,7 +95,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       getSessionState,
       config.checkSessionInterval ?? 3,
       config.sessionRefreshInterval ?? 300,
-      config.signInRedirectURL,
+      config.afterSignInUrl,
       getAuthzURL,
     );
   }

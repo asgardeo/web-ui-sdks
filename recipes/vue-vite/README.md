@@ -32,7 +32,7 @@ const app = createApp(App);
 
 app.use(router);
 app.use(asgardeoPlugin, {
-  signInRedirectURL: "http://localhost:5173/",
+  afterSignInUrl: "http://localhost:5173/",
   signOutRedirectURL: "http://localhost:5173/",
   clientId: "<ADD_CLIENT_ID_HERE>",
   baseUrl: "https://api.asgardeo.io/t/<org_name>",
@@ -63,7 +63,7 @@ By default, the Vite development server runs on port `5173`. In case you wish to
    })
    ```
 
-2. Update the `signInRedirectURL` & `signOutRedirectURL` in `main.ts` to match your new port.
+2. Update the `afterSignInUrl` & `signOutRedirectURL` in `main.ts` to match your new port.
 
 3. Go to the Asgardeo Console and navigate to the protocol tab of your application:
    - Update the Authorized Redirect URL.

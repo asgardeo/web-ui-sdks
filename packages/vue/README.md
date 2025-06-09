@@ -32,7 +32,7 @@ import { AsgardeoAuth } from '@asgardeo/vue'
 const app = createApp(App)
 
 app.use(AsgardeoAuth, {
-  signInRedirectURL: "http://localhost:3000",
+  afterSignInUrl: "http://localhost:3000",
   signOutRedirectURL: "http://localhost:3000",
   clientId: "<your-client-id>",
   baseUrl: "https://api.asgardeo.io/t/<org-name>",

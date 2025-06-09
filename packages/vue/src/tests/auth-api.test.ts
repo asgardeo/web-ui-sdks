@@ -71,7 +71,7 @@ describe('AuthAPI', () => {
       const config: AuthVueConfig = {
         baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
         clientId: 'mock-client-id',
-        signInRedirectURL: 'http://localhost:5173/',
+        afterSignInUrl: 'http://localhost:5173/',
         signOutRedirectURL: 'http://localhost:5173/',
       };
 

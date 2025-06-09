@@ -159,7 +159,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
           /**
            * Check the origin of the message to ensure it's from the popup window
            */
-          if (event.origin !== config.signInRedirectURL) return;
+          if (event.origin !== config.afterSignInUrl) return;
 
           const {code, state} = event.data;
 

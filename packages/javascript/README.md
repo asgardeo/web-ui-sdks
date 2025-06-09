@@ -28,7 +28,7 @@ import { AsgardeoAuth } from "@asgardeo/javascript";
 
 // Initialize the auth instance
 const auth = new AsgardeoAuth({
-    signInRedirectURL: "https://localhost:3000",
+    afterSignInUrl: "https://localhost:3000",
     clientId: "<your_client_id>",
     baseUrl: "https://api.asgardeo.io/t/<org_name>"
 });

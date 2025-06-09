@@ -20,7 +20,7 @@ import {OAuthResponseMode} from '../../models/oauth-response';
 import {OIDCEndpoints} from '../../models/oidc-endpoints';
 
 export interface DefaultAuthClientConfig {
-  signInRedirectURL: string;
+  afterSignInUrl: string;
   signOutRedirectURL?: string;
   clientHost?: string;
   clientId: string;

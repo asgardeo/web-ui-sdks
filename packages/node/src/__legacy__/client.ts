@@ -49,7 +49,7 @@ export class AsgardeoNodeClient<T> {
     * ```
     * const _store: Storage = new DataStore();
     * const _config = {
-           signInRedirectURL: "http://localhost:3000/sign-in",
+           afterSignInUrl: "http://localhost:3000/sign-in",
            signOutRedirectURL: "http://localhost:3000/dashboard",
            clientId: "client ID",
            serverOrigin: "https://api.asgardeo.io/t/<org_name>"

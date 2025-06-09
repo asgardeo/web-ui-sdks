@@ -102,7 +102,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @example
    * const config = \{
-   *     signInRedirectURL: "http://localhost:3000/sign-in",
+   *     afterSignInUrl: "http://localhost:3000/sign-in",
    *     clientId: "client ID",
    *     baseUrl: "https://localhost:9443"
    * \}
@@ -249,7 +249,7 @@ export class AsgardeoAuthClient<T> {
 
       const authorizeRequestParams: Map<string, string> = getAuthorizeRequestUrlParams(
         {
-          redirectUri: configData.signInRedirectURL,
+          redirectUri: configData.afterSignInUrl,
           clientId: configData.clientId,
           scope: configData.scope as unknown as any,
           responseMode: configData.responseMode,
@@ -348,7 +348,7 @@ export class AsgardeoAuthClient<T> {
       body.set('code', code);
 
       body.set('grant_type', 'authorization_code');
-      body.set('redirect_uri', configData.signInRedirectURL);
+      body.set('redirect_uri', configData.afterSignInUrl);
 
       if (tokenRequestConfig?.params) {
         Object.entries(tokenRequestConfig.params).forEach(([key, value]: [key: string, value: unknown]) => {
@@ -510,7 +510,7 @@ export class AsgardeoAuthClient<T> {
       );
     }
 
-    const callbackURL: string = configData?.signOutRedirectURL ?? configData?.signInRedirectURL;
+    const callbackURL: string = configData?.signOutRedirectURL ?? configData?.afterSignInUrl;
 
     if (!callbackURL || callbackURL.trim().length === 0) {
       throw new AsgardeoAuthException(
@@ -1118,7 +1118,7 @@ export class AsgardeoAuthClient<T> {
    * @example
    * ```
    * const config = {
-   *     signInRedirectURL: "http://localhost:3000/sign-in",
+   *     afterSignInUrl: "http://localhost:3000/sign-in",
    *     clientId: "client ID",
    *     baseUrl: "https://localhost:9443"
    * }

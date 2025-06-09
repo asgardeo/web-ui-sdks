@@ -32,7 +32,7 @@ export default defineNuxtModule<ModuleOptions>({
     clientId: process.env.ASGARDEO_CLIENT_ID || '',
     clientSecret: process.env.ASGARDEO_CLIENT_SECRET || '',
     scope: ['openid', 'profile'],
-    signInRedirectURL: process.env.ASGARDEO_SIGN_IN_REDIRECT_URL || '',
+    afterSignInUrl: process.env.ASGARDEO_SIGN_IN_REDIRECT_URL || '',
     signOutRedirectURL: process.env.ASGARDEO_SIGN_OUT_REDIRECT_URL || '',
   },
   meta: {
@@ -50,7 +50,7 @@ export default defineNuxtModule<ModuleOptions>({
         enablePKCE: true,
         scope: ['openid', 'profile'],
         serverOrigin: process.env.ASGARDEO_BASE_URL,
-        signInRedirectURL: process.env.ASGARDEO_SIGN_IN_REDIRECT_URL || '',
+        afterSignInUrl: process.env.ASGARDEO_SIGN_IN_REDIRECT_URL || '',
         signOutRedirectURL: process.env.ASGARDEO_SIGN_OUT_REDIRECT_URL || '',
       },
     ) as ModuleOptions;
@@ -66,7 +66,7 @@ export default defineNuxtModule<ModuleOptions>({
       clientSecret: options.clientSecret,
       scope: options.scope,
       serverOrigin: options.baseUrl,
-      signInRedirectURL: options.signInRedirectURL,
+      afterSignInUrl: options.afterSignInUrl,
       signOutRedirectURL: options.signOutRedirectURL,
     });
 
@@ -102,7 +102,7 @@ export default defineNuxtModule<ModuleOptions>({
 
 declare module '@nuxt/schema' {
   interface PublicRuntimeConfig {
-    asgardeoAuth: Pick<ModuleOptions, 'clientId' | 'baseUrl' | 'signInRedirectURL' | 'signOutRedirectURL' | 'scope'>;
+    asgardeoAuth: Pick<ModuleOptions, 'clientId' | 'baseUrl' | 'afterSignInUrl' | 'signOutRedirectURL' | 'scope'>;
   }
 
   interface RuntimeConfig {
