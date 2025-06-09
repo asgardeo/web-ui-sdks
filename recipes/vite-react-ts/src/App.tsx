@@ -96,9 +96,8 @@ function App() {
           <Header />
           <main>
             <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/signin" element={<SignInPage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/" element={<DashboardPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/organizations" element={<OrganizationsPage />} />
               <Route path="/organizations/new" element={<CreateOrganizationPage />} />
