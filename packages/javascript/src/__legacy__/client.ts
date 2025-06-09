@@ -17,7 +17,7 @@
  */
 
 import {AuthenticationCore} from './core';
-import {DataLayer} from './data';
+import StorageManager from '../StorageManager';
 import {AuthClientConfig, BasicUserInfo, CustomGrantConfig, FetchResponse} from './models';
 import {ExtendedAuthorizeRequestUrlParams} from '../models/oauth-request';
 import {Crypto} from '../models/crypto';
@@ -46,7 +46,7 @@ const DefaultConfig: Partial<AuthClientConfig<unknown>> = {
  * This class provides the necessary methods needed to implement authentication.
  */
 export class AsgardeoAuthClient<T> {
-  private _dataLayer!: DataLayer<T>;
+  private _storageManager!: StorageManager<T>;
   private _authenticationCore!: AuthenticationCore<T>;
 
   private static _instanceID: number;
@@ -107,15 +107,15 @@ export class AsgardeoAuthClient<T> {
     }
 
     if (!clientId) {
-      this._dataLayer = new DataLayer<T>(`instance_${AsgardeoAuthClient._instanceID}`, store);
+      this._storageManager = new StorageManager<T>(`instance_${AsgardeoAuthClient._instanceID}`, store);
     } else {
-      this._dataLayer = new DataLayer<T>(`instance_${AsgardeoAuthClient._instanceID}-${clientId}`, store);
+      this._storageManager = new StorageManager<T>(`instance_${AsgardeoAuthClient._instanceID}-${clientId}`, store);
     }
 
-    this._authenticationCore = new AuthenticationCore(this._dataLayer, cryptoUtils);
-    AsgardeoAuthClient._authenticationCore = new AuthenticationCore(this._dataLayer, cryptoUtils);
+    this._authenticationCore = new AuthenticationCore(this._storageManager, cryptoUtils);
+    AsgardeoAuthClient._authenticationCore = new AuthenticationCore(this._storageManager, cryptoUtils);
 
-    await this._dataLayer.setConfigData({
+    await this._storageManager.setConfigData({
       ...DefaultConfig,
       ...config,
       scope: [
@@ -126,9 +126,9 @@ export class AsgardeoAuthClient<T> {
   }
 
   /**
-   * This method returns the `DataLayer` object that allows you to access authentication data.
+   * This method returns the `StorageManager` object that allows you to access authentication data.
    *
-   * @returns - The `DataLayer` object.
+   * @returns - The `StorageManager` object.
    *
    * @example
    * ```
@@ -139,8 +139,8 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public getDataLayer(): DataLayer<T> {
-    return this._dataLayer;
+  public getDataLayer(): StorageManager<T> {
+    return this._storageManager;
   }
 
   /**
@@ -188,7 +188,7 @@ export class AsgardeoAuthClient<T> {
     delete authRequestConfig?.forceInit;
 
     if (
-      await this._dataLayer.getTemporaryDataParameter(
+      await this._storageManager.getTemporaryDataParameter(
         OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {
@@ -235,7 +235,7 @@ export class AsgardeoAuthClient<T> {
     },
   ): Promise<TokenResponse> {
     if (
-      await this._dataLayer.getTemporaryDataParameter(
+      await this._storageManager.getTemporaryDataParameter(
         OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       )
     ) {

@@ -23,7 +23,7 @@ import {
   BasicUserInfo,
   Crypto,
   CustomGrantConfig,
-  DataLayer,
+  StorageManager,
   IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
@@ -40,7 +40,7 @@ export class AsgardeoNodeCore<T> {
   private _auth: AsgardeoAuthClient<T>;
   private _cryptoUtils: Crypto;
   private _store: Storage;
-  private _dataLayer: DataLayer<T>;
+  private _storageManager: StorageManager<T>;
 
   constructor(config: AuthClientConfig<T>, store?: Storage) {
     //Initialize the default memory cache store if an external store is not passed.
@@ -52,7 +52,7 @@ export class AsgardeoNodeCore<T> {
     this._cryptoUtils = new NodeCryptoUtils();
     this._auth = new AsgardeoAuthClient();
     this._auth.initialize(config, this._store, this._cryptoUtils);
-    this._dataLayer = this._auth.getDataLayer();
+    this._storageManager = this._auth.getDataLayer();
     Logger.debug('Initialized AsgardeoAuthClient successfully');
   }
 
@@ -75,7 +75,7 @@ export class AsgardeoNodeCore<T> {
     }
 
     if (await this.isAuthenticated(userID)) {
-      const sessionData: SessionData = await this._dataLayer.getSessionData(userID);
+      const sessionData: SessionData = await this._storageManager.getSessionData(userID);
 
       return Promise.resolve({
         accessToken: sessionData.access_token,
@@ -178,7 +178,7 @@ export class AsgardeoNodeCore<T> {
         return Promise.resolve(false);
       }
 
-      if (await SessionUtils.validateSession(await this._dataLayer.getSessionData(userId))) {
+      if (await SessionUtils.validateSession(await this._storageManager.getSessionData(userId))) {
         return Promise.resolve(true);
       }
 
@@ -188,8 +188,8 @@ export class AsgardeoNodeCore<T> {
         return Promise.resolve(true);
       }
 
-      this._dataLayer.removeSessionData(userId);
-      this._dataLayer.getTemporaryData(userId);
+      this._storageManager.removeSessionData(userId);
+      this._storageManager.getTemporaryData(userId);
       return Promise.resolve(false);
     } catch (error) {
       return Promise.reject(error);
@@ -248,7 +248,7 @@ export class AsgardeoNodeCore<T> {
     return AsgardeoNodeCore.isSignOutSuccessful(signOutRedirectURL);
   }
 
-  public getDataLayer(): DataLayer<T> {
-    return this._dataLayer;
+  public getDataLayer(): StorageManager<T> {
+    return this._storageManager;
   }
 }

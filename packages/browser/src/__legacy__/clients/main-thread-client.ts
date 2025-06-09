@@ -21,7 +21,7 @@ import {
   AuthClientConfig,
   BasicUserInfo,
   IsomorphicCrypto,
-  DataLayer,
+  StorageManager,
   IdTokenPayload,
   FetchResponse,
   ExtendedAuthorizeRequestUrlParams,
@@ -393,7 +393,7 @@ export const MainThreadClient = async (
     return _authenticationHelper.getAccessToken();
   };
 
-  const getDataLayer = async (): Promise<DataLayer<MainThreadClientConfig>> => {
+  const getDataLayer = async (): Promise<StorageManager<MainThreadClientConfig>> => {
     return _authenticationHelper.getDataLayer();
   };
 

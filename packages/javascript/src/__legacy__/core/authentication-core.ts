@@ -17,7 +17,7 @@
  */
 import extractPkceStorageKeyFromState from '../../utils/extractPkceStorageKeyFromState';
 import generateStateParamForRequestCorrelation from '../../utils/generateStateParamForRequestCorrelation';
-import {DataLayer} from '../data';
+import StorageManager from '../../StorageManager';
 import {AsgardeoAuthException} from '../exception';
 import {AuthenticationHelper} from '../helpers';
 import {
@@ -45,24 +45,24 @@ import getAuthorizeRequestUrlParams from '../../utils/getAuthorizeRequestUrlPara
 import PKCEConstants from '../../constants/PKCEConstants';
 
 export class AuthenticationCore<T> {
-  private _dataLayer: DataLayer<T>;
+  private _storageManager: StorageManager<T>;
   private _config: () => Promise<AuthClientConfig>;
   private _oidcProviderMetaData: () => Promise<OIDCDiscoveryApiResponse>;
   private _authenticationHelper: AuthenticationHelper<T>;
   private _cryptoUtils: Crypto;
   private _cryptoHelper: IsomorphicCrypto;
 
-  public constructor(dataLayer: DataLayer<T>, cryptoUtils: Crypto) {
+  public constructor(storageManager: StorageManager<T>, cryptoUtils: Crypto) {
     this._cryptoUtils = cryptoUtils;
     this._cryptoHelper = new IsomorphicCrypto(cryptoUtils);
-    this._authenticationHelper = new AuthenticationHelper(dataLayer, this._cryptoHelper);
-    this._dataLayer = dataLayer;
-    this._config = async () => await this._dataLayer.getConfigData();
-    this._oidcProviderMetaData = async () => await this._dataLayer.getOIDCProviderMetaData();
+    this._authenticationHelper = new AuthenticationHelper(storageManager, this._cryptoHelper);
+    this._storageManager = storageManager;
+    this._config = async () => await this._storageManager.getConfigData();
+    this._oidcProviderMetaData = async () => await this._storageManager.getOIDCProviderMetaData();
   }
 
   public async getAuthorizationURL(config?: AuthorizeRequestUrlParams, userID?: string): Promise<string> {
-    const authorizeEndpoint: string = (await this._dataLayer.getOIDCProviderMetaDataParameter(
+    const authorizeEndpoint: string = (await this._storageManager.getOIDCProviderMetaDataParameter(
       OIDCDiscoveryConstants.Storage.StorageKeys.Endpoints.AUTHORIZATION as keyof OIDCDiscoveryApiResponse,
     )) as string;
 
@@ -77,7 +77,7 @@ export class AuthenticationCore<T> {
 
     const authorizeRequest: URL = new URL(authorizeEndpoint);
     const configData: StrictAuthClientConfig = await this._config();
-    const tempStore: TemporaryStore = await this._dataLayer.getTemporaryData(userID);
+    const tempStore: TemporaryStore = await this._storageManager.getTemporaryData(userID);
     const pkceKey: string = await generatePkceStorageKey(tempStore);
 
     let codeVerifier: string | undefined;
@@ -86,7 +86,7 @@ export class AuthenticationCore<T> {
     if (configData.enablePKCE) {
       codeVerifier = this._cryptoHelper?.getCodeVerifier();
       codeChallenge = this._cryptoHelper?.getCodeChallenge(codeVerifier);
-      await this._dataLayer.setTemporaryDataParameter(pkceKey, codeVerifier, userID);
+      await this._storageManager.setTemporaryDataParameter(pkceKey, codeVerifier, userID);
     }
 
     const authorizeRequestParams: Map<string, string> = getAuthorizeRequestUrlParams(
@@ -132,7 +132,7 @@ export class AuthenticationCore<T> {
     }
 
     sessionState &&
-      (await this._dataLayer.setSessionDataParameter(
+      (await this._storageManager.setSessionDataParameter(
         OIDCRequestConstants.Params.SESSION_STATE as keyof SessionData,
         sessionState,
         userID,
@@ -162,10 +162,10 @@ export class AuthenticationCore<T> {
     if (configData.enablePKCE) {
       body.set(
         'code_verifier',
-        `${await this._dataLayer.getTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID)}`,
+        `${await this._storageManager.getTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID)}`,
       );
 
-      await this._dataLayer.removeTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID);
+      await this._storageManager.removeTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID);
     }
 
     let tokenResponse: Response;
@@ -202,7 +202,7 @@ export class AuthenticationCore<T> {
   public async refreshAccessToken(userID?: string): Promise<TokenResponse> {
     const tokenEndpoint: string | undefined = (await this._oidcProviderMetaData()).token_endpoint;
     const configData: StrictAuthClientConfig = await this._config();
-    const sessionData: SessionData = await this._dataLayer.getSessionData(userID);
+    const sessionData: SessionData = await this._storageManager.getSessionData(userID);
 
     if (!sessionData.refresh_token) {
       throw new AsgardeoAuthException(
@@ -279,7 +279,7 @@ export class AuthenticationCore<T> {
     const body: string[] = [];
 
     body.push(`client_id=${configData.clientID}`);
-    body.push(`token=${(await this._dataLayer.getSessionData(userID)).access_token}`);
+    body.push(`token=${(await this._storageManager.getSessionData(userID)).access_token}`);
     body.push('token_type_hint=access_token');
 
     if (configData.clientSecret && configData.clientSecret.trim().length > 0) {
@@ -362,7 +362,7 @@ export class AuthenticationCore<T> {
     if (customGrantParams.attachToken) {
       requestHeaders = {
         ...requestHeaders,
-        Authorization: `Bearer ${(await this._dataLayer.getSessionData(userID)).access_token}`,
+        Authorization: `Bearer ${(await this._storageManager.getSessionData(userID)).access_token}`,
       };
     }
 
@@ -401,7 +401,7 @@ export class AuthenticationCore<T> {
   }
 
   public async getBasicUserInfo(userID?: string): Promise<BasicUserInfo> {
-    const sessionData: SessionData = await this._dataLayer.getSessionData(userID);
+    const sessionData: SessionData = await this._storageManager.getSessionData(userID);
     const authenticatedUser: AuthenticatedUserInfo = this._authenticationHelper.getAuthenticatedUserInfo(
       sessionData?.id_token,
     );
@@ -423,7 +423,7 @@ export class AuthenticationCore<T> {
   }
 
   public async getDecodedIDToken(userID?: string): Promise<IdTokenPayload> {
-    const idToken: string = (await this._dataLayer.getSessionData(userID)).id_token;
+    const idToken: string = (await this._storageManager.getSessionData(userID)).id_token;
     const payload: IdTokenPayload = this._cryptoHelper.decodeIDToken(idToken);
 
     return payload;
@@ -434,7 +434,7 @@ export class AuthenticationCore<T> {
   }
 
   public async getIDToken(userID?: string): Promise<string> {
-    return (await this._dataLayer.getSessionData(userID)).id_token;
+    return (await this._storageManager.getSessionData(userID)).id_token;
   }
 
   public async getOIDCProviderMetaData(forceInit: boolean): Promise<void> {
@@ -442,7 +442,7 @@ export class AuthenticationCore<T> {
 
     if (
       !forceInit &&
-      (await this._dataLayer.getTemporaryDataParameter(
+      (await this._storageManager.getTemporaryDataParameter(
         OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
       ))
     ) {
@@ -467,10 +467,10 @@ export class AuthenticationCore<T> {
         );
       }
 
-      await this._dataLayer.setOIDCProviderMetaData(
+      await this._storageManager.setOIDCProviderMetaData(
         await this._authenticationHelper.resolveEndpoints(await response.json()),
       );
-      await this._dataLayer.setTemporaryDataParameter(
+      await this._storageManager.setTemporaryDataParameter(
         OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
@@ -478,7 +478,7 @@ export class AuthenticationCore<T> {
       return Promise.resolve();
     } else if ((configData as any).baseUrl) {
       try {
-        await this._dataLayer.setOIDCProviderMetaData(await this._authenticationHelper.resolveEndpointsByBaseURL());
+        await this._storageManager.setOIDCProviderMetaData(await this._authenticationHelper.resolveEndpointsByBaseURL());
       } catch (error: any) {
         throw new AsgardeoAuthException(
           'JS-AUTH_CORE-GOPMD-IV02',
@@ -486,16 +486,16 @@ export class AuthenticationCore<T> {
           error ?? 'Resolving endpoints by base url failed.',
         );
       }
-      await this._dataLayer.setTemporaryDataParameter(
+      await this._storageManager.setTemporaryDataParameter(
         OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
 
       return Promise.resolve();
     } else {
-      await this._dataLayer.setOIDCProviderMetaData(await this._authenticationHelper.resolveEndpointsExplicitly());
+      await this._storageManager.setOIDCProviderMetaData(await this._authenticationHelper.resolveEndpointsExplicitly());
 
-      await this._dataLayer.setTemporaryDataParameter(
+      await this._storageManager.setTemporaryDataParameter(
         OIDCDiscoveryConstants.Storage.StorageKeys.OPENID_PROVIDER_CONFIG_INITIATED,
         true,
       );
@@ -550,7 +550,7 @@ export class AuthenticationCore<T> {
     queryParams.set('post_logout_redirect_uri', callbackURL);
 
     if (configData.sendIdTokenInLogoutRequest) {
-      const idToken: string = (await this._dataLayer.getSessionData(userID))?.id_token;
+      const idToken: string = (await this._storageManager.getSessionData(userID))?.id_token;
 
       if (!idToken || idToken.trim().length === 0) {
         throw new AsgardeoAuthException(
@@ -574,7 +574,7 @@ export class AuthenticationCore<T> {
   }
 
   public async getAccessToken(userID?: string): Promise<string> {
-    return (await this._dataLayer.getSessionData(userID))?.access_token;
+    return (await this._storageManager.getSessionData(userID))?.access_token;
   }
 
   /**
@@ -584,7 +584,7 @@ export class AuthenticationCore<T> {
    * @returns Created at timestamp of the token response in milliseconds.
    */
   public async getCreatedAt(userID?: string): Promise<number> {
-    return (await this._dataLayer.getSessionData(userID))?.created_at;
+    return (await this._storageManager.getSessionData(userID))?.created_at;
   }
 
   /**
@@ -594,7 +594,7 @@ export class AuthenticationCore<T> {
    * @returns Expires in timestamp of the token response in seconds.
    */
   public async getExpiresIn(userID?: string): Promise<string> {
-    return (await this._dataLayer.getSessionData(userID))?.expires_in;
+    return (await this._storageManager.getSessionData(userID))?.expires_in;
   }
 
   public async isAuthenticated(userID?: string): Promise<boolean> {
@@ -622,15 +622,15 @@ export class AuthenticationCore<T> {
   }
 
   public async getPKCECode(state: string, userID?: string): Promise<string> {
-    return (await this._dataLayer.getTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID)) as string;
+    return (await this._storageManager.getTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID)) as string;
   }
 
   public async setPKCECode(pkce: string, state: string, userID?: string): Promise<void> {
-    return await this._dataLayer.setTemporaryDataParameter(extractPkceStorageKeyFromState(state), pkce, userID);
+    return await this._storageManager.setTemporaryDataParameter(extractPkceStorageKeyFromState(state), pkce, userID);
   }
 
   public async updateConfig(config: Partial<AuthClientConfig<T>>): Promise<void> {
-    await this._dataLayer.setConfigData(config);
+    await this._storageManager.setConfigData(config);
     await this.getOIDCProviderMetaData(true);
   }
 }

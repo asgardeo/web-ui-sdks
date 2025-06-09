@@ -21,7 +21,6 @@ export * from './__legacy__/models';
 export * from './models/oauth-response';
 export * from './IsomorphicCrypto';
 export * from './__legacy__/exception';
-export * from './__legacy__/data';
 
 export {default as getUserInfo} from './api/getUserInfo';
 
@@ -55,3 +54,5 @@ export {ThemeColors, ThemeConfig, Theme, ThemeMode} from './theme/types';
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
 export {default as extractPkceStorageKeyFromState} from './utils/extractPkceStorageKeyFromState';
 export {default as removeTrailingSlash} from './utils/removeTrailingSlash';
+
+export {default as StorageManager} from './StorageManager';

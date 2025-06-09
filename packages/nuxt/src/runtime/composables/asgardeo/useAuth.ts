@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {BasicUserInfo, DataLayer, IdTokenPayload, OIDCEndpoints} from '@asgardeo/auth-node';
+import type {BasicUserInfo, StorageManager, IdTokenPayload, OIDCEndpoints} from '@asgardeo/node';
 import type {AuthInterface} from '../../types';
 import {navigateTo} from '#imports';
 
@@ -214,7 +214,7 @@ export const useAuth = (): AuthInterface => {
     }
   };
 
-  const getDataLayer = async (): Promise<DataLayer<any> | null> => {
+  const getDataLayer = async (): Promise<StorageManager<any> | null> => {
     try {
       const response: Response = await fetch('/api/auth/get-data-layer', {
         method: 'GET',

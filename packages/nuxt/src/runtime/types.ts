@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {BasicUserInfo, DataLayer, IdTokenPayload, OIDCEndpoints} from '@asgardeo/auth-node';
+import type {BasicUserInfo, StorageManager, IdTokenPayload, OIDCEndpoints} from '@asgardeo/node';
 
 export interface ModuleOptions {
   /**
@@ -60,7 +60,7 @@ export interface ModuleOptions {
 export interface AuthInterface {
   getAccessToken: () => Promise<string | null>;
   getBasicUserInfo: () => Promise<BasicUserInfo | null>;
-  getDataLayer: () => Promise<DataLayer<any> | null>;
+  getDataLayer: () => Promise<StorageManager<any> | null>;
   getDecodedIDToken: () => Promise<IdTokenPayload | null>;
   getIdToken: () => Promise<string | null>;
   getOIDCServiceEndpoints: () => Promise<OIDCEndpoints | null>;

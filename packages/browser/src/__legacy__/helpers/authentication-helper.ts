@@ -23,7 +23,7 @@ import {
   BasicUserInfo,
   IsomorphicCrypto,
   CustomGrantConfig,
-  DataLayer,
+  StorageManager,
   IdTokenPayload,
   FetchResponse,
   ExtendedAuthorizeRequestUrlParams,
@@ -61,14 +61,14 @@ import {SPAUtils} from '../utils';
 
 export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerClientConfig> {
   protected _authenticationClient: AsgardeoAuthClient<T>;
-  protected _dataLayer: DataLayer<T>;
+  protected _storageManager: StorageManager<T>;
   protected _spaHelper: SPAHelper<T>;
   protected _instanceID: number;
   protected _isTokenRefreshing: boolean;
 
   public constructor(authClient: AsgardeoAuthClient<T>, spaHelper: SPAHelper<T>) {
     this._authenticationClient = authClient;
-    this._dataLayer = this._authenticationClient.getDataLayer();
+    this._storageManager = this._authenticationClient.getDataLayer();
     this._spaHelper = spaHelper;
     this._instanceID = this._authenticationClient.getInstanceID();
     this._isTokenRefreshing = false;
@@ -112,7 +112,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       useDefaultEndpoint = false;
 
       for (const baseUrl of [
-        ...((await this._dataLayer.getConfigData())?.resourceServerURLs ?? []),
+        ...((await this._storageManager.getConfigData())?.resourceServerURLs ?? []),
         (config as any).baseUrl,
       ]) {
         if (baseUrl && config.tokenEndpoint?.startsWith(baseUrl)) {
@@ -122,7 +122,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       }
     }
     if (config.shouldReplayAfterRefresh) {
-      this._dataLayer.setTemporaryDataParameter(CUSTOM_GRANT_CONFIG, JSON.stringify(config));
+      this._storageManager.setTemporaryDataParameter(CUSTOM_GRANT_CONFIG, JSON.stringify(config));
     }
     if (useDefaultEndpoint || matches) {
       return this._authenticationClient
@@ -157,7 +157,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
   }
 
   public async getCustomGrantConfigData(): Promise<AuthClientConfig<CustomGrantConfig> | null> {
-    const configString = await this._dataLayer.getTemporaryDataParameter(CUSTOM_GRANT_CONFIG);
+    const configString = await this._storageManager.getTemporaryDataParameter(CUSTOM_GRANT_CONFIG);
 
     if (configString) {
       return JSON.parse(configString as string);
@@ -225,7 +225,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     enableRetrievingSignOutURLFromSession?: (config: SPACustomGrantConfig) => void,
   ): Promise<HttpResponse> {
     let matches = false;
-    const config = await this._dataLayer.getConfigData();
+    const config = await this._storageManager.getConfigData();
 
     for (const baseUrl of [...((await config?.resourceServerURLs) ?? []), (config as any).baseUrl]) {
       if (baseUrl && requestConfig?.url?.startsWith(baseUrl)) {
@@ -336,7 +336,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     httpFinishCallback?: () => void,
   ): Promise<HttpResponse[] | undefined> {
     let matches = true;
-    const config = await this._dataLayer.getConfigData();
+    const config = await this._storageManager.getConfigData();
 
     for (const requestConfig of requestConfigs) {
       let urlMatches = false;
@@ -454,7 +454,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       params: Record<string, unknown>;
     },
   ): Promise<BasicUserInfo> {
-    const config = await this._dataLayer.getConfigData();
+    const config = await this._storageManager.getConfigData();
 
     if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE && sessionState) {
       const pkce = SPAUtils.getPKCE(extractPkceStorageKeyFromState(sessionState));
@@ -587,7 +587,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     checkSession: () => Promise<void>,
     tryRetrievingUserInfo?: () => Promise<BasicUserInfo | undefined>,
   ): Promise<BasicUserInfo | undefined> {
-    const config = await this._dataLayer.getConfigData();
+    const config = await this._storageManager.getConfigData();
 
     if (await shouldStopAuthn()) {
       return Promise.resolve({
@@ -685,11 +685,11 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
   }
 
   public async getIDPAccessToken(): Promise<string> {
-    return (await this._dataLayer.getSessionData())?.access_token;
+    return (await this._storageManager.getSessionData())?.access_token;
   }
 
-  public getDataLayer(): DataLayer<T> {
-    return this._dataLayer;
+  public getDataLayer(): StorageManager<T> {
+    return this._storageManager;
   }
 
   public async isAuthenticated(): Promise<boolean> {

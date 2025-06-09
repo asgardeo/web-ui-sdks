@@ -16,17 +16,17 @@
  * under the License.
  */
 
-import {Stores} from '../../models/store';
-import {Storage} from '../../models/store';
-import {AuthClientConfig, SessionData} from '../models';
-import {TemporaryStore, TemporaryStoreValue} from '../../models/store';
-import {OIDCDiscoveryApiResponse} from '../../models/oidc-discovery';
+import {Stores} from './models/store';
+import {Storage} from './models/store';
+import {AuthClientConfig, SessionData} from './__legacy__/models';
+import {TemporaryStore, TemporaryStoreValue} from './models/store';
+import {OIDCDiscoveryApiResponse} from './models/oidc-discovery';
 
 type PartialData<T> = Partial<AuthClientConfig<T> | OIDCDiscoveryApiResponse | SessionData | TemporaryStore>;
 
 export const ASGARDEO_SESSION_ACTIVE: string = 'asgardeo-session-active';
 
-export class DataLayer<T> {
+class StorageManager<T> {
   protected _id: string;
   protected _store: Storage;
   public constructor(instanceID: string, store: Storage) {
@@ -227,3 +227,5 @@ export class DataLayer<T> {
     await this.removeValue(this._resolveKey(Stores.SessionData, userID), key);
   }
 }
+
+export default StorageManager;

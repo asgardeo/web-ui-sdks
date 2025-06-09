@@ -17,7 +17,7 @@
  */
 
 import {IsomorphicCrypto} from '../../IsomorphicCrypto';
-import {DataLayer} from '../data';
+import StorageManager from '../../StorageManager';
 import {AsgardeoAuthException} from '../exception';
 import {AuthClientConfig, AuthenticatedUserInfo, SessionData, StrictAuthClientConfig} from '../models';
 import {JWKInterface} from '../../models/crypto';
@@ -32,15 +32,15 @@ import TokenExchangeConstants from '../../constants/TokenExchangeConstants';
 import {OIDCDiscoveryEndpointsApiResponse, OIDCDiscoveryApiResponse} from '../../models/oidc-discovery';
 
 export class AuthenticationHelper<T> {
-  private _dataLayer: DataLayer<T>;
+  private _storageManager: StorageManager<T>;
   private _config: () => Promise<AuthClientConfig>;
   private _oidcProviderMetaData: () => Promise<OIDCDiscoveryApiResponse>;
   private _cryptoHelper: IsomorphicCrypto;
 
-  public constructor(dataLayer: DataLayer<T>, cryptoHelper: IsomorphicCrypto) {
-    this._dataLayer = dataLayer;
-    this._config = async () => await this._dataLayer.getConfigData();
-    this._oidcProviderMetaData = async () => await this._dataLayer.getOIDCProviderMetaData();
+  public constructor(storageManager: StorageManager<T>, cryptoHelper: IsomorphicCrypto) {
+    this._storageManager = storageManager;
+    this._config = async () => await this._storageManager.getConfigData();
+    this._oidcProviderMetaData = async () => await this._storageManager.getOIDCProviderMetaData();
     this._cryptoHelper = cryptoHelper;
   }
 
@@ -150,7 +150,7 @@ export class AuthenticationHelper<T> {
   }
 
   public async validateIdToken(idToken: string): Promise<boolean> {
-    const jwksEndpoint: string | undefined = (await this._dataLayer.getOIDCProviderMetaData()).jwks_uri;
+    const jwksEndpoint: string | undefined = (await this._storageManager.getOIDCProviderMetaData()).jwks_uri;
     const configData: StrictAuthClientConfig = await this._config();
 
     if (!jwksEndpoint || jwksEndpoint.trim().length === 0) {
@@ -224,7 +224,7 @@ export class AuthenticationHelper<T> {
   public async replaceCustomGrantTemplateTags(text: string, userID?: string): Promise<string> {
     let scope: string = ScopeConstants.OPENID;
     const configData: StrictAuthClientConfig = await this._config();
-    const sessionData: SessionData = await this._dataLayer.getSessionData(userID);
+    const sessionData: SessionData = await this._storageManager.getSessionData(userID);
 
     if (configData.scope && configData.scope.length > 0) {
       if (!configData.scope.includes(ScopeConstants.OPENID)) {
@@ -245,8 +245,8 @@ export class AuthenticationHelper<T> {
   }
 
   public async clearUserSessionData(userID?: string): Promise<void> {
-    await this._dataLayer.removeTemporaryData(userID);
-    await this._dataLayer.removeSessionData(userID);
+    await this._storageManager.removeTemporaryData(userID);
+    await this._storageManager.removeSessionData(userID);
   }
 
   public async handleTokenResponse(response: Response, userID?: string): Promise<TokenResponse> {
@@ -267,7 +267,7 @@ export class AuthenticationHelper<T> {
 
     if (shouldValidateIdToken) {
       return this.validateIdToken(parsedResponse.id_token).then(async () => {
-        await this._dataLayer.setSessionData(parsedResponse, userID);
+        await this._storageManager.setSessionData(parsedResponse, userID);
 
         const tokenResponse: TokenResponse = {
           accessToken: parsedResponse.access_token,
@@ -292,7 +292,7 @@ export class AuthenticationHelper<T> {
         tokenType: parsedResponse.token_type,
       };
 
-      await this._dataLayer.setSessionData(parsedResponse, userID);
+      await this._storageManager.setSessionData(parsedResponse, userID);
 
       return Promise.resolve(tokenResponse);
     }

@@ -16,29 +16,30 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, DataLayer, TokenConstants} from '@asgardeo/javascript';
+import {AsgardeoAuthClient, StorageManager, TokenConstants} from '@asgardeo/javascript';
 
 import {AuthenticationHelper} from '../helpers/authentication-helper';
 import {MainThreadClientConfig, WebWorkerClientConfig} from '../models/client-config';
 
 export class SPAHelper<T extends MainThreadClientConfig | WebWorkerClientConfig> {
   private _authenticationClient: AsgardeoAuthClient<T>;
-  private _dataLayer: DataLayer<T>;
+  private _storageManager: StorageManager<T>;
+
   public constructor(authClient: AsgardeoAuthClient<T>) {
     this._authenticationClient = authClient;
-    this._dataLayer = this._authenticationClient.getDataLayer();
+    this._storageManager = this._authenticationClient.getDataLayer();
   }
 
   public async refreshAccessTokenAutomatically(
     authenticationHelper: AuthenticationHelper<MainThreadClientConfig | WebWorkerClientConfig>,
   ): Promise<void> {
-    const shouldRefreshAutomatically: boolean = (await this._dataLayer.getConfigData())?.periodicTokenRefresh ?? false;
+    const shouldRefreshAutomatically: boolean = (await this._storageManager.getConfigData())?.periodicTokenRefresh ?? false;
 
     if (!shouldRefreshAutomatically) {
       return;
     }
 
-    const sessionData = await this._dataLayer.getSessionData();
+    const sessionData = await this._storageManager.getSessionData();
     if (sessionData.refresh_token) {
       // Refresh 10 seconds before the expiry time
       const expiryTime = parseInt(sessionData.expires_in);
@@ -48,7 +49,7 @@ export class SPAHelper<T extends MainThreadClientConfig | WebWorkerClientConfig>
         await authenticationHelper.refreshAccessToken();
       }, time * 1000);
 
-      await this._dataLayer.setTemporaryDataParameter(
+      await this._storageManager.setTemporaryDataParameter(
         TokenConstants.Storage.StorageKeys.REFRESH_TOKEN_TIMER,
         JSON.stringify(timer),
       );
@@ -56,9 +57,9 @@ export class SPAHelper<T extends MainThreadClientConfig | WebWorkerClientConfig>
   }
 
   public async getRefreshTimeoutTimer(): Promise<number> {
-    if (await this._dataLayer.getTemporaryDataParameter(TokenConstants.Storage.StorageKeys.REFRESH_TOKEN_TIMER)) {
+    if (await this._storageManager.getTemporaryDataParameter(TokenConstants.Storage.StorageKeys.REFRESH_TOKEN_TIMER)) {
       return JSON.parse(
-        (await this._dataLayer.getTemporaryDataParameter(
+        (await this._storageManager.getTemporaryDataParameter(
           TokenConstants.Storage.StorageKeys.REFRESH_TOKEN_TIMER,
         )) as string,
       );

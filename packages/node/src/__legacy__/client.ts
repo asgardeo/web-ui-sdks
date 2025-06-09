@@ -20,7 +20,7 @@ import {
   AuthClientConfig,
   BasicUserInfo,
   CustomGrantConfig,
-  DataLayer,
+  StorageManager,
   IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
@@ -411,7 +411,7 @@ export class AsgardeoNodeClient<T> {
     return AsgardeoNodeClient.didSignOutFail(signOutRedirectURL);
   }
 
-  public async getDataLayer(): Promise<DataLayer<T>> {
+  public async getDataLayer(): Promise<StorageManager<T>> {
     return this._authCore.getDataLayer();
   }
 }

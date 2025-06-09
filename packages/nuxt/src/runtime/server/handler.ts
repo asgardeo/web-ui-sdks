@@ -17,7 +17,7 @@
  */
 
 import {randomUUID} from 'node:crypto';
-import {AsgardeoNodeClient, type AuthClientConfig, type DataLayer, type TokenResponse} from '@asgardeo/auth-node';
+import {AsgardeoNodeClient, type AuthClientConfig, type StorageManager, type TokenResponse} from '@asgardeo/node';
 import type {CookieSerializeOptions} from 'cookie-es';
 import {defineEventHandler, sendRedirect, setCookie, deleteCookie, getQuery, getCookie, createError, H3Event} from 'h3';
 import {getAsgardeoSdkInstance} from './services/asgardeo/index';
@@ -273,7 +273,7 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
     } else if (action === 'get-data-layer' && method === 'GET') {
       try {
-        const dataLayer: DataLayer<any> = await authClient.getDataLayer();
+        const dataLayer: StorageManager<any> = await authClient.getDataLayer();
         return dataLayer;
       } catch (error: any) {
         throw createError({

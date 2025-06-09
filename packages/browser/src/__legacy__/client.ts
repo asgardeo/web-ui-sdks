@@ -23,7 +23,7 @@ import {
   BasicUserInfo,
   IsomorphicCrypto,
   CustomGrantConfig,
-  DataLayer,
+  StorageManager,
   IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
@@ -904,7 +904,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getDataLayer(): Promise<DataLayer<MainThreadClientConfig>> {
+  public async getDataLayer(): Promise<StorageManager<MainThreadClientConfig>> {
     await this._validateMethod();
 
     if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
