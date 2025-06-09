@@ -1,6 +1,6 @@
 'use client';
 
-import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import {useState, createContext, useContext} from 'react';
 import Header from './components/Header';
 import DashboardPage from './pages/Dashboard';
