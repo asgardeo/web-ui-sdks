@@ -222,10 +222,10 @@ export class AuthenticationHelper<T> {
     };
   }
 
-  public async replaceCustomGrantTemplateTags(text: string, userID?: string): Promise<string> {
+  public async replaceCustomGrantTemplateTags(text: string, userId?: string): Promise<string> {
     let scope: string = ScopeConstants.OPENID;
     const configData: StrictAuthClientConfig = await this._config();
-    const sessionData: SessionData = await this._storageManager.getSessionData(userID);
+    const sessionData: SessionData = await this._storageManager.getSessionData(userId);
 
     if (configData.scope && configData.scope.length > 0) {
       if (!configData.scope.includes(ScopeConstants.OPENID)) {
@@ -245,12 +245,12 @@ export class AuthenticationHelper<T> {
       .replace(TokenExchangeConstants.Placeholders.CLIENT_SECRET, configData.clientSecret ?? '');
   }
 
-  public async clearUserSessionData(userID?: string): Promise<void> {
-    await this._storageManager.removeTemporaryData(userID);
-    await this._storageManager.removeSessionData(userID);
+  public async clearUserSessionData(userId?: string): Promise<void> {
+    await this._storageManager.removeTemporaryData(userId);
+    await this._storageManager.removeSessionData(userId);
   }
 
-  public async handleTokenResponse(response: Response, userID?: string): Promise<TokenResponse> {
+  public async handleTokenResponse(response: Response, userId?: string): Promise<TokenResponse> {
     if (response.status !== 200 || !response.ok) {
       throw new AsgardeoAuthException(
         'JS-AUTH_HELPER-HTR-NE01',
@@ -268,7 +268,7 @@ export class AuthenticationHelper<T> {
 
     if (shouldValidateIdToken) {
       return this.validateIdToken(parsedResponse.id_token).then(async () => {
-        await this._storageManager.setSessionData(parsedResponse, userID);
+        await this._storageManager.setSessionData(parsedResponse, userId);
 
         const tokenResponse: TokenResponse = {
           accessToken: parsedResponse.access_token,
@@ -293,7 +293,7 @@ export class AuthenticationHelper<T> {
         tokenType: parsedResponse.token_type,
       };
 
-      await this._storageManager.setSessionData(parsedResponse, userID);
+      await this._storageManager.setSessionData(parsedResponse, userId);
 
       return Promise.resolve(tokenResponse);
     }

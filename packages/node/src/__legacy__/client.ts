@@ -73,7 +73,7 @@ export class AsgardeoNodeClient<T> {
    * authorization URL to authorize the user.
    * @param {string} authorizationCode - The authorization code obtained from Asgardeo after a user signs in.
    * @param {String} sessionState - The session state obtained from Asgardeo after a user signs in.
-   * @param {string} userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param {string} userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    * @param {string} state - The state parameter in the redirect URL.
    *

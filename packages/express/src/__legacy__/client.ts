@@ -106,9 +106,9 @@ export class AsgardeoExpressClient {
     }
 
     //Check if the user has a valid user ID and if not create one
-    let userID = req.cookies.ASGARDEO_SESSION_ID;
-    if (!userID) {
-      userID = uuidv4();
+    let userId = req.cookies.ASGARDEO_SESSION_ID;
+    if (!userId) {
+      userId = uuidv4();
     }
 
     //Handle signIn() callback
@@ -116,7 +116,7 @@ export class AsgardeoExpressClient {
       if (url) {
         //DEBUG
         Logger.debug('Redirecting to: ' + url);
-        res.cookie('ASGARDEO_SESSION_ID', userID, {
+        res.cookie('ASGARDEO_SESSION_ID', userId, {
           maxAge: AsgardeoExpressClient._clientConfig.cookieConfig?.maxAge
             ? AsgardeoExpressClient._clientConfig.cookieConfig.maxAge
             : CookieConfig.defaultMaxAge,
@@ -132,7 +132,7 @@ export class AsgardeoExpressClient {
 
     const authResponse: TokenResponse = await this._authClient.signIn(
       authRedirectCallback,
-      userID,
+      userId,
       req.query.code,
       req.query.session_state,
       req.query.state,

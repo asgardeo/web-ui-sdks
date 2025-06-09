@@ -196,7 +196,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @param config - (Optional) A config object to force initialization and pass
    * custom path parameters such as the fidp parameter.
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * @returns - A promise that resolves with the authorization URL.
@@ -214,7 +214,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getAuthorizationURL(config?: ExtendedAuthorizeRequestUrlParams, userID?: string): Promise<string> {
+  public async getAuthorizationURL(config?: ExtendedAuthorizeRequestUrlParams, userId?: string): Promise<string> {
     const authRequestConfig: ExtendedAuthorizeRequestUrlParams = {...config};
 
     delete authRequestConfig?.forceInit;
@@ -235,7 +235,7 @@ export class AsgardeoAuthClient<T> {
 
       const authorizeRequest: URL = new URL(authorizeEndpoint);
       const configData: StrictAuthClientConfig = await this._config();
-      const tempStore: TemporaryStore = await this._storageManager.getTemporaryData(userID);
+      const tempStore: TemporaryStore = await this._storageManager.getTemporaryData(userId);
       const pkceKey: string = await generatePkceStorageKey(tempStore);
 
       let codeVerifier: string | undefined;
@@ -244,7 +244,7 @@ export class AsgardeoAuthClient<T> {
       if (configData.enablePKCE) {
         codeVerifier = this._cryptoHelper?.getCodeVerifier();
         codeChallenge = this._cryptoHelper?.getCodeChallenge(codeVerifier);
-        await this._storageManager.setTemporaryDataParameter(pkceKey, codeVerifier, userID);
+        await this._storageManager.setTemporaryDataParameter(pkceKey, codeVerifier, userId);
       }
 
       const authorizeRequestParams: Map<string, string> = getAuthorizeRequestUrlParams(
@@ -287,7 +287,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @param authorizationCode - The authorization code.
    * @param sessionState - The session state.
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * @returns - A Promise that resolves with the token response.
@@ -310,7 +310,7 @@ export class AsgardeoAuthClient<T> {
     authorizationCode: string,
     sessionState: string,
     state: string,
-    userID?: string,
+    userId?: string,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
@@ -332,7 +332,7 @@ export class AsgardeoAuthClient<T> {
         (await this._storageManager.setSessionDataParameter(
           OIDCRequestConstants.Params.SESSION_STATE as keyof SessionData,
           sessionState,
-          userID,
+          userId,
         ));
 
       const body: URLSearchParams = new URLSearchParams();
@@ -359,10 +359,10 @@ export class AsgardeoAuthClient<T> {
       if (configData.enablePKCE) {
         body.set(
           'code_verifier',
-          `${await this._storageManager.getTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID)}`,
+          `${await this._storageManager.getTemporaryDataParameter(extractPkceStorageKeyFromState(state), userId)}`,
         );
 
-        await this._storageManager.removeTemporaryDataParameter(extractPkceStorageKeyFromState(state), userID);
+        await this._storageManager.removeTemporaryDataParameter(extractPkceStorageKeyFromState(state), userId);
       }
 
       let tokenResponse: Response;
@@ -393,7 +393,7 @@ export class AsgardeoAuthClient<T> {
         );
       }
 
-      return await this._authenticationHelper.handleTokenResponse(tokenResponse, userID);
+      return await this._authenticationHelper.handleTokenResponse(tokenResponse, userId);
     };
 
     if (
@@ -481,7 +481,7 @@ export class AsgardeoAuthClient<T> {
   /**
    * This method returns the sign-out URL.
    *
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * **This doesn't clear the authentication data.**
@@ -497,7 +497,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getSignOutURL(userID?: string): Promise<string> {
+  public async getSignOutURL(userId?: string): Promise<string> {
     const logoutEndpoint: string | undefined = (await this._oidcProviderMetaData())?.end_session_endpoint;
     const configData: StrictAuthClientConfig = await this._config();
 
@@ -525,7 +525,7 @@ export class AsgardeoAuthClient<T> {
     queryParams.set('post_logout_redirect_uri', callbackURL);
 
     if (configData.sendIdTokenInLogoutRequest) {
-      const idToken: string = (await this._storageManager.getSessionData(userID))?.id_token;
+      const idToken: string = (await this._storageManager.getSessionData(userId))?.id_token;
 
       if (!idToken || idToken.trim().length === 0) {
         throw new AsgardeoAuthException(
@@ -578,7 +578,7 @@ export class AsgardeoAuthClient<T> {
   /**
    * This method decodes the payload of the ID token and returns it.
    *
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * @returns - A Promise that resolves with the decoded ID token payload.
@@ -592,8 +592,8 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getDecodedIDToken(userID?: string): Promise<IdTokenPayload> {
-    const idToken: string = (await this._storageManager.getSessionData(userID)).id_token;
+  public async getDecodedIDToken(userId?: string): Promise<IdTokenPayload> {
+    const idToken: string = (await this._storageManager.getSessionData(userId)).id_token;
     const payload: IdTokenPayload = this._cryptoHelper.decodeIDToken(idToken);
 
     return payload;
@@ -602,7 +602,7 @@ export class AsgardeoAuthClient<T> {
   /**
    * This method returns the ID token.
    *
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * @returns - A Promise that resolves with the ID token.
@@ -616,14 +616,14 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getIDToken(userID?: string): Promise<string> {
-    return (await this._storageManager.getSessionData(userID)).id_token;
+  public async getIDToken(userId?: string): Promise<string> {
+    return (await this._storageManager.getSessionData(userId)).id_token;
   }
 
   /**
    * This method returns the basic user information obtained from the ID token.
    *
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * @returns - A Promise that resolves with an object containing the basic user information.
@@ -637,8 +637,8 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getBasicUserInfo(userID?: string): Promise<BasicUserInfo> {
-    const sessionData: SessionData = await this._storageManager.getSessionData(userID);
+  public async getBasicUserInfo(userId?: string): Promise<BasicUserInfo> {
+    const sessionData: SessionData = await this._storageManager.getSessionData(userId);
     const authenticatedUser: AuthenticatedUserInfo = this._authenticationHelper.getAuthenticatedUserInfo(
       sessionData?.id_token,
     );
@@ -680,7 +680,7 @@ export class AsgardeoAuthClient<T> {
   /**
    * This method revokes the access token.
    *
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * **This method also clears the authentication data.**
@@ -700,7 +700,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async revokeAccessToken(userID?: string): Promise<FetchResponse> {
+  public async revokeAccessToken(userId?: string): Promise<FetchResponse> {
     const revokeTokenEndpoint: string | undefined = (await this._oidcProviderMetaData()).revocation_endpoint;
     const configData: StrictAuthClientConfig = await this._config();
 
@@ -716,7 +716,7 @@ export class AsgardeoAuthClient<T> {
     const body: string[] = [];
 
     body.push(`client_id=${configData.clientId}`);
-    body.push(`token=${(await this._storageManager.getSessionData(userID)).access_token}`);
+    body.push(`token=${(await this._storageManager.getSessionData(userId)).access_token}`);
     body.push('token_type_hint=access_token');
 
     if (configData.clientSecret && configData.clientSecret.trim().length > 0) {
@@ -751,7 +751,7 @@ export class AsgardeoAuthClient<T> {
       );
     }
 
-    this._authenticationHelper.clearUserSessionData(userID);
+    this._authenticationHelper.clearUserSessionData(userId);
 
     return Promise.resolve(response);
   }
@@ -760,7 +760,7 @@ export class AsgardeoAuthClient<T> {
    * This method refreshes the access token and returns a Promise that resolves with the new access
    * token and other relevant data.
    *
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * @returns - A Promise that resolves with the token response.
@@ -778,10 +778,10 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async refreshAccessToken(userID?: string): Promise<TokenResponse> {
+  public async refreshAccessToken(userId?: string): Promise<TokenResponse> {
     const tokenEndpoint: string | undefined = (await this._oidcProviderMetaData()).token_endpoint;
     const configData: StrictAuthClientConfig = await this._config();
-    const sessionData: SessionData = await this._storageManager.getSessionData(userID);
+    const sessionData: SessionData = await this._storageManager.getSessionData(userId);
 
     if (!sessionData.refresh_token) {
       throw new AsgardeoAuthException(
@@ -839,13 +839,13 @@ export class AsgardeoAuthClient<T> {
       );
     }
 
-    return this._authenticationHelper.handleTokenResponse(tokenResponse, userID);
+    return this._authenticationHelper.handleTokenResponse(tokenResponse, userId);
   }
 
   /**
    * This method returns the access token.
    *
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * @returns - A Promise that resolves with the access token.
@@ -859,28 +859,28 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getAccessToken(userID?: string): Promise<string> {
-    return (await this._storageManager.getSessionData(userID))?.access_token;
+  public async getAccessToken(userId?: string): Promise<string> {
+    return (await this._storageManager.getSessionData(userId))?.access_token;
   }
 
   /**
    * The created timestamp of the token response in milliseconds.
    *
-   * @param userID - User ID
+   * @param userId - User ID
    * @returns Created at timestamp of the token response in milliseconds.
    */
-  public async getCreatedAt(userID?: string): Promise<number> {
-    return (await this._storageManager.getSessionData(userID))?.created_at;
+  public async getCreatedAt(userId?: string): Promise<number> {
+    return (await this._storageManager.getSessionData(userId))?.created_at;
   }
 
   /**
    * The expires timestamp of the token response in seconds.
    *
-   * @param userID - User ID
+   * @param userId - User ID
    * @returns Expires in timestamp of the token response in seconds.
    */
-  public async getExpiresIn(userID?: string): Promise<string> {
-    return (await this._storageManager.getSessionData(userID))?.expires_in;
+  public async getExpiresIn(userId?: string): Promise<string> {
+    return (await this._storageManager.getSessionData(userId))?.expires_in;
   }
 
   /**
@@ -888,7 +888,7 @@ export class AsgardeoAuthClient<T> {
    * depending on the config passed.
    *
    * @param config - A config object containing the custom grant configurations.
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * @returns - A Promise that resolves with the response depending
@@ -921,7 +921,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async requestCustomGrant(config: CustomGrantConfig, userID?: string): Promise<TokenResponse | FetchResponse> {
+  public async requestCustomGrant(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
     const oidcProviderMetadata: OIDCDiscoveryApiResponse = await this._oidcProviderMetaData();
     const configData: StrictAuthClientConfig = await this._config();
 
@@ -946,7 +946,7 @@ export class AsgardeoAuthClient<T> {
       Object.entries(config.data).map(async ([key, value]: [key: string, value: any]) => {
         const newValue: string = await this._authenticationHelper.replaceCustomGrantTemplateTags(
           value as string,
-          userID,
+          userId,
         );
 
         return `${key}=${newValue}`;
@@ -961,7 +961,7 @@ export class AsgardeoAuthClient<T> {
     if (config.attachToken) {
       requestHeaders = {
         ...requestHeaders,
-        Authorization: `Bearer ${(await this._storageManager.getSessionData(userID)).access_token}`,
+        Authorization: `Bearer ${(await this._storageManager.getSessionData(userId)).access_token}`,
       };
     }
 
@@ -993,7 +993,7 @@ export class AsgardeoAuthClient<T> {
     }
 
     if (config.returnsSession) {
-      return this._authenticationHelper.handleTokenResponse(response, userID);
+      return this._authenticationHelper.handleTokenResponse(response, userId);
     } else {
       return Promise.resolve((await response.json()) as TokenResponse | FetchResponse);
     }
@@ -1002,7 +1002,7 @@ export class AsgardeoAuthClient<T> {
   /**
    * This method returns if the user is authenticated or not.
    *
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * @returns - A Promise that resolves with `true` if the user is authenticated, `false` otherwise.
@@ -1016,14 +1016,14 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async isAuthenticated(userID?: string): Promise<boolean> {
-    const isAccessTokenAvailable: boolean = Boolean(await this.getAccessToken(userID));
+  public async isAuthenticated(userId?: string): Promise<boolean> {
+    const isAccessTokenAvailable: boolean = Boolean(await this.getAccessToken(userId));
 
     // Check if the access token is expired.
-    const createdAt: number = await this.getCreatedAt(userID);
+    const createdAt: number = await this.getCreatedAt(userId);
 
     // Get the expires in value.
-    const expiresInString: string = await this.getExpiresIn(userID);
+    const expiresInString: string = await this.getExpiresIn(userId);
 
     // If the expires in value is not available, the token is invalid and the user is not authenticated.
     if (!expiresInString) {
@@ -1043,7 +1043,7 @@ export class AsgardeoAuthClient<T> {
   /**
    * This method returns the PKCE code generated during the generation of the authentication URL.
    *
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    * @param state - The state parameter that was passed in the authentication URL.
    *
@@ -1058,10 +1058,10 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getPKCECode(state: string, userID?: string): Promise<string> {
+  public async getPKCECode(state: string, userId?: string): Promise<string> {
     return (await this._storageManager.getTemporaryDataParameter(
       extractPkceStorageKeyFromState(state),
-      userID,
+      userId,
     )) as string;
   }
 
@@ -1070,7 +1070,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @param pkce - The PKCE code.
    * @param state - The state parameter that was passed in the authentication URL.
-   * @param userID - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
+   * @param userId - (Optional) A unique ID of the user to be authenticated. This is useful in multi-user
    * scenarios where each user should be uniquely identified.
    *
    * @example
@@ -1082,8 +1082,8 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async setPKCECode(pkce: string, state: string, userID?: string): Promise<void> {
-    return await this._storageManager.setTemporaryDataParameter(extractPkceStorageKeyFromState(state), pkce, userID);
+  public async setPKCECode(pkce: string, state: string, userId?: string): Promise<void> {
+    return await this._storageManager.setTemporaryDataParameter(extractPkceStorageKeyFromState(state), pkce, userId);
   }
 
   /**
@@ -1154,7 +1154,7 @@ export class AsgardeoAuthClient<T> {
     await this.getOIDCProviderMetaData(true);
   }
 
-  public static async clearUserSessionData(userID?: string): Promise<void> {
-    await this._authenticationHelper.clearUserSessionData(userID);
+  public static async clearUserSessionData(userId?: string): Promise<void> {
+    await this._authenticationHelper.clearUserSessionData(userId);
   }
 }

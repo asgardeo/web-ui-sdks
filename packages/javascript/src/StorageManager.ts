@@ -75,8 +75,8 @@ class StorageManager<T> {
     await this._store.setData(key, dataToBeSavedJSON);
   }
 
-  protected _resolveKey(store: Stores | string, userID?: string): string {
-    return userID ? `${store}-${this._id}-${userID}` : `${store}-${this._id}`;
+  protected _resolveKey(store: Stores | string, userId?: string): string {
+    return userId ? `${store}-${this._id}-${userId}` : `${store}-${this._id}`;
   }
 
   protected isLocalStorageAvailable(): boolean {
@@ -100,16 +100,16 @@ class StorageManager<T> {
     this.setDataInBulk(this._resolveKey(Stores.OIDCProviderMetaData), oidcProviderMetaData);
   }
 
-  public async setTemporaryData(temporaryData: Partial<TemporaryStore>, userID?: string): Promise<void> {
-    this.setDataInBulk(this._resolveKey(Stores.TemporaryData, userID), temporaryData);
+  public async setTemporaryData(temporaryData: Partial<TemporaryStore>, userId?: string): Promise<void> {
+    this.setDataInBulk(this._resolveKey(Stores.TemporaryData, userId), temporaryData);
   }
 
-  public async setSessionData(sessionData: Partial<SessionData>, userID?: string): Promise<void> {
-    this.setDataInBulk(this._resolveKey(Stores.SessionData, userID), sessionData);
+  public async setSessionData(sessionData: Partial<SessionData>, userId?: string): Promise<void> {
+    this.setDataInBulk(this._resolveKey(Stores.SessionData, userId), sessionData);
   }
 
-  public async setCustomData<K>(key: string, customData: Partial<K>, userID?: string): Promise<void> {
-    this.setDataInBulk(this._resolveKey(key, userID), customData);
+  public async setCustomData<K>(key: string, customData: Partial<K>, userId?: string): Promise<void> {
+    this.setDataInBulk(this._resolveKey(key, userId), customData);
   }
 
   public async getConfigData(): Promise<AuthClientConfig<T>> {
@@ -120,16 +120,16 @@ class StorageManager<T> {
     return JSON.parse((await this._store.getData(this._resolveKey(Stores.OIDCProviderMetaData))) ?? null);
   }
 
-  public async getTemporaryData(userID?: string): Promise<TemporaryStore> {
-    return JSON.parse((await this._store.getData(this._resolveKey(Stores.TemporaryData, userID))) ?? null);
+  public async getTemporaryData(userId?: string): Promise<TemporaryStore> {
+    return JSON.parse((await this._store.getData(this._resolveKey(Stores.TemporaryData, userId))) ?? null);
   }
 
-  public async getSessionData(userID?: string): Promise<SessionData> {
-    return JSON.parse((await this._store.getData(this._resolveKey(Stores.SessionData, userID))) ?? null);
+  public async getSessionData(userId?: string): Promise<SessionData> {
+    return JSON.parse((await this._store.getData(this._resolveKey(Stores.SessionData, userId))) ?? null);
   }
 
-  public async getCustomData<K>(key: string, userID?: string): Promise<K> {
-    return JSON.parse((await this._store.getData(this._resolveKey(key, userID))) ?? null);
+  public async getCustomData<K>(key: string, userId?: string): Promise<K> {
+    return JSON.parse((await this._store.getData(this._resolveKey(key, userId))) ?? null);
   }
 
   public setSessionStatus(status: string): void {
@@ -153,12 +153,12 @@ class StorageManager<T> {
     await this._store.removeData(this._resolveKey(Stores.OIDCProviderMetaData));
   }
 
-  public async removeTemporaryData(userID?: string): Promise<void> {
-    await this._store.removeData(this._resolveKey(Stores.TemporaryData, userID));
+  public async removeTemporaryData(userId?: string): Promise<void> {
+    await this._store.removeData(this._resolveKey(Stores.TemporaryData, userId));
   }
 
-  public async removeSessionData(userID?: string): Promise<void> {
-    await this._store.removeData(this._resolveKey(Stores.SessionData, userID));
+  public async removeSessionData(userId?: string): Promise<void> {
+    await this._store.removeData(this._resolveKey(Stores.SessionData, userId));
   }
 
   public async getConfigDataParameter(key: keyof AuthClientConfig<T>): Promise<TemporaryStoreValue> {
@@ -173,14 +173,14 @@ class StorageManager<T> {
     return data && JSON.parse(data)[key];
   }
 
-  public async getTemporaryDataParameter(key: keyof TemporaryStore, userID?: string): Promise<TemporaryStoreValue> {
-    const data: string = await this._store.getData(this._resolveKey(Stores.TemporaryData, userID));
+  public async getTemporaryDataParameter(key: keyof TemporaryStore, userId?: string): Promise<TemporaryStoreValue> {
+    const data: string = await this._store.getData(this._resolveKey(Stores.TemporaryData, userId));
 
     return data && JSON.parse(data)[key];
   }
 
-  public async getSessionDataParameter(key: keyof SessionData, userID?: string): Promise<TemporaryStoreValue> {
-    const data: string = await this._store.getData(this._resolveKey(Stores.SessionData, userID));
+  public async getSessionDataParameter(key: keyof SessionData, userId?: string): Promise<TemporaryStoreValue> {
+    const data: string = await this._store.getData(this._resolveKey(Stores.SessionData, userId));
 
     return data && JSON.parse(data)[key];
   }
@@ -199,17 +199,17 @@ class StorageManager<T> {
   public async setTemporaryDataParameter(
     key: keyof TemporaryStore,
     value: TemporaryStoreValue,
-    userID?: string,
+    userId?: string,
   ): Promise<void> {
-    await this.setValue(this._resolveKey(Stores.TemporaryData, userID), key, value);
+    await this.setValue(this._resolveKey(Stores.TemporaryData, userId), key, value);
   }
 
   public async setSessionDataParameter(
     key: keyof SessionData,
     value: TemporaryStoreValue,
-    userID?: string,
+    userId?: string,
   ): Promise<void> {
-    await this.setValue(this._resolveKey(Stores.SessionData, userID), key, value);
+    await this.setValue(this._resolveKey(Stores.SessionData, userId), key, value);
   }
 
   public async removeConfigDataParameter(key: keyof AuthClientConfig<T>): Promise<void> {
@@ -220,12 +220,12 @@ class StorageManager<T> {
     await this.removeValue(this._resolveKey(Stores.OIDCProviderMetaData), key);
   }
 
-  public async removeTemporaryDataParameter(key: keyof TemporaryStore, userID?: string): Promise<void> {
-    await this.removeValue(this._resolveKey(Stores.TemporaryData, userID), key);
+  public async removeTemporaryDataParameter(key: keyof TemporaryStore, userId?: string): Promise<void> {
+    await this.removeValue(this._resolveKey(Stores.TemporaryData, userId), key);
   }
 
-  public async removeSessionDataParameter(key: keyof SessionData, userID?: string): Promise<void> {
-    await this.removeValue(this._resolveKey(Stores.SessionData, userID), key);
+  public async removeSessionDataParameter(key: keyof SessionData, userId?: string): Promise<void> {
+    await this.removeValue(this._resolveKey(Stores.SessionData, userId), key);
   }
 }
 

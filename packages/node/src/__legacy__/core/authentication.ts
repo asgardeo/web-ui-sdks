@@ -58,13 +58,13 @@ export class AsgardeoNodeCore<T> {
 
   public async signIn(
     authURLCallback: AuthURLCallback,
-    userID: string,
+    userId: string,
     authorizationCode?: string,
     sessionState?: string,
     state?: string,
     signInConfig?: Record<string, string | boolean>,
   ): Promise<TokenResponse> {
-    if (!userID) {
+    if (!userId) {
       return Promise.reject(
         new AsgardeoAuthException(
           'NODE-AUTH_CORE-SI-NF01',
@@ -74,8 +74,8 @@ export class AsgardeoNodeCore<T> {
       );
     }
 
-    if (await this.isAuthenticated(userID)) {
-      const sessionData: SessionData = await this._storageManager.getSessionData(userID);
+    if (await this.isAuthenticated(userId)) {
+      const sessionData: SessionData = await this._storageManager.getSessionData(userId);
 
       return Promise.resolve({
         accessToken: sessionData.access_token,
@@ -100,7 +100,7 @@ export class AsgardeoNodeCore<T> {
           ),
         );
       }
-      const authURL = await this.getAuthURL(userID, signInConfig);
+      const authURL = await this.getAuthURL(userId, signInConfig);
       authURLCallback(authURL);
 
       return Promise.resolve({
@@ -115,7 +115,7 @@ export class AsgardeoNodeCore<T> {
       });
     }
 
-    return this.requestAccessToken(authorizationCode, sessionState ?? '', userID, state);
+    return this.requestAccessToken(authorizationCode, sessionState ?? '', userId, state);
   }
 
   public async getAuthURL(userId: string, signInConfig?: Record<string, string | boolean>): Promise<string> {
