@@ -19,12 +19,6 @@
 import {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 import {User} from './models/user';
 import {Config} from './models/config';
-import { CustomGrantConfig } from './__legacy__/models';
-import { Crypto } from './models/crypto';
-import { ExtendedAuthorizeRequestUrlParams } from './models/oauth-request';
-import { OIDCEndpoints } from './models/oidc-endpoints';
-import { TokenResponse } from './models/token';
-import StorageManager from './StorageManager';
 
 /**
  * Base class for implementing Asgardeo clients.
@@ -33,60 +27,6 @@ import StorageManager from './StorageManager';
  * @typeParam T - Configuration type that extends Config.
  */
 abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T> {
-  getStorageManager(): StorageManager<T> {
-    throw new Error('Method not implemented.');
-  }
-  getInstanceId(): number {
-    throw new Error('Method not implemented.');
-  }
-  getSignInUrl(requestConfig: ExtendedAuthorizeRequestUrlParams, userId: string): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  getSignOutUrl(userId: string): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  loadOpenIDProviderConfiguration(force: boolean): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  getOpenIDProviderEndpoints(): Promise<Partial<OIDCEndpoints>> {
-    throw new Error('Method not implemented.');
-  }
-  requestAccessToken(authorizationCode: string, sessionState: string, state: string, userId?: string, requestConfig?: { params: Record<string, unknown>; }): Promise<TokenResponse> {
-    throw new Error('Method not implemented.');
-  }
-  getIdToken(userId: string, raw: boolean): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  getCrypto(): Crypto {
-    throw new Error('Method not implemented.');
-  }
-  revokeAccessToken(userId?: string): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
-  refreshAccessToken(userId?: string): Promise<TokenResponse> {
-    throw new Error('Method not implemented.');
-  }
-  getAccessToken(userId?: string): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  exchangeToken(requestConfig: CustomGrantConfig, userId?: string): Promise<TokenResponse> {
-    throw new Error('Method not implemented.');
-  }
-  getPKCECode(state: string, userId?: string): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  setPKCECode(code: string, state: string, userId?: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  isSignOutSuccessful(afterSignOutUrl: string): boolean {
-    throw new Error('Method not implemented.');
-  }
-  reInitialize(config: T): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  clearSession(userId?: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
   /**
    * Initializes the authentication client with provided configuration.
    *
