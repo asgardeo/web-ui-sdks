@@ -18,7 +18,7 @@
 
 import {IsomorphicCrypto} from '../../IsomorphicCrypto';
 import StorageManager from '../../StorageManager';
-import {AsgardeoAuthException} from '../exception';
+import {AsgardeoAuthException} from '../../errors/exception';
 import {AuthClientConfig, AuthenticatedUserInfo, StrictAuthClientConfig} from '../models';
 import {SessionData} from '../../models/session';
 import {JWKInterface} from '../../models/crypto';

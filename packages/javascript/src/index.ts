@@ -18,9 +18,8 @@
 
 export * from './__legacy__/client';
 export * from './__legacy__/models';
-export * from './models/oauth-response';
+
 export * from './IsomorphicCrypto';
-export * from './__legacy__/exception';
 
 export {default as getUserInfo} from './api/getUserInfo';
 
@@ -30,11 +29,13 @@ export {default as OIDCRequestConstants} from './constants/OIDCRequestConstants'
 export {default as AsgardeoError} from './errors/AsgardeoError';
 export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';
 export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
+export {AsgardeoAuthException} from './errors/exception';
 
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 export {BaseConfig, Config, Preferences, ThemePreferences} from './models/config';
 export {TokenResponse, IdTokenPayload} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';
+export {OAuthResponseMode} from './models/oauth-response';
 export {
   AuthorizeRequestUrlParams,
   KnownExtendedAuthorizeRequestUrlParams,

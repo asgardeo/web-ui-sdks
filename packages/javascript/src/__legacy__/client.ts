@@ -37,7 +37,7 @@ import OIDCRequestConstants from '../constants/OIDCRequestConstants';
 import {IsomorphicCrypto} from '../IsomorphicCrypto';
 import extractPkceStorageKeyFromState from '../utils/extractPkceStorageKeyFromState';
 import generateStateParamForRequestCorrelation from '../utils/generateStateParamForRequestCorrelation';
-import {AsgardeoAuthException} from './exception';
+import {AsgardeoAuthException} from '../errors/exception';
 import {AuthenticationHelper} from './helpers';
 import {SessionData} from '../models/session';
 import {AuthorizeRequestUrlParams} from '../models/oauth-request';

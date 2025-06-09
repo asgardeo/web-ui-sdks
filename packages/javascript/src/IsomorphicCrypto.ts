@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthException} from './__legacy__/exception';
+import {AsgardeoAuthException} from './errors/exception';
 import {Crypto, JWKInterface} from './models/crypto';
 import {IdTokenPayload} from './models/token';
 import TokenConstants from './constants/TokenConstants';
