@@ -43,6 +43,7 @@ export {
 export {OIDCEndpoints} from './models/oidc-endpoints';
 export {Storage} from './models/store';
 export {User} from './models/user';
+export {SessionData} from './models/session';
 export {Schema, SchemaAttribute, WellKnownSchemaIds} from './models/scim2-schema';
 export {RecursivePartial} from './models/utility-types';
 
