@@ -1,7 +1,7 @@
 'use client';
 
 import {useState, useRef, useEffect} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {useApp} from '../App';
 import {Users, ChevronDown, Settings, User, LogOut, Plus, Check, Building2} from 'lucide-react';
 import {SignedOut, SignInButton, SignOutButton} from '@asgardeo/react';
@@ -13,7 +13,6 @@ export default function Header() {
   const [showOrgDropdown, setShowOrgDropdown] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const orgDropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
 
   // Close dropdowns when clicking outside
   useEffect(() => {
