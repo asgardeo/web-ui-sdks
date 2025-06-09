@@ -18,7 +18,8 @@
 
 import {Stores} from './models/store';
 import {Storage} from './models/store';
-import {AuthClientConfig, SessionData} from './__legacy__/models';
+import {AuthClientConfig} from './__legacy__/models';
+import {SessionData} from './models/session';
 import {TemporaryStore, TemporaryStoreValue} from './models/store';
 import {OIDCDiscoveryApiResponse} from './models/oidc-discovery';
 

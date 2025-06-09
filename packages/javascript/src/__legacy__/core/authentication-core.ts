@@ -27,9 +27,9 @@ import {
   CustomGrantConfig,
   FetchRequestConfig,
   FetchResponse,
-  SessionData,
   StrictAuthClientConfig,
 } from '../models';
+import {SessionData} from '../../models/session';
 import {AuthorizeRequestUrlParams} from '../../models/oauth-request';
 import {TokenResponse, IdTokenPayload} from '../../models/token';
 import {Crypto} from '../../models/crypto';

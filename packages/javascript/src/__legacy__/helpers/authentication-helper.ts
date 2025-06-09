@@ -19,7 +19,8 @@
 import {IsomorphicCrypto} from '../../IsomorphicCrypto';
 import StorageManager from '../../StorageManager';
 import {AsgardeoAuthException} from '../exception';
-import {AuthClientConfig, AuthenticatedUserInfo, SessionData, StrictAuthClientConfig} from '../models';
+import {AuthClientConfig, AuthenticatedUserInfo, StrictAuthClientConfig} from '../models';
+import {SessionData} from '../../models/session';
 import {JWKInterface} from '../../models/crypto';
 import {TokenResponse, AccessTokenApiResponse} from '../../models/token';
 import {IdTokenPayload} from '../../models/token';
