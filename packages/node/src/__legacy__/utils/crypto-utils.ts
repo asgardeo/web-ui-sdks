@@ -51,7 +51,7 @@ export class NodeCryptoUtils implements Crypto<Buffer | string> {
     idToken: string,
     jwk: Partial<JWKInterface>,
     algorithms: string[],
-    clientID: string,
+    clientId: string,
     issuer: string,
     subject: string,
     clockTolerance?: number,
@@ -60,7 +60,7 @@ export class NodeCryptoUtils implements Crypto<Buffer | string> {
     return jose
       .jwtVerify(idToken, key, {
         algorithms: algorithms,
-        audience: clientID,
+        audience: clientId,
         clockTolerance: clockTolerance,
         issuer: issuer,
         subject: subject,

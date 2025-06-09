@@ -70,7 +70,7 @@ describe('AuthAPI', () => {
     it('should call initialize on the client with the provided config', async () => {
       const config: AuthVueConfig = {
         baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
-        clientID: 'mock-client-id',
+        clientId: 'mock-client-id',
         signInRedirectURL: 'http://localhost:5173/',
         signOutRedirectURL: 'http://localhost:5173/',
       };
@@ -419,7 +419,7 @@ describe('AuthAPI', () => {
 
   describe('updateConfig', () => {
     it('should call updateConfig on the client', async () => {
-      const config: Partial<AuthClientConfig<Config>> = {clientID: 'new-client-id'};
+      const config: Partial<AuthClientConfig<Config>> = {clientId: 'new-client-id'};
       await authApi.updateConfig(config);
       expect(mockClient.updateConfig).toHaveBeenCalledWith(config);
     });

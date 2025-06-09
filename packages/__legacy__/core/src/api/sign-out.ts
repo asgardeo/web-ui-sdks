@@ -50,7 +50,7 @@ const signOut = async (): Promise<void> => {
 
   try {
     formBody.append('id_token_hint', await authClient.getIDToken());
-    formBody.append('client_id', (await authClient.getStorageManager().getConfigData()).clientID);
+    formBody.append('client_id', (await authClient.getStorageManager().getConfigData()).clientId);
     formBody.append('response_mode', 'direct');
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-SIGNOUT-SO-IV', 'Failed to build the body of the signout request.');

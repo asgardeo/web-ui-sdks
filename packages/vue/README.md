@@ -34,7 +34,7 @@ const app = createApp(App)
 app.use(AsgardeoAuth, {
   signInRedirectURL: "http://localhost:3000",
   signOutRedirectURL: "http://localhost:3000",
-  clientID: "<your-client-id>",
+  clientId: "<your-client-id>",
   baseUrl: "https://api.asgardeo.io/t/<org-name>",
   scope: ["openid", "profile"]
 })

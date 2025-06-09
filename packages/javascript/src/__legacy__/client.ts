@@ -103,7 +103,7 @@ export class AsgardeoAuthClient<T> {
    * @example
    * const config = \{
    *     signInRedirectURL: "http://localhost:3000/sign-in",
-   *     clientID: "client ID",
+   *     clientId: "client ID",
    *     baseUrl: "https://localhost:9443"
    * \}
    *
@@ -119,7 +119,7 @@ export class AsgardeoAuthClient<T> {
     cryptoUtils: Crypto,
     instanceID?: number,
   ): Promise<void> {
-    const clientId: string = config.clientID;
+    const clientId: string = config.clientId;
 
     if (!AsgardeoAuthClient._instanceID) {
       AsgardeoAuthClient._instanceID = 0;
@@ -250,7 +250,7 @@ export class AsgardeoAuthClient<T> {
       const authorizeRequestParams: Map<string, string> = getAuthorizeRequestUrlParams(
         {
           redirectUri: configData.signInRedirectURL,
-          clientId: configData.clientID,
+          clientId: configData.clientId,
           scope: configData.scope as unknown as any,
           responseMode: configData.responseMode,
           codeChallengeMethod: PKCEConstants.DEFAULT_CODE_CHALLENGE_METHOD,
@@ -337,7 +337,7 @@ export class AsgardeoAuthClient<T> {
 
       const body: URLSearchParams = new URLSearchParams();
 
-      body.set('client_id', configData.clientID);
+      body.set('client_id', configData.clientId);
 
       if (configData.clientSecret && configData.clientSecret.trim().length > 0) {
         body.set('client_secret', configData.clientSecret);
@@ -536,7 +536,7 @@ export class AsgardeoAuthClient<T> {
       }
       queryParams.set('id_token_hint', idToken);
     } else {
-      queryParams.set('client_id', configData.clientID);
+      queryParams.set('client_id', configData.clientId);
     }
 
     queryParams.set('state', OIDCRequestConstants.Params.SIGN_OUT_SUCCESS);
@@ -715,7 +715,7 @@ export class AsgardeoAuthClient<T> {
 
     const body: string[] = [];
 
-    body.push(`client_id=${configData.clientID}`);
+    body.push(`client_id=${configData.clientId}`);
     body.push(`token=${(await this._storageManager.getSessionData(userID)).access_token}`);
     body.push('token_type_hint=access_token');
 
@@ -803,7 +803,7 @@ export class AsgardeoAuthClient<T> {
 
     const body: string[] = [];
 
-    body.push(`client_id=${configData.clientID}`);
+    body.push(`client_id=${configData.clientId}`);
     body.push(`refresh_token=${sessionData.refresh_token}`);
     body.push('grant_type=refresh_token');
 
@@ -879,7 +879,7 @@ export class AsgardeoAuthClient<T> {
    * const config = {
    *   attachToken: false,
    *   data: {
-   *       client_id: "{{clientID}}",
+   *       client_id: "{{clientId}}",
    *       grant_type: "account_switch",
    *       scope: "{{scope}}",
    *       token: "{{token}}",
@@ -1119,7 +1119,7 @@ export class AsgardeoAuthClient<T> {
    * ```
    * const config = {
    *     signInRedirectURL: "http://localhost:3000/sign-in",
-   *     clientID: "client ID",
+   *     clientId: "client ID",
    *     baseUrl: "https://localhost:9443"
    * }
    *

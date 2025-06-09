@@ -34,7 +34,7 @@ app.use(router);
 app.use(asgardeoPlugin, {
   signInRedirectURL: "http://localhost:5173/",
   signOutRedirectURL: "http://localhost:5173/",
-  clientID: "<ADD_CLIENT_ID_HERE>",
+  clientId: "<ADD_CLIENT_ID_HERE>",
   baseUrl: "https://api.asgardeo.io/t/<org_name>",
 });
 

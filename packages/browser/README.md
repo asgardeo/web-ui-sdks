@@ -29,7 +29,7 @@ import { AsgardeoAuthClient } from "@asgardeo/browser";
 // Initialize the auth client
 const authClient = new AsgardeoAuthClient({
     signInRedirectURL: "https://localhost:3000",
-    clientID: "<your_client_id>",
+    clientId: "<your_client_id>",
     baseUrl: "https://api.asgardeo.io/t/<org_name>"
 });
 

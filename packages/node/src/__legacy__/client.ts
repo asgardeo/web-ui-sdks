@@ -51,7 +51,7 @@ export class AsgardeoNodeClient<T> {
     * const _config = {
            signInRedirectURL: "http://localhost:3000/sign-in",
            signOutRedirectURL: "http://localhost:3000/dashboard",
-           clientID: "client ID",
+           clientId: "client ID",
            serverOrigin: "https://api.asgardeo.io/t/<org_name>"
        };
     * const auth = new AsgardeoNodeClient(_config,_store);
@@ -276,7 +276,7 @@ export class AsgardeoNodeClient<T> {
      * const config = {
      *      attachToken: false,
      *      data: {
-     *          client_id: "{{clientID}}",
+     *          client_id: "{{clientId}}",
      *          grant_type: "account_switch",
      *          scope: "{{scope}}",
      *          token: "{{token}}",

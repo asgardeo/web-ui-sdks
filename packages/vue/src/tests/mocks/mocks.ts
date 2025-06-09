@@ -200,7 +200,7 @@ export const asgardeoAuthSPAMock: any = {
 
 export const mockConfig: AuthVueConfig = {
   baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
-  clientID: 'mock-client-id',
+  clientId: 'mock-client-id',
   signInRedirectURL: 'http://localhost:5173/',
   signOutRedirectURL: 'http://localhost:5173/',
 };

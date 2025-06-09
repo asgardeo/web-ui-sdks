@@ -40,7 +40,7 @@ import { AsgardeoProvider } from "@asgardeo/react";
 
   - `signInRedirectURL`: The URL where users should be redirected after they sign in. This should be a page in your application.
 
-  - `clientID`: The ID of your application. You get this when you register your application with Asgardeo.
+  - `clientId`: The ID of your application. You get this when you register your application with Asgardeo.
 
   - `scope`: The scope of the access request. This is a list of scopes separated by spaces. Scopes allow your application to request access only to the resources it needs, and also allow users to control how much access they grant to your application.
 

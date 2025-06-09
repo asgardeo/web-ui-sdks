@@ -70,7 +70,7 @@ describe('asgardeoPlugin', () => {
     expect(mockAuthAPI.init).toHaveBeenCalledWith(
       expect.objectContaining({
         baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
-        clientID: 'mock-client-id',
+        clientId: 'mock-client-id',
         disableAutoSignIn: true,
         disableTrySignInSilently: true,
         signInRedirectURL: 'http://localhost:5173/',
@@ -176,7 +176,7 @@ describe('asgardeoPlugin', () => {
   it('should update config and sync state', async () => {
     const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
 
-    const newConfig: Partial<AuthClientConfig<Config>> = {clientID: 'new-client-id'};
+    const newConfig: Partial<AuthClientConfig<Config>> = {clientId: 'new-client-id'};
 
     const updatedState: AuthStateInterface = {
       ...mockState,

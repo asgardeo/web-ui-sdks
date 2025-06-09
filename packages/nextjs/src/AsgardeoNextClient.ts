@@ -58,7 +58,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
     return this.asgardeo.initialize({
       baseUrl,
-      clientID: clientId,
+      clientId: clientId,
       clientSecret,
       signInRedirectURL: afterSignInUrl,
     } as any);
@@ -127,11 +127,11 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
         {},
         undefined,
         (redirectUrl: string) => {
-          return response = NextResponse.redirect(redirectUrl, 302);
+          return (response = NextResponse.redirect(redirectUrl, 302));
         },
         searchParams.get('code') as string,
-        searchParams.get('session_state')as string,
-        searchParams.get('state')as string,
+        searchParams.get('session_state') as string,
+        searchParams.get('state') as string,
       );
 
       // If we already redirected via the callback, return that

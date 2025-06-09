@@ -259,7 +259,7 @@ export const MainThreadClient = async (
     if ((await _authenticationClient.isAuthenticated()) && !_getSignOutURLFromSessionStorage) {
       location.href = await _authenticationClient.getSignOutURL();
     } else {
-      location.href = SPAUtils.getSignOutURL(config.clientID, instanceID);
+      location.href = SPAUtils.getSignOutURL(config.clientId, instanceID);
     }
 
     _spaHelper.clearRefreshTokenTimeout();

@@ -196,7 +196,7 @@ export class AuthenticationHelper<T> {
     return this._cryptoHelper.isValidIdToken(
       idToken,
       jwk,
-      (await this._config()).clientID,
+      (await this._config()).clientId,
       issuer ?? '',
       this._cryptoHelper.decodeIDToken(idToken).sub,
       (await this._config()).clockTolerance,
@@ -241,7 +241,7 @@ export class AuthenticationHelper<T> {
         this.getAuthenticatedUserInfo(sessionData.id_token).username,
       )
       .replace(TokenExchangeConstants.Placeholders.SCOPE, scope)
-      .replace(TokenExchangeConstants.Placeholders.CLIENT_ID, configData.clientID)
+      .replace(TokenExchangeConstants.Placeholders.CLIENT_ID, configData.clientId)
       .replace(TokenExchangeConstants.Placeholders.CLIENT_SECRET, configData.clientSecret ?? '');
   }
 

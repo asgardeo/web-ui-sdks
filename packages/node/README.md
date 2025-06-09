@@ -28,7 +28,7 @@ import { AsgardeoNodeClient } from "@asgardeo/node";
 
 // Initialize the client
 const authClient = new AsgardeoNodeClient({
-    clientID: "<your_client_id>",
+    clientId: "<your_client_id>",
     clientSecret: "<your_client_secret>",
     baseUrl: "https://api.asgardeo.io/t/<org_name>",
     callbackURL: "http://localhost:3000/callback"

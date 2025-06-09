@@ -90,7 +90,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     sessionManagementHelper: SessionManagementHelperInterface,
   ): void {
     sessionManagementHelper.initialize(
-      config.clientID,
+      config.clientId,
       oidcEndpoints.checkSessionIframe ?? '',
       getSessionState,
       config.checkSessionInterval ?? 3,
@@ -473,7 +473,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
                         SPAUtils.setSignOutURL(await _authenticationClient.getSignOutURL());
                     } */
           if (config.storage !== BrowserStorage.WebWorker) {
-            SPAUtils.setSignOutURL(await this._authenticationClient.getSignOutURL(), config.clientID, this._instanceID);
+            SPAUtils.setSignOutURL(await this._authenticationClient.getSignOutURL(), config.clientId, this._instanceID);
 
             if (this._spaHelper) {
               this._spaHelper.clearRefreshTokenTimeout();

@@ -129,7 +129,7 @@ export const WebWorkerClient = async (
 
         return signOutURL;
       } catch {
-        return SPAUtils.getSignOutURL(config.clientID, instanceID);
+        return SPAUtils.getSignOutURL(config.clientId, instanceID);
       }
     },
     config.storage as BrowserStorage,
@@ -504,7 +504,7 @@ export const WebWorkerClient = async (
 
         return communicate<null, string>(message)
           .then((url: string) => {
-            SPAUtils.setSignOutURL(url, config.clientID, instanceID);
+            SPAUtils.setSignOutURL(url, config.clientId, instanceID);
 
             // Enable OIDC Sessions Management only if it is set to true in the config.
             if (config.enableOIDCSessionManagement) {
@@ -636,7 +636,7 @@ export const WebWorkerClient = async (
             return reject(error);
           });
       } else {
-        window.location.href = SPAUtils.getSignOutURL(config.clientID, instanceID);
+        window.location.href = SPAUtils.getSignOutURL(config.clientId, instanceID);
 
         return SPAUtils.waitTillPageRedirect().then(() => {
           return Promise.resolve(true);

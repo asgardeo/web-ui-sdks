@@ -30,7 +30,7 @@ export interface ModuleOptions {
    * Asgardeo Application Client ID.
    * @default process.env.ASGARDEO_CLIENT_ID
    */
-  clientID: string;
+  clientId: string;
 
   /**
    * Asgardeo Application Client Secret. (Server-side only)

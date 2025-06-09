@@ -6,7 +6,7 @@ const envVariables = import.meta.env;
 
 const config: UIAuthConfig = {
   baseUrl: envVariables.VITE_BASE_URL,
-  clientID: envVariables.VITE_CLIENT_ID,
+  clientId: envVariables.VITE_CLIENT_ID,
   scope: envVariables.VITE_SCOPE?.split(","),
   signInRedirectURL: envVariables.VITE_SIGN_IN_REDIRECT_URL,
 };

@@ -49,7 +49,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
 
     return this.asgardeo.init({
       baseUrl: config.baseUrl,
-      clientID: config.clientId,
+      clientId: config.clientId,
       signInRedirectURL: config.afterSignInUrl,
       scope: [...scopes, 'internal_login'],
     });

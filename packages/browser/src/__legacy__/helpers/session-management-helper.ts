@@ -48,7 +48,7 @@ export const SessionManagementHelper = (() => {
   let _getAuthorizationURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>;
 
   const initialize = (
-    clientID: string,
+    clientId: string,
     checkSessionEndpoint: string,
     getSessionState: () => Promise<string>,
     interval: number,
@@ -56,7 +56,7 @@ export const SessionManagementHelper = (() => {
     redirectURL: string,
     getAuthorizationURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>,
   ): void => {
-    _clientID = clientID;
+    _clientID = clientId;
     _checkSessionEndpoint = checkSessionEndpoint;
     _sessionState = getSessionState;
     _interval = interval;
