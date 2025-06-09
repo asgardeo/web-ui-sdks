@@ -74,7 +74,7 @@ describe('asgardeoPlugin', () => {
         disableAutoSignIn: true,
         disableTrySignInSilently: true,
         afterSignInUrl: 'http://localhost:5173/',
-        signOutRedirectURL: 'http://localhost:5173/',
+        afterSignOutUrl: 'http://localhost:5173/',
       }),
     );
   });

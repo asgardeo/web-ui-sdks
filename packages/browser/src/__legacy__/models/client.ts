@@ -55,7 +55,7 @@ export interface MainThreadClientInterface {
       params: Record<string, unknown>;
     },
   ): Promise<BasicUserInfo>;
-  signOut(signOutRedirectURL?: string): Promise<boolean>;
+  signOut(afterSignOutUrl?: string): Promise<boolean>;
   requestCustomGrant(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
   refreshAccessToken(): Promise<BasicUserInfo>;
   revokeAccessToken(): Promise<boolean>;
@@ -92,7 +92,7 @@ export interface WebWorkerClientInterface {
       params: Record<string, unknown>;
     },
   ): Promise<BasicUserInfo>;
-  signOut(signOutRedirectURL?: string): Promise<boolean>;
+  signOut(afterSignOutUrl?: string): Promise<boolean>;
   revokeAccessToken(): Promise<boolean>;
   getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
   getBasicUserInfo(): Promise<BasicUserInfo>;

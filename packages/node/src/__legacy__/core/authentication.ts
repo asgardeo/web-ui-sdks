@@ -240,12 +240,12 @@ export class AsgardeoNodeCore<T> {
     return this._auth.revokeAccessToken(userId);
   }
 
-  public static didSignOutFail(signOutRedirectURL: string): boolean {
-    return AsgardeoNodeCore.didSignOutFail(signOutRedirectURL);
+  public static didSignOutFail(afterSignOutUrl: string): boolean {
+    return AsgardeoNodeCore.didSignOutFail(afterSignOutUrl);
   }
 
-  public static isSignOutSuccessful(signOutRedirectURL: string): boolean {
-    return AsgardeoNodeCore.isSignOutSuccessful(signOutRedirectURL);
+  public static isSignOutSuccessful(afterSignOutUrl: string): boolean {
+    return AsgardeoNodeCore.isSignOutSuccessful(afterSignOutUrl);
   }
 
   public getStorageManager(): StorageManager<T> {

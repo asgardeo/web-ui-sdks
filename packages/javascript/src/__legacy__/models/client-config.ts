@@ -21,7 +21,7 @@ import {OIDCEndpoints} from '../../models/oidc-endpoints';
 
 export interface DefaultAuthClientConfig {
   afterSignInUrl: string;
-  signOutRedirectURL?: string;
+  afterSignOutUrl?: string;
   clientHost?: string;
   clientId: string;
   clientSecret?: string;

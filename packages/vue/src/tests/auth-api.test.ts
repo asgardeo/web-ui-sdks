@@ -72,7 +72,7 @@ describe('AuthAPI', () => {
         baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
         clientId: 'mock-client-id',
         afterSignInUrl: 'http://localhost:5173/',
-        signOutRedirectURL: 'http://localhost:5173/',
+        afterSignOutUrl: 'http://localhost:5173/',
       };
 
       await authApi.init(config);

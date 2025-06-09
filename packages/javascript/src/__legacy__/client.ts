@@ -510,7 +510,7 @@ export class AsgardeoAuthClient<T> {
       );
     }
 
-    const callbackURL: string = configData?.signOutRedirectURL ?? configData?.afterSignInUrl;
+    const callbackURL: string = configData?.afterSignOutUrl ?? configData?.afterSignInUrl;
 
     if (!callbackURL || callbackURL.trim().length === 0) {
       throw new AsgardeoAuthException(
@@ -1091,7 +1091,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @param signOutRedirectUrl - The URL to which the user has been redirected to after signing-out.
    *
-   * **The server appends path parameters to the `signOutRedirectURL` and these path parameters
+   * **The server appends path parameters to the `afterSignOutUrl` and these path parameters
    *  are required for this method to function.**
    *
    * @returns - `true` if successful, `false` otherwise.
@@ -1100,8 +1100,8 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public static isSignOutSuccessful(signOutRedirectURL: string): boolean {
-    const url: URL = new URL(signOutRedirectURL);
+  public static isSignOutSuccessful(afterSignOutUrl: string): boolean {
+    const url: URL = new URL(afterSignOutUrl);
     const stateParam: string | null = url.searchParams.get(OIDCRequestConstants.Params.STATE);
     const error: boolean = Boolean(url.searchParams.get('error'));
 
@@ -1113,7 +1113,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @param signOutRedirectUrl - The URL to which the user has been redirected to after signing-out.
    *
-   * **The server appends path parameters to the `signOutRedirectURL` and these path parameters
+   * **The server appends path parameters to the `afterSignOutUrl` and these path parameters
    *  are required for this method to function.**
    *
    * @returns - `true` if successful, `false` otherwise.
@@ -1122,8 +1122,8 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public static didSignOutFail(signOutRedirectURL: string): boolean {
-    const url: URL = new URL(signOutRedirectURL);
+  public static didSignOutFail(afterSignOutUrl: string): boolean {
+    const url: URL = new URL(afterSignOutUrl);
     const stateParam: string | null = url.searchParams.get(OIDCRequestConstants.Params.STATE);
     const error: boolean = Boolean(url.searchParams.get('error'));
 

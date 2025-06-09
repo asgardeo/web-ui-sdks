@@ -54,7 +54,7 @@ export interface ModuleOptions {
    * The absolute URI to redirect to after sign-out completes.
    * @default process.env.ASGARDEO_SIGN_OUT_REDIRECT_URL
    */
-  signOutRedirectURL: string;
+  afterSignOutUrl: string;
 }
 
 export interface AuthInterface {

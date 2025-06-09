@@ -32,5 +32,5 @@ export interface StrictExpressClientConfig {
   signInConfig?: Record<string, string | boolean>;
 }
 
-export type ExpressClientConfig = Exclude<AuthClientConfig, 'afterSignInUrl' | 'signOutRedirectURL'> &
+export type ExpressClientConfig = Exclude<AuthClientConfig, 'afterSignInUrl' | 'afterSignOutUrl'> &
   StrictExpressClientConfig;

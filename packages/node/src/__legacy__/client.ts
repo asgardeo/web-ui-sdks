@@ -50,7 +50,7 @@ export class AsgardeoNodeClient<T> {
     * const _store: Storage = new DataStore();
     * const _config = {
            afterSignInUrl: "http://localhost:3000/sign-in",
-           signOutRedirectURL: "http://localhost:3000/dashboard",
+           afterSignOutUrl: "http://localhost:3000/dashboard",
            clientId: "client ID",
            serverOrigin: "https://api.asgardeo.io/t/<org_name>"
        };
@@ -313,7 +313,7 @@ export class AsgardeoNodeClient<T> {
    * @example
    * ```
    * const updateConfig = await auth.updateConfig({
-   *       signOutRedirectURL: "http://localhost:3000/sign-out"
+   *       afterSignOutUrl: "http://localhost:3000/sign-out"
    *   });
    * ```
    *
@@ -371,7 +371,7 @@ export class AsgardeoNodeClient<T> {
 
   /**
    * This method returns if the user has been successfully signed out or not.
-   * @param {string} signOutRedirectURL - The URL to which the user is redirected to
+   * @param {string} afterSignOutUrl - The URL to which the user is redirected to
    * after signing out from the server.
    *
    * @return {boolean} - A boolean value indicating if the user has been signed out or not.
@@ -386,13 +386,13 @@ export class AsgardeoNodeClient<T> {
    * @memberof AsgardeoNodeClient
    *
    */
-  public static isSignOutSuccessful(signOutRedirectURL: string): boolean {
-    return AsgardeoNodeClient.isSignOutSuccessful(signOutRedirectURL);
+  public static isSignOutSuccessful(afterSignOutUrl: string): boolean {
+    return AsgardeoNodeClient.isSignOutSuccessful(afterSignOutUrl);
   }
 
   /**
    * This method returns if sign-out failed or not
-   * @param {string} signOutRedirectURL - The URL to which the user is redirected to
+   * @param {string} afterSignOutUrl - The URL to which the user is redirected to
    * after signing out from the server.
    *
    * @return {boolean} - A boolean value indicating if sign-out failed or not.
@@ -407,8 +407,8 @@ export class AsgardeoNodeClient<T> {
    * @memberof AsgardeoNodeClient
    *
    */
-  public static didSignOutFail(signOutRedirectURL: string): boolean {
-    return AsgardeoNodeClient.didSignOutFail(signOutRedirectURL);
+  public static didSignOutFail(afterSignOutUrl: string): boolean {
+    return AsgardeoNodeClient.didSignOutFail(afterSignOutUrl);
   }
 
   public async getStorageManager(): Promise<StorageManager<T>> {

@@ -48,12 +48,12 @@ export class AsgardeoExpressClient {
     //Set the client config
     AsgardeoExpressClient._clientConfig = {...config};
 
-    //Add the afterSignInUrl and signOutRedirectURL
+    //Add the afterSignInUrl and afterSignOutUrl
     //Add custom paths if the user has already declared any or else use the defaults
     const nodeClientConfig: AuthClientConfig = {
       ...config,
       afterSignInUrl: config.appURL + (config.loginPath || DEFAULT_LOGIN_PATH),
-      signOutRedirectURL: config.appURL + (config.logoutPath || DEFAULT_LOGOUT_PATH),
+      afterSignOutUrl: config.appURL + (config.logoutPath || DEFAULT_LOGOUT_PATH),
     };
 
     //Initialize the user provided storage if there is any
@@ -194,12 +194,12 @@ export class AsgardeoExpressClient {
     return this._authClient.revokeAccessToken(userId);
   }
 
-  public static didSignOutFail(signOutRedirectURL: string): boolean {
-    return LegacyAsgardeoNodeClient.didSignOutFail(signOutRedirectURL);
+  public static didSignOutFail(afterSignOutUrl: string): boolean {
+    return LegacyAsgardeoNodeClient.didSignOutFail(afterSignOutUrl);
   }
 
-  public static isSignOutSuccessful(signOutRedirectURL: string): boolean {
-    return LegacyAsgardeoNodeClient.isSignOutSuccessful(signOutRedirectURL);
+  public static isSignOutSuccessful(afterSignOutUrl: string): boolean {
+    return LegacyAsgardeoNodeClient.isSignOutSuccessful(afterSignOutUrl);
   }
 
   public static protectRoute(

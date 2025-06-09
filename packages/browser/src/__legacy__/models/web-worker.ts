@@ -52,8 +52,8 @@ export interface WebWorkerCoreInterface {
     pkce?: string,
     state?: string,
   ): Promise<BasicUserInfo>;
-  signOut(signOutRedirectURL?: string): Promise<string>;
-  getSignOutURL(signOutRedirectURL?: string): Promise<string>;
+  signOut(afterSignOutUrl?: string): Promise<string>;
+  getSignOutURL(afterSignOutUrl?: string): Promise<string>;
   requestCustomGrant(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
   refreshAccessToken(): Promise<BasicUserInfo>;
   revokeAccessToken(): Promise<boolean>;
