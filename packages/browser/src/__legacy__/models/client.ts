@@ -66,7 +66,7 @@ export interface MainThreadClientInterface {
   getIDToken(): Promise<string>;
   getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
   getAccessToken(): Promise<string>;
-  getDataLayer(): Promise<StorageManager<MainThreadClientConfig>>;
+  getStorageManager(): Promise<StorageManager<MainThreadClientConfig>>;
   isAuthenticated(): Promise<boolean>;
   updateConfig(config: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void>;
   trySignInSilently(

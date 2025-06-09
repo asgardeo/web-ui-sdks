@@ -61,7 +61,7 @@ export const WebWorkerCore = async (
     _spaHelper,
   );
 
-  const _dataLayer = _authenticationClient.getDataLayer();
+  const _dataLayer = _authenticationClient.getStorageManager();
 
   const _httpClient: HttpClientInstance = HttpClient.getInstance();
 

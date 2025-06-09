@@ -60,7 +60,7 @@ export interface ModuleOptions {
 export interface AuthInterface {
   getAccessToken: () => Promise<string | null>;
   getBasicUserInfo: () => Promise<BasicUserInfo | null>;
-  getDataLayer: () => Promise<StorageManager<any> | null>;
+  getStorageManager: () => Promise<StorageManager<any> | null>;
   getDecodedIDToken: () => Promise<IdTokenPayload | null>;
   getIdToken: () => Promise<string | null>;
   getOIDCServiceEndpoints: () => Promise<OIDCEndpoints | null>;

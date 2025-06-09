@@ -52,7 +52,7 @@ export class AsgardeoNodeCore<T> {
     this._cryptoUtils = new NodeCryptoUtils();
     this._auth = new AsgardeoAuthClient();
     this._auth.initialize(config, this._store, this._cryptoUtils);
-    this._storageManager = this._auth.getDataLayer();
+    this._storageManager = this._auth.getStorageManager();
     Logger.debug('Initialized AsgardeoAuthClient successfully');
   }
 
@@ -248,7 +248,7 @@ export class AsgardeoNodeCore<T> {
     return AsgardeoNodeCore.isSignOutSuccessful(signOutRedirectURL);
   }
 
-  public getDataLayer(): StorageManager<T> {
+  public getStorageManager(): StorageManager<T> {
     return this._storageManager;
   }
 }

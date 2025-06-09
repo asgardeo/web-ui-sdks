@@ -891,7 +891,7 @@ export class AsgardeoSPAClient {
    *
    * @example
    * ```
-   *   auth.getDataLayer().then((dataLayer) => {
+   *   auth.getStorageManager().then((dataLayer) => {
    *       // console.log(dataLayer);
    *   }).catch((error) => {
    *       // console.error(error);
@@ -904,7 +904,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getDataLayer(): Promise<StorageManager<MainThreadClientConfig>> {
+  public async getStorageManager(): Promise<StorageManager<MainThreadClientConfig>> {
     await this._validateMethod();
 
     if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
@@ -918,7 +918,7 @@ export class AsgardeoSPAClient {
     }
     const mainThreadClient = this._client as MainThreadClientInterface;
 
-    return mainThreadClient.getDataLayer();
+    return mainThreadClient.getStorageManager();
   }
 
   /**

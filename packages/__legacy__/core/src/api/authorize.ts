@@ -43,7 +43,7 @@ const authorize = async (): Promise<AuthApiResponse> => {
     });
 
     /* Save the state temporarily in the data layer, this needs to be passed when token is requested */
-    await authInstace.getDataLayer().setTemporaryDataParameter('state', params.get('state'));
+    await authInstace.getStorageManager().setTemporaryDataParameter('state', params.get('state'));
 
     const headers: Headers = new Headers();
     headers.append('Accept', 'application/json');

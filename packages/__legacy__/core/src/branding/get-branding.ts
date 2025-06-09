@@ -42,7 +42,7 @@ const getBranding = async (props: GetBrandingProps): Promise<Branding> => {
     let brandingFromConsole: BrandingPreferenceAPIResponse;
 
     try {
-      const {enableConsoleBranding} = await AuthClient.getInstance().getDataLayer().getConfigData();
+      const {enableConsoleBranding} = await AuthClient.getInstance().getStorageManager().getConfigData();
 
       if (enableConsoleBranding) {
         brandingFromConsole = await getBrandingPreference();

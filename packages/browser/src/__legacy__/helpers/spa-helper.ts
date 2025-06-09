@@ -27,13 +27,14 @@ export class SPAHelper<T extends MainThreadClientConfig | WebWorkerClientConfig>
 
   public constructor(authClient: AsgardeoAuthClient<T>) {
     this._authenticationClient = authClient;
-    this._storageManager = this._authenticationClient.getDataLayer();
+    this._storageManager = this._authenticationClient.getStorageManager();
   }
 
   public async refreshAccessTokenAutomatically(
     authenticationHelper: AuthenticationHelper<MainThreadClientConfig | WebWorkerClientConfig>,
   ): Promise<void> {
-    const shouldRefreshAutomatically: boolean = (await this._storageManager.getConfigData())?.periodicTokenRefresh ?? false;
+    const shouldRefreshAutomatically: boolean =
+      (await this._storageManager.getConfigData())?.periodicTokenRefresh ?? false;
 
     if (!shouldRefreshAutomatically) {
       return;

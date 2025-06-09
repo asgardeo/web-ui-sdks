@@ -68,7 +68,7 @@ export const MainThreadClient = async (
   await _authenticationClient.initialize(config, _store, _cryptoUtils, instanceID);
 
   const _spaHelper = new SPAHelper<MainThreadClientConfig>(_authenticationClient);
-  const _dataLayer = _authenticationClient.getDataLayer();
+  const _dataLayer = _authenticationClient.getStorageManager();
   const _sessionManagementHelper = await SessionManagementHelper(
     async () => {
       return _authenticationClient.getSignOutURL();
@@ -393,8 +393,8 @@ export const MainThreadClient = async (
     return _authenticationHelper.getAccessToken();
   };
 
-  const getDataLayer = async (): Promise<StorageManager<MainThreadClientConfig>> => {
-    return _authenticationHelper.getDataLayer();
+  const getStorageManager = async (): Promise<StorageManager<MainThreadClientConfig>> => {
+    return _authenticationHelper.getStorageManager();
   };
 
   const getConfigData = async (): Promise<AuthClientConfig<MainThreadClientConfig>> => {
@@ -438,7 +438,7 @@ export const MainThreadClient = async (
     getBasicUserInfo,
     getConfigData,
     getCryptoHelper,
-    getDataLayer,
+    getStorageManager,
     getDecodedIDToken,
     getHttpClient,
     getIDToken,

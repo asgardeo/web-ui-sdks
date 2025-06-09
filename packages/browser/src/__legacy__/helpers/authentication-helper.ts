@@ -68,7 +68,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
 
   public constructor(authClient: AsgardeoAuthClient<T>, spaHelper: SPAHelper<T>) {
     this._authenticationClient = authClient;
-    this._storageManager = this._authenticationClient.getDataLayer();
+    this._storageManager = this._authenticationClient.getStorageManager();
     this._spaHelper = spaHelper;
     this._instanceID = this._authenticationClient.getInstanceID();
     this._isTokenRefreshing = false;
@@ -688,7 +688,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     return (await this._storageManager.getSessionData())?.access_token;
   }
 
-  public getDataLayer(): StorageManager<T> {
+  public getStorageManager(): StorageManager<T> {
     return this._storageManager;
   }
 

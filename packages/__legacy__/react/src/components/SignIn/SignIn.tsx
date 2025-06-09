@@ -182,7 +182,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
       authContext?.setAuthResponse(resp);
 
       const authInstance: UIAuthClient = AuthClient.getInstance();
-      const state: string = (await authInstance.getDataLayer().getTemporaryDataParameter('state')).toString();
+      const state: string = (await authInstance.getStorageManager().getTemporaryDataParameter('state')).toString();
 
       await authInstance.requestAccessToken(resp.authData.code, resp.authData.session_state, state);
 

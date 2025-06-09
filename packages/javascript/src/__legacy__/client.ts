@@ -132,14 +132,14 @@ export class AsgardeoAuthClient<T> {
    *
    * @example
    * ```
-   * const data = auth.getDataLayer();
+   * const data = auth.getStorageManager();
    * ```
    *
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getDataLayer}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getStorageManager}
    *
    * @preserve
    */
-  public getDataLayer(): StorageManager<T> {
+  public getStorageManager(): StorageManager<T> {
     return this._storageManager;
   }
 

@@ -411,7 +411,7 @@ export class AsgardeoNodeClient<T> {
     return AsgardeoNodeClient.didSignOutFail(signOutRedirectURL);
   }
 
-  public async getDataLayer(): Promise<StorageManager<T>> {
-    return this._authCore.getDataLayer();
+  public async getStorageManager(): Promise<StorageManager<T>> {
+    return this._authCore.getStorageManager();
   }
 }

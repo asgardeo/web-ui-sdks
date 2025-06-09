@@ -214,7 +214,7 @@ export const useAuth = (): AuthInterface => {
     }
   };
 
-  const getDataLayer = async (): Promise<StorageManager<any> | null> => {
+  const getStorageManager = async (): Promise<StorageManager<any> | null> => {
     try {
       const response: Response = await fetch('/api/auth/get-data-layer', {
         method: 'GET',
@@ -232,7 +232,7 @@ export const useAuth = (): AuthInterface => {
   return {
     getAccessToken,
     getBasicUserInfo,
-    getDataLayer,
+    getStorageManager,
     getDecodedIDToken,
     getIdToken,
     getOIDCServiceEndpoints,

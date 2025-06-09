@@ -38,7 +38,7 @@ const getLocalization = async (props: GetLocalizationProps): Promise<TextObject>
 
   let textFromConsoleBranding: BrandingPreferenceTextAPIResponse;
 
-  const configData: AuthClientConfig<UIAuthConfig> = await AuthClient.getInstance().getDataLayer().getConfigData();
+  const configData: AuthClientConfig<UIAuthConfig> = await AuthClient.getInstance().getStorageManager().getConfigData();
 
   try {
     if (configData.enableConsoleTextBranding) {

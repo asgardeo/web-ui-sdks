@@ -273,7 +273,7 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
     } else if (action === 'get-data-layer' && method === 'GET') {
       try {
-        const dataLayer: StorageManager<any> = await authClient.getDataLayer();
+        const dataLayer: StorageManager<any> = await authClient.getStorageManager();
         return dataLayer;
       } catch (error: any) {
         throw createError({
