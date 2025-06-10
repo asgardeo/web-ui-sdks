@@ -139,9 +139,9 @@ export const useAuth = (): AuthInterface => {
    *
    * @returns {Promise<boolean>} - A promise that resolves to `true` if authenticated, otherwise `false`.
    */
-  const isAuthenticated = async (): Promise<boolean> => {
+  const isSignedIn = async (): Promise<boolean> => {
     try {
-      const response: Response = await fetch('/api/auth/isAuthenticated', {
+      const response: Response = await fetch('/api/auth/isSignedIn', {
         credentials: 'include',
         method: 'GET',
       });
@@ -236,7 +236,7 @@ export const useAuth = (): AuthInterface => {
     getDecodedIDToken,
     getIdToken,
     getOpenIDProviderEndpoints,
-    isAuthenticated,
+    isSignedIn,
     revokeAccessToken,
     signIn,
     signOut,

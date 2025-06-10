@@ -233,7 +233,7 @@ export const workerReceiver = (
         break;
       case IS_AUTHENTICATED:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.isAuthenticated()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.isSignedIn()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }

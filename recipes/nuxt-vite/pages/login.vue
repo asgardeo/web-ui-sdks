@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { navigateTo } from '#app';
-const { signIn, isAuthenticated } = useAuth();
+const { signIn, isSignedIn } = useAuth();
 
 const isLoading = ref(true);
 
 onMounted(async () => {
   try {
-    const authStatus = await isAuthenticated();
+    const authStatus = await isSignedIn();
     if (authStatus) {
       await navigateTo('/home');
     }

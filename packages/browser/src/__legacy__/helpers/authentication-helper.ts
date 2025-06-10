@@ -602,7 +602,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     }
 
     if (config.storage !== BrowserStorage.WebWorker) {
-      if (await this._authenticationClient.isAuthenticated()) {
+      if (await this._authenticationClient.isSignedIn()) {
         this._spaHelper.clearRefreshTokenTimeout();
         this._spaHelper.refreshAccessTokenAutomatically(this);
 
@@ -692,7 +692,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     return this._storageManager;
   }
 
-  public async isAuthenticated(): Promise<boolean> {
-    return this._authenticationClient.isAuthenticated();
+  public async isSignedIn(): Promise<boolean> {
+    return this._authenticationClient.isSignedIn();
   }
 }

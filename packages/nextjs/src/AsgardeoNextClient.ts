@@ -73,7 +73,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
   }
 
   override isSignedIn(sessionId?: string): Promise<boolean> {
-    return this.asgardeo.isAuthenticated(sessionId as string);
+    return this.asgardeo.isSignedIn(sessionId as string);
   }
 
   override async signIn(
@@ -153,9 +153,9 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
     if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.session) {
       try {
-        const isAuthenticated: boolean = await this.isSignedIn();
+        const isSignedIn: boolean = await this.isSignedIn();
 
-        return NextResponse.json({isSignedIn: isAuthenticated});
+        return NextResponse.json({isSignedIn: isSignedIn});
       } catch (error) {
         return NextResponse.json({error: 'Failed to check session'}, {status: 500});
       }

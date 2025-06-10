@@ -158,7 +158,7 @@ export class AsgardeoSPAClient {
       );
     }
 
-    if (validateAuthentication && !(await this.isAuthenticated())) {
+    if (validateAuthentication && !(await this.isSignedIn())) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-VM-IV02',
@@ -983,10 +983,10 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async isAuthenticated(): Promise<boolean | undefined> {
+  public async isSignedIn(): Promise<boolean | undefined> {
     await this._isInitialized();
 
-    return this._client?.isAuthenticated();
+    return this._client?.isSignedIn();
   }
 
   /**

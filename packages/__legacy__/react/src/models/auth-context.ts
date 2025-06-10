@@ -23,7 +23,7 @@ interface AuthContext {
   authResponse: AuthApiResponse;
   config: UIAuthConfig;
   isAuthLoading: boolean;
-  isAuthenticated: boolean | undefined;
+  isSignedIn: boolean | undefined;
   isBrandingLoading: boolean;
   isComponentLoading: boolean;
   isGlobalLoading: boolean;

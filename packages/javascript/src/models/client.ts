@@ -57,7 +57,7 @@ export interface AsgardeoClient<T> {
 
   /**
    * Checks if a user is signed in.
-   * FIXME: This should be integrated with the existing isAuthenticated method which returns a Promise.
+   * FIXME: This should be integrated with the existing isSignedIn method which returns a Promise.
    *
    * @returns Boolean indicating sign-in status.
    */

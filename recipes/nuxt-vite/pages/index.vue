@@ -2,14 +2,14 @@
 import { ref, onMounted } from 'vue';
 import { navigateTo } from '#app';
 
-const { signOut, isAuthenticated, getBasicUserInfo } = useAuth();
+const { signOut, isSignedIn, getBasicUserInfo } = useAuth();
 
 const userInfo = ref<Record<string, any> | null>(null);
 const isLoading = ref(true);
 
 onMounted(async () => {
   try {
-    const authStatus = await isAuthenticated();
+    const authStatus = await isSignedIn();
     if (!authStatus) {
       await navigateTo('/login');
       return;

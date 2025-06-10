@@ -157,12 +157,12 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
           statusMessage: 'Failed to retrieve user information.',
         });
       }
-    } else if (action === 'isAuthenticated' && method === 'GET') {
+    } else if (action === 'isSignedIn' && method === 'GET') {
       const sessionId: string | undefined = getCookie(event, sessionIdCookieName);
       if (!sessionId) return false;
 
       try {
-        return await authClient.isAuthenticated(sessionId);
+        return await authClient.isSignedIn(sessionId);
       } catch {
         return false;
       }

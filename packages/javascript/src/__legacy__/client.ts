@@ -989,14 +989,14 @@ export class AsgardeoAuthClient<T> {
    *
    * @example
    * ```
-   * await auth.isAuthenticated();
+   * await auth.isSignedIn();
    * ```
    *
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#isAuthenticated}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#isSignedIn}
    *
    * @preserve
    */
-  public async isAuthenticated(userId?: string): Promise<boolean> {
+  public async isSignedIn(userId?: string): Promise<boolean> {
     const isAccessTokenAvailable: boolean = Boolean(await this.getAccessToken(userId));
 
     // Check if the access token is expired.
@@ -1015,9 +1015,9 @@ export class AsgardeoAuthClient<T> {
     const currentTime: number = new Date().getTime();
     const isAccessTokenValid: boolean = createdAt + expiresIn > currentTime;
 
-    const isAuthenticated: boolean = isAccessTokenAvailable && isAccessTokenValid;
+    const isSignedIn: boolean = isAccessTokenAvailable && isAccessTokenValid;
 
-    return isAuthenticated;
+    return isSignedIn;
   }
 
   /**

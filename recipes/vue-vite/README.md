@@ -77,12 +77,12 @@ The Asgardeo Auth plugin is available throughout your Vue application. Here's ho
 <script setup>
 import { useAsgardeo } from '@asgardeo/vue';
 
-const { isAuthenticated, signIn, signOut, getBasicUserInfo } = useAsgardeo();
+const { isSignedIn, signIn, signOut, getBasicUserInfo } = useAsgardeo();
 </script>
 
 <template>
   <div>
-    <button v-if="!isAuthenticated" @click="signIn">Login</button>
+    <button v-if="!isSignedIn" @click="signIn">Login</button>
     <button v-else @click="signOut">Logout</button>
   </div>
 </template>

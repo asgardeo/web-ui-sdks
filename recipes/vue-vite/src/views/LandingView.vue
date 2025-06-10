@@ -31,7 +31,7 @@ const { state } = useAsgardeo()
 const router = useRouter()
 
 watch(
-  () => state.isAuthenticated,
+  () => state.isSignedIn,
   (auth) => {
     if (auth) {
       router.push('/home')

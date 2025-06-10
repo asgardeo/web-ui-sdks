@@ -190,8 +190,8 @@ export const WebWorkerCore = async (
     return _authenticationHelper.getAccessToken();
   };
 
-  const isAuthenticated = (): Promise<boolean> => {
-    return _authenticationHelper.isAuthenticated();
+  const isSignedIn = (): Promise<boolean> => {
+    return _authenticationHelper.isSignedIn();
   };
 
   const setSessionState = async (sessionState: string): Promise<void> => {
@@ -228,7 +228,7 @@ export const WebWorkerCore = async (
     getSignOutUrl,
     httpRequest,
     httpRequestAll,
-    isAuthenticated,
+    isSignedIn,
     refreshAccessToken,
     requestAccessToken,
     exchangeToken,

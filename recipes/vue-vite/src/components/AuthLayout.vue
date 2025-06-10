@@ -88,8 +88,8 @@ const hideToken = () => {
           <p>Checking authentication status...</p>
         </div>
 
-        <div v-else-if="state.isAuthenticated" class="user-info">
-          <h2 v-if="state.isAuthenticated">Welcome, {{ state.displayName }}</h2>
+        <div v-else-if="state.isSignedIn" class="user-info">
+          <h2 v-if="state.isSignedIn">Welcome, {{ state.displayName }}</h2>
           <h2 v-else>Welcome, loading user data...</h2>
           <p v-if="state.email" class="user-email">{{ state.email }}</p>
 

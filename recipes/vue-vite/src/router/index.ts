@@ -58,7 +58,7 @@ const router: Router = createRouter({
     },
     {
       beforeEnter: async (): Promise<boolean> => {
-        const { state, isAuthenticated, signIn } = useAsgardeo()
+        const { state, isSignedIn, signIn } = useAsgardeo()
 
         // Wait for loading to complete if still in progress
         if (state.isLoading) {
@@ -66,7 +66,7 @@ const router: Router = createRouter({
         }
 
         try {
-          const auth: boolean = await isAuthenticated()
+          const auth: boolean = await isSignedIn()
           if (!auth) {
             await signIn()
             return false // Prevent navigation until sign-in completes

@@ -59,10 +59,6 @@ class AuthAPI {
     return this._isLoading;
   }
 
-  public isSignedIn(): Promise<boolean> {
-    return this.isAuthenticated();
-  }
-
   public isLoading(): boolean {
     return this._getIsLoading();
   }
@@ -120,12 +116,12 @@ class AuthAPI {
           return null; // FIXME: Validate this. Temp fix for: error TS7030: Not all code paths return a value.
         }
 
-        if (await this._client.isAuthenticated()) {
+        if (await this._client.isSignedIn()) {
           const stateToUpdate = {
             allowedScopes: response.allowedScopes,
             displayName: response.displayName,
             email: response.email,
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
             isSigningOut: false,
             sub: response.sub,
@@ -241,11 +237,11 @@ class AuthAPI {
           this.updateState({
             ...this.getState(),
             ...(response as BasicUserInfo),
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
           });
 
-          dispatch({...(response as BasicUserInfo), isAuthenticated: true, isLoading: false});
+          dispatch({...(response as BasicUserInfo), isSignedIn: true, isLoading: false});
         }
 
         callback && callback(response);
@@ -360,8 +356,8 @@ class AuthAPI {
    *
    * @return {Promise<boolean>} - A Promise that resolves with `true` if teh user is authenticated.
    */
-  public async isAuthenticated(): Promise<boolean> {
-    return this._client.isAuthenticated();
+  public async isSignedIn(): Promise<boolean> {
+    return this._client.isSignedIn();
   }
 
   /**
@@ -448,13 +444,13 @@ class AuthAPI {
           return false;
         }
 
-        if (await this._client.isAuthenticated()) {
+        if (await this._client.isSignedIn()) {
           const basicUserInfo = response as BasicUserInfo;
           const stateToUpdate = {
             allowedScopes: basicUserInfo.allowedScopes,
             displayName: basicUserInfo.displayName,
             email: basicUserInfo.email,
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
             isSigningOut: false,
             sub: basicUserInfo.sub,
@@ -478,7 +474,7 @@ AuthAPI.DEFAULT_STATE = {
   allowedScopes: '',
   displayName: '',
   email: '',
-  isAuthenticated: false,
+  isSignedIn: false,
   isLoading: true,
   sub: '',
   username: '',

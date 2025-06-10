@@ -31,7 +31,7 @@ import { useAuthentication } from "@asgardeo/react";
 Then, you can use it in your component:
 
 ```ts
-const { user, isAuthenticated, accessToken, signOut } = useAuthentication();
+const { user, isSignedIn, accessToken, signOut } = useAuthentication();
 ```
 
 ## Return Value
@@ -40,7 +40,7 @@ The `useAuthentication` hook returns an object with the following properties:
 
 - `user`: The current user. This is an object that contains information about the user.
 
-- `isAuthenticated`: A boolean that indicates whether the user is authenticated.
+- `isSignedIn`: A boolean that indicates whether the user is authenticated.
 
 - `accessToken`: The access token for the authenticated user.
 
@@ -49,9 +49,9 @@ The `useAuthentication` hook returns an object with the following properties:
 Here's an example of how to use these values:
 
 ```ts
-const { user, isAuthenticated, signOut } = useAuthentication();
+const { user, isSignedIn, signOut } = useAuthentication();
 
-if (isAuthenticated) {
+if (isSignedIn) {
   console.log(`User ${user.username} is authenticated.`);
 } else {
   console.log("User is not authenticated.");

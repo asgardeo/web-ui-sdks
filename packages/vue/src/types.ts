@@ -75,7 +75,7 @@ export interface AuthStateInterface {
   /**
    * Specifies if the user is authenticated or not.
    */
-  isAuthenticated: boolean;
+  isSignedIn: boolean;
   /**
    * Are the Auth requests loading.
    */
@@ -102,7 +102,7 @@ export interface AuthContextInterface {
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
-  isAuthenticated(): Promise<boolean>;
+  isSignedIn(): Promise<boolean>;
   on(hook: Hooks.CustomGrant, callback: (response?: any) => void, id: string): void;
   on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): void;
   on(hook: Hooks, callback: (response?: any) => void, id?: string): void;

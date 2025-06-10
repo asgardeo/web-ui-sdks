@@ -67,7 +67,7 @@ export interface MainThreadClientInterface {
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getAccessToken(): Promise<string>;
   getStorageManager(): Promise<StorageManager<MainThreadClientConfig>>;
-  isAuthenticated(): Promise<boolean>;
+  isSignedIn(): Promise<boolean>;
   updateConfig(config: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void>;
   trySignInSilently(
     additionalParams?: Record<string, string | boolean>,
@@ -101,7 +101,7 @@ export interface WebWorkerClientInterface {
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
   getCrypto(): Promise<IsomorphicCrypto>;
   getIDToken(): Promise<string>;
-  isAuthenticated(): Promise<boolean>;
+  isSignedIn(): Promise<boolean>;
   setHttpRequestSuccessCallback(callback: (response: HttpResponse) => void): void;
   setHttpRequestErrorCallback(callback: (response: HttpError) => void | Promise<void>): void;
   setHttpRequestStartCallback(callback: () => void): void;

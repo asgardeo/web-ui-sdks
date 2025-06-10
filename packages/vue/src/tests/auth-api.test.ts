@@ -52,7 +52,7 @@ describe('AuthAPI', () => {
         allowedScopes: '',
         displayName: '',
         email: '',
-        isAuthenticated: false,
+        isSignedIn: false,
         isLoading: true,
         sub: '',
         username: '',
@@ -101,14 +101,14 @@ describe('AuthAPI', () => {
 
       expect(mockClient.signIn).toHaveBeenCalledWith(config, authCode, sessionState, authState, tokenConfig);
 
-      expect(mockClient.isAuthenticated).toHaveBeenCalled();
+      expect(mockClient.isSignedIn).toHaveBeenCalled();
       expect(callback).toHaveBeenCalledWith(response);
 
       expect(authApi.getState()).toMatchObject({
         allowedScopes: 'openid profile',
         displayName: 'Test User',
         email: 'test@example.com',
-        isAuthenticated: true,
+        isSignedIn: true,
         isLoading: false,
         isSigningOut: false,
         sub: 'user-id-123',
@@ -128,16 +128,16 @@ describe('AuthAPI', () => {
       const result: BasicUserInfo = await authApi.signIn();
       expect(result).toBeNull();
 
-      expect(authApi.getState().isAuthenticated).toBe(false);
+      expect(authApi.getState().isSignedIn).toBe(false);
     });
 
     it('should handle unauthenticated scenarios', async () => {
-      mockClient.isAuthenticated.mockResolvedValueOnce(false);
+      mockClient.isSignedIn.mockResolvedValueOnce(false);
       const response: boolean | BasicUserInfo = await authApi.signIn();
 
       // Response should be returned, but state shouldn't be updated
       expect(response).toBeDefined();
-      expect(authApi.getState().isAuthenticated).toBe(false);
+      expect(authApi.getState().isSignedIn).toBe(false);
     });
   });
 
@@ -168,7 +168,7 @@ describe('AuthAPI', () => {
     it('should update the auth state', () => {
       const newState: AuthStateInterface = {
         allowedScopes: 'read write',
-        isAuthenticated: true,
+        isSignedIn: true,
         isLoading: false,
         username: 'newUser',
       };
@@ -241,7 +241,7 @@ describe('AuthAPI', () => {
       expect(authApi.getState()).toMatchObject({
         displayName: 'Test User',
         email: 'test@example.com',
-        isAuthenticated: true,
+        isSignedIn: true,
         isLoading: false,
         username: 'testUser',
       });
@@ -260,7 +260,7 @@ describe('AuthAPI', () => {
 
       // State should not be updated for session properties
       expect(authApi.getState().username).toBe('');
-      expect(authApi.getState().isAuthenticated).toBe(false);
+      expect(authApi.getState().isSignedIn).toBe(false);
     });
 
     it('should handle null response', async () => {
@@ -303,7 +303,7 @@ describe('AuthAPI', () => {
       authApi.updateState({
         allowedScopes: 'read write',
         email: 'test@example.com',
-        isAuthenticated: true,
+        isSignedIn: true,
         isLoading: false,
         username: 'testUser',
       });
@@ -390,9 +390,9 @@ describe('AuthAPI', () => {
   });
 
   describe('authentication status methods', () => {
-    it('should call isAuthenticated on the client', async () => {
-      const result: boolean = await authApi.isAuthenticated();
-      expect(mockClient.isAuthenticated).toHaveBeenCalled();
+    it('should call isSignedIn on the client', async () => {
+      const result: boolean = await authApi.isSignedIn();
+      expect(mockClient.isSignedIn).toHaveBeenCalled();
       expect(result).toBe(true);
     });
 
@@ -458,7 +458,7 @@ describe('AuthAPI', () => {
         allowedScopes: 'openid profile',
         displayName: 'Test User',
         email: 'test@example.com',
-        isAuthenticated: true,
+        isSignedIn: true,
         isLoading: false,
         sub: 'user-id-123',
         username: 'testUser',
@@ -474,13 +474,13 @@ describe('AuthAPI', () => {
 
     it('should handle false response from trySignInSilently', async () => {
       mockClient.trySignInSilently.mockResolvedValueOnce(false);
-      mockClient.isAuthenticated.mockResolvedValueOnce(false);
+      mockClient.isSignedIn.mockResolvedValueOnce(false);
 
       const result: boolean | BasicUserInfo = await authApi.trySignInSilently();
 
       expect(result).toBe(false);
       expect(authApi.getState().isLoading).toBe(false);
-      expect(authApi.getState().isAuthenticated).toBe(false);
+      expect(authApi.getState().isSignedIn).toBe(false);
     });
 
     it('should handle errors', async () => {

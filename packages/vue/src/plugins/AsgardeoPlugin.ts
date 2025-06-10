@@ -81,9 +81,9 @@ export const asgardeoPlugin: Plugin = {
 
     const checkIsAuthenticated = async (): Promise<void> =>
       withStateSync(async () => {
-        const isAuthenticatedState: boolean = await AuthClient.isAuthenticated();
+        const isAuthenticatedState: boolean = await AuthClient.isSignedIn();
         if (!isAuthenticatedState) {
-          AuthClient.updateState({...state, isAuthenticated: false, isLoading: false});
+          AuthClient.updateState({...state, isSignedIn: false, isLoading: false});
           return;
         }
         const response: BasicUserInfo = await AuthClient.getBasicUserInfo();
@@ -92,12 +92,12 @@ export const asgardeoPlugin: Plugin = {
               allowedScopes: response.allowedScopes,
               displayName: response.displayName,
               email: response.email,
-              isAuthenticated: true,
+              isSignedIn: true,
               isLoading: false,
               sub: response.sub,
               username: response.username,
             }
-          : {...state, isAuthenticated: isAuthenticatedState, isLoading: false};
+          : {...state, isSignedIn: isAuthenticatedState, isLoading: false};
         AuthClient.updateState(stateToUpdate);
       });
 
@@ -137,7 +137,7 @@ export const asgardeoPlugin: Plugin = {
 
           await checkIsAuthenticated();
 
-          if (state.isAuthenticated) {
+          if (state.isSignedIn) {
             return;
           }
 
@@ -166,7 +166,7 @@ export const asgardeoPlugin: Plugin = {
       httpRequest: (config: HttpRequestConfig): Promise<HttpResponse<any>> => AuthClient.httpRequest(config),
       httpRequestAll: (configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> =>
         AuthClient.httpRequestAll(configs),
-      isAuthenticated: (): Promise<boolean> => AuthClient.isAuthenticated(),
+      isSignedIn: (): Promise<boolean> => AuthClient.isSignedIn(),
       on: (hook: Hooks, callback: (response?: any) => void, id?: string): void => {
         if (hook === Hooks.CustomGrant && id) {
           AuthClient.on(hook, callback, id);

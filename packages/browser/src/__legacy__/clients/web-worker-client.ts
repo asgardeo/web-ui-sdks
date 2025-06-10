@@ -531,7 +531,7 @@ export const WebWorkerClient = async (
   };
 
   const tryRetrievingUserInfo = async (): Promise<BasicUserInfo | undefined> => {
-    if (await isAuthenticated()) {
+    if (await isSignedIn()) {
       await startAutoRefreshToken();
 
       // Enable OIDC Sessions Management only if it is set to true in the config.
@@ -763,7 +763,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const isAuthenticated = (): Promise<boolean> => {
+  const isSignedIn = (): Promise<boolean> => {
     const message: Message<null> = {
       type: IS_AUTHENTICATED,
     };
@@ -850,7 +850,7 @@ export const WebWorkerClient = async (
     httpRequest,
     httpRequestAll,
     initialize,
-    isAuthenticated,
+    isSignedIn,
     refreshAccessToken,
     exchangeToken,
     revokeAccessToken,

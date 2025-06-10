@@ -64,7 +64,7 @@ export interface AuthInterface {
   getDecodedIDToken: () => Promise<IdTokenPayload | null>;
   getIdToken: () => Promise<string | null>;
   getOpenIDProviderEndpoints: () => Promise<OIDCEndpoints | null>;
-  isAuthenticated: () => Promise<boolean>;
+  isSignedIn: () => Promise<boolean>;
   revokeAccessToken: () => Promise<void>;
   signIn: (callbackUrl?: string) => Promise<void>;
   signOut: () => Promise<void>;

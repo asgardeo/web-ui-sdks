@@ -74,7 +74,7 @@ export class AsgardeoNodeCore<T> {
       );
     }
 
-    if (await this.isAuthenticated(userId)) {
+    if (await this.isSignedIn(userId)) {
       const sessionData: SessionData = await this._storageManager.getSessionData(userId);
 
       return Promise.resolve({
@@ -144,7 +144,7 @@ export class AsgardeoNodeCore<T> {
   }
 
   public async getIDToken(userId: string): Promise<string> {
-    const is_logged_in = await this.isAuthenticated(userId);
+    const is_logged_in = await this.isSignedIn(userId);
     if (!is_logged_in) {
       return Promise.reject(
         new AsgardeoAuthException(
@@ -172,9 +172,9 @@ export class AsgardeoNodeCore<T> {
     return this._auth.refreshAccessToken(userId);
   }
 
-  public async isAuthenticated(userId: string): Promise<boolean> {
+  public async isSignedIn(userId: string): Promise<boolean> {
     try {
-      if (!(await this._auth.isAuthenticated(userId))) {
+      if (!(await this._auth.isSignedIn(userId))) {
         return Promise.resolve(false);
       }
 

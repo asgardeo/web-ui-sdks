@@ -16,37 +16,37 @@
  * under the License.
  */
 
-import express from "express";
-import { AsgardeoExpressClient } from "../client";
-import { UnauthenticatedCallback } from "../models";
-import { Logger } from "@asgardeo/node";
+import express from 'express';
+import {AsgardeoExpressClient} from '../client';
+import {UnauthenticatedCallback} from '../models';
+import {Logger} from '@asgardeo/node';
 
 export const protectRoute = (
-    asgardeoExpressClient: AsgardeoExpressClient,
-    callback: UnauthenticatedCallback
+  asgardeoExpressClient: AsgardeoExpressClient,
+  callback: UnauthenticatedCallback,
 ): ((req: express.Request, res: express.Response, next: express.nextFunction) => Promise<void>) => {
-    return async (req: express.Request, res: express.Response, next: express.nextFunction): Promise<void> => {
-        if (req.cookies.ASGARDEO_SESSION_ID === undefined) {
-            Logger.error("No session ID found in the request cookies");
+  return async (req: express.Request, res: express.Response, next: express.nextFunction): Promise<void> => {
+    if (req.cookies.ASGARDEO_SESSION_ID === undefined) {
+      Logger.error('No session ID found in the request cookies');
 
-            if (callback(res, "Unauthenticated")) {
-                return;
-            }
+      if (callback(res, 'Unauthenticated')) {
+        return;
+      }
 
-            return next();
-        } else {
-            //validate the cookie
-            const isCookieValid = await asgardeoExpressClient.isAuthenticated(req.cookies.ASGARDEO_SESSION_ID);
-            if (isCookieValid) {
-                return next();
-            } else {
-                Logger.error("Invalid session ID found in the request cookies");
-                if (callback(res, "Invalid session cookie")) {
-                    return;
-                }
-
-                return next();
-            }
+      return next();
+    } else {
+      //validate the cookie
+      const isCookieValid = await asgardeoExpressClient.isSignedIn(req.cookies.ASGARDEO_SESSION_ID);
+      if (isCookieValid) {
+        return next();
+      } else {
+        Logger.error('Invalid session ID found in the request cookies');
+        if (callback(res, 'Invalid session cookie')) {
+          return;
         }
-    };
+
+        return next();
+      }
+    }
+  };
 };

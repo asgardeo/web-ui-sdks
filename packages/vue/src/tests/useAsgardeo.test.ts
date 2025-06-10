@@ -46,7 +46,7 @@ describe('useAsgardeo', () => {
     getOpenIDProviderEndpoints: vi.fn().mockResolvedValue({} as OIDCEndpoints),
     httpRequest: vi.fn().mockResolvedValue({} as HttpResponse<any>),
     httpRequestAll: vi.fn().mockResolvedValue([{} as HttpResponse<any>]),
-    isAuthenticated: vi.fn().mockResolvedValue(true),
+    isSignedIn: vi.fn().mockResolvedValue(true),
     on: vi.fn(),
     refreshAccessToken: vi.fn().mockResolvedValue({} as BasicUserInfo),
     exchangeToken: vi.fn(),
@@ -55,7 +55,7 @@ describe('useAsgardeo', () => {
     signOut: vi.fn().mockResolvedValue(true),
     state: {
       allowedScopes: '',
-      isAuthenticated: true,
+      isSignedIn: true,
       isLoading: false,
     },
     trySignInSilently: vi.fn().mockResolvedValue(true),

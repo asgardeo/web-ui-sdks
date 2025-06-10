@@ -70,7 +70,7 @@ export interface AuthStateInterface {
   /**
    * Specifies if the user is authenticated or not.
    */
-  isAuthenticated: boolean;
+  isSignedIn: boolean;
   /**
    * Are the Auth requests loading.
    */
@@ -109,7 +109,7 @@ export interface AuthContextInterface {
   getIDToken(): Promise<string>;
   getAccessToken(): Promise<string>;
   refreshAccessToken(): Promise<BasicUserInfo>;
-  isAuthenticated(): Promise<boolean>;
+  isSignedIn(): Promise<boolean>;
   enableHttpHandler(): Promise<boolean>;
   disableHttpHandler(): Promise<boolean>;
   updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void>;

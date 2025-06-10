@@ -47,7 +47,7 @@ app.mount('#app')
 ```vue
 <template>
   <div>
-    <div v-if="auth.isAuthenticated">
+    <div v-if="auth.isSignedIn">
       <p>Welcome, {{ auth.user?.username }}</p>
       <button @click="auth.signOut">Sign Out</button>
     </div>
@@ -65,7 +65,7 @@ const auth = useAsgardeo()
 ## Composables
 
 - `useAsgardeo()`: Main composable that provides:
-  - `isAuthenticated`: Boolean indicating authentication status
+  - `isSignedIn`: Boolean indicating authentication status
   - `user`: Current user information
   - `signIn()`: Function to initiate sign in
   - `signOut()`: Function to sign out

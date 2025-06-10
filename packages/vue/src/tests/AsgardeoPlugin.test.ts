@@ -49,7 +49,7 @@ describe('asgardeoPlugin', () => {
       allowedScopes: '',
       displayName: '',
       email: '',
-      isAuthenticated: false,
+      isSignedIn: false,
       isLoading: true,
       sub: '',
       username: '',
@@ -63,7 +63,7 @@ describe('asgardeoPlugin', () => {
   it('should provide the authentication context', () => {
     const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
     expect(authContext).toBeDefined();
-    expect(authContext.state.isAuthenticated).toBe(false);
+    expect(authContext.state.isSignedIn).toBe(false);
   });
 
   it('should call AuthAPI init on install', async () => {
@@ -85,7 +85,7 @@ describe('asgardeoPlugin', () => {
       allowedScopes: 'openid profile',
       displayName: 'Test User',
       email: 'test@example.com',
-      isAuthenticated: true,
+      isSignedIn: true,
       isLoading: false,
       sub: 'user-id-123',
       username: 'testUser',
@@ -107,7 +107,7 @@ describe('asgardeoPlugin', () => {
       allowedScopes: '',
       displayName: '',
       email: '',
-      isAuthenticated: false,
+      isSignedIn: false,
       isLoading: false,
       sub: '',
       username: '',
@@ -161,7 +161,7 @@ describe('asgardeoPlugin', () => {
 
     const silentSignInState: AuthStateInterface = {
       ...mockState,
-      isAuthenticated: true,
+      isSignedIn: true,
       username: 'testUser',
     };
 
@@ -199,7 +199,7 @@ describe('asgardeoPlugin', () => {
 
     const refreshedState: AuthStateInterface = {
       ...mockState,
-      isAuthenticated: true,
+      isSignedIn: true,
       username: 'testUser',
     };
     mockAuthAPI.getState.mockReturnValueOnce(refreshedState);

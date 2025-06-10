@@ -30,9 +30,9 @@ import SignedProps from '../../models/signed-props';
  */
 const SignedIn: FC<PropsWithChildren<SignedProps>> = (props: PropsWithChildren<SignedProps>) => {
   const {fallback = null, children} = props;
-  const {isAuthenticated} = useAuthentication();
+  const {isSignedIn} = useAuthentication();
 
-  return isAuthenticated ? children : fallback;
+  return isSignedIn ? children : fallback;
 };
 
 export default SignedIn;

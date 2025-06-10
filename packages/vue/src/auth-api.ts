@@ -87,12 +87,12 @@ class AuthAPI {
         if (!response) {
           return response;
         }
-        if (await this._client.isAuthenticated()) {
+        if (await this._client.isSignedIn()) {
           Object.assign(this._authState, {
             allowedScopes: response.allowedScopes,
             displayName: response.displayName,
             email: response.email,
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
             isSigningOut: false,
             sub: response.sub,
@@ -196,7 +196,7 @@ class AuthAPI {
           Object.assign(this._authState, {
             ...this._authState,
             ...(response as BasicUserInfo),
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
           });
         }
@@ -310,8 +310,8 @@ class AuthAPI {
    *
    * @return {Promise<boolean>} - A Promise that resolves with `true` if the user is authenticated.
    */
-  public async isAuthenticated(): Promise<boolean> {
-    return this._client.isAuthenticated();
+  public async isSignedIn(): Promise<boolean> {
+    return this._client.isSignedIn();
   }
 
   /**
@@ -396,13 +396,13 @@ class AuthAPI {
           return false;
         }
 
-        if (await this._client.isAuthenticated()) {
+        if (await this._client.isSignedIn()) {
           const basicUserInfo: BasicUserInfo = response as BasicUserInfo;
           Object.assign(this._authState, {
             allowedScopes: basicUserInfo.allowedScopes,
             displayName: basicUserInfo.displayName,
             email: basicUserInfo.email,
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
             sub: basicUserInfo.sub,
             username: basicUserInfo.username,
@@ -418,7 +418,7 @@ AuthAPI.DEFAULT_STATE = {
   allowedScopes: '',
   displayName: '',
   email: '',
-  isAuthenticated: false,
+  isSignedIn: false,
   isLoading: true,
   sub: '',
   username: '',

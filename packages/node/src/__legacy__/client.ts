@@ -141,16 +141,16 @@ export class AsgardeoNodeClient<T> {
    *
    * @example
    * ```
-   * const isAuth = await authClient.isAuthenticated("a2a2972c-51cd-5e9d-a9ae-058fae9f7927");
+   * const isAuth = await authClient.isSignedIn("a2a2972c-51cd-5e9d-a9ae-058fae9f7927");
    * ```
    *
-   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#isAuthenticated
+   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#isSignedIn
    *
    * @memberof AsgardeoNodeClient
    *
    */
-  public async isAuthenticated(userId: string): Promise<boolean> {
-    return this._authCore.isAuthenticated(userId);
+  public async isSignedIn(userId: string): Promise<boolean> {
+    return this._authCore.isSignedIn(userId);
   }
 
   /**

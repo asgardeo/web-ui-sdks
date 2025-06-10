@@ -255,7 +255,7 @@ export const MainThreadClient = async (
   };
 
   const signOut = async (): Promise<boolean> => {
-    if ((await _authenticationClient.isAuthenticated()) && !_getSignOutURLFromSessionStorage) {
+    if ((await _authenticationClient.isSignedIn()) && !_getSignOutURLFromSessionStorage) {
       location.href = await _authenticationClient.getSignOutUrl();
     } else {
       location.href = SPAUtils.getSignOutUrl(config.clientId, instanceID);
@@ -400,8 +400,8 @@ export const MainThreadClient = async (
     return await _dataLayer.getConfigData();
   };
 
-  const isAuthenticated = async (): Promise<boolean> => {
-    return _authenticationHelper.isAuthenticated();
+  const isSignedIn = async (): Promise<boolean> => {
+    return _authenticationHelper.isSignedIn();
   };
 
   const isSessionActive = async (): Promise<boolean> => {
@@ -444,7 +444,7 @@ export const MainThreadClient = async (
     getOpenIDProviderEndpoints,
     httpRequest,
     httpRequestAll,
-    isAuthenticated,
+    isSignedIn,
     isSessionActive,
     refreshAccessToken,
     exchangeToken,

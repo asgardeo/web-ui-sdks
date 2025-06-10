@@ -26,7 +26,7 @@ export const mockAuthContext: Partial<AuthContextInterface> = {
   state: {
     allowedScopes: 'openid profile email',
     displayName: 'John Doe',
-    isAuthenticated: true,
+    isSignedIn: true,
     isLoading: false,
   },
 };
@@ -35,7 +35,7 @@ export const mockState: AuthStateInterface = {
   allowedScopes: '',
   displayName: '',
   email: '',
-  isAuthenticated: false,
+  isSignedIn: false,
   isLoading: true,
   sub: '',
   username: '',
@@ -54,7 +54,7 @@ export type MockAuthAPI = {
   httpRequest: Mock;
   httpRequestAll: Mock;
   init: Mock;
-  isAuthenticated: Mock;
+  isSignedIn: Mock;
   isSessionActive: Mock;
   on: Mock;
   refreshAccessToken: Mock;
@@ -86,7 +86,7 @@ export const mockAuthAPI: MockAuthAPI = {
   httpRequest: vi.fn().mockResolvedValue({data: {}, status: 200}),
   httpRequestAll: vi.fn().mockResolvedValue([{data: {}, status: 200}]),
   init: vi.fn().mockResolvedValue(true),
-  isAuthenticated: vi.fn().mockResolvedValue(true),
+  isSignedIn: vi.fn().mockResolvedValue(true),
   isSessionActive: vi.fn().mockResolvedValue(true),
   on: vi.fn(),
   refreshAccessToken: vi.fn().mockResolvedValue({
@@ -134,7 +134,7 @@ export const mockAsgardeoSPAClient: Partial<AsgardeoSPAClient> = {
   httpRequest: vi.fn().mockResolvedValue({data: {}, status: 200}),
   httpRequestAll: vi.fn().mockResolvedValue([{data: {}, status: 200}]),
   initialize: vi.fn().mockResolvedValue(true),
-  isAuthenticated: vi.fn().mockResolvedValue(true),
+  isSignedIn: vi.fn().mockResolvedValue(true),
   isSessionActive: vi.fn().mockResolvedValue(true),
   on: vi.fn().mockResolvedValue(undefined),
   refreshAccessToken: vi.fn().mockResolvedValue({

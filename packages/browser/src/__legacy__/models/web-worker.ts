@@ -64,7 +64,7 @@ export interface WebWorkerCoreInterface {
   getIDToken(): Promise<string>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getAccessToken(): Promise<string>;
-  isAuthenticated(): Promise<boolean>;
+  isSignedIn(): Promise<boolean>;
   startAutoRefreshToken(): Promise<void>;
   setSessionState(sessionState: string): Promise<void>;
   updateConfig(config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void>;
