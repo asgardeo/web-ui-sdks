@@ -136,7 +136,7 @@ export class IsomorphicCrypto<T = any> {
    *
    * @throws
    */
-  public decodeIDToken(idToken: string): IdTokenPayload {
+  public decodeIdToken(idToken: string): IdTokenPayload {
     try {
       const utf8String: string = this._cryptoUtils.base64URLDecode(idToken.split('.')[1]);
       const payload: IdTokenPayload = JSON.parse(utf8String);
