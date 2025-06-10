@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { navigateTo } from '#app';
 
-const { signOut, isSignedIn, getBasicUserInfo } = useAuth();
+const { signOut, isSignedIn, getUser } = useAuth();
 
 const userInfo = ref<Record<string, any> | null>(null);
 const isLoading = ref(true);
@@ -14,7 +14,7 @@ onMounted(async () => {
       await navigateTo('/login');
       return;
     }
-    userInfo.value = await getBasicUserInfo();
+    userInfo.value = await getUser();
   } catch (error) {
     console.error("Authentication check or user info fetch failed:", error);
     await navigateTo('/login');

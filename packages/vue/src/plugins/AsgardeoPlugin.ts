@@ -86,7 +86,7 @@ export const asgardeoPlugin: Plugin = {
           AuthClient.updateState({...state, isSignedIn: false, isLoading: false});
           return;
         }
-        const response: BasicUserInfo = await AuthClient.getBasicUserInfo();
+        const response: BasicUserInfo = await AuthClient.getUser();
         const stateToUpdate: AuthStateInterface = response
           ? {
               allowedScopes: response.allowedScopes,
@@ -158,7 +158,7 @@ export const asgardeoPlugin: Plugin = {
       enableHttpHandler: (): Promise<boolean> => AuthClient.enableHttpHandler(),
       error: error.value,
       getAccessToken: (): Promise<string> => AuthClient.getAccessToken(),
-      getBasicUserInfo: (): Promise<BasicUserInfo> => AuthClient.getBasicUserInfo(),
+      getUser: (): Promise<BasicUserInfo> => AuthClient.getUser(),
       getDecodedIDToken: (): Promise<IdTokenPayload> => AuthClient.getDecodedIDToken(),
       getHttpClient: (): Promise<HttpClientInstance> => AuthClient.getHttpClient(),
       getIDToken: (): Promise<string> => AuthClient.getIDToken(),

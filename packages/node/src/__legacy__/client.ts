@@ -184,16 +184,16 @@ export class AsgardeoNodeClient<T> {
    *
    * @example
    * ```
-   * const basicInfo = await authClient.getBasicUserInfo("a2a2972c-51cd-5e9d-a9ae-058fae9f7927");
+   * const basicInfo = await authClient.getUser("a2a2972c-51cd-5e9d-a9ae-058fae9f7927");
    * ```
    *
-   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getBasicUserInfo
+   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getUser
    *
    * @memberof AsgardeoNodeClient
    *
    */
-  public async getBasicUserInfo(userId: string): Promise<BasicUserInfo> {
-    return this._authCore.getBasicUserInfo(userId);
+  public async getUser(userId: string): Promise<BasicUserInfo> {
+    return this._authCore.getUser(userId);
   }
 
   /**

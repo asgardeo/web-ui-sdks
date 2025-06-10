@@ -57,7 +57,7 @@ export interface WebWorkerCoreInterface {
   exchangeToken(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
   refreshAccessToken(): Promise<BasicUserInfo>;
   revokeAccessToken(): Promise<boolean>;
-  getBasicUserInfo(): Promise<BasicUserInfo>;
+  getUser(): Promise<BasicUserInfo>;
   getDecodedIDToken(): Promise<IdTokenPayload>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
   getCrypto(): Promise<IsomorphicCrypto>;

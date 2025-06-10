@@ -191,7 +191,7 @@ export const workerReceiver = (
         break;
       case GET_BASIC_USER_INFO:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getBasicUserInfo()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getUser()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }

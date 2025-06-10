@@ -163,8 +163,8 @@ export const WebWorkerCore = async (
       .catch(error => Promise.reject(error));
   };
 
-  const getBasicUserInfo = async (): Promise<BasicUserInfo> => {
-    return _authenticationHelper.getBasicUserInfo();
+  const getUser = async (): Promise<BasicUserInfo> => {
+    return _authenticationHelper.getUser();
   };
 
   const getDecodedIDToken = async (): Promise<IdTokenPayload> => {
@@ -218,7 +218,7 @@ export const WebWorkerCore = async (
     enableHttpHandler,
     getAccessToken,
     getSignInUrl,
-    getBasicUserInfo,
+    getUser,
     getConfigData,
     getCrypto,
     getDecodedIDPIDToken,

@@ -45,7 +45,7 @@ export type MockAuthAPI = {
   disableHttpHandler: Mock;
   enableHttpHandler: Mock;
   getAccessToken: Mock;
-  getBasicUserInfo: Mock;
+  getUser: Mock;
   getDecodedIDToken: Mock;
   getHttpClient: Mock;
   getIDToken: Mock;
@@ -71,7 +71,7 @@ export const mockAuthAPI: MockAuthAPI = {
   disableHttpHandler: vi.fn().mockResolvedValue(true),
   enableHttpHandler: vi.fn().mockResolvedValue(true),
   getAccessToken: vi.fn().mockResolvedValue('mock-access-token'),
-  getBasicUserInfo: vi.fn().mockResolvedValue({
+  getUser: vi.fn().mockResolvedValue({
     allowedScopes: 'openid profile',
     displayName: 'Test User',
     email: 'test@example.com',
@@ -119,7 +119,7 @@ export const mockAsgardeoSPAClient: Partial<AsgardeoSPAClient> = {
   disableHttpHandler: vi.fn().mockResolvedValue(true),
   enableHttpHandler: vi.fn().mockResolvedValue(true),
   getAccessToken: vi.fn().mockResolvedValue('mock-access-token'),
-  getBasicUserInfo: vi.fn().mockResolvedValue({
+  getUser: vi.fn().mockResolvedValue({
     allowedScopes: 'openid profile',
     displayName: 'Test User',
     email: 'test@example.com',

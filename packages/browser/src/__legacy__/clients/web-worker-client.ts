@@ -385,7 +385,7 @@ export const WebWorkerClient = async (
     _authenticationHelper.initializeSessionManger(
       config,
       oidcEndpoints,
-      async () => (await getBasicUserInfo()).sessionState,
+      async () => (await getUser()).sessionState,
       async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> =>
         (await getSignInUrl(params)).authorizationURL,
       _sessionManagementHelper,
@@ -539,7 +539,7 @@ export const WebWorkerClient = async (
         checkSession();
       }
 
-      return getBasicUserInfo();
+      return getUser();
     }
 
     return Promise.resolve(undefined);
@@ -693,7 +693,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getBasicUserInfo = (): Promise<BasicUserInfo> => {
+  const getUser = (): Promise<BasicUserInfo> => {
     const message: Message<null> = {
       type: GET_BASIC_USER_INFO,
     };
@@ -840,7 +840,7 @@ export const WebWorkerClient = async (
   return {
     disableHttpHandler,
     enableHttpHandler,
-    getBasicUserInfo,
+    getUser,
     getConfigData,
     getCrypto,
     getDecodedIDPIDToken,

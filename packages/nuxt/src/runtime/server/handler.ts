@@ -150,7 +150,7 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
 
       try {
-        return await authClient.getBasicUserInfo(sessionId);
+        return await authClient.getUser(sessionId);
       } catch {
         throw createError({
           statusCode: 500,

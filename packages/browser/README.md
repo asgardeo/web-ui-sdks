@@ -37,7 +37,7 @@ const authClient = new AsgardeoAuthClient({
 authClient.signIn();
 
 // Get user info after authentication
-const userInfo = await authClient.getBasicUserInfo();
+const userInfo = await authClient.getUser();
 
 // Sign out
 authClient.signOut();

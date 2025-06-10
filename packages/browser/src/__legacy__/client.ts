@@ -331,7 +331,7 @@ export class AsgardeoSPAClient {
    *
    * @example
    * ```
-   * auth.getBasicUserInfo().then((response) => {
+   * auth.getUser().then((response) => {
    *    // console.log(response);
    * }).catch((error) => {
    *    // console.error(error);
@@ -344,10 +344,10 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getBasicUserInfo(): Promise<BasicUserInfo | undefined> {
+  public async getUser(): Promise<BasicUserInfo | undefined> {
     await this._validateMethod();
 
-    return this._client?.getBasicUserInfo();
+    return this._client?.getUser();
   }
 
   /**

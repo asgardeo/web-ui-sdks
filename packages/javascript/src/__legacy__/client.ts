@@ -630,14 +630,14 @@ export class AsgardeoAuthClient<T> {
    *
    * @example
    * ```
-   * const userInfo = await auth.getBasicUserInfo();
+   * const userInfo = await auth.getUser();
    * ```
    *
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getBasicUserInfo}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getUser}
    *
    * @preserve
    */
-  public async getBasicUserInfo(userId?: string): Promise<BasicUserInfo> {
+  public async getUser(userId?: string): Promise<BasicUserInfo> {
     const sessionData: SessionData = await this._storageManager.getSessionData(userId);
     const authenticatedUser: AuthenticatedUserInfo = this._authenticationHelper.getAuthenticatedUserInfo(
       sessionData?.id_token,

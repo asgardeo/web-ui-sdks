@@ -182,11 +182,11 @@ describe('AuthAPI', () => {
     });
   });
 
-  describe('getBasicUserInfo', () => {
-    it('should call getBasicUserInfo on the client', async () => {
-      const result: BasicUserInfo = await authApi.getBasicUserInfo();
+  describe('getUser', () => {
+    it('should call getUser on the client', async () => {
+      const result: BasicUserInfo = await authApi.getUser();
 
-      expect(mockClient.getBasicUserInfo).toHaveBeenCalled();
+      expect(mockClient.getUser).toHaveBeenCalled();
       expect(result).toEqual({
         allowedScopes: 'openid profile',
         displayName: 'Test User',

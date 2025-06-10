@@ -212,8 +212,8 @@ export class AsgardeoNodeCore<T> {
     return Promise.resolve(signOutURL);
   }
 
-  public async getBasicUserInfo(userId: string): Promise<BasicUserInfo> {
-    return this._auth.getBasicUserInfo(userId);
+  public async getUser(userId: string): Promise<BasicUserInfo> {
+    return this._auth.getUser(userId);
   }
 
   public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints> {

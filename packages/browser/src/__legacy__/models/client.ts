@@ -59,7 +59,7 @@ export interface MainThreadClientInterface {
   exchangeToken(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
   refreshAccessToken(): Promise<BasicUserInfo>;
   revokeAccessToken(): Promise<boolean>;
-  getBasicUserInfo(): Promise<BasicUserInfo>;
+  getUser(): Promise<BasicUserInfo>;
   getDecodedIDToken(): Promise<IdTokenPayload>;
   getCrypto(): Promise<IsomorphicCrypto>;
   getConfigData(): Promise<AuthClientConfig<MainThreadClientConfig>>;
@@ -95,7 +95,7 @@ export interface WebWorkerClientInterface {
   signOut(afterSignOutUrl?: string): Promise<boolean>;
   revokeAccessToken(): Promise<boolean>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
-  getBasicUserInfo(): Promise<BasicUserInfo>;
+  getUser(): Promise<BasicUserInfo>;
   getConfigData(): Promise<AuthClientConfig<WebWorkerClientConfig>>;
   getDecodedIDToken(): Promise<IdTokenPayload>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;

@@ -147,9 +147,9 @@ describe('asgardeoPlugin', () => {
 
     mockAuthAPI.getState.mockReturnValueOnce(userInfoState);
 
-    await authContext.getBasicUserInfo();
+    await authContext.getUser();
 
-    expect(mockAuthAPI.getBasicUserInfo).toHaveBeenCalled();
+    expect(mockAuthAPI.getUser).toHaveBeenCalled();
     expect(authContext.state).toMatchObject(userInfoState);
   });
 

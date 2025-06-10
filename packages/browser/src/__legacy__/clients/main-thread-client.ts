@@ -157,7 +157,7 @@ export const MainThreadClient = async (
     _authenticationHelper.initializeSessionManger(
       config,
       oidcEndpoints,
-      async () => (await _authenticationClient.getBasicUserInfo()).sessionState,
+      async () => (await _authenticationClient.getUser()).sessionState,
       async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> => _authenticationClient.getSignInUrl(params),
       _sessionManagementHelper,
     );
@@ -368,8 +368,8 @@ export const MainThreadClient = async (
     );
   };
 
-  const getBasicUserInfo = async (): Promise<BasicUserInfo> => {
-    return _authenticationHelper.getBasicUserInfo();
+  const getUser = async (): Promise<BasicUserInfo> => {
+    return _authenticationHelper.getUser();
   };
 
   const getDecodedIDToken = async (): Promise<IdTokenPayload> => {
@@ -434,7 +434,7 @@ export const MainThreadClient = async (
     disableHttpHandler,
     enableHttpHandler,
     getAccessToken,
-    getBasicUserInfo,
+    getUser,
     getConfigData,
     getCrypto,
     getStorageManager,

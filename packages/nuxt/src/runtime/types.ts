@@ -59,7 +59,7 @@ export interface ModuleOptions {
 
 export interface AuthInterface {
   getAccessToken: () => Promise<string | null>;
-  getBasicUserInfo: () => Promise<BasicUserInfo | null>;
+  getUser: () => Promise<BasicUserInfo | null>;
   getStorageManager: () => Promise<StorageManager<any> | null>;
   getDecodedIDToken: () => Promise<IdTokenPayload | null>;
   getIdToken: () => Promise<string | null>;

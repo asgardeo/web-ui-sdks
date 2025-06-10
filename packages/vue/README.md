@@ -70,7 +70,7 @@ const auth = useAsgardeo()
   - `signIn()`: Function to initiate sign in
   - `signOut()`: Function to sign out
   - `getAccessToken()`: Function to get the current access token
-  - `getBasicUserInfo()`: Function to get basic user information
+  - `getUser()`: Function to get basic user information
   
 - `useAuthContext()`: Composable to access the raw authentication context
 - `useIsAuthenticated()`: Composable to check authentication status

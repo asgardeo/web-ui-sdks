@@ -135,7 +135,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
           if (config.returnsSession) {
             this._spaHelper.refreshAccessTokenAutomatically(this);
 
-            return this._authenticationClient.getBasicUserInfo();
+            return this._authenticationClient.getUser();
           } else {
             return response as FetchResponse;
           }
@@ -177,7 +177,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       }
       this._spaHelper.refreshAccessTokenAutomatically(this);
 
-      return this._authenticationClient.getBasicUserInfo();
+      return this._authenticationClient.getUser();
     } catch (error) {
       const refreshTokenError: Message<string> = {
         type: REFRESH_ACCESS_TOKEN_ERR0R,
@@ -490,7 +490,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
             }
           }
 
-          return this._authenticationClient.getBasicUserInfo();
+          return this._authenticationClient.getUser();
         })
         .catch(error => {
           return Promise.reject(error);
@@ -611,7 +611,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
           checkSession();
         }
 
-        return Promise.resolve(await this._authenticationClient.getBasicUserInfo());
+        return Promise.resolve(await this._authenticationClient.getUser());
       }
     }
 
@@ -656,8 +656,8 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     }
   }
 
-  public async getBasicUserInfo(): Promise<BasicUserInfo> {
-    return this._authenticationClient.getBasicUserInfo();
+  public async getUser(): Promise<BasicUserInfo> {
+    return this._authenticationClient.getUser();
   }
 
   public async getDecodedIDToken(): Promise<IdTokenPayload> {

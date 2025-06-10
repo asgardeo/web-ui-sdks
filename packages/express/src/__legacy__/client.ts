@@ -166,8 +166,8 @@ export class AsgardeoExpressClient {
     return this._authClient.getIDToken(userId);
   }
 
-  public async getBasicUserInfo(userId: string): Promise<BasicUserInfo> {
-    return this._authClient.getBasicUserInfo(userId);
+  public async getUser(userId: string): Promise<BasicUserInfo> {
+    return this._authClient.getUser(userId);
   }
 
   public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints> {

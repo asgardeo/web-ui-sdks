@@ -97,7 +97,7 @@ export interface AuthContextInterface {
     },
   ) => Promise<BasicUserInfo>;
   signOut: (callback?: (response: boolean) => void) => Promise<boolean>;
-  getBasicUserInfo(): Promise<BasicUserInfo>;
+  getUser(): Promise<BasicUserInfo>;
   httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
   exchangeToken(config: CustomGrantConfig, callback?: (response: BasicUserInfo | FetchResponse<any>) => void): void;

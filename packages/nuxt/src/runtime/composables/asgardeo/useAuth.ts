@@ -174,7 +174,7 @@ export const useAuth = (): AuthInterface => {
    *
    * @returns {Promise<BasicUserInfo | null>} A promise resolving to user info or null.
    */
-  const getBasicUserInfo = async (): Promise<BasicUserInfo | null> => {
+  const getUser = async (): Promise<BasicUserInfo | null> => {
     try {
       const userInfo: BasicUserInfo = await $fetch<BasicUserInfo>('/api/auth/user', {
         method: 'GET',
@@ -231,7 +231,7 @@ export const useAuth = (): AuthInterface => {
 
   return {
     getAccessToken,
-    getBasicUserInfo,
+    getUser,
     getStorageManager,
     getDecodedIDToken,
     getIdToken,

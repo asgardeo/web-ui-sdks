@@ -181,8 +181,8 @@ class AuthAPI {
    *
    * @return {Promise<BasicUserInfo>} - A promise that resolves with the user information.
    */
-  public async getBasicUserInfo(): Promise<BasicUserInfo> {
-    return this._client.getBasicUserInfo();
+  public async getUser(): Promise<BasicUserInfo> {
+    return this._client.getUser();
   }
 
   /**

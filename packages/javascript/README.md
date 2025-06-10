@@ -43,7 +43,7 @@ auth.signIn()
     });
 
 // Get authenticated user
-auth.getBasicUserInfo()
+auth.getUser()
     .then((userInfo) => {
         console.log(userInfo);
     });
