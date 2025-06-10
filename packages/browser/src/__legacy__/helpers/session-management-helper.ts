@@ -242,7 +242,7 @@ export const SessionManagementHelper = (() => {
         const signOutURL = await _signOut();
         // Clearing user session data before redirecting to the signOutURL because user has been already logged
         // out by the initial logout request in the single logout flow.
-        await AsgardeoAuthClient.clearUserSessionData();
+        await AsgardeoAuthClient.clearSession();
         parent.location.href = signOutURL;
         window.location.href = 'about:blank';
 

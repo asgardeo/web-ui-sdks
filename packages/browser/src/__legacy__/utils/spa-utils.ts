@@ -120,7 +120,7 @@ export class SPAUtils {
       const newUrl = window.location.href.split('?')[0];
       history.pushState({}, document.title, newUrl);
 
-      await AsgardeoAuthClient.clearUserSessionData();
+      await AsgardeoAuthClient.clearSession();
 
       return true;
     }

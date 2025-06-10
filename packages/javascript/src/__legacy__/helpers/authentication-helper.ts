@@ -245,7 +245,7 @@ export class AuthenticationHelper<T> {
       .replace(TokenExchangeConstants.Placeholders.CLIENT_SECRET, configData.clientSecret ?? '');
   }
 
-  public async clearUserSessionData(userId?: string): Promise<void> {
+  public async clearSession(userId?: string): Promise<void> {
     await this._storageManager.removeTemporaryData(userId);
     await this._storageManager.removeSessionData(userId);
   }

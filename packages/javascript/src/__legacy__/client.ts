@@ -751,7 +751,7 @@ export class AsgardeoAuthClient<T> {
       );
     }
 
-    this._authenticationHelper.clearUserSessionData(userId);
+    this._authenticationHelper.clearSession(userId);
 
     return Promise.resolve(response);
   }
@@ -1134,7 +1134,7 @@ export class AsgardeoAuthClient<T> {
     await this.loadOpenIDProviderConfiguration(true);
   }
 
-  public static async clearUserSessionData(userId?: string): Promise<void> {
-    await this._authenticationHelper.clearUserSessionData(userId);
+  public static async clearSession(userId?: string): Promise<void> {
+    await this._authenticationHelper.clearSession(userId);
   }
 }
