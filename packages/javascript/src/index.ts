@@ -21,7 +21,8 @@ export * from './__legacy__/models';
 
 export * from './IsomorphicCrypto';
 
-export {default as authorize} from './api/authorize';
+export {default as initializeApplicationNativeAuthentication} from './api/initializeApplicationNativeAuthentication';
+export {default as handleApplicationNativeAuthentication} from './api/handleApplicationNativeAuthentication';
 export {default as getUserInfo} from './api/getUserInfo';
 
 export {default as TokenConstants} from './constants/TokenConstants';

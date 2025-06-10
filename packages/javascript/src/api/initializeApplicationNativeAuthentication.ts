@@ -17,6 +17,7 @@
  */
 
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
+import {ApplicationNativeAuthenticationInitiateResponse} from '../models/application-native-authentication';
 
 /**
  * Represents the authorization request payload that can be sent to the authorization endpoint.
@@ -73,36 +74,6 @@ export interface AuthorizationRequest {
 }
 
 /**
- * Represents the authorization response from the authorization endpoint.
- */
-export interface AuthorizationResponse {
-  /**
-   * The authorization code.
-   */
-  code?: string;
-  /**
-   * The state parameter.
-   */
-  state?: string;
-  /**
-   * Session state.
-   */
-  session_state?: string;
-  /**
-   * The error code if authorization failed.
-   */
-  error?: string;
-  /**
-   * Human-readable error description.
-   */
-  error_description?: string;
-  /**
-   * Additional response parameters.
-   */
-  [key: string]: any;
-}
-
-/**
  * Request configuration for the authorize function.
  */
 export interface AuthorizeRequestConfig extends Partial<Request> {
@@ -126,7 +97,7 @@ export interface AuthorizeRequestConfig extends Partial<Request> {
  * @example
  * ```typescript
  * try {
- *   const authResponse = await authorize({
+ *   const authResponse = await initializeApplicationNativeAuthentication({
  *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/oauth2/authorize",
  *     payload: {
  *       response_type: "code",
@@ -146,13 +117,17 @@ export interface AuthorizeRequestConfig extends Partial<Request> {
  * }
  * ```
  */
-const authorize = async ({url, payload, ...requestConfig}: AuthorizeRequestConfig): Promise<AuthorizationResponse> => {
+const initializeApplicationNativeAuthentication = async ({
+  url,
+  payload,
+  ...requestConfig
+}: AuthorizeRequestConfig): Promise<ApplicationNativeAuthenticationInitiateResponse> => {
   try {
     new URL(url);
   } catch (error) {
     throw new AsgardeoAPIError(
       'Invalid endpoint URL provided',
-      'authorize-ValidationError-001',
+      'initializeApplicationNativeAuthentication-ValidationError-001',
       'javascript',
       400,
       'Invalid Request',
@@ -162,7 +137,7 @@ const authorize = async ({url, payload, ...requestConfig}: AuthorizeRequestConfi
   if (!payload) {
     throw new AsgardeoAPIError(
       'Authorization payload is required',
-      'authorize-ValidationError-002',
+      'initializeApplicationNativeAuthentication-ValidationError-002',
       'javascript',
       400,
       'Invalid Request',
@@ -212,14 +187,14 @@ const authorize = async ({url, payload, ...requestConfig}: AuthorizeRequestConfi
 
     throw new AsgardeoAPIError(
       `Authorization request failed: ${errorText}`,
-      'authorize-ResponseError-001',
+      'initializeApplicationNativeAuthentication-ResponseError-001',
       'javascript',
       response.status,
       response.statusText,
     );
   }
 
-  return (await response.json()) as AuthorizationResponse;
+  return (await response.json()) as ApplicationNativeAuthenticationInitiateResponse;
 };
 
-export default authorize;
+export default initializeApplicationNativeAuthentication;
