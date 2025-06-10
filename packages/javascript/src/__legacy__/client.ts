@@ -864,26 +864,6 @@ export class AsgardeoAuthClient<T> {
   }
 
   /**
-   * The created timestamp of the token response in milliseconds.
-   *
-   * @param userId - User ID
-   * @returns Created at timestamp of the token response in milliseconds.
-   */
-  public async getCreatedAt(userId?: string): Promise<number> {
-    return (await this._storageManager.getSessionData(userId))?.created_at;
-  }
-
-  /**
-   * The expires timestamp of the token response in seconds.
-   *
-   * @param userId - User ID
-   * @returns Expires in timestamp of the token response in seconds.
-   */
-  public async getExpiresIn(userId?: string): Promise<string> {
-    return (await this._storageManager.getSessionData(userId))?.expires_in;
-  }
-
-  /**
    * This method sends a custom-grant request and returns a Promise that resolves with the response
    * depending on the config passed.
    *
@@ -1020,10 +1000,10 @@ export class AsgardeoAuthClient<T> {
     const isAccessTokenAvailable: boolean = Boolean(await this.getAccessToken(userId));
 
     // Check if the access token is expired.
-    const createdAt: number = await this.getCreatedAt(userId);
+    const createdAt: number = (await this._storageManager.getSessionData(userId))?.created_at;
 
     // Get the expires in value.
-    const expiresInString: string = await this.getExpiresIn(userId);
+    const expiresInString: string = (await this._storageManager.getSessionData(userId))?.expires_in;
 
     // If the expires in value is not available, the token is invalid and the user is not authenticated.
     if (!expiresInString) {
