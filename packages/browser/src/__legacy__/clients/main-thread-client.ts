@@ -71,7 +71,7 @@ export const MainThreadClient = async (
   const _dataLayer = _authenticationClient.getStorageManager();
   const _sessionManagementHelper = await SessionManagementHelper(
     async () => {
-      return _authenticationClient.getSignOutURL();
+      return _authenticationClient.getSignOutUrl();
     },
     (config.storage as BrowserStorage) ?? BrowserStorage.SessionStorage,
     (sessionState: string) =>
@@ -158,8 +158,7 @@ export const MainThreadClient = async (
       config,
       oidcEndpoints,
       async () => (await _authenticationClient.getBasicUserInfo()).sessionState,
-      async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> =>
-        _authenticationClient.getSignInUrl(params),
+      async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> => _authenticationClient.getSignInUrl(params),
       _sessionManagementHelper,
     );
   };
@@ -257,9 +256,9 @@ export const MainThreadClient = async (
 
   const signOut = async (): Promise<boolean> => {
     if ((await _authenticationClient.isAuthenticated()) && !_getSignOutURLFromSessionStorage) {
-      location.href = await _authenticationClient.getSignOutURL();
+      location.href = await _authenticationClient.getSignOutUrl();
     } else {
-      location.href = SPAUtils.getSignOutURL(config.clientId, instanceID);
+      location.href = SPAUtils.getSignOutUrl(config.clientId, instanceID);
     }
 
     _spaHelper.clearRefreshTokenTimeout();

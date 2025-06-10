@@ -490,14 +490,14 @@ export class AsgardeoAuthClient<T> {
    *
    * @example
    * ```
-   * const signOutUrl = await auth.getSignOutURL();
+   * const signOutUrl = await auth.getSignOutUrl();
    * ```
    *
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getSignOutURL}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getSignOutUrl}
    *
    * @preserve
    */
-  public async getSignOutURL(userId?: string): Promise<string> {
+  public async getSignOutUrl(userId?: string): Promise<string> {
     const logoutEndpoint: string | undefined = (await this._oidcProviderMetaData())?.end_session_endpoint;
     const configData: StrictAuthClientConfig = await this._config();
 

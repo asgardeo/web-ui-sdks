@@ -197,7 +197,7 @@ export class AsgardeoNodeCore<T> {
   }
 
   public async signOut(userId: string): Promise<string> {
-    const signOutURL = await this._auth.getSignOutURL(userId);
+    const signOutURL = await this._auth.getSignOutUrl(userId);
 
     if (!signOutURL) {
       return Promise.reject(

@@ -52,7 +52,7 @@ export class SPAUtils {
     );
   }
 
-  public static getSignOutURL(clientId: string, instanceID: number): string {
+  public static getSignOutUrl(clientId: string, instanceID: number): string {
     return (
       sessionStorage.getItem(
         `${OIDCRequestConstants.SignOut.Storage.StorageKeys.SIGN_OUT_URL}-instance_${instanceID}-${clientId}`,

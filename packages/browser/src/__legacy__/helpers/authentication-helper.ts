@@ -470,10 +470,10 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
         .then(async () => {
           // Disable this temporarily
           /* if (config.storage === Storage.BrowserMemory) {
-                        SPAUtils.setSignOutURL(await _authenticationClient.getSignOutURL());
+                        SPAUtils.setSignOutURL(await _authenticationClient.getSignOutUrl());
                     } */
           if (config.storage !== BrowserStorage.WebWorker) {
-            SPAUtils.setSignOutURL(await this._authenticationClient.getSignOutURL(), config.clientId, this._instanceID);
+            SPAUtils.setSignOutURL(await this._authenticationClient.getSignOutUrl(), config.clientId, this._instanceID);
 
             if (this._spaHelper) {
               this._spaHelper.clearRefreshTokenTimeout();

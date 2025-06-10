@@ -131,11 +131,11 @@ export const WebWorkerCore = async (
   const signOut = async (): Promise<string> => {
     _spaHelper.clearRefreshTokenTimeout();
 
-    return await _authenticationClient.getSignOutURL();
+    return await _authenticationClient.getSignOutUrl();
   };
 
-  const getSignOutURL = async (): Promise<string> => {
-    return await _authenticationClient.getSignOutURL();
+  const getSignOutUrl = async (): Promise<string> => {
+    return await _authenticationClient.getSignOutUrl();
   };
 
   const requestCustomGrant = async (config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse> => {
@@ -225,7 +225,7 @@ export const WebWorkerCore = async (
     getDecodedIDToken,
     getIDToken,
     getOIDCServiceEndpoints,
-    getSignOutURL,
+    getSignOutUrl,
     httpRequest,
     httpRequestAll,
     isAuthenticated,

@@ -129,7 +129,7 @@ export const WebWorkerClient = async (
 
         return signOutURL;
       } catch {
-        return SPAUtils.getSignOutURL(config.clientId, instanceID);
+        return SPAUtils.getSignOutUrl(config.clientId, instanceID);
       }
     },
     config.storage as BrowserStorage,
@@ -636,7 +636,7 @@ export const WebWorkerClient = async (
             return reject(error);
           });
       } else {
-        window.location.href = SPAUtils.getSignOutURL(config.clientId, instanceID);
+        window.location.href = SPAUtils.getSignOutUrl(config.clientId, instanceID);
 
         return SPAUtils.waitTillPageRedirect().then(() => {
           return Promise.resolve(true);

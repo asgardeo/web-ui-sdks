@@ -241,7 +241,7 @@ export const workerReceiver = (
         break;
       case GET_SIGN_OUT_URL:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getSignOutURL()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getSignOutUrl()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }
