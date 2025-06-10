@@ -96,7 +96,7 @@ export interface AuthContextInterface {
   error: AsgardeoAuthException;
   getAccessToken(): Promise<string>;
   getUser(): Promise<BasicUserInfo>;
-  getDecodedIDToken(): Promise<IdTokenPayload>;
+  getDecodedIdToken(): Promise<IdTokenPayload>;
   getHttpClient(): Promise<HttpClientInstance>;
   getIdToken(): Promise<string>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;

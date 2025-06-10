@@ -100,7 +100,7 @@ export const useAuth = (): AuthInterface => {
    *
    * @returns {Promise<IdTokenPayload | null>} - A promise that resolves to the decoded ID token payload if available, or null if not.
    */
-  const getDecodedIDToken = async (): Promise<IdTokenPayload | null> => {
+  const getDecodedIdToken = async (): Promise<IdTokenPayload | null> => {
     try {
       const response: Response = await fetch(`/api/auth/get-decoded-id-token`, {
         credentials: 'include',
@@ -233,7 +233,7 @@ export const useAuth = (): AuthInterface => {
     getAccessToken,
     getUser,
     getStorageManager,
-    getDecodedIDToken,
+    getDecodedIdToken,
     getIdToken,
     getOpenIDProviderEndpoints,
     isSignedIn,

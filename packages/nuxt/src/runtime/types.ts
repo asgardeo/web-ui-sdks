@@ -61,7 +61,7 @@ export interface AuthInterface {
   getAccessToken: () => Promise<string | null>;
   getUser: () => Promise<BasicUserInfo | null>;
   getStorageManager: () => Promise<StorageManager<any> | null>;
-  getDecodedIDToken: () => Promise<IdTokenPayload | null>;
+  getDecodedIdToken: () => Promise<IdTokenPayload | null>;
   getIdToken: () => Promise<string | null>;
   getOpenIDProviderEndpoints: () => Promise<OIDCEndpoints | null>;
   isSignedIn: () => Promise<boolean>;

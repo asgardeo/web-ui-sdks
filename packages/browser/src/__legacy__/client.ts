@@ -738,7 +738,7 @@ export class AsgardeoSPAClient {
    *
    * @example
    * ```
-   * auth.getDecodedIDToken().then((response)=>{
+   * auth.getDecodedIdToken().then((response)=>{
    *     // console.log(response);
    * }).catch((error)=>{
    *     // console.error(error);
@@ -750,10 +750,10 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getDecodedIDToken(): Promise<IdTokenPayload | undefined> {
+  public async getDecodedIdToken(): Promise<IdTokenPayload | undefined> {
     await this._validateMethod();
 
-    return this._client?.getDecodedIDToken();
+    return this._client?.getDecodedIdToken();
   }
 
   /**

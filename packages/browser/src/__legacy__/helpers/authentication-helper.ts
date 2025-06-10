@@ -660,12 +660,12 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     return this._authenticationClient.getUser();
   }
 
-  public async getDecodedIDToken(): Promise<IdTokenPayload> {
-    return this._authenticationClient.getDecodedIDToken();
+  public async getDecodedIdToken(): Promise<IdTokenPayload> {
+    return this._authenticationClient.getDecodedIdToken();
   }
 
   public async getDecodedIDPIDToken(): Promise<IdTokenPayload> {
-    return this._authenticationClient.getDecodedIDToken();
+    return this._authenticationClient.getDecodedIdToken();
   }
 
   public async getCrypto(): Promise<IsomorphicCrypto> {

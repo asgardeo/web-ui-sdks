@@ -585,14 +585,14 @@ export class AsgardeoAuthClient<T> {
    *
    * @example
    * ```
-   * const decodedIdToken = await auth.getDecodedIDToken();
+   * const decodedIdToken = await auth.getDecodedIdToken();
    * ```
    *
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getDecodedIDToken}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getDecodedIdToken}
    *
    * @preserve
    */
-  public async getDecodedIDToken(userId?: string): Promise<IdTokenPayload> {
+  public async getDecodedIdToken(userId?: string): Promise<IdTokenPayload> {
     const idToken: string = (await this._storageManager.getSessionData(userId)).id_token;
     const payload: IdTokenPayload = this._cryptoHelper.decodeIDToken(idToken);
 

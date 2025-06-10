@@ -220,8 +220,8 @@ export class AsgardeoNodeCore<T> {
     return this._auth.getOpenIDProviderEndpoints() as Promise<OIDCEndpoints>;
   }
 
-  public async getDecodedIDToken(userId?: string): Promise<IdTokenPayload> {
-    return this._auth.getDecodedIDToken(userId);
+  public async getDecodedIdToken(userId?: string): Promise<IdTokenPayload> {
+    return this._auth.getDecodedIdToken(userId);
   }
 
   public async getAccessToken(userId?: string): Promise<string> {

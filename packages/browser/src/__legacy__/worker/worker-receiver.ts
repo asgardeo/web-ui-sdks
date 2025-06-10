@@ -199,7 +199,7 @@ export const workerReceiver = (
         break;
       case GET_DECODED_ID_TOKEN:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getDecodedIDToken()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getDecodedIdToken()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }

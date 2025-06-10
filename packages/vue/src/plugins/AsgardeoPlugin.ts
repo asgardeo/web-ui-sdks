@@ -159,7 +159,7 @@ export const asgardeoPlugin: Plugin = {
       error: error.value,
       getAccessToken: (): Promise<string> => AuthClient.getAccessToken(),
       getUser: (): Promise<BasicUserInfo> => AuthClient.getUser(),
-      getDecodedIDToken: (): Promise<IdTokenPayload> => AuthClient.getDecodedIDToken(),
+      getDecodedIdToken: (): Promise<IdTokenPayload> => AuthClient.getDecodedIdToken(),
       getHttpClient: (): Promise<HttpClientInstance> => AuthClient.getHttpClient(),
       getIdToken: (): Promise<string> => AuthClient.getIdToken(),
       getOpenIDProviderEndpoints: (): Promise<OIDCEndpoints> => AuthClient.getOpenIDProviderEndpoints(),

@@ -214,9 +214,9 @@ describe('asgardeoPlugin', () => {
     expect(accessTokenValue).toBe(accessToken);
 
     const decodedIDToken: IdTokenPayload = {aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'};
-    mockAuthAPI.getDecodedIDToken.mockResolvedValueOnce(decodedIDToken);
-    const idToken: IdTokenPayload = await authContext.getDecodedIDToken();
-    expect(mockAuthAPI.getDecodedIDToken).toHaveBeenCalled();
+    mockAuthAPI.getDecodedIdToken.mockResolvedValueOnce(decodedIDToken);
+    const idToken: IdTokenPayload = await authContext.getDecodedIdToken();
+    expect(mockAuthAPI.getDecodedIdToken).toHaveBeenCalled();
     expect(idToken).toMatchObject(decodedIDToken);
   });
 

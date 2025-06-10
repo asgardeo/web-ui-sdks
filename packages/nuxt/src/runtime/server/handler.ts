@@ -212,7 +212,7 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
 
       try {
-        return await authClient.getDecodedIDToken(sessionId);
+        return await authClient.getDecodedIdToken(sessionId);
       } catch {
         throw createError({
           statusCode: 500,

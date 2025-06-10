@@ -247,8 +247,8 @@ class AuthAPI {
    * @return {Promise<DecodedIDTokenPayloadInterface>} - A Promise that resolves with
    * the decoded payload of the id token.
    */
-  public async getDecodedIDToken(): Promise<IdTokenPayload> {
-    return this._client.getDecodedIDToken();
+  public async getDecodedIdToken(): Promise<IdTokenPayload> {
+    return this._client.getDecodedIdToken();
   }
 
   /**
@@ -260,7 +260,7 @@ class AuthAPI {
    * the decoded payload of the idp id token.
    */
   public async getDecodedIDPIDToken(): Promise<IdTokenPayload> {
-    return this._client.getDecodedIDToken();
+    return this._client.getDecodedIdToken();
   }
 
   /**

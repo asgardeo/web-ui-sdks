@@ -40,7 +40,7 @@ describe('useAsgardeo', () => {
     error: new AsgardeoAuthException('Some error', 'Error message', 'error'),
     getAccessToken: vi.fn().mockResolvedValue('token'),
     getUser: vi.fn().mockResolvedValue({} as BasicUserInfo),
-    getDecodedIDToken: vi.fn().mockResolvedValue({} as IdTokenPayload),
+    getDecodedIdToken: vi.fn().mockResolvedValue({} as IdTokenPayload),
     getHttpClient: vi.fn().mockResolvedValue({} as HttpClientInstance),
     getIdToken: vi.fn().mockResolvedValue('id_token'),
     getOpenIDProviderEndpoints: vi.fn().mockResolvedValue({} as OIDCEndpoints),

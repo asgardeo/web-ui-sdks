@@ -20,12 +20,12 @@
 import { useAsgardeo } from '@asgardeo/vue'
 import { computed } from 'vue'
 
-const { state, signOut, getDecodedIDToken } = useAsgardeo()
+const { state, signOut, getDecodedIdToken } = useAsgardeo()
 
 const userEmail = computed(() => state?.email || 'This is the content of the home page.')
 
 const getid = async () => {
-  const id = await getDecodedIDToken()
+  const id = await getDecodedIdToken()
   console.log(JSON.stringify(id, null, 2))
 }
 </script>

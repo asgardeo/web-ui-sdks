@@ -46,7 +46,7 @@ export type MockAuthAPI = {
   enableHttpHandler: Mock;
   getAccessToken: Mock;
   getUser: Mock;
-  getDecodedIDToken: Mock;
+  getDecodedIdToken: Mock;
   getHttpClient: Mock;
   getIdToken: Mock;
   getOpenIDProviderEndpoints: Mock;
@@ -78,7 +78,7 @@ export const mockAuthAPI: MockAuthAPI = {
     sub: 'user-id-123',
     username: 'testUser',
   }),
-  getDecodedIDToken: vi.fn().mockResolvedValue({aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'}),
+  getDecodedIdToken: vi.fn().mockResolvedValue({aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'}),
   getHttpClient: vi.fn().mockResolvedValue({}),
   getIdToken: vi.fn().mockResolvedValue('mock-id-token'),
   getOpenIDProviderEndpoints: vi.fn().mockResolvedValue({}),
@@ -126,7 +126,7 @@ export const mockAsgardeoSPAClient: Partial<AsgardeoSPAClient> = {
     sub: 'user-id-123',
     username: 'testUser',
   }),
-  getDecodedIDToken: vi.fn().mockResolvedValue({sub: 'user-id-123'}),
+  getDecodedIdToken: vi.fn().mockResolvedValue({sub: 'user-id-123'}),
   getHttpClient: vi.fn().mockResolvedValue({}),
   getIDPAccessToken: vi.fn().mockResolvedValue('mock-idp-access-token'),
   getIdToken: vi.fn().mockResolvedValue('mock-id-token'),
