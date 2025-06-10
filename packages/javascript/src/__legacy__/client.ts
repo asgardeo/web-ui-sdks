@@ -669,11 +669,11 @@ export class AsgardeoAuthClient<T> {
    * const cryptoHelper = await auth.IsomorphicCrypto();
    * ```
    *
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getCryptoHelper}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getCrypto}
    *
    * @preserve
    */
-  public async getCryptoHelper(): Promise<IsomorphicCrypto> {
+  public async getCrypto(): Promise<IsomorphicCrypto> {
     return this._cryptoHelper;
   }
 

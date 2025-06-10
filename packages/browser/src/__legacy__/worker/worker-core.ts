@@ -171,8 +171,8 @@ export const WebWorkerCore = async (
     return _authenticationHelper.getDecodedIDToken();
   };
 
-  const getCryptoHelper = async (): Promise<IsomorphicCrypto> => {
-    return _authenticationHelper.getCryptoHelper();
+  const getCrypto = async (): Promise<IsomorphicCrypto> => {
+    return _authenticationHelper.getCrypto();
   };
 
   const getDecodedIDPIDToken = async (): Promise<IdTokenPayload> => {
@@ -220,7 +220,7 @@ export const WebWorkerCore = async (
     getSignInUrl,
     getBasicUserInfo,
     getConfigData,
-    getCryptoHelper,
+    getCrypto,
     getDecodedIDPIDToken,
     getDecodedIDToken,
     getIDToken,

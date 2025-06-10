@@ -668,8 +668,8 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     return this._authenticationClient.getDecodedIDToken();
   }
 
-  public async getCryptoHelper(): Promise<IsomorphicCrypto> {
-    return this._authenticationClient.getCryptoHelper();
+  public async getCrypto(): Promise<IsomorphicCrypto> {
+    return this._authenticationClient.getCrypto();
   }
 
   public async getIDToken(): Promise<string> {

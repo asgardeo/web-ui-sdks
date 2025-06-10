@@ -376,8 +376,8 @@ export const MainThreadClient = async (
     return _authenticationHelper.getDecodedIDToken();
   };
 
-  const getCryptoHelper = async (): Promise<IsomorphicCrypto> => {
-    return _authenticationHelper.getCryptoHelper();
+  const getCrypto = async (): Promise<IsomorphicCrypto> => {
+    return _authenticationHelper.getCrypto();
   };
 
   const getIDToken = async (): Promise<string> => {
@@ -436,7 +436,7 @@ export const MainThreadClient = async (
     getAccessToken,
     getBasicUserInfo,
     getConfigData,
-    getCryptoHelper,
+    getCrypto,
     getStorageManager,
     getDecodedIDToken,
     getHttpClient,

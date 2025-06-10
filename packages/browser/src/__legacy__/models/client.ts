@@ -61,7 +61,7 @@ export interface MainThreadClientInterface {
   revokeAccessToken(): Promise<boolean>;
   getBasicUserInfo(): Promise<BasicUserInfo>;
   getDecodedIDToken(): Promise<IdTokenPayload>;
-  getCryptoHelper(): Promise<IsomorphicCrypto>;
+  getCrypto(): Promise<IsomorphicCrypto>;
   getConfigData(): Promise<AuthClientConfig<MainThreadClientConfig>>;
   getIDToken(): Promise<string>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
@@ -99,7 +99,7 @@ export interface WebWorkerClientInterface {
   getConfigData(): Promise<AuthClientConfig<WebWorkerClientConfig>>;
   getDecodedIDToken(): Promise<IdTokenPayload>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
-  getCryptoHelper(): Promise<IsomorphicCrypto>;
+  getCrypto(): Promise<IsomorphicCrypto>;
   getIDToken(): Promise<string>;
   isAuthenticated(): Promise<boolean>;
   setHttpRequestSuccessCallback(callback: (response: HttpResponse) => void): void;

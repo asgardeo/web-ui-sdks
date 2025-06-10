@@ -60,7 +60,7 @@ export interface WebWorkerCoreInterface {
   getBasicUserInfo(): Promise<BasicUserInfo>;
   getDecodedIDToken(): Promise<IdTokenPayload>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
-  getCryptoHelper(): Promise<IsomorphicCrypto>;
+  getCrypto(): Promise<IsomorphicCrypto>;
   getIDToken(): Promise<string>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getAccessToken(): Promise<string>;

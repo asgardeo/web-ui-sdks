@@ -764,22 +764,22 @@ export class AsgardeoSPAClient {
    *
    * @example
    * ```
-   * auth.getCryptoHelper().then((response)=>{
+   * auth.getCrypto().then((response)=>{
    *     // console.log(response);
    * }).catch((error)=>{
    *     // console.error(error);
    * });
    * ```
-   * @link https://github.com/asgardeo/asgardeo-auth-spa-sdk/tree/master#getCryptoHelper
+   * @link https://github.com/asgardeo/asgardeo-auth-spa-sdk/tree/master#getCrypto
    *
    * @memberof AsgardeoSPAClient
    *
    * @preserve
    */
-  public async getCryptoHelper(): Promise<IsomorphicCrypto | undefined> {
+  public async getCrypto(): Promise<IsomorphicCrypto | undefined> {
     await this._validateMethod();
 
-    return this._client?.getCryptoHelper();
+    return this._client?.getCrypto();
   }
 
   /**

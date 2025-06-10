@@ -207,7 +207,7 @@ export const workerReceiver = (
         break;
       case GET_CRYPTO_HELPER:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getCryptoHelper()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getCrypto()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }

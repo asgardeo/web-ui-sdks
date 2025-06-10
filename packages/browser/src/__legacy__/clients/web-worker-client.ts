@@ -735,7 +735,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getCryptoHelper = (): Promise<IsomorphicCrypto> => {
+  const getCrypto = (): Promise<IsomorphicCrypto> => {
     const message: Message<null> = {
       type: GET_CRYPTO_HELPER,
     };
@@ -842,7 +842,7 @@ export const WebWorkerClient = async (
     enableHttpHandler,
     getBasicUserInfo,
     getConfigData,
-    getCryptoHelper,
+    getCrypto,
     getDecodedIDPIDToken,
     getDecodedIDToken,
     getIDToken,
