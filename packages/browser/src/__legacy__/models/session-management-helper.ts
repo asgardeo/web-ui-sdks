@@ -26,7 +26,7 @@ export interface SessionManagementHelperInterface {
     interval: number,
     sessionRefreshInterval: number,
     redirectURL: string,
-    getAuthorizationURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>,
+    getSignInUrl: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>,
   ): void;
   receivePromptNoneResponse(setSessionState?: (sessionState: string | null) => Promise<void>): Promise<boolean>;
   reset();

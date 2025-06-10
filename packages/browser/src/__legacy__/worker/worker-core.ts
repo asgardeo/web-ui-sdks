@@ -99,9 +99,9 @@ export const WebWorkerCore = async (
     _authenticationHelper.disableHttpHandler(_httpClient);
   };
 
-  const getAuthorizationURL = async (params?: AuthorizeRequestUrlParams): Promise<AuthorizationResponse> => {
+  const getSignInUrl = async (params?: AuthorizeRequestUrlParams): Promise<AuthorizationResponse> => {
     return _authenticationClient
-      .getAuthorizationURL(params)
+      .getSignInUrl(params)
       .then(async (url: string) => {
         const urlObject: URL = new URL(url);
         const state: string = urlObject.searchParams.get(OIDCRequestConstants.Params.STATE) ?? '';
@@ -217,7 +217,7 @@ export const WebWorkerCore = async (
     disableHttpHandler,
     enableHttpHandler,
     getAccessToken,
-    getAuthorizationURL,
+    getSignInUrl,
     getBasicUserInfo,
     getConfigData,
     getCryptoHelper,

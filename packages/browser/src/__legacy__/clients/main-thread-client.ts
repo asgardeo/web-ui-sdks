@@ -159,7 +159,7 @@ export const MainThreadClient = async (
       oidcEndpoints,
       async () => (await _authenticationClient.getBasicUserInfo()).sessionState,
       async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> =>
-        _authenticationClient.getAuthorizationURL(params),
+        _authenticationClient.getSignInUrl(params),
       _sessionManagementHelper,
     );
   };
@@ -227,7 +227,7 @@ export const MainThreadClient = async (
         );
       }
 
-      return _authenticationClient.getAuthorizationURL(signInConfig).then(async (url: string) => {
+      return _authenticationClient.getSignInUrl(signInConfig).then(async (url: string) => {
         if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE) {
           const pkceKey: string = extractPkceStorageKeyFromState(resolvedState);
 
@@ -326,7 +326,7 @@ export const MainThreadClient = async (
 
   const constructSilentSignInUrl = async (additionalParams: Record<string, string | boolean> = {}): Promise<string> => {
     const config = await _dataLayer.getConfigData();
-    const urlString: string = await _authenticationClient.getAuthorizationURL({
+    const urlString: string = await _authenticationClient.getSignInUrl({
       prompt: 'none',
       state: SILENT_SIGN_IN_STATE,
       ...additionalParams,

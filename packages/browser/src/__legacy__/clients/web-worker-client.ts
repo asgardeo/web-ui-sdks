@@ -387,7 +387,7 @@ export const WebWorkerClient = async (
       oidcEndpoints,
       async () => (await getBasicUserInfo()).sessionState,
       async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> =>
-        (await getAuthorizationURL(params)).authorizationURL,
+        (await getSignInUrl(params)).authorizationURL,
       _sessionManagementHelper,
     );
   };
@@ -449,7 +449,7 @@ export const WebWorkerClient = async (
    * @param {ExtendedAuthorizeRequestUrlParams} params Authorization URL params.
    * @returns {Promise<string>} Authorization URL.
    */
-  const getAuthorizationURL = async (params?: ExtendedAuthorizeRequestUrlParams): Promise<AuthorizationResponse> => {
+  const getSignInUrl = async (params?: ExtendedAuthorizeRequestUrlParams): Promise<AuthorizationResponse> => {
     const config: AuthClientConfig<WebWorkerClientConfig> = await getConfigData();
 
     const message: Message<ExtendedAuthorizeRequestUrlParams> = {
@@ -590,7 +590,7 @@ export const WebWorkerClient = async (
         return requestAccessToken(resolvedAuthorizationCode, resolvedSessionState, resolvedState, tokenRequestConfig);
       }
 
-      return getAuthorizationURL(params)
+      return getSignInUrl(params)
         .then(async (response: AuthorizationResponse) => {
           location.href = response.authorizationURL;
 

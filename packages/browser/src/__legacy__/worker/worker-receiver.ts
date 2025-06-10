@@ -97,7 +97,7 @@ export const workerReceiver = (
         break;
       case GET_AUTH_URL:
         webWorker
-          .getAuthorizationURL(data?.data)
+          .getSignInUrl(data?.data)
           .then((response: AuthorizationResponse) => {
             port.postMessage(MessageUtils.generateSuccessMessage(response));
           })

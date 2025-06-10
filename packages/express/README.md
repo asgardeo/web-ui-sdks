@@ -40,7 +40,7 @@ const app = express();
 
 // Login endpoint
 app.get("/login", (req, res) => {
-    const authUrl = authClient.getAuthorizationURL();
+    const authUrl = authClient.getSignInUrl();
     res.redirect(authUrl);
 });
 

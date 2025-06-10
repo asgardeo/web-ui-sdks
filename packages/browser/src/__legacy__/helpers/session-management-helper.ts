@@ -45,7 +45,7 @@ export const SessionManagementHelper = (() => {
   let _checkSessionIntervalTimeout: number;
   let _storage: BrowserStorage;
   let _setSessionState: (sessionState: string) => void;
-  let _getAuthorizationURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>;
+  let _getSignInUrl: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>;
 
   const initialize = (
     clientId: string,
@@ -54,7 +54,7 @@ export const SessionManagementHelper = (() => {
     interval: number,
     sessionRefreshInterval: number,
     redirectURL: string,
-    getAuthorizationURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>,
+    getSignInUrl: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>,
   ): void => {
     _clientID = clientId;
     _checkSessionEndpoint = checkSessionEndpoint;
@@ -62,7 +62,7 @@ export const SessionManagementHelper = (() => {
     _interval = interval;
     _redirectURL = redirectURL;
     _sessionRefreshInterval = sessionRefreshInterval;
-    _getAuthorizationURL = getAuthorizationURL;
+    _getSignInUrl = getSignInUrl;
 
     if (_interval > -1) {
       initiateCheckSession();
@@ -152,7 +152,7 @@ export const SessionManagementHelper = (() => {
         window?.addEventListener('message', receiveMessageListener);
       }
 
-      const promptNoneURL: string = await _getAuthorizationURL({
+      const promptNoneURL: string = await _getSignInUrl({
         prompt: 'none',
         response_mode: 'query',
         state: STATE,

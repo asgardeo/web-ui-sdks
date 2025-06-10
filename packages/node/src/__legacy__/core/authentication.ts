@@ -119,7 +119,7 @@ export class AsgardeoNodeCore<T> {
   }
 
   public async getAuthURL(userId: string, signInConfig?: Record<string, string | boolean>): Promise<string> {
-    const authURL = await this._auth.getAuthorizationURL(signInConfig, userId);
+    const authURL = await this._auth.getSignInUrl(signInConfig, userId);
 
     if (authURL) {
       return Promise.resolve(authURL.toString());

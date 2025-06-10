@@ -45,7 +45,7 @@ export interface WebWorkerCoreInterface {
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse[] | undefined>;
   enableHttpHandler(): void;
   disableHttpHandler(): void;
-  getAuthorizationURL(params?: AuthorizeRequestUrlParams, afterSignInUrl?: string): Promise<AuthorizationResponse>;
+  getSignInUrl(params?: AuthorizeRequestUrlParams, afterSignInUrl?: string): Promise<AuthorizationResponse>;
   requestAccessToken(
     authorizationCode?: string,
     sessionState?: string,

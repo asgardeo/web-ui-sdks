@@ -203,19 +203,19 @@ export class AsgardeoAuthClient<T> {
    *
    * @example
    * ```
-   * auth.getAuthorizationURL().then((url)=>{
+   * auth.getSignInUrl().then((url)=>{
    *  // console.log(url);
    * }).catch((error)=>{
    *  // console.error(error);
    * });
    * ```
    *
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getAuthorizationURL}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getSignInUrl}
    *
    * @preserve
    */
-  public async getAuthorizationURL(config?: ExtendedAuthorizeRequestUrlParams, userId?: string): Promise<string> {
-    const authRequestConfig: ExtendedAuthorizeRequestUrlParams = {...config};
+  public async getSignInUrl(requestConfig?: ExtendedAuthorizeRequestUrlParams, userId?: string): Promise<string> {
+    const authRequestConfig: ExtendedAuthorizeRequestUrlParams = {...requestConfig};
 
     delete authRequestConfig?.forceInit;
 
@@ -276,7 +276,7 @@ export class AsgardeoAuthClient<T> {
       return __TODO__();
     }
 
-    return this.getOIDCProviderMetaData(config?.forceInit as boolean).then(() => {
+    return this.getOIDCProviderMetaData(requestConfig?.forceInit as boolean).then(() => {
       return __TODO__();
     });
   }
