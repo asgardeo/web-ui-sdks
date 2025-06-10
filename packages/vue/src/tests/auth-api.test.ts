@@ -221,8 +221,8 @@ describe('AuthAPI', () => {
     });
   });
 
-  describe('requestCustomGrant', () => {
-    it('should call requestCustomGrant on the client', async () => {
+  describe('exchangeToken', () => {
+    it('should call exchangeToken on the client', async () => {
       const config: SPACustomGrantConfig = {
         attachToken: false,
         data: {key: 'value'},
@@ -232,9 +232,9 @@ describe('AuthAPI', () => {
       };
       const callback: Mock = vi.fn();
 
-      const result: BasicUserInfo | FetchResponse<any> = await authApi.requestCustomGrant(config, callback);
+      const result: BasicUserInfo | FetchResponse<any> = await authApi.exchangeToken(config, callback);
 
-      expect(mockClient.requestCustomGrant).toHaveBeenCalledWith(config);
+      expect(mockClient.exchangeToken).toHaveBeenCalledWith(config);
       expect(callback).toHaveBeenCalledWith(result);
 
       // Check state updates for returnsSession = true
@@ -256,7 +256,7 @@ describe('AuthAPI', () => {
         signInRequired: true,
       };
 
-      await authApi.requestCustomGrant(config);
+      await authApi.exchangeToken(config);
 
       // State should not be updated for session properties
       expect(authApi.getState().username).toBe('');
@@ -264,7 +264,7 @@ describe('AuthAPI', () => {
     });
 
     it('should handle null response', async () => {
-      mockClient.requestCustomGrant.mockResolvedValueOnce(null);
+      mockClient.exchangeToken.mockResolvedValueOnce(null);
       const config: SPACustomGrantConfig = {
         attachToken: false,
         data: {key: 'value'},
@@ -273,7 +273,7 @@ describe('AuthAPI', () => {
         signInRequired: true,
       };
 
-      const result: BasicUserInfo | FetchResponse<any> = await authApi.requestCustomGrant(config);
+      const result: BasicUserInfo | FetchResponse<any> = await authApi.exchangeToken(config);
       expect(result).toBeNull();
     });
 
@@ -284,7 +284,7 @@ describe('AuthAPI', () => {
         'Custom grant failed',
       );
 
-      mockClient.requestCustomGrant.mockRejectedValueOnce(error);
+      mockClient.exchangeToken.mockRejectedValueOnce(error);
 
       const config: SPACustomGrantConfig = {
         attachToken: false,
@@ -294,7 +294,7 @@ describe('AuthAPI', () => {
         signInRequired: true,
       };
 
-      await expect(authApi.requestCustomGrant(config)).rejects.toThrow('Custom grant failed');
+      await expect(authApi.exchangeToken(config)).rejects.toThrow('Custom grant failed');
     });
   });
 
@@ -490,7 +490,7 @@ describe('AuthAPI', () => {
         'Custom grant failed',
       );
 
-      mockClient.requestCustomGrant.mockRejectedValueOnce(error);
+      mockClient.exchangeToken.mockRejectedValueOnce(error);
 
       const config: SPACustomGrantConfig = {
         attachToken: false,
@@ -500,7 +500,7 @@ describe('AuthAPI', () => {
         signInRequired: true,
       };
 
-      await expect(authApi.requestCustomGrant(config)).rejects.toThrow('Custom grant failed');
+      await expect(authApi.exchangeToken(config)).rejects.toThrow('Custom grant failed');
     });
   });
 });

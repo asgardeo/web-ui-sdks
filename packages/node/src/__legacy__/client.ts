@@ -287,20 +287,20 @@ export class AsgardeoNodeClient<T> {
      *      signInRequired: true
      * }
 
-     * auth.requestCustomGrant(config).then((response)=>{
+     * auth.exchangeToken(config).then((response)=>{
      *     console.log(response);
      * }).catch((error)=>{
      *     console.error(error);
      * });
      * ```
      *
-     * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#requestCustomGrant
+     * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#exchangeToken
      *
      * @memberof AsgardeoNodeClient
      *
      */
-  public async requestCustomGrant(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
-    return this._authCore.requestCustomGrant(config, userId);
+  public async exchangeToken(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
+    return this._authCore.exchangeToken(config, userId);
   }
 
   /**

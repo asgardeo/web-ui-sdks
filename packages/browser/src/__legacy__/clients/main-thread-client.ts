@@ -279,8 +279,8 @@ export const MainThreadClient = async (
     }
   };
 
-  const requestCustomGrant = async (config: SPACustomGrantConfig): Promise<BasicUserInfo | FetchResponse> => {
-    return await _authenticationHelper.requestCustomGrant(config, enableRetrievingSignOutURLFromSession);
+  const exchangeToken = async (config: SPACustomGrantConfig): Promise<BasicUserInfo | FetchResponse> => {
+    return await _authenticationHelper.exchangeToken(config, enableRetrievingSignOutURLFromSession);
   };
 
   const refreshAccessToken = async (): Promise<BasicUserInfo> => {
@@ -447,7 +447,7 @@ export const MainThreadClient = async (
     isAuthenticated,
     isSessionActive,
     refreshAccessToken,
-    requestCustomGrant,
+    exchangeToken,
     revokeAccessToken,
     setHttpRequestErrorCallback,
     setHttpRequestFinishCallback,

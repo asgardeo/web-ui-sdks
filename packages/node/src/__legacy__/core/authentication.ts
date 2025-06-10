@@ -228,8 +228,8 @@ export class AsgardeoNodeCore<T> {
     return this._auth.getAccessToken(userId);
   }
 
-  public async requestCustomGrant(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
-    return this._auth.requestCustomGrant(config, userId);
+  public async exchangeToken(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
+    return this._auth.exchangeToken(config, userId);
   }
 
   public async updateConfig(config: Partial<AuthClientConfig<T>>): Promise<void> {

@@ -138,8 +138,8 @@ export const WebWorkerCore = async (
     return await _authenticationClient.getSignOutUrl();
   };
 
-  const requestCustomGrant = async (config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse> => {
-    return await _authenticationHelper.requestCustomGrant(config);
+  const exchangeToken = async (config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse> => {
+    return await _authenticationHelper.exchangeToken(config);
   };
 
   const refreshAccessToken = async (): Promise<BasicUserInfo> => {
@@ -231,7 +231,7 @@ export const WebWorkerCore = async (
     isAuthenticated,
     refreshAccessToken,
     requestAccessToken,
-    requestCustomGrant,
+    exchangeToken,
     revokeAccessToken,
     setHttpRequestFinishCallback,
     setHttpRequestStartCallback,

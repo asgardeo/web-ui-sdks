@@ -619,7 +619,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async requestCustomGrant(config: CustomGrantConfig): Promise<FetchResponse<any> | BasicUserInfo | undefined> {
+  public async exchangeToken(config: CustomGrantConfig): Promise<FetchResponse<any> | BasicUserInfo | undefined> {
     if (config.signInRequired) {
       await this._validateMethod();
     } else {
@@ -636,7 +636,7 @@ export class AsgardeoSPAClient {
       );
     }
 
-    const customGrantResponse = await this._client?.requestCustomGrant(config);
+    const customGrantResponse = await this._client?.exchangeToken(config);
 
     const customGrantCallback = this._onCustomGrant.get(config.id);
     customGrantCallback && customGrantCallback(this._onCustomGrant?.get(config.id));

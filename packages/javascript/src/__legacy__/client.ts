@@ -890,18 +890,18 @@ export class AsgardeoAuthClient<T> {
    *   signInRequired: true
    * }
    *
-   * auth.requestCustomGrant(config).then((response)=>{
+   * auth.exchangeToken(config).then((response)=>{
    *  // console.log(response);
    * }).catch((error)=>{
    *  // console.error(error);
    * });
    * ```
    *
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#requestCustomGrant}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#exchangeToken}
    *
    * @preserve
    */
-  public async requestCustomGrant(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
+  public async exchangeToken(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
     const oidcProviderMetadata: OIDCDiscoveryApiResponse = await this._oidcProviderMetaData();
     const configData: StrictAuthClientConfig = await this._config();
 

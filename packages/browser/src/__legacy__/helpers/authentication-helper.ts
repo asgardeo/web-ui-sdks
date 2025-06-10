@@ -100,7 +100,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     );
   }
 
-  public async requestCustomGrant(
+  public async exchangeToken(
     config: SPACustomGrantConfig,
     enableRetrievingSignOutURLFromSession?: (config: SPACustomGrantConfig) => void,
   ): Promise<BasicUserInfo | FetchResponse> {
@@ -126,7 +126,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     }
     if (useDefaultEndpoint || matches) {
       return this._authenticationClient
-        .requestCustomGrant(config)
+        .exchangeToken(config)
         .then(async (response: FetchResponse | TokenResponse) => {
           if (enableRetrievingSignOutURLFromSession && typeof enableRetrievingSignOutURLFromSession === 'function') {
             enableRetrievingSignOutURLFromSession(config);
@@ -173,7 +173,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       await this._authenticationClient.refreshAccessToken();
       const customGrantConfig = await this.getCustomGrantConfigData();
       if (customGrantConfig) {
-        await this.requestCustomGrant(customGrantConfig, enableRetrievingSignOutURLFromSession);
+        await this.exchangeToken(customGrantConfig, enableRetrievingSignOutURLFromSession);
       }
       this._spaHelper.refreshAccessTokenAutomatically(this);
 

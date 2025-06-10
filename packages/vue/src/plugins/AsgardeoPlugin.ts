@@ -175,12 +175,12 @@ export const asgardeoPlugin: Plugin = {
         }
       },
       refreshAccessToken: (): Promise<BasicUserInfo> => AuthClient.refreshAccessToken(),
-      requestCustomGrant: async (
+      exchangeToken: async (
         config: CustomGrantConfig,
         callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
       ): Promise<BasicUserInfo | FetchResponse<any>> => {
         try {
-          const response: BasicUserInfo | FetchResponse<any> = await AuthClient.requestCustomGrant(config);
+          const response: BasicUserInfo | FetchResponse<any> = await AuthClient.exchangeToken(config);
           callback?.(response);
           return response;
         } catch (err) {

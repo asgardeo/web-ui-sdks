@@ -181,12 +181,12 @@ class AuthAPI {
    * @return {Promise<FetchResponse<any> | SignInResponse>} a promise that resolves with
    * the value returned by the custom grant request.
    */
-  public requestCustomGrant(
+  public exchangeToken(
     config: SPACustomGrantConfig,
     callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
   ): Promise<BasicUserInfo | FetchResponse<any>> {
     return this._client
-      .requestCustomGrant(config)
+      .exchangeToken(config)
       .then((response: BasicUserInfo | FetchResponse<any>) => {
         if (!response) {
           return response;

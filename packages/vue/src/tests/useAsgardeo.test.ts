@@ -49,7 +49,7 @@ describe('useAsgardeo', () => {
     isAuthenticated: vi.fn().mockResolvedValue(true),
     on: vi.fn(),
     refreshAccessToken: vi.fn().mockResolvedValue({} as BasicUserInfo),
-    requestCustomGrant: vi.fn(),
+    exchangeToken: vi.fn(),
     revokeAccessToken: vi.fn().mockResolvedValue(true),
     signIn: vi.fn().mockResolvedValue({} as BasicUserInfo),
     signOut: vi.fn().mockResolvedValue(true),

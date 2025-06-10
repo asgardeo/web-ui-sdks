@@ -225,13 +225,13 @@ class AuthAPI {
    * @return {Promise<FetchResponse<any> | SignInResponse>} - A Promise that resolves with
    * the value returned by the custom grant request.
    */
-  public requestCustomGrant(
+  public exchangeToken(
     config: SPACustomGrantConfig,
     callback: (response: BasicUserInfo | FetchResponse<any>) => void,
     dispatch: (state: AuthStateInterface) => void,
   ): Promise<BasicUserInfo | FetchResponse<any>> {
     return this._client
-      .requestCustomGrant(config)
+      .exchangeToken(config)
       .then((response: BasicUserInfo | FetchResponse<any>) => {
         if (!response) {
           return null; // FIXME: Validate this. Temp fix for: error TS7030: Not all code paths return a value.

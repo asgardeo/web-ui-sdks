@@ -253,11 +253,11 @@ describe('asgardeoPlugin', () => {
       sessionState: 'test',
     };
 
-    mockAuthAPI.requestCustomGrant.mockResolvedValueOnce(customGrantResponse);
+    mockAuthAPI.exchangeToken.mockResolvedValueOnce(customGrantResponse);
 
-    authContext.requestCustomGrant(customGrantConfig);
+    authContext.exchangeToken(customGrantConfig);
 
-    expect(mockAuthAPI.requestCustomGrant).toHaveBeenCalledWith(customGrantConfig);
+    expect(mockAuthAPI.exchangeToken).toHaveBeenCalledWith(customGrantConfig);
   });
 
   it('should properly register event handlers with the on method', async () => {

@@ -100,10 +100,7 @@ export interface AuthContextInterface {
   getBasicUserInfo(): Promise<BasicUserInfo>;
   httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
-  requestCustomGrant(
-    config: CustomGrantConfig,
-    callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
-  ): void;
+  exchangeToken(config: CustomGrantConfig, callback?: (response: BasicUserInfo | FetchResponse<any>) => void): void;
   revokeAccessToken(): Promise<boolean>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getHttpClient(): Promise<HttpClientInstance>;

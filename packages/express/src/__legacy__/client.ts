@@ -182,8 +182,8 @@ export class AsgardeoExpressClient {
     return this._authClient.getAccessToken(userId);
   }
 
-  public async requestCustomGrant(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
-    return this._authClient.requestCustomGrant(config, userId);
+  public async exchangeToken(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
+    return this._authClient.exchangeToken(config, userId);
   }
 
   public async updateConfig(config: Partial<AuthClientConfig>): Promise<void> {

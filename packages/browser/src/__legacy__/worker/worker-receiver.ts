@@ -162,7 +162,7 @@ export const workerReceiver = (
         break;
       case REQUEST_CUSTOM_GRANT:
         webWorker
-          .requestCustomGrant(data.data)
+          .exchangeToken(data.data)
           .then(response => {
             port.postMessage(MessageUtils.generateSuccessMessage(response));
           })

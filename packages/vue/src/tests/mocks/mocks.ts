@@ -58,7 +58,7 @@ export type MockAuthAPI = {
   isSessionActive: Mock;
   on: Mock;
   refreshAccessToken: Mock;
-  requestCustomGrant: Mock;
+  exchangeToken: Mock;
   revokeAccessToken: Mock;
   signIn: Mock;
   signOut: Mock;
@@ -94,7 +94,7 @@ export const mockAuthAPI: MockAuthAPI = {
     email: 'test@example.com',
     username: 'testUser',
   }),
-  requestCustomGrant: vi.fn().mockResolvedValue({
+  exchangeToken: vi.fn().mockResolvedValue({
     displayName: 'Test User',
     email: 'test@example.com',
     username: 'testUser',
@@ -142,7 +142,7 @@ export const mockAsgardeoSPAClient: Partial<AsgardeoSPAClient> = {
     email: 'test@example.com',
     username: 'testUser',
   }),
-  requestCustomGrant: vi.fn().mockResolvedValue({
+  exchangeToken: vi.fn().mockResolvedValue({
     displayName: 'Test User',
     email: 'test@example.com',
     username: 'testUser',

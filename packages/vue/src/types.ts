@@ -107,10 +107,7 @@ export interface AuthContextInterface {
   on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): void;
   on(hook: Hooks, callback: (response?: any) => void, id?: string): void;
   refreshAccessToken(): Promise<BasicUserInfo>;
-  requestCustomGrant(
-    config: CustomGrantConfig,
-    callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
-  ): void;
+  exchangeToken(config: CustomGrantConfig, callback?: (response: BasicUserInfo | FetchResponse<any>) => void): void;
   revokeAccessToken(): Promise<boolean>;
   signIn: (
     config?: SignInConfig,

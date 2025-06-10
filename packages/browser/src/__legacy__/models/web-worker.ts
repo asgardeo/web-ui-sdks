@@ -54,7 +54,7 @@ export interface WebWorkerCoreInterface {
   ): Promise<BasicUserInfo>;
   signOut(afterSignOutUrl?: string): Promise<string>;
   getSignOutUrl(afterSignOutUrl?: string): Promise<string>;
-  requestCustomGrant(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
+  exchangeToken(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
   refreshAccessToken(): Promise<BasicUserInfo>;
   revokeAccessToken(): Promise<boolean>;
   getBasicUserInfo(): Promise<BasicUserInfo>;

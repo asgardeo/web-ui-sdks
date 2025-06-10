@@ -188,7 +188,7 @@ export const WebWorkerClient = async (
    * @returns {Promise<HttpResponse|boolean>} A promise that resolves with a boolean value or the request
    * response if the the `returnResponse` attribute in the `requestParams` object is set to `true`.
    */
-  const requestCustomGrant = (requestParams: SPACustomGrantConfig): Promise<FetchResponse | BasicUserInfo> => {
+  const exchangeToken = (requestParams: SPACustomGrantConfig): Promise<FetchResponse | BasicUserInfo> => {
     const message: Message<CustomGrantConfig> = {
       data: requestParams,
       type: REQUEST_CUSTOM_GRANT,
@@ -852,7 +852,7 @@ export const WebWorkerClient = async (
     initialize,
     isAuthenticated,
     refreshAccessToken,
-    requestCustomGrant,
+    exchangeToken,
     revokeAccessToken,
     setHttpRequestErrorCallback,
     setHttpRequestFinishCallback,

@@ -56,7 +56,7 @@ export interface MainThreadClientInterface {
     },
   ): Promise<BasicUserInfo>;
   signOut(afterSignOutUrl?: string): Promise<boolean>;
-  requestCustomGrant(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
+  exchangeToken(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
   refreshAccessToken(): Promise<BasicUserInfo>;
   revokeAccessToken(): Promise<boolean>;
   getBasicUserInfo(): Promise<BasicUserInfo>;
@@ -77,7 +77,7 @@ export interface MainThreadClientInterface {
 }
 
 export interface WebWorkerClientInterface {
-  requestCustomGrant(requestParams: CustomGrantConfig): Promise<FetchResponse | BasicUserInfo>;
+  exchangeToken(requestParams: CustomGrantConfig): Promise<FetchResponse | BasicUserInfo>;
   httpRequest<T = any>(config: HttpRequestConfig): Promise<HttpResponse<T>>;
   httpRequestAll<T = any>(configs: HttpRequestConfig[]): Promise<HttpResponse<T>[]>;
   enableHttpHandler(): Promise<boolean>;
