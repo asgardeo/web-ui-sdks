@@ -4,13 +4,14 @@ import {useState, useRef, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {useApp} from '../App';
 import {Users, ChevronDown, Settings, User, LogOut, Plus, Check, Building2} from 'lucide-react';
-import {SignedOut, SignInButton, SignOutButton} from '@asgardeo/react';
+import {SignedOut, SignInButton, SignOutButton, UserProfile} from '@asgardeo/react';
 import {Button} from './ui/button';
 
 export default function Header() {
   const {user, currentOrg, organizations, setCurrentOrg} = useApp();
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showOrgDropdown, setShowOrgDropdown] = useState(false);
+  const [showUserProfile, setShowUserProfile] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const orgDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -152,9 +153,12 @@ export default function Header() {
                   </div>
 
                   <Link
-                    to="/profile"
+                    // to="/profile"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    onClick={() => setShowUserDropdown(false)}
+                    onClick={() => {
+                      setShowUserProfile(true);
+                      setShowUserDropdown(false);
+                    }}
                   >
                     <User className="h-4 w-4 mr-3" />
                     Your profile
@@ -190,6 +194,7 @@ export default function Header() {
           </div>
         </div>
       </div>
+      {showUserProfile && <UserProfile mode="popup" />}
     </header>
   );
 }
