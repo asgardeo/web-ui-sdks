@@ -749,7 +749,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getIDToken = (): Promise<string> => {
+  const getIdToken = (): Promise<string> => {
     const message: Message<null> = {
       type: GET_ID_TOKEN,
     };
@@ -845,7 +845,7 @@ export const WebWorkerClient = async (
     getCrypto,
     getDecodedIDPIDToken,
     getDecodedIDToken,
-    getIDToken,
+    getIdToken,
     getOpenIDProviderEndpoints,
     httpRequest,
     httpRequestAll,

@@ -609,14 +609,14 @@ export class AsgardeoAuthClient<T> {
    *
    * @example
    * ```
-   * const idToken = await auth.getIDToken();
+   * const idToken = await auth.getIdToken();
    * ```
    *
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getIDToken}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getIdToken}
    *
    * @preserve
    */
-  public async getIDToken(userId?: string): Promise<string> {
+  public async getIdToken(userId?: string): Promise<string> {
     return (await this._storageManager.getSessionData(userId)).id_token;
   }
 

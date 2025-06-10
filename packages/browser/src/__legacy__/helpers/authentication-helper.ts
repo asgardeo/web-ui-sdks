@@ -672,8 +672,8 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     return this._authenticationClient.getCrypto();
   }
 
-  public async getIDToken(): Promise<string> {
-    return this._authenticationClient.getIDToken();
+  public async getIdToken(): Promise<string> {
+    return this._authenticationClient.getIdToken();
   }
 
   public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints> {

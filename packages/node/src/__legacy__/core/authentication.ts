@@ -143,7 +143,7 @@ export class AsgardeoNodeCore<T> {
     return this._auth.requestAccessToken(authorizationCode, sessionState, state, userId);
   }
 
-  public async getIDToken(userId: string): Promise<string> {
+  public async getIdToken(userId: string): Promise<string> {
     const is_logged_in = await this.isSignedIn(userId);
     if (!is_logged_in) {
       return Promise.reject(
@@ -154,7 +154,7 @@ export class AsgardeoNodeCore<T> {
         ),
       );
     }
-    const idToken = await this._auth.getIDToken(userId);
+    const idToken = await this._auth.getIdToken(userId);
     if (idToken) {
       return Promise.resolve(idToken);
     } else {

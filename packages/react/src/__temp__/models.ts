@@ -106,7 +106,7 @@ export interface AuthContextInterface {
   getHttpClient(): Promise<HttpClientInstance>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
   getDecodedIDToken(): Promise<IdTokenPayload>;
-  getIDToken(): Promise<string>;
+  getIdToken(): Promise<string>;
   getAccessToken(): Promise<string>;
   refreshAccessToken(): Promise<BasicUserInfo>;
   isSignedIn(): Promise<boolean>;

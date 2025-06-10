@@ -215,7 +215,7 @@ export const workerReceiver = (
         break;
       case GET_ID_TOKEN:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getIDToken()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getIdToken()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }

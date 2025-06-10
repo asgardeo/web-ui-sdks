@@ -162,16 +162,16 @@ export class AsgardeoNodeClient<T> {
    *
    * @example
    * ```
-   * const isAuth = await authClient.getIDToken("a2a2972c-51cd-5e9d-a9ae-058fae9f7927");
+   * const isAuth = await authClient.getIdToken("a2a2972c-51cd-5e9d-a9ae-058fae9f7927");
    * ```
    *
-   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getIDToken
+   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getIdToken
    *
    * @memberof AsgardeoNodeClient
    *
    */
-  public async getIDToken(userId: string): Promise<string> {
-    return this._authCore.getIDToken(userId);
+  public async getIdToken(userId: string): Promise<string> {
+    return this._authCore.getIdToken(userId);
   }
 
   /**

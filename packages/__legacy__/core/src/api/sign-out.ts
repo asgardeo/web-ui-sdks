@@ -49,7 +49,7 @@ const signOut = async (): Promise<void> => {
   const authClient: UIAuthClient = AuthClient.getInstance();
 
   try {
-    formBody.append('id_token_hint', await authClient.getIDToken());
+    formBody.append('id_token_hint', await authClient.getIdToken());
     formBody.append('client_id', (await authClient.getStorageManager().getConfigData()).clientId);
     formBody.append('response_mode', 'direct');
   } catch (error) {

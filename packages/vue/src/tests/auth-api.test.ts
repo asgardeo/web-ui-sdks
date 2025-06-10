@@ -360,9 +360,9 @@ describe('AuthAPI', () => {
       expect(result).toEqual({sub: 'user-id-123'});
     });
 
-    it('should call getIDToken on the client', async () => {
-      const result: string = await authApi.getIDToken();
-      expect(mockClient.getIDToken).toHaveBeenCalled();
+    it('should call getIdToken on the client', async () => {
+      const result: string = await authApi.getIdToken();
+      expect(mockClient.getIdToken).toHaveBeenCalled();
       expect(result).toBe('mock-id-token');
     });
 

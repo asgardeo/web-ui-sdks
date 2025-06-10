@@ -162,8 +162,8 @@ export class AsgardeoExpressClient {
     return this._authClient.isSignedIn(userId);
   }
 
-  public async getIDToken(userId: string): Promise<string> {
-    return this._authClient.getIDToken(userId);
+  public async getIdToken(userId: string): Promise<string> {
+    return this._authClient.getIdToken(userId);
   }
 
   public async getUser(userId: string): Promise<BasicUserInfo> {

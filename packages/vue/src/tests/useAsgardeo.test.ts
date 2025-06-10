@@ -42,7 +42,7 @@ describe('useAsgardeo', () => {
     getUser: vi.fn().mockResolvedValue({} as BasicUserInfo),
     getDecodedIDToken: vi.fn().mockResolvedValue({} as IdTokenPayload),
     getHttpClient: vi.fn().mockResolvedValue({} as HttpClientInstance),
-    getIDToken: vi.fn().mockResolvedValue('id_token'),
+    getIdToken: vi.fn().mockResolvedValue('id_token'),
     getOpenIDProviderEndpoints: vi.fn().mockResolvedValue({} as OIDCEndpoints),
     httpRequest: vi.fn().mockResolvedValue({} as HttpResponse<any>),
     httpRequestAll: vi.fn().mockResolvedValue([{} as HttpResponse<any>]),

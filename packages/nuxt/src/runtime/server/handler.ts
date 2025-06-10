@@ -176,7 +176,7 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
 
       try {
-        const idToken: string = await authClient.getIDToken(sessionId);
+        const idToken: string = await authClient.getIdToken(sessionId);
         return {idToken};
       } catch {
         throw createError({

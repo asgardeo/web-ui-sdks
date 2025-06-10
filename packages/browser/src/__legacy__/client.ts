@@ -789,19 +789,19 @@ export class AsgardeoSPAClient {
    *
    * @example
    * ```
-   * const idToken = await auth.getIDToken();
+   * const idToken = await auth.getIdToken();
    * ```
    *
-   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getIDToken
+   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getIdToken
    *
    * @memberof AsgardeoAuthClient
    *
    * @preserve
    */
-  public async getIDToken(): Promise<string | undefined> {
+  public async getIdToken(): Promise<string | undefined> {
     await this._validateMethod();
 
-    return this._client?.getIDToken();
+    return this._client?.getIdToken();
   }
 
   /**

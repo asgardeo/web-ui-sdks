@@ -380,8 +380,8 @@ export const MainThreadClient = async (
     return _authenticationHelper.getCrypto();
   };
 
-  const getIDToken = async (): Promise<string> => {
-    return _authenticationHelper.getIDToken();
+  const getIdToken = async (): Promise<string> => {
+    return _authenticationHelper.getIdToken();
   };
 
   const getOpenIDProviderEndpoints = async (): Promise<OIDCEndpoints> => {
@@ -440,7 +440,7 @@ export const MainThreadClient = async (
     getStorageManager,
     getDecodedIDToken,
     getHttpClient,
-    getIDToken,
+    getIdToken,
     getOpenIDProviderEndpoints,
     httpRequest,
     httpRequestAll,

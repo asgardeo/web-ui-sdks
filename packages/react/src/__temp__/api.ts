@@ -314,8 +314,8 @@ class AuthAPI {
    *
    * @return {Promise<string>} - A Promise that resolves with the id token.
    */
-  public async getIDToken(): Promise<string> {
-    return this._client.getIDToken();
+  public async getIdToken(): Promise<string> {
+    return this._client.getIdToken();
   }
 
   /**
