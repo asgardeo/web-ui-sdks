@@ -55,7 +55,7 @@ const authorize = async (): Promise<AuthApiResponse> => {
       method: 'POST',
     };
 
-    authzURL = (await authInstace.getOIDCServiceEndpoints()).authorizationEndpoint;
+    authzURL = (await authInstace.getOpenIDProviderEndpoints()).authorizationEndpoint;
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-AUTHZ-A-NF', 'Authorization request building failed', error.stack);
   }

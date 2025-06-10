@@ -228,8 +228,8 @@ class AuthAPI {
    *
    * @return {Promise<ServiceResourcesType>} - A Promise that resolves with an object containing the service endpoints.
    */
-  public async getOIDCServiceEndpoints(): Promise<OIDCEndpoints> {
-    return this._client.getOIDCServiceEndpoints();
+  public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints> {
+    return this._client.getOpenIDProviderEndpoints();
   }
 
   /**

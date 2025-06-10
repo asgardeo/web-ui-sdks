@@ -379,7 +379,7 @@ export const WebWorkerClient = async (
   };
 
   const checkSession = async (): Promise<void> => {
-    const oidcEndpoints: OIDCEndpoints = await getOIDCServiceEndpoints();
+    const oidcEndpoints: OIDCEndpoints = await getOpenIDProviderEndpoints();
     const config: AuthClientConfig<WebWorkerClientConfig> = await getConfigData();
 
     _authenticationHelper.initializeSessionManger(
@@ -665,7 +665,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getOIDCServiceEndpoints = (): Promise<OIDCEndpoints> => {
+  const getOpenIDProviderEndpoints = (): Promise<OIDCEndpoints> => {
     const message: Message<null> = {
       type: GET_OIDC_SERVICE_ENDPOINTS,
     };
@@ -846,7 +846,7 @@ export const WebWorkerClient = async (
     getDecodedIDPIDToken,
     getDecodedIDToken,
     getIDToken,
-    getOIDCServiceEndpoints,
+    getOpenIDProviderEndpoints,
     httpRequest,
     httpRequestAll,
     initialize,

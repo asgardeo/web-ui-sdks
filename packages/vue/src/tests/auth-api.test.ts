@@ -333,10 +333,10 @@ describe('AuthAPI', () => {
     });
   });
 
-  describe('getOIDCServiceEndpoints', () => {
-    it('should call getOIDCServiceEndpoints on the client', async () => {
-      await authApi.getOIDCServiceEndpoints();
-      expect(mockClient.getOIDCServiceEndpoints).toHaveBeenCalled();
+  describe('getOpenIDProviderEndpoints', () => {
+    it('should call getOpenIDProviderEndpoints on the client', async () => {
+      await authApi.getOpenIDProviderEndpoints();
+      expect(mockClient.getOpenIDProviderEndpoints).toHaveBeenCalled();
     });
   });
 

@@ -99,7 +99,7 @@ export interface AuthContextInterface {
   getDecodedIDToken(): Promise<IdTokenPayload>;
   getHttpClient(): Promise<HttpClientInstance>;
   getIDToken(): Promise<string>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
+  getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
   isAuthenticated(): Promise<boolean>;

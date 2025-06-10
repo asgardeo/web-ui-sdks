@@ -162,7 +162,7 @@ export const asgardeoPlugin: Plugin = {
       getDecodedIDToken: (): Promise<IdTokenPayload> => AuthClient.getDecodedIDToken(),
       getHttpClient: (): Promise<HttpClientInstance> => AuthClient.getHttpClient(),
       getIDToken: (): Promise<string> => AuthClient.getIDToken(),
-      getOIDCServiceEndpoints: (): Promise<OIDCEndpoints> => AuthClient.getOIDCServiceEndpoints(),
+      getOpenIDProviderEndpoints: (): Promise<OIDCEndpoints> => AuthClient.getOpenIDProviderEndpoints(),
       httpRequest: (config: HttpRequestConfig): Promise<HttpResponse<any>> => AuthClient.httpRequest(config),
       httpRequestAll: (configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> =>
         AuthClient.httpRequestAll(configs),

@@ -183,7 +183,7 @@ export const workerReceiver = (
         break;
       case GET_OIDC_SERVICE_ENDPOINTS:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getOIDCServiceEndpoints()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getOpenIDProviderEndpoints()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }

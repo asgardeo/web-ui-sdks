@@ -62,7 +62,7 @@ export interface WebWorkerCoreInterface {
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
   getCryptoHelper(): Promise<IsomorphicCrypto>;
   getIDToken(): Promise<string>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
+  getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getAccessToken(): Promise<string>;
   isAuthenticated(): Promise<boolean>;
   startAutoRefreshToken(): Promise<void>;

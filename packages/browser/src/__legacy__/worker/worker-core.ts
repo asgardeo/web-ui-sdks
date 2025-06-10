@@ -182,8 +182,8 @@ export const WebWorkerCore = async (
   const getIDToken = async (): Promise<string> => {
     return _authenticationHelper.getIDToken();
   };
-  const getOIDCServiceEndpoints = async (): Promise<OIDCEndpoints> => {
-    return _authenticationHelper.getOIDCServiceEndpoints();
+  const getOpenIDProviderEndpoints = async (): Promise<OIDCEndpoints> => {
+    return _authenticationHelper.getOpenIDProviderEndpoints();
   };
 
   const getAccessToken = (): Promise<string> => {
@@ -224,7 +224,7 @@ export const WebWorkerCore = async (
     getDecodedIDPIDToken,
     getDecodedIDToken,
     getIDToken,
-    getOIDCServiceEndpoints,
+    getOpenIDProviderEndpoints,
     getSignOutUrl,
     httpRequest,
     httpRequestAll,

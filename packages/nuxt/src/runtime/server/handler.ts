@@ -238,7 +238,7 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
     } else if (action === 'get-oidc-endpoints' && method === 'GET') {
       try {
-        return await authClient.getOIDCServiceEndpoints();
+        return await authClient.getOpenIDProviderEndpoints();
       } catch {
         throw createError({
           statusCode: 500,

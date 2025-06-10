@@ -551,14 +551,14 @@ export class AsgardeoAuthClient<T> {
    *
    * @example
    * ```
-   * const endpoints = await auth.getOIDCServiceEndpoints();
+   * const endpoints = await auth.getOpenIDProviderEndpoints();
    * ```
    *
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getOIDCServiceEndpoints}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getOpenIDProviderEndpoints}
    *
    * @preserve
    */
-  public async getOIDCServiceEndpoints(): Promise<Partial<OIDCEndpoints>> {
+  public async getOpenIDProviderEndpoints(): Promise<Partial<OIDCEndpoints>> {
     const oidcProviderMetaData: OIDCDiscoveryApiResponse = await this._oidcProviderMetaData();
 
     return {

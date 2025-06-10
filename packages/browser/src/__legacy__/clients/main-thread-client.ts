@@ -151,7 +151,7 @@ export const MainThreadClient = async (
   };
 
   const checkSession = async (): Promise<void> => {
-    const oidcEndpoints: OIDCEndpoints = (await _authenticationClient.getOIDCServiceEndpoints()) as OIDCEndpoints;
+    const oidcEndpoints: OIDCEndpoints = (await _authenticationClient.getOpenIDProviderEndpoints()) as OIDCEndpoints;
     const config = await _dataLayer.getConfigData();
 
     _authenticationHelper.initializeSessionManger(
@@ -384,8 +384,8 @@ export const MainThreadClient = async (
     return _authenticationHelper.getIDToken();
   };
 
-  const getOIDCServiceEndpoints = async (): Promise<OIDCEndpoints> => {
-    return _authenticationHelper.getOIDCServiceEndpoints();
+  const getOpenIDProviderEndpoints = async (): Promise<OIDCEndpoints> => {
+    return _authenticationHelper.getOpenIDProviderEndpoints();
   };
 
   const getAccessToken = async (): Promise<string> => {
@@ -441,7 +441,7 @@ export const MainThreadClient = async (
     getDecodedIDToken,
     getHttpClient,
     getIDToken,
-    getOIDCServiceEndpoints,
+    getOpenIDProviderEndpoints,
     httpRequest,
     httpRequestAll,
     isAuthenticated,

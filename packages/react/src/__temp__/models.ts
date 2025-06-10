@@ -105,7 +105,7 @@ export interface AuthContextInterface {
     callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
   ): void;
   revokeAccessToken(): Promise<boolean>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
+  getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getHttpClient(): Promise<HttpClientInstance>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
   getDecodedIDToken(): Promise<IdTokenPayload>;

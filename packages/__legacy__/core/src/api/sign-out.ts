@@ -63,7 +63,7 @@ const signOut = async (): Promise<void> => {
   };
 
   try {
-    const {endSessionEndpoint} = await authClient.getOIDCServiceEndpoints();
+    const {endSessionEndpoint} = await authClient.getOpenIDProviderEndpoints();
     signOutUrl = endSessionEndpoint;
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-SIGNOUT-SO-NF', 'Failed to retrieve the sign out endpoint.');

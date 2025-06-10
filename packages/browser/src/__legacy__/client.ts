@@ -693,10 +693,10 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getOIDCServiceEndpoints(): Promise<OIDCEndpoints | undefined> {
+  public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints | undefined> {
     await this._isInitialized();
 
-    return this._client?.getOIDCServiceEndpoints();
+    return this._client?.getOpenIDProviderEndpoints();
   }
 
   /**

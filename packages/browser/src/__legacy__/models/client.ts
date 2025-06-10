@@ -64,7 +64,7 @@ export interface MainThreadClientInterface {
   getCryptoHelper(): Promise<IsomorphicCrypto>;
   getConfigData(): Promise<AuthClientConfig<MainThreadClientConfig>>;
   getIDToken(): Promise<string>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
+  getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getAccessToken(): Promise<string>;
   getStorageManager(): Promise<StorageManager<MainThreadClientConfig>>;
   isAuthenticated(): Promise<boolean>;
@@ -94,7 +94,7 @@ export interface WebWorkerClientInterface {
   ): Promise<BasicUserInfo>;
   signOut(afterSignOutUrl?: string): Promise<boolean>;
   revokeAccessToken(): Promise<boolean>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
+  getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getBasicUserInfo(): Promise<BasicUserInfo>;
   getConfigData(): Promise<AuthClientConfig<WebWorkerClientConfig>>;
   getDecodedIDToken(): Promise<IdTokenPayload>;

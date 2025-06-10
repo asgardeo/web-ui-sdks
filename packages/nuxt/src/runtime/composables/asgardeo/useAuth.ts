@@ -197,7 +197,7 @@ export const useAuth = (): AuthInterface => {
    * OIDC endpoints object if available, or null if an error occurs or
    * the data is not found.
    */
-  const getOIDCServiceEndpoints = async (): Promise<OIDCEndpoints | null> => {
+  const getOpenIDProviderEndpoints = async (): Promise<OIDCEndpoints | null> => {
     try {
       const response: Response = await fetch('/api/auth/get-oidc-endpoints', {
         method: 'GET',
@@ -235,7 +235,7 @@ export const useAuth = (): AuthInterface => {
     getStorageManager,
     getDecodedIDToken,
     getIdToken,
-    getOIDCServiceEndpoints,
+    getOpenIDProviderEndpoints,
     isAuthenticated,
     revokeAccessToken,
     signIn,

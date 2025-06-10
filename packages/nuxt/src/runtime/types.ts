@@ -63,7 +63,7 @@ export interface AuthInterface {
   getStorageManager: () => Promise<StorageManager<any> | null>;
   getDecodedIDToken: () => Promise<IdTokenPayload | null>;
   getIdToken: () => Promise<string | null>;
-  getOIDCServiceEndpoints: () => Promise<OIDCEndpoints | null>;
+  getOpenIDProviderEndpoints: () => Promise<OIDCEndpoints | null>;
   isAuthenticated: () => Promise<boolean>;
   revokeAccessToken: () => Promise<void>;
   signIn: (callbackUrl?: string) => Promise<void>;
