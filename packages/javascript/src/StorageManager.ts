@@ -116,7 +116,7 @@ class StorageManager<T> {
     return JSON.parse((await this._store.getData(this._resolveKey(Stores.ConfigData))) ?? null);
   }
 
-  public async getOIDCProviderMetaData(): Promise<OIDCDiscoveryApiResponse> {
+  public async loadOpenIDProviderConfiguration(): Promise<OIDCDiscoveryApiResponse> {
     return JSON.parse((await this._store.getData(this._resolveKey(Stores.OIDCProviderMetaData))) ?? null);
   }
 

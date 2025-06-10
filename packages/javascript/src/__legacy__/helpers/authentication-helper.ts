@@ -41,7 +41,7 @@ export class AuthenticationHelper<T> {
   public constructor(storageManager: StorageManager<T>, cryptoHelper: IsomorphicCrypto) {
     this._storageManager = storageManager;
     this._config = async () => await this._storageManager.getConfigData();
-    this._oidcProviderMetaData = async () => await this._storageManager.getOIDCProviderMetaData();
+    this._oidcProviderMetaData = async () => await this._storageManager.loadOpenIDProviderConfiguration();
     this._cryptoHelper = cryptoHelper;
   }
 
@@ -151,7 +151,7 @@ export class AuthenticationHelper<T> {
   }
 
   public async validateIdToken(idToken: string): Promise<boolean> {
-    const jwksEndpoint: string | undefined = (await this._storageManager.getOIDCProviderMetaData()).jwks_uri;
+    const jwksEndpoint: string | undefined = (await this._storageManager.loadOpenIDProviderConfiguration()).jwks_uri;
     const configData: StrictAuthClientConfig = await this._config();
 
     if (!jwksEndpoint || jwksEndpoint.trim().length === 0) {

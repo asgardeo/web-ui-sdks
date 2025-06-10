@@ -141,7 +141,7 @@ export class AsgardeoAuthClient<T> {
     this._cryptoHelper = new IsomorphicCrypto(cryptoUtils);
     this._authenticationHelper = new AuthenticationHelper(this._storageManager, this._cryptoHelper);
     this._config = async () => await this._storageManager.getConfigData();
-    this._oidcProviderMetaData = async () => await this._storageManager.getOIDCProviderMetaData();
+    this._oidcProviderMetaData = async () => await this._storageManager.loadOpenIDProviderConfiguration();
 
     // FIXME: Validate this.
     // Ref: https://github.com/asgardeo/asgardeo-auth-js-core/pull/205
@@ -276,7 +276,7 @@ export class AsgardeoAuthClient<T> {
       return __TODO__();
     }
 
-    return this.getOIDCProviderMetaData(requestConfig?.forceInit as boolean).then(() => {
+    return this.loadOpenIDProviderConfiguration(requestConfig?.forceInit as boolean).then(() => {
       return __TODO__();
     });
   }
@@ -404,12 +404,12 @@ export class AsgardeoAuthClient<T> {
       return __TODO__();
     }
 
-    return this.getOIDCProviderMetaData(false).then(() => {
+    return this.loadOpenIDProviderConfiguration(false).then(() => {
       return __TODO__();
     });
   }
 
-  public async getOIDCProviderMetaData(forceInit: boolean): Promise<void> {
+  public async loadOpenIDProviderConfiguration(forceInit: boolean): Promise<void> {
     const configData: StrictAuthClientConfig = await this._config();
 
     if (
@@ -1151,7 +1151,7 @@ export class AsgardeoAuthClient<T> {
    */
   public async updateConfig(config: Partial<AuthClientConfig<T>>): Promise<void> {
     await this._storageManager.setConfigData(config);
-    await this.getOIDCProviderMetaData(true);
+    await this.loadOpenIDProviderConfiguration(true);
   }
 
   public static async clearUserSessionData(userId?: string): Promise<void> {
