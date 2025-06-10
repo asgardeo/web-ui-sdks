@@ -125,7 +125,7 @@ export interface AuthContextInterface {
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ) => Promise<boolean | BasicUserInfo>;
-  updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void>;
+  reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void>;
 }
 
 /**

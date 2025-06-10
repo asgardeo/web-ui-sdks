@@ -67,6 +67,6 @@ export interface WebWorkerCoreInterface {
   isSignedIn(): Promise<boolean>;
   startAutoRefreshToken(): Promise<void>;
   setSessionState(sessionState: string): Promise<void>;
-  updateConfig(config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void>;
+  reInitialize(config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void>;
   getConfigData(): Promise<AuthClientConfig<WebWorkerClientConfig>>;
 }

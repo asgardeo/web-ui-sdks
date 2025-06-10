@@ -809,7 +809,7 @@ export const WebWorkerClient = async (
     }
   };
 
-  const updateConfig = async (newConfig: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void> => {
+  const reInitialize = async (newConfig: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void> => {
     const existingConfig = await getConfigData();
     const isCheckSessionIframeDifferent: boolean = !(
       existingConfig &&
@@ -861,6 +861,6 @@ export const WebWorkerClient = async (
     signIn,
     signOut,
     trySignInSilently,
-    updateConfig,
+    reInitialize,
   };
 };

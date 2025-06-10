@@ -63,7 +63,7 @@ export type MockAuthAPI = {
   signIn: Mock;
   signOut: Mock;
   trySignInSilently: Mock;
-  updateConfig: Mock;
+  reInitialize: Mock;
   updateState: Mock;
 };
 
@@ -109,7 +109,7 @@ export const mockAuthAPI: MockAuthAPI = {
   }),
   signOut: vi.fn().mockResolvedValue(true),
   trySignInSilently: vi.fn().mockResolvedValue(false),
-  updateConfig: vi.fn().mockResolvedValue(undefined),
+  reInitialize: vi.fn().mockResolvedValue(undefined),
   updateState: vi.fn().mockImplementation((newState: AuthStateInterface) => {
     Object.assign(mockState, newState);
   }),
@@ -163,7 +163,7 @@ export const mockAsgardeoSPAClient: Partial<AsgardeoSPAClient> = {
     sub: 'user-id-123',
     username: 'testUser',
   }),
-  updateConfig: vi.fn().mockResolvedValue(undefined),
+  reInitialize: vi.fn().mockResolvedValue(undefined),
 };
 
 export class MockAsgardeoAuthException extends Error {

@@ -186,8 +186,8 @@ export class AsgardeoExpressClient {
     return this._authClient.exchangeToken(config, userId);
   }
 
-  public async updateConfig(config: Partial<AuthClientConfig>): Promise<void> {
-    return this._authClient.updateConfig(config);
+  public async reInitialize(config: Partial<AuthClientConfig>): Promise<void> {
+    return this._authClient.reInitialize(config);
   }
 
   public async revokeAccessToken(userId?: string): Promise<FetchResponse> {

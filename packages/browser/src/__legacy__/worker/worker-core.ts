@@ -203,8 +203,8 @@ export const WebWorkerCore = async (
     return;
   };
 
-  const updateConfig = async (config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void> => {
-    await _authenticationClient.updateConfig(config);
+  const reInitialize = async (config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void> => {
+    await _authenticationClient.reInitialize(config);
 
     return;
   };
@@ -239,6 +239,6 @@ export const WebWorkerCore = async (
     setSessionState,
     signOut,
     startAutoRefreshToken,
-    updateConfig,
+    reInitialize,
   };
 };

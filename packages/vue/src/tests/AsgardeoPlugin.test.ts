@@ -185,9 +185,9 @@ describe('asgardeoPlugin', () => {
 
     mockAuthAPI.getState.mockReturnValueOnce(updatedState);
 
-    await authContext.updateConfig(newConfig);
+    await authContext.reInitialize(newConfig);
 
-    expect(mockAuthAPI.updateConfig).toHaveBeenCalledWith(newConfig);
+    expect(mockAuthAPI.reInitialize).toHaveBeenCalledWith(newConfig);
 
     expect(mockAuthAPI.getState).toHaveBeenCalled();
 

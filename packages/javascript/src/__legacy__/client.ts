@@ -1123,13 +1123,13 @@ export class AsgardeoAuthClient<T> {
    *     baseUrl: "https://localhost:9443"
    * }
    *
-   * await auth.updateConfig(config);
+   * await auth.reInitialize(config);
    * ```
-   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#updateConfig}
+   * {@link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#reInitialize}
    *
    * @preserve
    */
-  public async updateConfig(config: Partial<AuthClientConfig<T>>): Promise<void> {
+  public async reInitialize(config: Partial<AuthClientConfig<T>>): Promise<void> {
     await this._storageManager.setConfigData(config);
     await this.loadOpenIDProviderConfiguration(true);
   }

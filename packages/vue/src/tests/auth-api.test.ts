@@ -417,11 +417,11 @@ describe('AuthAPI', () => {
     });
   });
 
-  describe('updateConfig', () => {
-    it('should call updateConfig on the client', async () => {
+  describe('reInitialize', () => {
+    it('should call reInitialize on the client', async () => {
       const config: Partial<AuthClientConfig<Config>> = {clientId: 'new-client-id'};
-      await authApi.updateConfig(config);
-      expect(mockClient.updateConfig).toHaveBeenCalledWith(config);
+      await authApi.reInitialize(config);
+      expect(mockClient.reInitialize).toHaveBeenCalledWith(config);
     });
   });
 

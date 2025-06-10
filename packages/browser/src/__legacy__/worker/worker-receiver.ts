@@ -273,7 +273,7 @@ export const workerReceiver = (
         break;
       case UPDATE_CONFIG:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.updateConfig(data?.data)));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.reInitialize(data?.data)));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }

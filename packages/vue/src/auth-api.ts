@@ -346,8 +346,8 @@ class AuthAPI {
    *
    * @param {Partial<AuthClientConfig<T>>} config - A config object to update the SDK configurations with.
    */
-  public async updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void> {
-    return this._client.updateConfig(config);
+  public async reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void> {
+    return this._client.reInitialize(config);
   }
 
   /**

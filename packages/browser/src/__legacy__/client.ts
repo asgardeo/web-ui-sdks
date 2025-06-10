@@ -1148,22 +1148,22 @@ export class AsgardeoSPAClient {
    *     clientId: "client ID",
    *     baseUrl: "https://api.asgardeo.io"
    * }
-   * const auth.updateConfig(config);
+   * const auth.reInitialize(config);
    * ```
-   * @link https://github.com/asgardeo/asgardeo-auth-spa-sdk/tree/master/lib#updateConfig
+   * @link https://github.com/asgardeo/asgardeo-auth-spa-sdk/tree/master/lib#reInitialize
    *
    * @memberof AsgardeoAuthClient
    *
    * @preserve
    */
-  public async updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void> {
+  public async reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void> {
     await this._isInitialized();
     if (this._storage === BrowserStorage.WebWorker) {
       const client = this._client as WebWorkerClientInterface;
-      await client.updateConfig(config as Partial<AuthClientConfig<WebWorkerClientConfig>>);
+      await client.reInitialize(config as Partial<AuthClientConfig<WebWorkerClientConfig>>);
     } else {
       const client = this._client as WebWorkerClientInterface;
-      await client.updateConfig(config as Partial<AuthClientConfig<WebWorkerClientConfig>>);
+      await client.reInitialize(config as Partial<AuthClientConfig<WebWorkerClientConfig>>);
     }
 
     return;

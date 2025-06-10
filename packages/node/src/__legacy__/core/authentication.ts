@@ -232,8 +232,8 @@ export class AsgardeoNodeCore<T> {
     return this._auth.exchangeToken(config, userId);
   }
 
-  public async updateConfig(config: Partial<AuthClientConfig<T>>): Promise<void> {
-    return this._auth.updateConfig(config);
+  public async reInitialize(config: Partial<AuthClientConfig<T>>): Promise<void> {
+    return this._auth.reInitialize(config);
   }
 
   public async revokeAccessToken(userId?: string): Promise<FetchResponse> {

@@ -221,9 +221,9 @@ export const asgardeoPlugin: Plugin = {
         }),
       state,
       trySignInSilently,
-      updateConfig: async (config: Partial<AuthClientConfig<Config>>): Promise<void> =>
+      reInitialize: async (config: Partial<AuthClientConfig<Config>>): Promise<void> =>
         withStateSync(async () => {
-          await AuthClient.updateConfig(config);
+          await AuthClient.reInitialize(config);
         }),
     };
 

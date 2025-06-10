@@ -312,18 +312,18 @@ export class AsgardeoNodeClient<T> {
    *
    * @example
    * ```
-   * const updateConfig = await auth.updateConfig({
+   * const reInitialize = await auth.reInitialize({
    *       afterSignOutUrl: "http://localhost:3000/sign-out"
    *   });
    * ```
    *
-   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#updateConfig
+   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#reInitialize
    *
    * @memberof AsgardeoNodeClient
    *
    */
-  public async updateConfig(config: Partial<AuthClientConfig<T>>): Promise<void> {
-    return this._authCore.updateConfig(config);
+  public async reInitialize(config: Partial<AuthClientConfig<T>>): Promise<void> {
+    return this._authCore.reInitialize(config);
   }
 
   /**

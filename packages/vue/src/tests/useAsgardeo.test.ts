@@ -59,7 +59,7 @@ describe('useAsgardeo', () => {
       isLoading: false,
     },
     trySignInSilently: vi.fn().mockResolvedValue(true),
-    updateConfig: vi.fn().mockResolvedValue(undefined),
+    reInitialize: vi.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(() => {

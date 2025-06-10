@@ -112,7 +112,7 @@ export interface AuthContextInterface {
   isSignedIn(): Promise<boolean>;
   enableHttpHandler(): Promise<boolean>;
   disableHttpHandler(): Promise<boolean>;
-  updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void>;
+  reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void>;
   trySignInSilently: (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},

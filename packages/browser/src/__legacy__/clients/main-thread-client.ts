@@ -408,7 +408,7 @@ export const MainThreadClient = async (
     return (await _dataLayer.getSessionStatus()) === 'true';
   };
 
-  const updateConfig = async (newConfig: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void> => {
+  const reInitialize = async (newConfig: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void> => {
     const existingConfig = await _dataLayer.getConfigData();
     const isCheckSessionIframeDifferent: boolean = !(
       existingConfig &&
@@ -420,7 +420,7 @@ export const MainThreadClient = async (
       existingConfig.endpoints.checkSessionIframe === newConfig.endpoints.checkSessionIframe
     );
     const config = {...existingConfig, ...newConfig};
-    await _authenticationClient.updateConfig(config);
+    await _authenticationClient.reInitialize(config);
 
     // Re-initiates check session if the check session endpoint is updated.
     if (config.enableOIDCSessionManagement && isCheckSessionIframeDifferent) {
@@ -456,6 +456,6 @@ export const MainThreadClient = async (
     signIn,
     signOut,
     trySignInSilently,
-    updateConfig,
+    reInitialize,
   };
 };
