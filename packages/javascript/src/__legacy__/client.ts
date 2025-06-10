@@ -182,12 +182,12 @@ export class AsgardeoAuthClient<T> {
    *
    * @example
    * ```
-   * const instanceId = auth.getInstanceID();
+   * const instanceId = auth.getInstanceId();
    * ```
    *
    * @preserve
    */
-  public getInstanceID(): number {
+  public getInstanceId(): number {
     return AsgardeoAuthClient._instanceID;
   }
 

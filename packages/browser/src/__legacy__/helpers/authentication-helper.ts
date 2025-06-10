@@ -70,7 +70,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     this._authenticationClient = authClient;
     this._storageManager = this._authenticationClient.getStorageManager();
     this._spaHelper = spaHelper;
-    this._instanceID = this._authenticationClient.getInstanceID();
+    this._instanceID = this._authenticationClient.getInstanceId();
     this._isTokenRefreshing = false;
   }
 
