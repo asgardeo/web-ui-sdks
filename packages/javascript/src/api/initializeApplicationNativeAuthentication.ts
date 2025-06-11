@@ -78,9 +78,9 @@ export interface AuthorizationRequest {
  */
 export interface AuthorizeRequestConfig extends Partial<Request> {
   /**
-   * The authorization endpoint URL.
+   * The base URL of the Asgardeo server.
    */
-  url: string;
+  baseUrl: string;
   /**
    * The authorization request payload.
    */
@@ -118,19 +118,19 @@ export interface AuthorizeRequestConfig extends Partial<Request> {
  * ```
  */
 const initializeApplicationNativeAuthentication = async ({
-  url,
+  baseUrl,
   payload,
   ...requestConfig
 }: AuthorizeRequestConfig): Promise<ApplicationNativeAuthenticationInitiateResponse> => {
   try {
-    new URL(url);
+    new URL(baseUrl);
   } catch (error) {
     throw new AsgardeoAPIError(
-      'Invalid endpoint URL provided',
+      'Invalid base URL provided',
       'initializeApplicationNativeAuthentication-ValidationError-001',
       'javascript',
       400,
-      'Invalid Request',
+      'If an invalid base URL is provided, the endpoint URL cannot be constructed correctly.',
     );
   }
 
@@ -140,11 +140,10 @@ const initializeApplicationNativeAuthentication = async ({
       'initializeApplicationNativeAuthentication-ValidationError-002',
       'javascript',
       400,
-      'Invalid Request',
+      'If an authorization payload is not provided, the request cannot be constructed correctly.',
     );
   }
 
-  // Convert payload to URL search params for GET request or form data for POST
   const searchParams = new URLSearchParams();
   Object.entries(payload).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
@@ -152,35 +151,17 @@ const initializeApplicationNativeAuthentication = async ({
     }
   });
 
-  let response: Response;
-  const method = requestConfig.method || 'POST';
-
-  if (method.toUpperCase() === 'GET') {
-    // For GET requests, append parameters to URL
-    const urlWithParams = `${url}?${searchParams.toString()}`;
-    const {headers: customHeaders, ...otherConfig} = requestConfig;
-    response = await fetch(urlWithParams, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        ...customHeaders,
-      },
-      ...otherConfig,
-    });
-  } else {
-    // For POST requests, send as form data
-    const {headers: customHeaders, ...otherConfig} = requestConfig;
-    response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept: 'application/json',
-        ...customHeaders,
-      },
-      body: searchParams.toString(),
-      ...otherConfig,
-    });
-  }
+  const {headers: customHeaders, ...otherConfig} = requestConfig;
+  const response: Response = await fetch(`${baseUrl}/oauth2/authorize`, {
+    method: requestConfig.method || 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: 'application/json',
+      ...customHeaders,
+    },
+    body: searchParams.toString(),
+    ...otherConfig,
+  });
 
   if (!response.ok) {
     const errorText = await response.text();

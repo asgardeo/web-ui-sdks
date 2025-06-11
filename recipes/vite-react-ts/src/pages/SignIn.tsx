@@ -6,7 +6,7 @@ import {Input} from '@/components/ui/input';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {Label} from '@/components/ui/label';
 import {Users, Eye, EyeOff} from 'lucide-react';
-import {useAsgardeo} from '@asgardeo/react';
+import {useAsgardeo, SignIn} from '@asgardeo/react';
 
 export default function SignInPage() {
   const {isLoading} = useAsgardeo();
@@ -27,6 +27,17 @@ export default function SignInPage() {
           <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
           <p className="text-gray-600 mt-2">Sign in to your account to continue</p>
         </div>
+
+        <SignIn
+          onSuccess={authData => {
+            console.log('Authentication successful:', authData);
+            // Handle successful authentication
+          }}
+          onError={error => {
+            console.error('Authentication failed:', error);
+          }}
+          styled={false}
+        />
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="space-y-1">

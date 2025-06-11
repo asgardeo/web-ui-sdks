@@ -49,6 +49,16 @@ export {User} from './models/user';
 export {SessionData} from './models/session';
 export {Schema, SchemaAttribute, WellKnownSchemaIds} from './models/scim2-schema';
 export {RecursivePartial} from './models/utility-types';
+export {
+  ApplicationNativeAuthenticationInitiateResponse,
+  ApplicationNativeAuthenticationFlowStatus,
+  ApplicationNativeAuthenticationFlowType,
+  ApplicationNativeAuthenticationStepType,
+  ApplicationNativeAuthenticationAuthenticator,
+  ApplicationNativeAuthenticationLink,
+  ApplicationNativeAuthenticationHandleRequestPayload,
+  ApplicationNativeAuthenticationHandleResponse,
+} from './models/application-native-authentication';
 
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 

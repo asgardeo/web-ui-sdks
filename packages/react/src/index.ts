@@ -52,6 +52,12 @@ export * from './components/control/SignedIn';
 export {default as SignedOut} from './components/control/SignedOut';
 export * from './components/control/SignedOut';
 
+export {default as BaseSignIn} from './components/presentation/SignIn/BaseSignIn';
+export * from './components/presentation/SignIn/BaseSignIn';
+
+export {default as SignIn} from './components/presentation/SignIn/SignIn';
+export * from './components/presentation/SignIn/SignIn';
+
 export {default as User} from './components/presentation/User';
 export * from './components/presentation/User';
 

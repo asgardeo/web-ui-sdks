@@ -30,6 +30,7 @@ import {
   OIDCEndpoints,
   SignInConfig,
   SPACustomGrantConfig,
+  initializeApplicationNativeAuthentication,
 } from '@asgardeo/browser';
 import {AuthStateInterface} from './models';
 
@@ -108,7 +109,24 @@ class AuthAPI {
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> {
+  ): Promise<any> {
+    if (config?.['response_mode'] === 'direct') {
+      await this._client.isInitialized();
+
+      const payload = {
+        baseUrl: (await this.getConfigData())?.baseUrl,
+        payload: {
+          client_id: (await this.getConfigData())?.clientId,
+          redirect_uri: (await this.getConfigData())?.afterSignInUrl,
+          response_type: 'code',
+          scope: (await this.getConfigData())?.scope as any,
+          response_mode: 'direct',
+        },
+      };
+
+      return initializeApplicationNativeAuthentication(payload);
+    }
+
     return this._client
       .signIn(config, authorizationCode, sessionState, authState, tokenRequestConfig)
       .then(async (response: BasicUserInfo) => {

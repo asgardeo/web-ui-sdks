@@ -136,7 +136,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const signIn = async (options?: SignInOptions): Promise<User> => {
     try {
       const response = await asgardeo.signIn(options);
-      setUser(await asgardeo.getUser());
+      // setUser(await asgardeo.getUser());
 
       return response;
     } catch (error) {
@@ -170,7 +170,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
           throw new Error('Sign up functionality not implemented yet');
         },
         user,
-        baseUrl
+        baseUrl,
       }}
     >
       <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>

@@ -27,9 +27,9 @@ import {
  */
 export interface AuthorizeRequestConfig extends Partial<Request> {
   /**
-   * The authorization endpoint URL.
+   * The base URL of the Asgardeo server.
    */
-  url: string;
+  baseUrl: string;
   /**
    * The authorization request payload.
    */
@@ -37,19 +37,19 @@ export interface AuthorizeRequestConfig extends Partial<Request> {
 }
 
 const handleApplicationNativeAuthentication = async ({
-  url,
+  baseUrl,
   payload,
   ...requestConfig
 }: AuthorizeRequestConfig): Promise<ApplicationNativeAuthenticationHandleResponse> => {
   try {
-    new URL(url);
+    new URL(baseUrl);
   } catch (error) {
     throw new AsgardeoAPIError(
-      'Invalid endpoint URL provided',
+      'Invalid base URL provided',
       'handleApplicationNativeAuthentication-ValidationError-001',
       'javascript',
       400,
-      'Invalid Request',
+      'If an invalid base URL is provided, the endpoint URL cannot be constructed correctly.',
     );
   }
 
@@ -59,19 +59,19 @@ const handleApplicationNativeAuthentication = async ({
       'handleApplicationNativeAuthentication-ValidationError-002',
       'javascript',
       400,
-      'Invalid Request',
+      'If an authorization payload is not provided, the request cannot be constructed correctly.',
     );
   }
 
   const {headers: customHeaders, ...otherConfig} = requestConfig;
-  const response: Response = await fetch(url, {
+  const response: Response = await fetch(`${baseUrl}/oauth2/authn`, {
     method: requestConfig.method || 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json',
       Accept: 'application/json',
       ...customHeaders,
     },
-    body: payload,
+    body: JSON.stringify(payload),
     ...otherConfig,
   });
 

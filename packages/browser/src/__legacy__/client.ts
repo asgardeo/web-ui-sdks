@@ -112,7 +112,7 @@ export class AsgardeoSPAClient {
    *
    * @private
    */
-  private async _isInitialized(): Promise<boolean> {
+  public async isInitialized(): Promise<boolean> {
     if (!this._startedInitialize) {
       return false;
     }
@@ -148,7 +148,7 @@ export class AsgardeoSPAClient {
    * @private
    */
   private async _validateMethod(validateAuthentication: boolean = true): Promise<boolean> {
-    if (!(await this._isInitialized())) {
+    if (!(await this.isInitialized())) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-VM-NF01',
@@ -395,7 +395,7 @@ export class AsgardeoSPAClient {
       params: Record<string, unknown>;
     },
   ): Promise<BasicUserInfo | undefined> {
-    await this._isInitialized();
+    await this.isInitialized();
 
     // Discontinues the execution of this method if `config.callOnlyOnRedirect` is true and the `signIn` method
     // is not being called on redirect.
@@ -438,7 +438,7 @@ export class AsgardeoSPAClient {
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ): Promise<BasicUserInfo | boolean | undefined> {
-    await this._isInitialized();
+    await this.isInitialized();
 
     // checks if the `signIn` method has been called.
     if (SPAUtils.wasSignInCalled()) {
@@ -694,7 +694,7 @@ export class AsgardeoSPAClient {
    * @preserve
    */
   public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints | undefined> {
-    await this._isInitialized();
+    await this.isInitialized();
 
     return this._client?.getOpenIDProviderEndpoints();
   }
@@ -984,7 +984,7 @@ export class AsgardeoSPAClient {
    * @preserve
    */
   public async isSignedIn(): Promise<boolean | undefined> {
-    await this._isInitialized();
+    await this.isInitialized();
 
     return this._client?.isSignedIn();
   }
@@ -999,7 +999,7 @@ export class AsgardeoSPAClient {
    * @preserve
    */
   public async isSessionActive(): Promise<boolean | undefined> {
-    await this._isInitialized();
+    await this.isInitialized();
 
     if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
       return Promise.reject(
@@ -1038,7 +1038,7 @@ export class AsgardeoSPAClient {
   public async on(hook: Hooks.CustomGrant, callback: (response?: any) => void, id: string): Promise<void>;
   public async on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): Promise<void>;
   public async on(hook: Hooks, callback: (response?: any) => void | Promise<void>, id?: string): Promise<void> {
-    await this._isInitialized();
+    await this.isInitialized();
     if (callback && typeof callback === 'function') {
       switch (hook) {
         case Hooks.SignIn:
@@ -1109,7 +1109,7 @@ export class AsgardeoSPAClient {
    * @preserve
    */
   public async enableHttpHandler(): Promise<boolean | undefined> {
-    await this._isInitialized();
+    await this.isInitialized();
 
     return this._client?.enableHttpHandler();
   }
@@ -1131,7 +1131,7 @@ export class AsgardeoSPAClient {
    * @preserve
    */
   public async disableHttpHandler(): Promise<boolean | undefined> {
-    await this._isInitialized();
+    await this.isInitialized();
 
     return this._client?.disableHttpHandler();
   }
@@ -1157,7 +1157,7 @@ export class AsgardeoSPAClient {
    * @preserve
    */
   public async reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void> {
-    await this._isInitialized();
+    await this.isInitialized();
     if (this._storage === BrowserStorage.WebWorker) {
       const client = this._client as WebWorkerClientInterface;
       await client.reInitialize(config as Partial<AuthClientConfig<WebWorkerClientConfig>>);
