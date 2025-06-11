@@ -81,6 +81,10 @@ export * from './components/primitives/Card/Card';
 
 export {default as Eye} from './components/primitives/Icons/Eye';
 export {default as EyeOff} from './components/primitives/Icons/EyeOff';
+export {default as CircleCheck} from './components/primitives/Icons/CircleCheck';
+export {default as CircleAlert} from './components/primitives/Icons/CircleAlert';
+export {default as TriangleAlert} from './components/primitives/Icons/TriangleAlert';
+export {default as Info} from './components/primitives/Icons/Info';
 
 export {
   createField,

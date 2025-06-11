@@ -19,9 +19,9 @@
 import {FC, SVGProps} from 'react';
 
 /**
- * EyeOff icon component.
+ * TriangleAlert icon component.
  */
-const EyeOff: FC<SVGProps<SVGSVGElement>> = props => (
+const TriangleAlert: FC<SVGProps<SVGSVGElement>> = props => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -34,11 +34,10 @@ const EyeOff: FC<SVGProps<SVGSVGElement>> = props => (
     strokeLinejoin="round"
     {...props}
   >
-    <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" />
-    <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
-    <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" />
-    <path d="m2 2 20 20" />
+    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+    <path d="M12 9v4" />
+    <path d="M12 17h.01" />
   </svg>
 );
 
-export default EyeOff;
+export default TriangleAlert;
