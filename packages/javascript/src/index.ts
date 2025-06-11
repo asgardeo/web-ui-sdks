@@ -62,6 +62,7 @@ export {SessionData} from './models/session';
 export {Schema, SchemaAttribute, WellKnownSchemaIds} from './models/scim2-schema';
 export {RecursivePartial} from './models/utility-types';
 export {FieldType} from './models/field';
+export {I18nBundle, I18nTranslations, I18nMetadata} from './models/i18n';
 
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 
@@ -70,6 +71,7 @@ export {ThemeColors, ThemeConfig, Theme, ThemeMode} from './theme/types';
 
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
 export {default as extractPkceStorageKeyFromState} from './utils/extractPkceStorageKeyFromState';
+export {default as getI18nBundles} from './utils/getI18nBundles';
 export {default as removeTrailingSlash} from './utils/removeTrailingSlash';
 export {default as resolveFieldType} from './utils/resolveFieldType';
 export {default as resolveFieldName} from './utils/resolveFieldName';
