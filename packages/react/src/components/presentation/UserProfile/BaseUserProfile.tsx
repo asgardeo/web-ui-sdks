@@ -19,9 +19,9 @@
 import {CSSProperties, FC, ReactElement, useMemo, useState, useCallback} from 'react';
 import {Popover} from '../../primitives/Popover/Popover';
 import {Avatar} from '../../primitives/Avatar/Avatar';
-import {TextField} from '../../primitives/TextField/TextField';
-import {DatePicker} from '../../primitives/DatePicker/DatePicker';
-import {Checkbox} from '../../primitives/Checkbox/Checkbox';
+import TextField from '../../primitives/TextField/TextField';
+import DatePicker from '../../primitives/DatePicker/DatePicker';
+import Checkbox from '../../primitives/Checkbox/Checkbox';
 import Button from '../../primitives/Button/Button';
 import {useTheme} from '../../../theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';

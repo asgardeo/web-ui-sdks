@@ -19,6 +19,8 @@
 import {CSSProperties, FC, InputHTMLAttributes} from 'react';
 import {useTheme} from '../../../theme/useTheme';
 import clsx from 'clsx';
+import FormControl from '../FormControl/FormControl';
+import InputLabel from '../InputLabel/InputLabel';
 
 export interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'type'> {
   /**
@@ -51,7 +53,7 @@ export interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputEleme
   dateFormat?: string;
 }
 
-export const DatePicker: FC<DatePickerProps> = ({
+const DatePicker: FC<DatePickerProps> = ({
   label,
   error,
   className,
@@ -63,19 +65,6 @@ export const DatePicker: FC<DatePickerProps> = ({
   ...rest
 }) => {
   const {theme} = useTheme();
-
-  const containerStyle: CSSProperties = {
-    marginBottom: theme.spacing.unit * 2 + 'px',
-    ...style
-  };
-
-  const labelStyle: CSSProperties = {
-    display: 'block',
-    marginBottom: theme.spacing.unit + 'px',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    fontSize: '0.875rem',
-    fontWeight: 500,
-  };
 
   const inputStyle: CSSProperties = {
     width: '100%',
@@ -89,19 +78,17 @@ export const DatePicker: FC<DatePickerProps> = ({
     transition: 'border-color 0.2s ease',
   };
 
-  const helperTextStyle: CSSProperties = {
-    fontSize: '0.75rem',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    marginTop: theme.spacing.unit / 2 + 'px',
-  };
-
   return (
-    <div style={containerStyle} className={clsx('asgardeo-date-picker', className)}>
+    <FormControl
+      error={error}
+      helperText={helperText}
+      className={clsx('asgardeo-date-picker', className)}
+      style={style}
+    >
       {label && (
-        <label style={labelStyle}>
+        <InputLabel required={required} error={!!error}>
           {label}
-          {required && <span style={{color: theme.colors.error.main}}> *</span>}
-        </label>
+        </InputLabel>
       )}
       <input
         type="date"
@@ -113,8 +100,7 @@ export const DatePicker: FC<DatePickerProps> = ({
         aria-required={required}
         {...rest}
       />
-      {(error || helperText) && <div style={helperTextStyle}>{error || helperText}</div>}
-    </div>
+    </FormControl>
   );
 };
 

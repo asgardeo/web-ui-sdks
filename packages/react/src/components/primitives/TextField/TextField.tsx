@@ -19,6 +19,8 @@
 import {CSSProperties, FC, InputHTMLAttributes, ReactNode} from 'react';
 import {useTheme} from '../../../theme/useTheme';
 import clsx from 'clsx';
+import FormControl from '../FormControl/FormControl';
+import InputLabel from '../InputLabel/InputLabel';
 
 export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className'> {
   /**
@@ -63,7 +65,7 @@ export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   onEndIconClick?: () => void;
 }
 
-export const TextField: FC<TextFieldProps> = ({
+const TextField: FC<TextFieldProps> = ({
   label,
   error,
   required,
@@ -85,19 +87,6 @@ export const TextField: FC<TextFieldProps> = ({
   const hasEndIcon = !!endIcon;
   const leftPadding = hasStartIcon ? theme.spacing.unit * 5 : theme.spacing.unit * 1.5;
   const rightPadding = hasEndIcon ? theme.spacing.unit * 5 : theme.spacing.unit * 1.5;
-
-  const containerStyle: CSSProperties = {
-    marginBottom: theme.spacing.unit * 2 + 'px',
-    ...style,
-  };
-
-  const labelStyle: CSSProperties = {
-    display: 'block',
-    marginBottom: theme.spacing.unit + 'px',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    fontSize: '0.875rem',
-    fontWeight: 500,
-  };
 
   const inputStyle: CSSProperties = {
     width: '100%',
@@ -142,19 +131,17 @@ export const TextField: FC<TextFieldProps> = ({
     right: theme.spacing.unit,
   };
 
-  const helperTextStyle: CSSProperties = {
-    fontSize: '0.75rem',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    marginTop: theme.spacing.unit / 2 + 'px',
-  };
-
   return (
-    <div style={containerStyle} className={clsx('asgardeo-text-field', className)}>
+    <FormControl
+      error={error}
+      helperText={helperText}
+      className={clsx('asgardeo-text-field', className)}
+      style={style}
+    >
       {label && (
-        <label style={labelStyle}>
+        <InputLabel required={required} error={!!error}>
           {label}
-          {required && <span style={{color: theme.colors.error.main}}> *</span>}
-        </label>
+        </InputLabel>
       )}
       <div style={inputContainerStyle}>
         {startIcon && (
@@ -188,8 +175,7 @@ export const TextField: FC<TextFieldProps> = ({
           </div>
         )}
       </div>
-      {(error || helperText) && <div style={helperTextStyle}>{error || helperText}</div>}
-    </div>
+    </FormControl>
   );
 };
 

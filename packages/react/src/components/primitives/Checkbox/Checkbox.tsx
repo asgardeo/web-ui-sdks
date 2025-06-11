@@ -19,6 +19,8 @@
 import {CSSProperties, FC, InputHTMLAttributes} from 'react';
 import {useTheme} from '../../../theme/useTheme';
 import clsx from 'clsx';
+import FormControl from '../FormControl/FormControl';
+import InputLabel from '../InputLabel/InputLabel';
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'type'> {
   /**
@@ -43,11 +45,10 @@ export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement
   helperText?: string;
 }
 
-export const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperText, style = {}, ...rest}) => {
+const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperText, style = {}, ...rest}) => {
   const {theme} = useTheme();
 
   const containerStyle: CSSProperties = {
-    marginBottom: theme.spacing.unit * 2 + 'px',
     display: 'flex',
     alignItems: 'center',
     ...style
@@ -60,31 +61,30 @@ export const Checkbox: FC<CheckboxProps> = ({label, error, className, required, 
     accentColor: theme.colors.primary.main,
   };
 
-  const labelStyle: CSSProperties = {
-    color: error ? theme.colors.error.main : theme.colors.text.primary,
-    fontSize: '0.875rem',
-  };
-
-  const helperTextStyle: CSSProperties = {
-    fontSize: '0.75rem',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    marginTop: theme.spacing.unit / 2 + 'px',
-    marginLeft: theme.spacing.unit * 3.5 + 'px',
-  };
-
   return (
-    <div className={clsx('asgardeo-checkbox', className)}>
+    <FormControl
+      error={error}
+      helperText={helperText}
+      className={clsx('asgardeo-checkbox', className)}
+      helperTextMarginLeft={theme.spacing.unit * 3.5 + 'px'}
+    >
       <div style={containerStyle}>
         <input type="checkbox" style={inputStyle} aria-invalid={!!error} aria-required={required} {...rest} />
         {label && (
-          <label style={labelStyle}>
+          <InputLabel 
+            required={required} 
+            error={!!error}
+            variant="inline"
+            style={{
+              color: error ? theme.colors.error.main : theme.colors.text.primary,
+              fontSize: '0.875rem',
+            }}
+          >
             {label}
-            {required && <span style={{color: theme.colors.error.main}}> *</span>}
-          </label>
+          </InputLabel>
         )}
       </div>
-      {(error || helperText) && <div style={helperTextStyle}>{error || helperText}</div>}
-    </div>
+    </FormControl>
   );
 };
 

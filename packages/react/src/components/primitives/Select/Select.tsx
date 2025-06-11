@@ -19,6 +19,8 @@
 import {CSSProperties, FC, SelectHTMLAttributes} from 'react';
 import {useTheme} from '../../../theme/useTheme';
 import clsx from 'clsx';
+import FormControl from '../FormControl/FormControl';
+import InputLabel from '../InputLabel/InputLabel';
 
 export interface SelectOption {
   /**
@@ -62,7 +64,7 @@ export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement
   options: SelectOption[];
 }
 
-export const Select: FC<SelectProps> = ({
+const Select: FC<SelectProps> = ({
   label,
   error,
   className,
@@ -74,19 +76,6 @@ export const Select: FC<SelectProps> = ({
   ...rest
 }) => {
   const {theme} = useTheme();
-
-  const containerStyle: CSSProperties = {
-    marginBottom: theme.spacing.unit * 2 + 'px',
-    ...style,
-  };
-
-  const labelStyle: CSSProperties = {
-    display: 'block',
-    marginBottom: theme.spacing.unit + 'px',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    fontSize: '0.875rem',
-    fontWeight: 500,
-  };
 
   const selectStyle: CSSProperties = {
     width: '100%',
@@ -106,19 +95,17 @@ export const Select: FC<SelectProps> = ({
     backgroundSize: '.65em auto',
   };
 
-  const helperTextStyle: CSSProperties = {
-    fontSize: '0.75rem',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    marginTop: theme.spacing.unit / 2 + 'px',
-  };
-
   return (
-    <div style={containerStyle} className={clsx('asgardeo-select', className)}>
+    <FormControl
+      error={error}
+      helperText={helperText}
+      className={clsx('asgardeo-select', className)}
+      style={style}
+    >
       {label && (
-        <label style={labelStyle}>
+        <InputLabel required={required} error={!!error}>
           {label}
-          {required && <span style={{color: theme.colors.error.main}}> *</span>}
-        </label>
+        </InputLabel>
       )}
       <select style={selectStyle} disabled={disabled} aria-invalid={!!error} aria-required={required} {...rest}>
         {options.map(option => (
@@ -127,8 +114,7 @@ export const Select: FC<SelectProps> = ({
           </option>
         ))}
       </select>
-      {(error || helperText) && <div style={helperTextStyle}>{error || helperText}</div>}
-    </div>
+    </FormControl>
   );
 };
 

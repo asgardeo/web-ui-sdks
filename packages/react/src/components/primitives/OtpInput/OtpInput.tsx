@@ -19,6 +19,8 @@
 import {CSSProperties, FC, KeyboardEvent, ChangeEvent, useRef, useEffect, useState} from 'react';
 import {useTheme} from '../../../theme/useTheme';
 import clsx from 'clsx';
+import FormControl from '../FormControl/FormControl';
+import InputLabel from '../InputLabel/InputLabel';
 
 export interface OtpInputProps {
   /**
@@ -129,19 +131,6 @@ const OtpInput: FC<OtpInputProps> = ({
     }
   }, [autoFocus]);
 
-  const containerStyle: CSSProperties = {
-    marginBottom: theme.spacing.unit * 2 + 'px',
-    ...style,
-  };
-
-  const labelStyle: CSSProperties = {
-    display: 'block',
-    marginBottom: theme.spacing.unit + 'px',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    fontSize: '0.875rem',
-    fontWeight: 500,
-  };
-
   const inputContainerStyle: CSSProperties = {
     display: 'flex',
     gap: theme.spacing.unit + 'px',
@@ -167,13 +156,6 @@ const OtpInput: FC<OtpInputProps> = ({
   const focusedInputStyle: CSSProperties = {
     borderColor: error ? theme.colors.error.main : theme.colors.primary.main,
     boxShadow: `0 0 0 2px ${error ? theme.colors.error.main + '20' : theme.colors.primary.main + '20'}`,
-  };
-
-  const helperTextStyle: CSSProperties = {
-    fontSize: '0.75rem',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    marginTop: theme.spacing.unit / 2 + 'px',
-    textAlign: 'center',
   };
 
   const handleChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
@@ -267,12 +249,17 @@ const OtpInput: FC<OtpInputProps> = ({
   };
 
   return (
-    <div style={containerStyle} className={clsx('asgardeo-otp-input', className)}>
+    <FormControl
+      error={error}
+      helperText={helperText}
+      className={clsx('asgardeo-otp-input', className)}
+      style={style}
+      helperTextAlign="center"
+    >
       {label && (
-        <label style={labelStyle}>
+        <InputLabel required={required} error={!!error}>
           {label}
-          {required && <span style={{color: theme.colors.error.main}}> *</span>}
-        </label>
+        </InputLabel>
       )}
       <div style={inputContainerStyle}>
         {Array.from({length}, (_, index) => (
@@ -308,8 +295,7 @@ const OtpInput: FC<OtpInputProps> = ({
           />
         ))}
       </div>
-      {(error || helperText) && <div style={helperTextStyle}>{error || helperText}</div>}
-    </div>
+    </FormControl>
   );
 };
 
