@@ -21,7 +21,7 @@ import {createPortal} from 'react-dom';
 import {useTheme} from '../../../theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
-import {Button} from '../Button/Button';
+import Button from '../Button/Button';
 
 const useStyles = () => {
   const {theme, colorScheme} = useTheme();
@@ -98,8 +98,8 @@ const PopoverHeader: FC<PopoverHeaderProps> = ({children}) => {
       {children && <h3 style={styles.headerTitle}>{children}</h3>}
       {onClose && (
         <Button
-          variant="tertiary"
-          buttonType="text"
+          color="tertiary"
+          variant="text"
           size="small"
           onClick={onClose}
           aria-label="Close"

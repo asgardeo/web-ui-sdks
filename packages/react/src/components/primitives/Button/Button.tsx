@@ -21,19 +21,19 @@ import {useTheme} from '../../../theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
-export type ButtonType = 'solid' | 'outline' | 'text';
+export type ButtonColor = 'primary' | 'secondary' | 'tertiary' | string;
+export type ButtonVariant = 'solid' | 'outline' | 'text';
 export type ButtonSize = 'small' | 'medium' | 'large';
 
-export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
+export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
   /**
-   * The button variant that determines the color scheme
+   * The button color that determines the color scheme
+   */
+  color?: ButtonColor;
+  /**
+   * The button variant that determines the visual style
    */
   variant?: ButtonVariant;
-  /**
-   * The button type that determines the visual style
-   */
-  buttonType?: ButtonType;
   /**
    * The size of the button
    */
@@ -54,13 +54,16 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
    * Icon to display after the button text
    */
   endIcon?: React.ReactNode;
-  /**
-   * Additional CSS class names
-   */
-  className?: string;
 }
 
-const useButtonStyles = (variant: ButtonVariant, buttonType: ButtonType, size: ButtonSize, fullWidth: boolean, disabled: boolean, loading: boolean) => {
+const useButtonStyles = (
+  color: ButtonColor,
+  variant: ButtonVariant,
+  size: ButtonSize,
+  fullWidth: boolean,
+  disabled: boolean,
+  loading: boolean,
+) => {
   const {theme} = useTheme();
 
   return useMemo(() => {
@@ -83,11 +86,11 @@ const useButtonStyles = (variant: ButtonVariant, buttonType: ButtonType, size: B
       },
     };
 
-    // Color configurations based on variant and type
+    // Color configurations based on color and variant
     const getColorConfig = () => {
-      switch (variant) {
+      switch (color) {
         case 'primary':
-          switch (buttonType) {
+          switch (variant) {
             case 'solid':
               return {
                 backgroundColor: theme.colors.primary.main,
@@ -133,7 +136,7 @@ const useButtonStyles = (variant: ButtonVariant, buttonType: ButtonType, size: B
           }
           break;
         case 'secondary':
-          switch (buttonType) {
+          switch (variant) {
             case 'solid':
               return {
                 backgroundColor: theme.colors.secondary.main,
@@ -179,7 +182,7 @@ const useButtonStyles = (variant: ButtonVariant, buttonType: ButtonType, size: B
           }
           break;
         case 'tertiary':
-          switch (buttonType) {
+          switch (variant) {
             case 'solid':
               return {
                 backgroundColor: theme.colors.text.secondary,
@@ -227,6 +230,8 @@ const useButtonStyles = (variant: ButtonVariant, buttonType: ButtonType, size: B
               };
           }
           break;
+        default:
+          return {};
       }
     };
 
@@ -249,12 +254,12 @@ const useButtonStyles = (variant: ButtonVariant, buttonType: ButtonType, size: B
     };
 
     return baseStyle;
-  }, [theme, variant, buttonType, size, fullWidth, disabled, loading]);
+  }, [theme, color, variant, size, fullWidth, disabled, loading]);
 };
 
 const LoadingSpinner: FC<{size: ButtonSize}> = ({size}) => {
   const {theme} = useTheme();
-  
+
   const spinnerSize = {
     small: '12px',
     medium: '16px',
@@ -287,39 +292,39 @@ const LoadingSpinner: FC<{size: ButtonSize}> = ({size}) => {
 
 /**
  * Button component with multiple variants and types.
- * 
+ *
  * @example
  * ```tsx
  * // Primary solid button
- * <Button variant="primary" buttonType="solid">
+ * <Button color="primary" variant="solid">
  *   Click me
  * </Button>
- * 
+ *
  * // Secondary outline button
- * <Button variant="secondary" buttonType="outline" size="large">
+ * <Button color="secondary" variant="outline" size="large">
  *   Cancel
  * </Button>
- * 
+ *
  * // Text button with loading state
- * <Button variant="tertiary" buttonType="text" loading>
+ * <Button color="tertiary" variant="text" loading>
  *   Loading...
  * </Button>
- * 
+ *
  * // Button with icons
- * <Button 
- *   variant="primary" 
- *   startIcon={<Icon />} 
+ * <Button
+ *   color="primary"
+ *   startIcon={<Icon />}
  *   endIcon={<Arrow />}
  * >
  *   Save and Continue
  * </Button>
  * ```
  */
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      variant = 'primary',
-      buttonType = 'solid',
+      color = 'primary',
+      variant = 'solid',
       size = 'medium',
       fullWidth = false,
       loading = false,
@@ -331,9 +336,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       style,
       ...rest
     },
-    ref
+    ref,
   ) => {
-    const buttonStyle = useButtonStyles(variant, buttonType, size, fullWidth, disabled || false, loading);
+    const buttonStyle = useButtonStyles(color, variant, size, fullWidth, disabled || false, loading);
 
     return (
       <button
@@ -341,14 +346,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         style={{...buttonStyle, ...style}}
         className={clsx(
           withVendorCSSClassPrefix('button'),
+          withVendorCSSClassPrefix(`button-${color}`),
           withVendorCSSClassPrefix(`button-${variant}`),
-          withVendorCSSClassPrefix(`button-${buttonType}`),
           withVendorCSSClassPrefix(`button-${size}`),
           {
             [withVendorCSSClassPrefix('button-full-width')]: fullWidth,
             [withVendorCSSClassPrefix('button-loading')]: loading,
           },
-          className
+          className,
         )}
         disabled={disabled || loading}
         {...rest}
@@ -359,7 +364,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {!loading && endIcon && <span>{endIcon}</span>}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = 'Button';

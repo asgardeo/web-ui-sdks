@@ -152,7 +152,7 @@ export default function Header() {
                     <div className="text-sm text-gray-500">@{user?.username}</div>
                   </div>
 
-                  <span
+                  <div
                     // to="/profile"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     onClick={() => {
@@ -162,7 +162,7 @@ export default function Header() {
                   >
                     <User className="h-4 w-4 mr-3" />
                     Your profile
-                  </span>
+                  </div>
 
                   <Link
                     to="/settings"

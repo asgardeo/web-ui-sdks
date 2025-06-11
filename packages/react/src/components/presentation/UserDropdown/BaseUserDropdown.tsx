@@ -22,7 +22,7 @@ import clsx from 'clsx';
 import {useTheme} from '../../../theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import {Popover} from '../../primitives/Popover/Popover';
-import {Button} from '../../primitives/Button/Button';
+import Button from '../../primitives/Button/Button';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 
 const useStyles = () => {
@@ -214,8 +214,8 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
         className={withVendorCSSClassPrefix('user-dropdown-trigger')}
         style={styles.trigger}
         onClick={() => setIsOpen(!isOpen)}
-        variant="tertiary"
-        buttonType="text"
+        color="tertiary"
+        variant="text"
         size="medium"
       >
         <Avatar
@@ -271,8 +271,8 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                       onClick={() => handleMenuItemClick(item)}
                       style={styles.menuItem}
                       className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
-                      variant="tertiary"
-                      buttonType="text"
+                      color="tertiary"
+                      variant="text"
                       size="small"
                       startIcon={item.icon}
                     >
