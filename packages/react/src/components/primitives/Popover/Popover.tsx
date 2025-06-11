@@ -45,7 +45,7 @@ const useStyles = () => {
         zIndex: 1000,
         maxHeight: '90vh',
         overflowY: 'auto',
-        background: theme.colors.surface,
+        background: theme.colors.background.surface,
         borderRadius: theme.borderRadius.large,
         boxShadow: `0 2px 8px ${colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
       } as CSSProperties,

@@ -24,6 +24,7 @@ import {FC, FormEvent, ReactElement} from 'react';
 import {createField} from '../../factories/FieldFactory';
 import Button from '../../primitives/Button/Button';
 import Card from '../../primitives/Card/Card';
+import Alert from '../../primitives/Alert/Alert';
 
 /**
  * Interface for form field state.
@@ -206,7 +207,12 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     return (
       <Card className={className}>
         <Card.Content>
-          {error && <div className={errorClassName}>Error: {error}</div>}
+          {error && (
+            <Alert variant="error">
+              <Alert.Title>Authentication Error</Alert.Title>
+              <Alert.Description>{error}</Alert.Description>
+            </Alert>
+          )}
         </Card.Content>
       </Card>
     );
@@ -220,18 +226,34 @@ const BaseSignIn: FC<BaseSignInProps> = ({
         <Card.Header>
           <Card.Title level={2}>{currentAuthenticator.authenticator}</Card.Title>
           {messages.length > 0 && (
-            <Card.Description>
-              {messages.map((message, index) => (
-                <div key={index} className={`message-${message.type.toLowerCase()}`}>
-                  {message.message}
-                </div>
-              ))}
-            </Card.Description>
+            <div style={{marginTop: '1rem'}}>
+              {messages.map((message, index) => {
+                const variant =
+                  message.type.toLowerCase() === 'error'
+                    ? 'error'
+                    : message.type.toLowerCase() === 'warning'
+                    ? 'warning'
+                    : message.type.toLowerCase() === 'success'
+                    ? 'success'
+                    : 'info';
+
+                return (
+                  <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}}>
+                    <Alert.Description>{message.message}</Alert.Description>
+                  </Alert>
+                );
+              })}
+            </div>
           )}
         </Card.Header>
 
         <Card.Content>
-          {error && <div className={errorClassName}>{error}</div>}
+          {error && (
+            <Alert variant="error" style={{marginBottom: '1rem'}}>
+              <Alert.Title>Error</Alert.Title>
+              <Alert.Description>{error}</Alert.Description>
+            </Alert>
+          )}
 
           {formFields.map(field => (
             <div key={field.param} style={{marginBottom: '1rem'}}>

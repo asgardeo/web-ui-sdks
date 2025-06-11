@@ -30,7 +30,7 @@ const lightTheme: ThemeConfig = {
       contrastText: '#ffffff',
     },
     background: {
-      surface: '#f5f5f5',
+      surface: '#ffffff',
       disabled: '#f0f0f0',
       body: {
         main: '#1a1a1a',
@@ -40,7 +40,6 @@ const lightTheme: ThemeConfig = {
       main: '#d32f2f',
       contrastText: '#ffffff',
     },
-    surface: '#f5f5f5',
     text: {
       primary: '#1a1a1a',
       secondary: '#666666',
@@ -78,7 +77,6 @@ const darkTheme: ThemeConfig = {
       main: '#d32f2f',
       contrastText: '#ffffff',
     },
-    surface: '#2d2d2d',
     text: {
       primary: '#ffffff',
       secondary: '#b3b3b3',
@@ -108,7 +106,6 @@ const toCssVariables = (theme: RecursivePartial<ThemeConfig>): Record<string, st
   cssVars['--asgardeo-color-background-body-main'] = theme.colors.background.body.main;
   cssVars['--asgardeo-color-error-main'] = theme.colors.error.main;
   cssVars['--asgardeo-color-error-contrastText'] = theme.colors.error.contrastText;
-  cssVars['--asgardeo-color-surface'] = theme.colors.surface;
   cssVars['--asgardeo-color-text-primary'] = theme.colors.text.primary;
   cssVars['--asgardeo-color-text-secondary'] = theme.colors.text.secondary;
   cssVars['--asgardeo-color-border'] = theme.colors.border;

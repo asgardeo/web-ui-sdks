@@ -468,7 +468,7 @@ const useStyles = () => {
         margin: '0 auto',
       } as CSSProperties,
       card: {
-        background: theme.colors.surface,
+        background: theme.colors.background.surface,
         borderRadius: theme.borderRadius.large,
       } as CSSProperties,
       header: {
