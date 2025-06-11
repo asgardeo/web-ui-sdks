@@ -23,7 +23,7 @@ import Select from '../primitives/Select/Select';
 import {SelectOption} from '../primitives/Select/Select';
 import Eye from '../primitives/Icons/Eye';
 import EyeOff from '../primitives/Icons/EyeOff';
-import OtpInput from '../primitives/OtpInput/OtpInput';
+import OtpField from '../primitives/OtpField/OtpField';
 
 /**
  * Interface for field configuration.
@@ -168,7 +168,7 @@ export const createField = (config: FieldConfig): ReactElement => {
     case FieldType.Text:
       return <TextField {...commonProps} type="text" onChange={e => onChange(e.target.value)} autoComplete="off" />;
     case FieldType.Otp:
-      return <OtpInput {...commonProps} onChange={e => onChange(e.target.value)} />;
+      return <OtpField {...commonProps} onChange={e => onChange(e.target.value)} />;
     case FieldType.Number:
       return (
         <TextField

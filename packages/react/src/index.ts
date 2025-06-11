@@ -82,8 +82,8 @@ export * from './components/primitives/Card/Card';
 export {default as Alert} from './components/primitives/Alert/Alert';
 export * from './components/primitives/Alert/Alert';
 
-export {default as OtpInput} from './components/primitives/OtpInput/OtpInput';
-export * from './components/primitives/OtpInput/OtpInput';
+export {default as OtpField} from './components/primitives/OtpField/OtpField';
+export * from './components/primitives/OtpField/OtpField';
 
 export {default as TextField} from './components/primitives/TextField/TextField';
 export * from './components/primitives/TextField/TextField';

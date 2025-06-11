@@ -85,7 +85,7 @@ export interface OtpInputProps {
   pattern?: string;
 }
 
-const OtpInput: FC<OtpInputProps> = ({
+const OtpField: FC<OtpInputProps> = ({
   label,
   error,
   className,
@@ -299,4 +299,4 @@ const OtpInput: FC<OtpInputProps> = ({
   );
 };
 
-export default OtpInput;
+export default OtpField;
