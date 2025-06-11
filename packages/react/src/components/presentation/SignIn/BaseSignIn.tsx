@@ -23,6 +23,7 @@ import {
 import {FC, FormEvent, ReactElement} from 'react';
 import {createField} from '../../factories/FieldFactory';
 import Button from '../../primitives/Button/Button';
+import Card from '../../primitives/Card/Card';
 
 /**
  * Interface for form field state.
@@ -124,6 +125,7 @@ export interface BaseSignInProps {
 /**
  * Base SignIn component that provides native authentication flow.
  * This component handles the presentation layer for authentication forms.
+ * Now uses Card component for better visual structure.
  *
  * @example
  * ```tsx
@@ -140,6 +142,7 @@ export interface BaseSignInProps {
  *       isInitialized={initialized}
  *       onSubmit={handleSubmit}
  *       onInputChange={handleInputChange}
+ *       className="max-w-md mx-auto"
  *     />
  *   );
  * };
@@ -191,64 +194,77 @@ const BaseSignIn: FC<BaseSignInProps> = ({
 
   if (!isInitialized && isLoading) {
     return showLoading ? (
-      <div className={className}>
-        <p>{loadingText}</p>
-      </div>
+      <Card className={className}>
+        <Card.Content>
+          <p>{loadingText}</p>
+        </Card.Content>
+      </Card>
     ) : null;
   }
 
   if (!currentAuthenticator) {
-    return <div className={className}>{error && <div className={errorClassName}>Error: {error}</div>}</div>;
+    return (
+      <Card className={className}>
+        <Card.Content>
+          {error && <div className={errorClassName}>Error: {error}</div>}
+        </Card.Content>
+      </Card>
+    );
   }
 
   const formFields = getFormFields();
 
   return (
-    <div className={className}>
-      {error && <div className={errorClassName}>{error}</div>}
+    <Card className={className}>
+      <form onSubmit={handleSubmit}>
+        <Card.Header>
+          <Card.Title level={2}>{currentAuthenticator.authenticator}</Card.Title>
+          {messages.length > 0 && (
+            <Card.Description>
+              {messages.map((message, index) => (
+                <div key={index} className={`message-${message.type.toLowerCase()}`}>
+                  {message.message}
+                </div>
+              ))}
+            </Card.Description>
+          )}
+        </Card.Header>
 
-      {messages.length > 0 && (
-        <div className={messageClassName}>
-          {messages.map((message, index) => (
-            <div key={index} className={`message-${message.type.toLowerCase()}`}>
-              {message.message}
+        <Card.Content>
+          {error && <div className={errorClassName}>{error}</div>}
+
+          {formFields.map(field => (
+            <div key={field.param} style={{marginBottom: '1rem'}}>
+              {createField({
+                param: field.param,
+                type: field.type,
+                displayName: field.displayName,
+                confidential: field.confidential,
+                required: field.required,
+                value: field.value,
+                onChange: value => onInputChange(field.param, value),
+                disabled: isLoading,
+                className: inputClassName,
+              })}
             </div>
           ))}
-        </div>
-      )}
+        </Card.Content>
 
-      <form onSubmit={handleSubmit}>
-        <h2>{currentAuthenticator.authenticator}</h2>
-
-        {formFields.map(field => (
-          <div key={field.param} style={{marginBottom: '1rem'}}>
-            {createField({
-              param: field.param,
-              type: field.type,
-              displayName: field.displayName,
-              confidential: field.confidential,
-              required: field.required,
-              value: field.value,
-              onChange: value => onInputChange(field.param, value),
-              disabled: isLoading,
-              className: inputClassName,
-            })}
-          </div>
-        ))}
-
-        <Button
-          type="submit"
-          disabled={isLoading}
-          loading={isLoading}
-          className={buttonClassName}
-          color="primary"
-          variant="solid"
-          fullWidth
-        >
-          {submitButtonText}
-        </Button>
+        <Card.Footer>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            loading={isLoading}
+            className={buttonClassName}
+            color="primary"
+            variant="solid"
+            fullWidth
+          >
+            {submitButtonText}
+          </Button>
+        </Card.Footer>
       </form>
-    </div>
+    </Card>
   );
 };
 

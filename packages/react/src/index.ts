@@ -74,7 +74,10 @@ export {default as UserDropdown} from './components/presentation/UserDropdown/Us
 export * from './components/presentation/UserDropdown/UserDropdown';
 
 export {default as Button} from './components/primitives/Button/Button';
-export {ButtonProps} from './components/primitives/Button/Button';
+export * from './components/primitives/Button/Button';
+
+export {default as Card} from './components/primitives/Card/Card';
+export * from './components/primitives/Card/Card';
 
 export {default as Eye} from './components/primitives/Icons/Eye';
 export {default as EyeOff} from './components/primitives/Icons/EyeOff';
