@@ -17,7 +17,15 @@ import {useTheme} from '../../../theme/useTheme'; 2025, WSO2 LLC. (https://www.w
  * under the License.
  */
 
-import {CSSProperties, HTMLAttributes, forwardRef, useMemo, ReactNode, ForwardRefExoticComponent, RefAttributes} from 'react';
+import {
+  CSSProperties,
+  HTMLAttributes,
+  forwardRef,
+  useMemo,
+  ReactNode,
+  ForwardRefExoticComponent,
+  RefAttributes,
+} from 'react';
 import {useTheme} from '../../../theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
@@ -98,6 +106,7 @@ const useCardStyles = (variant: CardVariant, clickable: boolean) => {
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
+      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
     };
 
     const variantStyles: Record<CardVariant, CSSProperties> = {

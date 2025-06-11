@@ -24,6 +24,7 @@ import {
   ApplicationNativeAuthenticationFlowStatus,
   ApplicationNativeAuthenticationAuthenticator,
   AsgardeoAPIError,
+  withVendorCSSClassPrefix,
 } from '@asgardeo/browser';
 import {FC, useState, useEffect, ReactElement} from 'react';
 import {clsx} from 'clsx';
@@ -293,39 +294,34 @@ const SignIn: FC<SignInProps> = ({
 
   const containerClasses = clsx(
     styled && [
-      'asgardeo-signin',
-      `asgardeo-signin--${size}`,
-      `asgardeo-signin--${variant}`,
-      'max-w-md mx-auto p-6 bg-white rounded-lg shadow-md',
+      withVendorCSSClassPrefix('signin'),
+      withVendorCSSClassPrefix(`signin--${size}`),
+      withVendorCSSClassPrefix(`signin--${variant}`),
     ],
     className,
   );
 
   const inputClasses = clsx(
     styled && [
-      'asgardeo-signin__input',
-      'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-      size === 'small' && 'text-sm py-1',
-      size === 'large' && 'text-lg py-3',
+      withVendorCSSClassPrefix('signin__input'),
+      size === 'small' && withVendorCSSClassPrefix('signin__input--small'),
+      size === 'large' && withVendorCSSClassPrefix('signin__input--large'),
     ],
   );
 
   const buttonClasses = clsx(
     styled && [
-      'asgardeo-signin__button',
-      'w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200',
-      size === 'small' && 'text-sm py-1',
-      size === 'large' && 'text-lg py-3',
-      variant === 'outlined' && 'bg-transparent text-blue-600 border-2 border-blue-600 hover:bg-blue-50',
-      variant === 'filled' && 'bg-blue-800 hover:bg-blue-900',
+      withVendorCSSClassPrefix('signin__button'),
+      size === 'small' && withVendorCSSClassPrefix('signin__button--small'),
+      size === 'large' && withVendorCSSClassPrefix('signin__button--large'),
+      variant === 'outlined' && withVendorCSSClassPrefix('signin__button--outlined'),
+      variant === 'filled' && withVendorCSSClassPrefix('signin__button--filled'),
     ],
   );
 
-  const errorClasses = clsx(
-    styled && ['asgardeo-signin__error', 'mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm'],
-  );
+  const errorClasses = clsx(styled && [withVendorCSSClassPrefix('signin__error')]);
 
-  const messageClasses = clsx(styled && ['asgardeo-signin__messages', 'mb-4 space-y-2']);
+  const messageClasses = clsx(styled && [withVendorCSSClassPrefix('signin__messages')]);
 
   return (
     <BaseSignIn
