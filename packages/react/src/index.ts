@@ -76,6 +76,9 @@ export * from './components/presentation/UserDropdown/UserDropdown';
 export {default as Button} from './components/primitives/Button/Button';
 export {ButtonProps} from './components/primitives/Button/Button';
 
+export {default as Eye} from './components/primitives/Icons/Eye';
+export {default as EyeOff} from './components/primitives/Icons/EyeOff';
+
 export {
   createField,
   FieldFactory,

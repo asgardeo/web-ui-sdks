@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {CSSProperties, FC, InputHTMLAttributes} from 'react';
+import {CSSProperties, FC, InputHTMLAttributes, ReactNode} from 'react';
 import {useTheme} from '../../../theme/useTheme';
 import clsx from 'clsx';
 
@@ -45,14 +45,50 @@ export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
    * Helper text to display below the input
    */
   helperText?: string;
+  /**
+   * Icon to display at the start (left) of the input
+   */
+  startIcon?: ReactNode;
+  /**
+   * Icon to display at the end (right) of the input
+   */
+  endIcon?: ReactNode;
+  /**
+   * Click handler for the start icon
+   */
+  onStartIconClick?: () => void;
+  /**
+   * Click handler for the end icon
+   */
+  onEndIconClick?: () => void;
 }
 
-export const TextField: FC<TextFieldProps> = ({label, error, required, className, disabled, helperText, style = {}, ...rest}) => {
+export const TextField: FC<TextFieldProps> = ({
+  label,
+  error,
+  required,
+  className,
+  disabled,
+  helperText,
+  startIcon,
+  endIcon,
+  onStartIconClick,
+  onEndIconClick,
+  type = 'text',
+  style = {},
+  ...rest
+}) => {
   const {theme} = useTheme();
+
+  // Calculate padding based on icons
+  const hasStartIcon = !!startIcon;
+  const hasEndIcon = !!endIcon;
+  const leftPadding = hasStartIcon ? theme.spacing.unit * 5 : theme.spacing.unit * 1.5;
+  const rightPadding = hasEndIcon ? theme.spacing.unit * 5 : theme.spacing.unit * 1.5;
 
   const containerStyle: CSSProperties = {
     marginBottom: theme.spacing.unit * 2 + 'px',
-    ...style
+    ...style,
   };
 
   const labelStyle: CSSProperties = {
@@ -65,7 +101,7 @@ export const TextField: FC<TextFieldProps> = ({label, error, required, className
 
   const inputStyle: CSSProperties = {
     width: '100%',
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
+    padding: `${theme.spacing.unit}px ${rightPadding}px ${theme.spacing.unit}px ${leftPadding}px`,
     border: `1px solid ${error ? theme.colors.error.main : theme.colors.border}`,
     borderRadius: theme.borderRadius.small,
     fontSize: '1rem',
@@ -73,6 +109,37 @@ export const TextField: FC<TextFieldProps> = ({label, error, required, className
     backgroundColor: disabled ? theme.colors.background.disabled : theme.colors.background.surface,
     outline: 'none',
     transition: 'border-color 0.2s ease',
+  };
+
+  const inputContainerStyle: CSSProperties = {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+  };
+
+  const iconButtonStyle: CSSProperties = {
+    position: 'absolute',
+    background: 'none',
+    border: 'none',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    padding: theme.spacing.unit / 2,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: theme.colors.text.secondary,
+    opacity: disabled ? 0.5 : 1,
+    top: '50%',
+    transform: 'translateY(-50%)',
+  };
+
+  const startIconStyle: CSSProperties = {
+    ...iconButtonStyle,
+    left: theme.spacing.unit,
+  };
+
+  const endIconStyle: CSSProperties = {
+    ...iconButtonStyle,
+    right: theme.spacing.unit,
   };
 
   const helperTextStyle: CSSProperties = {
@@ -89,7 +156,38 @@ export const TextField: FC<TextFieldProps> = ({label, error, required, className
           {required && <span style={{color: theme.colors.error.main}}> *</span>}
         </label>
       )}
-      <input style={inputStyle} disabled={disabled} aria-invalid={!!error} aria-required={required} {...rest} />
+      <div style={inputContainerStyle}>
+        {startIcon && (
+          <div
+            style={startIconStyle}
+            onClick={onStartIconClick}
+            role={onStartIconClick ? 'button' : undefined}
+            tabIndex={onStartIconClick && !disabled ? 0 : undefined}
+            aria-label="Start icon"
+          >
+            {startIcon}
+          </div>
+        )}
+        <input
+          style={inputStyle}
+          type={type}
+          disabled={disabled}
+          aria-invalid={!!error}
+          aria-required={required}
+          {...rest}
+        />
+        {endIcon && (
+          <div
+            style={endIconStyle}
+            onClick={onEndIconClick}
+            role={onEndIconClick ? 'button' : undefined}
+            tabIndex={onEndIconClick && !disabled ? 0 : undefined}
+            aria-label="End icon"
+          >
+            {endIcon}
+          </div>
+        )}
+      </div>
       {(error || helperText) && <div style={helperTextStyle}>{error || helperText}</div>}
     </div>
   );
