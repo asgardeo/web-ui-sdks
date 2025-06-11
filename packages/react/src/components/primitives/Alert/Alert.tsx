@@ -25,7 +25,7 @@ import {
   ForwardRefExoticComponent,
   useMemo,
 } from 'react';
-import {useTheme} from '../../../theme/useTheme';
+import {useTheme} from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import CircleCheck from '../Icons/CircleCheck';

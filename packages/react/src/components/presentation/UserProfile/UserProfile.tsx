@@ -17,7 +17,7 @@
  */
 
 import {FC, ReactElement} from 'react';
-import useAsgardeo from '../../../hooks/useAsgardeo';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
 import updateMeProfile from 'packages/react/src/api/scim2/updateMeProfile';
 import getMeProfile from 'packages/react/src/api/scim2/getMeProfile';
@@ -56,7 +56,7 @@ const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactEl
 
   const handleProfileUpdate = async (payload: any): Promise<void> => {
     await updateMeProfile({url: `${baseUrl}/scim2/Me`, payload});
-    await getMeProfile({url: `${baseUrl}/scim2/Me` });
+    await getMeProfile({url: `${baseUrl}/scim2/Me`});
   };
 
   return <BaseUserProfile user={user} onUpdate={handleProfileUpdate} {...rest} />;

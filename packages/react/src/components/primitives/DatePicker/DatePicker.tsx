@@ -17,7 +17,7 @@
  */
 
 import {CSSProperties, FC, InputHTMLAttributes} from 'react';
-import {useTheme} from '../../../theme/useTheme';
+import {useTheme} from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';

@@ -17,7 +17,7 @@
  */
 
 import {CSSProperties, FC, InputHTMLAttributes, ReactNode} from 'react';
-import {useTheme} from '../../../theme/useTheme';
+import {useTheme} from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
@@ -132,12 +132,7 @@ const TextField: FC<TextFieldProps> = ({
   };
 
   return (
-    <FormControl
-      error={error}
-      helperText={helperText}
-      className={clsx('asgardeo-text-field', className)}
-      style={style}
-    >
+    <FormControl error={error} helperText={helperText} className={clsx('asgardeo-text-field', className)} style={style}>
       {label && (
         <InputLabel required={required} error={!!error}>
           {label}

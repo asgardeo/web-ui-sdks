@@ -17,7 +17,7 @@
  */
 
 import {forwardRef, ForwardRefExoticComponent, MouseEvent, ReactElement, Ref, RefAttributes, useState} from 'react';
-import useAsgardeo from '../../../hooks/useAsgardeo';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import BaseSignInButton, {BaseSignInButtonProps} from './BaseSignInButton';
 
 /**

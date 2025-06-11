@@ -18,12 +18,12 @@
 
 import {SignInOptions, SignOutOptions, User} from '@asgardeo/browser';
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, use} from 'react';
-import AsgardeoReactClient from '../AsgardeoReactClient';
-import AsgardeoContext from '../contexts/AsgardeoContext';
-import useBrowserUrl from '../hooks/useBrowserUrl';
-import {AsgardeoReactConfig} from '../models/config';
-import {ThemeProvider} from '../theme/ThemeProvider';
-import I18nProvider from './I18nProvider';
+import AsgardeoReactClient from '../../AsgardeoReactClient';
+import AsgardeoContext from './AsgardeoContext';
+import useBrowserUrl from '../../hooks/useBrowserUrl';
+import {AsgardeoReactConfig} from '../../models/config';
+import {ThemeProvider} from '../Theme/ThemeProvider';
+import I18nProvider from '../I18n/I18nProvider';
 
 /**
  * Props interface of {@link AsgardeoProvider}

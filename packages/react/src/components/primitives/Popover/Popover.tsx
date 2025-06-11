@@ -18,7 +18,7 @@
 
 import React, {CSSProperties, FC, ReactNode, useEffect, useMemo, useState} from 'react';
 import {createPortal} from 'react-dom';
-import {useTheme} from '../../../theme/useTheme';
+import {useTheme} from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import Button from '../Button/Button';

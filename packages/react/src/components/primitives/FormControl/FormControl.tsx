@@ -17,7 +17,7 @@
  */
 
 import {CSSProperties, FC, ReactNode} from 'react';
-import {useTheme} from '../../../theme/useTheme';
+import {useTheme} from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 
 export interface FormControlProps {
@@ -72,17 +72,13 @@ const FormControl: FC<FormControlProps> = ({
     color: error ? theme.colors.error.main : theme.colors.text.secondary,
     marginTop: theme.spacing.unit / 2 + 'px',
     textAlign: helperTextAlign,
-    ...(helperTextMarginLeft && { marginLeft: helperTextMarginLeft }),
+    ...(helperTextMarginLeft && {marginLeft: helperTextMarginLeft}),
   };
 
   return (
     <div style={containerStyle} className={className}>
       {children}
-      {(error || helperText) && (
-        <div style={helperTextStyle}>
-          {error || helperText}
-        </div>
-      )}
+      {(error || helperText) && <div style={helperTextStyle}>{error || helperText}</div>}
     </div>
   );
 };

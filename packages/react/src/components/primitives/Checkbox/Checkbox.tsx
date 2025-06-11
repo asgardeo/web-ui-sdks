@@ -17,7 +17,7 @@
  */
 
 import {CSSProperties, FC, InputHTMLAttributes} from 'react';
-import {useTheme} from '../../../theme/useTheme';
+import {useTheme} from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
@@ -51,7 +51,7 @@ const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperT
   const containerStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    ...style
+    ...style,
   };
 
   const inputStyle: CSSProperties = {
@@ -71,8 +71,8 @@ const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperT
       <div style={containerStyle}>
         <input type="checkbox" style={inputStyle} aria-invalid={!!error} aria-required={required} {...rest} />
         {label && (
-          <InputLabel 
-            required={required} 
+          <InputLabel
+            required={required}
             error={!!error}
             variant="inline"
             style={{

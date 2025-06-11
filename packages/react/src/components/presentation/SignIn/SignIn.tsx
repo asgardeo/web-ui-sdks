@@ -29,7 +29,7 @@ import {
 import {FC, useState, useEffect, ReactElement} from 'react';
 import {clsx} from 'clsx';
 import BaseSignIn from './BaseSignIn';
-import useAsgardeo from '../../../hooks/useAsgardeo';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 
 /**
  * Props for the SignIn component.

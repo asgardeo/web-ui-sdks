@@ -16,14 +16,14 @@
  * under the License.
  */
 
-export {default as AsgardeoProvider} from './providers/AsgardeoProvider';
-export * from './providers/AsgardeoProvider';
+export {default as AsgardeoProvider} from './contexts/Asgardeo/AsgardeoProvider';
+export * from './contexts/Asgardeo/AsgardeoProvider';
 
-export {default as AsgardeoContext} from './contexts/AsgardeoContext';
-export * from './contexts/AsgardeoContext';
+export {default as AsgardeoContext} from './contexts/Asgardeo/AsgardeoContext';
+export * from './contexts/Asgardeo/AsgardeoContext';
 
-export {default as useAsgardeo} from './hooks/useAsgardeo';
-export * from './hooks/useAsgardeo';
+export {default as useAsgardeo} from './contexts/Asgardeo/useAsgardeo';
+export * from './contexts/Asgardeo/useAsgardeo';
 
 export {default as useBrowserUrl} from './hooks/useBrowserUrl';
 export * from './hooks/useBrowserUrl';

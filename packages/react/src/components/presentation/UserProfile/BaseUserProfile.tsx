@@ -23,7 +23,7 @@ import TextField from '../../primitives/TextField/TextField';
 import DatePicker from '../../primitives/DatePicker/DatePicker';
 import Checkbox from '../../primitives/Checkbox/Checkbox';
 import Button from '../../primitives/Button/Button';
-import {useTheme} from '../../../theme/useTheme';
+import {useTheme} from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
@@ -336,12 +336,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           >
             {isFieldEditing ? (
               <>
-                <Button 
-                  size="small"
-                  color="primary"
-                  variant="solid"
-                  onClick={() => handleFieldSave(schema)}
-                >
+                <Button size="small" color="primary" variant="solid" onClick={() => handleFieldSave(schema)}>
                   Save
                 </Button>
                 <Button

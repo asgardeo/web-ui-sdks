@@ -19,7 +19,7 @@
 import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useState} from 'react';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
-import {useTheme} from '../../../theme/useTheme';
+import {useTheme} from '../../../contexts/Theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import {Popover} from '../../primitives/Popover/Popover';
 import Button from '../../primitives/Button/Button';
