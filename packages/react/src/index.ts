@@ -73,4 +73,14 @@ export * from './components/presentation/UserDropdown/BaseUserDropdown';
 export {default as UserDropdown} from './components/presentation/UserDropdown/UserDropdown';
 export * from './components/presentation/UserDropdown/UserDropdown';
 
+export {
+  createField,
+  FieldFactory,
+  parseMultiValuedString,
+  formatMultiValuedString,
+  getDefaultOptionsForParam,
+  validateFieldValue,
+} from './components/factories/FieldFactory';
+export * from './components/factories/FieldFactory';
+
 export * from '@asgardeo/browser';

@@ -16,15 +16,19 @@
  * under the License.
  */
 
-import {ApplicationNativeAuthenticationAuthenticator} from '@asgardeo/browser';
+import {
+  ApplicationNativeAuthenticationAuthenticator,
+  ApplicationNativeAuthenticationAuthenticatorParamType,
+} from '@asgardeo/browser';
 import {FC, FormEvent, ReactElement} from 'react';
+import {createField} from '../../factories/FieldFactory';
 
 /**
  * Interface for form field state.
  */
 interface FormField {
   param: string;
-  type: string;
+  type: ApplicationNativeAuthenticationAuthenticatorParamType;
   displayName: string;
   confidential: boolean;
   required: boolean;
@@ -217,19 +221,17 @@ const BaseSignIn: FC<BaseSignInProps> = ({
 
         {formFields.map(field => (
           <div key={field.param} style={{marginBottom: '1rem'}}>
-            <label htmlFor={field.param}>
-              {field.displayName}
-              {field.required && ' *'}
-            </label>
-            <input
-              id={field.param}
-              type={field.confidential ? 'password' : 'text'}
-              value={formValues[field.param] || ''}
-              onChange={e => onInputChange(field.param, e.target.value)}
-              required={field.required}
-              className={inputClassName}
-              disabled={isLoading}
-            />
+            {createField({
+              param: field.param,
+              type: field.type,
+              displayName: field.displayName,
+              confidential: field.confidential,
+              required: field.required,
+              value: field.value,
+              onChange: value => onInputChange(field.param, value),
+              disabled: isLoading,
+              className: inputClassName,
+            })}
           </div>
         ))}
 

@@ -31,10 +31,10 @@ export interface ApplicationNativeAuthenticationAuthenticator {
   idp: string;
   metadata: {
     i18nKey: string;
-    promptType: string;
+    promptType: ApplicationNativeAuthenticationAuthenticatorPromptType;
     params: {
       param: string;
-      type: string;
+      type: ApplicationNativeAuthenticationAuthenticatorParamType;
       order: number;
       i18nKey: string;
       displayName: string;
@@ -61,4 +61,25 @@ export interface ApplicationNativeAuthenticationHandleRequestPayload {
 export interface ApplicationNativeAuthenticationHandleResponse {
   flowStatus: string;
   authData: Record<string, any>;
+}
+
+export enum ApplicationNativeAuthenticationAuthenticatorParamType {
+  String = 'STRING',
+  Integer = 'INTEGER',
+  MultiValued = 'MULTI_VALUED',
+}
+
+export enum ApplicationNativeAuthenticationAuthenticatorPromptType {
+  /**
+   * Prompt for user input, typically for username/password or similar credentials.
+   */
+  USER_PROMPT,
+  /**
+   * Prompt for internal system use, such as API keys or tokens.
+   */
+  INTERNAL_PROMPT,
+  /**
+   * Prompt for redirection to another page or service.
+   */
+  REDIRECTION_PROMPT,
 }

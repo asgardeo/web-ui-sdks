@@ -58,6 +58,8 @@ export {
   ApplicationNativeAuthenticationLink,
   ApplicationNativeAuthenticationHandleRequestPayload,
   ApplicationNativeAuthenticationHandleResponse,
+  ApplicationNativeAuthenticationAuthenticatorParamType,
+  ApplicationNativeAuthenticationAuthenticatorPromptType,
 } from './models/application-native-authentication';
 
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
