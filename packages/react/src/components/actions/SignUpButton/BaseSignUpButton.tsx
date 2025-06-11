@@ -27,6 +27,7 @@ import {
 } from 'react';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
+import {Button} from '../../primitives/Button/Button';
 
 /**
  * Common props shared by all {@link BaseSignUpButton} components.
@@ -89,16 +90,19 @@ const BaseSignUpButton: ForwardRefExoticComponent<BaseSignUpButtonProps & RefAtt
       }
 
       return (
-        <button
+        <Button
           ref={ref}
           className={clsx(withVendorCSSClassPrefix('sign-up-button'), className)}
           style={style}
           disabled={isLoading}
+          loading={isLoading}
           type="button"
+          variant="primary"
+          buttonType="outline"
           {...rest}
         >
           {children}
-        </button>
+        </Button>
       );
     },
   );

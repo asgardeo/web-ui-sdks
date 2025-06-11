@@ -22,6 +22,7 @@ import {Avatar} from '../../primitives/Avatar/Avatar';
 import {TextField} from '../../primitives/TextField/TextField';
 import {DatePicker} from '../../primitives/DatePicker/DatePicker';
 import {Checkbox} from '../../primitives/Checkbox/Checkbox';
+import {Button} from '../../primitives/Button/Button';
 import {useTheme} from '../../../theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
@@ -335,31 +336,36 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           >
             {isFieldEditing ? (
               <>
-                <button style={{...actionButtonStyle, ...saveButtonStyle}} onClick={() => handleFieldSave(schema)}>
+                <Button 
+                  size="small"
+                  variant="primary"
+                  buttonType="solid"
+                  onClick={() => handleFieldSave(schema)}
+                >
                   Save
-                </button>
-                <button
-                  style={{...actionButtonStyle, ...cancelButtonStyle}}
+                </Button>
+                <Button
+                  size="small"
+                  variant="secondary"
+                  buttonType="outline"
                   onClick={() => handleFieldCancel(schema.name!)}
                 >
                   Cancel
-                </button>
+                </Button>
               </>
             ) : (
-              <button
-                style={{
-                  ...actionButtonStyle,
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  margin: 0,
-                  padding: theme.spacing.unit / 2 + 'px',
-                  color: theme.colors.text.secondary,
-                }}
+              <Button
+                size="small"
+                variant="tertiary"
+                buttonType="text"
                 onClick={() => toggleFieldEdit(schema.name!)}
                 title="Edit"
+                style={{
+                  padding: theme.spacing.unit / 2 + 'px',
+                }}
               >
                 <PencilIcon />
-              </button>
+              </Button>
             )}
           </div>
         )}

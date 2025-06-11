@@ -22,6 +22,7 @@ import {
 } from '@asgardeo/browser';
 import {FC, FormEvent, ReactElement} from 'react';
 import {createField} from '../../factories/FieldFactory';
+import {Button} from '../../primitives/Button/Button';
 
 /**
  * Interface for form field state.
@@ -235,9 +236,17 @@ const BaseSignIn: FC<BaseSignInProps> = ({
           </div>
         ))}
 
-        <button type="submit" disabled={isLoading} className={buttonClassName}>
-          {isLoading ? loadingText : submitButtonText}
-        </button>
+        <Button 
+          type="submit" 
+          disabled={isLoading}
+          loading={isLoading}
+          className={buttonClassName}
+          variant="primary"
+          buttonType="solid"
+          fullWidth
+        >
+          {submitButtonText}
+        </Button>
       </form>
     </div>
   );

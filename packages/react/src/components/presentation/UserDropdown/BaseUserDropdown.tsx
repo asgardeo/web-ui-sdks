@@ -22,6 +22,7 @@ import clsx from 'clsx';
 import {useTheme} from '../../../theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import {Popover} from '../../primitives/Popover/Popover';
+import {Button} from '../../primitives/Button/Button';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 
 const useStyles = () => {
@@ -209,10 +210,13 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
 
   return (
     <div className={clsx(withVendorCSSClassPrefix('user-dropdown'), className)}>
-      <button
+      <Button
         className={withVendorCSSClassPrefix('user-dropdown-trigger')}
         style={styles.trigger}
         onClick={() => setIsOpen(!isOpen)}
+        variant="tertiary"
+        buttonType="text"
+        size="medium"
       >
         <Avatar
           imageUrl={getMappedUserProfileValue('picture', mergedMappings, user)}
@@ -221,7 +225,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
           alt={`${getDisplayName()}'s avatar`}
         />
         {showTriggerLable && <span style={styles.userName}>{getDisplayName()}</span>}
-      </button>
+      </Button>
 
       <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} portalId={portalId} mode="dropdown">
         <Popover.Content>
@@ -263,14 +267,17 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                       {item.label}
                     </a>
                   ) : (
-                    <button
+                    <Button
                       onClick={() => handleMenuItemClick(item)}
                       style={styles.menuItem}
                       className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
+                      variant="tertiary"
+                      buttonType="text"
+                      size="small"
+                      startIcon={item.icon}
                     >
-                      {item.icon}
                       {item.label}
-                    </button>
+                    </Button>
                   )}
                   {index < menuItems.length - 1 && <div style={styles.divider} />}
                 </div>

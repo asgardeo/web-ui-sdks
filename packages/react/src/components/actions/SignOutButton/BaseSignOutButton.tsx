@@ -27,6 +27,7 @@ import {
 } from 'react';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
+import {Button} from '../../primitives/Button/Button';
 
 /**
  * Common props shared by all {@link BaseSignOutButton} components.
@@ -89,16 +90,19 @@ const BaseSignOutButton: ForwardRefExoticComponent<BaseSignOutButtonProps & RefA
       }
 
       return (
-        <button
+        <Button
           ref={ref}
           className={clsx(withVendorCSSClassPrefix('sign-out-button'), className)}
           style={style}
           disabled={isLoading}
+          loading={isLoading}
           type="button"
+          variant="secondary"
+          buttonType="outline"
           {...rest}
         >
           {children}
-        </button>
+        </Button>
       );
     },
   );
