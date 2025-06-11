@@ -33,6 +33,18 @@ export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';
 export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
 export {AsgardeoAuthException} from './errors/exception';
 
+export {
+  ApplicationNativeAuthenticationInitiateResponse,
+  ApplicationNativeAuthenticationFlowStatus,
+  ApplicationNativeAuthenticationFlowType,
+  ApplicationNativeAuthenticationStepType,
+  ApplicationNativeAuthenticationAuthenticator,
+  ApplicationNativeAuthenticationLink,
+  ApplicationNativeAuthenticationHandleRequestPayload,
+  ApplicationNativeAuthenticationHandleResponse,
+  ApplicationNativeAuthenticationAuthenticatorParamType,
+  ApplicationNativeAuthenticationAuthenticatorPromptType,
+} from './models/application-native-authentication';
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 export {BaseConfig, Config, Preferences, ThemePreferences} from './models/config';
 export {TokenResponse, IdTokenPayload} from './models/token';
@@ -49,18 +61,7 @@ export {User} from './models/user';
 export {SessionData} from './models/session';
 export {Schema, SchemaAttribute, WellKnownSchemaIds} from './models/scim2-schema';
 export {RecursivePartial} from './models/utility-types';
-export {
-  ApplicationNativeAuthenticationInitiateResponse,
-  ApplicationNativeAuthenticationFlowStatus,
-  ApplicationNativeAuthenticationFlowType,
-  ApplicationNativeAuthenticationStepType,
-  ApplicationNativeAuthenticationAuthenticator,
-  ApplicationNativeAuthenticationLink,
-  ApplicationNativeAuthenticationHandleRequestPayload,
-  ApplicationNativeAuthenticationHandleResponse,
-  ApplicationNativeAuthenticationAuthenticatorParamType,
-  ApplicationNativeAuthenticationAuthenticatorPromptType,
-} from './models/application-native-authentication';
+export {FieldType} from './models/field';
 
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 
@@ -70,5 +71,7 @@ export {ThemeColors, ThemeConfig, Theme, ThemeMode} from './theme/types';
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
 export {default as extractPkceStorageKeyFromState} from './utils/extractPkceStorageKeyFromState';
 export {default as removeTrailingSlash} from './utils/removeTrailingSlash';
+export {default as resolveFieldType} from './utils/resolveFieldType';
+export {default as resolveFieldName} from './utils/resolveFieldName';
 
 export {default as StorageManager} from './StorageManager';

@@ -17,7 +17,7 @@
  */
 
 import {ThemeConfig, ThemeMode} from '../theme/types';
-import { RecursivePartial } from './utility-types';
+import {RecursivePartial} from './utility-types';
 
 export interface BaseConfig<T = unknown> {
   /**
@@ -83,9 +83,17 @@ export interface ThemePreferences {
   overrides?: RecursivePartial<ThemeConfig>;
 }
 
+export interface TextPreferences {
+  [key: string]: string | undefined;
+}
+
 export interface Preferences {
   /**
    * Theme preferences for the Asgardeo UI components
    */
   theme?: ThemePreferences;
+  /**
+   * Text preferences for the Asgardeo UI components
+   */
+  text?: TextPreferences;
 }

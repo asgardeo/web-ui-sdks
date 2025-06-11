@@ -16,34 +16,28 @@
  * under the License.
  */
 
-import {ApplicationNativeAuthenticationAuthenticatorParamType} from '@asgardeo/browser';
+import {FieldType} from '@asgardeo/browser';
 import {FC, ReactElement, useState} from 'react';
 import TextField from '../primitives/TextField/TextField';
 import Select from '../primitives/Select/Select';
 import {SelectOption} from '../primitives/Select/Select';
 import Eye from '../primitives/Icons/Eye';
 import EyeOff from '../primitives/Icons/EyeOff';
+import OtpInput from '../primitives/OtpInput/OtpInput';
 
 /**
  * Interface for field configuration.
  */
 export interface FieldConfig {
-  /**
-   * The parameter name.
-   */
-  param: string;
+  name: string;
   /**
    * The field type based on ApplicationNativeAuthenticationAuthenticatorParamType.
    */
-  type: ApplicationNativeAuthenticationAuthenticatorParamType;
+  type: FieldType;
   /**
    * Display name for the field.
    */
-  displayName: string;
-  /**
-   * Whether the field contains confidential information (password).
-   */
-  confidential: boolean;
+  label: string;
   /**
    * Whether the field is required.
    */
@@ -95,11 +89,7 @@ export const formatMultiValuedString = (values: string[]): string => {
 /**
  * Utility function to validate field values based on type
  */
-export const validateFieldValue = (
-  value: string,
-  type: ApplicationNativeAuthenticationAuthenticatorParamType,
-  required: boolean = false,
-): string | null => {
+export const validateFieldValue = (value: string, type: FieldType, required: boolean = false): string | null => {
   // Check if required field is empty
   if (required && (!value || value.trim() === '')) {
     return 'This field is required';
@@ -111,18 +101,10 @@ export const validateFieldValue = (
   }
 
   switch (type) {
-    case ApplicationNativeAuthenticationAuthenticatorParamType.Integer:
+    case FieldType.Number:
       const numValue = parseInt(value, 10);
       if (isNaN(numValue)) {
         return 'Please enter a valid number';
-      }
-      break;
-
-    case ApplicationNativeAuthenticationAuthenticatorParamType.MultiValued:
-      // Validate that multi-valued fields don't have empty values after splitting
-      const values = parseMultiValuedString(value);
-      if (values.some(v => v.trim() === '')) {
-        return 'Please remove empty values';
       }
       break;
   }
@@ -141,7 +123,7 @@ export const validateFieldValue = (
  * const field = createField({
  *   param: 'username',
  *   type: ApplicationNativeAuthenticationAuthenticatorParamType.String,
- *   displayName: 'Username',
+ *   label: 'Username',
  *   confidential: false,
  *   required: true,
  *   value: '',
@@ -150,26 +132,14 @@ export const validateFieldValue = (
  * ```
  */
 export const createField = (config: FieldConfig): ReactElement => {
-  const {
-    param,
-    type,
-    displayName,
-    confidential,
-    required,
-    value,
-    onChange,
-    disabled = false,
-    error,
-    className,
-    options = [],
-  } = config;
+  const {name, type, label, required, value, onChange, disabled = false, error, className, options = []} = config;
 
   // Auto-validate the field value
   const validationError = error || validateFieldValue(value, type, required);
 
   const commonProps = {
-    id: param,
-    label: displayName,
+    name,
+    label,
     required,
     disabled,
     error: validationError,
@@ -177,7 +147,6 @@ export const createField = (config: FieldConfig): ReactElement => {
     value,
   };
 
-  // Password toggle component for confidential fields
   const PasswordToggleField: FC = () => {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -194,14 +163,13 @@ export const createField = (config: FieldConfig): ReactElement => {
   };
 
   switch (type) {
-    case ApplicationNativeAuthenticationAuthenticatorParamType.String:
-      if (confidential) {
-        return <PasswordToggleField />;
-      }
-
+    case FieldType.Password:
+      return <PasswordToggleField />;
+    case FieldType.Text:
       return <TextField {...commonProps} type="text" onChange={e => onChange(e.target.value)} autoComplete="off" />;
-
-    case ApplicationNativeAuthenticationAuthenticatorParamType.Integer:
+    case FieldType.Otp:
+      return <OtpInput {...commonProps} onChange={e => onChange(e.target.value)} />;
+    case FieldType.Number:
       return (
         <TextField
           {...commonProps}
@@ -210,9 +178,7 @@ export const createField = (config: FieldConfig): ReactElement => {
           helperText="Enter a numeric value"
         />
       );
-
-    case ApplicationNativeAuthenticationAuthenticatorParamType.MultiValued:
-      // Try to get default options if none provided
+    case FieldType.Select:
       const fieldOptions = options.length > 0 ? options : [];
 
       if (fieldOptions.length > 0) {
@@ -226,7 +192,6 @@ export const createField = (config: FieldConfig): ReactElement => {
         );
       }
 
-      // Fallback to text field with comma-separated values
       return (
         <TextField
           {...commonProps}
@@ -238,11 +203,6 @@ export const createField = (config: FieldConfig): ReactElement => {
       );
 
     default:
-      // Fallback to text field for unknown types
-      if (confidential) {
-        return <PasswordToggleField />;
-      }
-
       return (
         <TextField
           {...commonProps}

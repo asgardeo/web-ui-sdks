@@ -19,6 +19,8 @@
 import {
   ApplicationNativeAuthenticationAuthenticator,
   ApplicationNativeAuthenticationAuthenticatorParamType,
+  resolveFieldName,
+  resolveFieldType
 } from '@asgardeo/browser';
 import {FC, FormEvent, ReactElement} from 'react';
 import {createField} from '../../factories/FieldFactory';
@@ -258,13 +260,12 @@ const BaseSignIn: FC<BaseSignInProps> = ({
           {formFields.map(field => (
             <div key={field.param} style={{marginBottom: '1rem'}}>
               {createField({
-                param: field.param,
-                type: field.type,
-                displayName: field.displayName,
-                confidential: field.confidential,
+                name: resolveFieldName(field),
+                type: resolveFieldType(field),
+                label: field.displayName,
                 required: field.required,
                 value: field.value,
-                onChange: value => onInputChange(field.param, value),
+                onChange: value => onInputChange(resolveFieldName(field), value),
                 disabled: isLoading,
                 className: inputClassName,
               })}

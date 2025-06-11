@@ -82,6 +82,9 @@ export * from './components/primitives/Card/Card';
 export {default as Alert} from './components/primitives/Alert/Alert';
 export * from './components/primitives/Alert/Alert';
 
+export {default as OtpInput} from './components/primitives/OtpInput/OtpInput';
+export * from './components/primitives/OtpInput/OtpInput';
+
 export {default as Eye} from './components/primitives/Icons/Eye';
 export {default as EyeOff} from './components/primitives/Icons/EyeOff';
 export {default as CircleCheck} from './components/primitives/Icons/CircleCheck';

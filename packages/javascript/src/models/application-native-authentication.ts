@@ -69,6 +69,10 @@ export enum ApplicationNativeAuthenticationAuthenticatorParamType {
   MultiValued = 'MULTI_VALUED',
 }
 
+export enum ApplicationNativeAuthenticationAuthenticatorExtendedParamType {
+  Otp = 'OTPCode',
+}
+
 export enum ApplicationNativeAuthenticationAuthenticatorPromptType {
   /**
    * Prompt for user input, typically for username/password or similar credentials.
