@@ -16,4 +16,4 @@
  * under the License.
  */
 
-export * from './en-US';
+export {default as en_US} from './en-US';

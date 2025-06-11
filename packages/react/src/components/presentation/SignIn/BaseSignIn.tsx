@@ -20,13 +20,14 @@ import {
   ApplicationNativeAuthenticationAuthenticator,
   ApplicationNativeAuthenticationAuthenticatorParamType,
   resolveFieldName,
-  resolveFieldType
+  resolveFieldType,
 } from '@asgardeo/browser';
 import {FC, FormEvent, ReactElement} from 'react';
 import {createField} from '../../factories/FieldFactory';
 import Button from '../../primitives/Button/Button';
 import Card from '../../primitives/Card/Card';
 import Alert from '../../primitives/Alert/Alert';
+import useTranslation from '../../../hooks/useTranslation';
 
 /**
  * Interface for form field state.
@@ -169,6 +170,8 @@ const BaseSignIn: FC<BaseSignInProps> = ({
   showLoading = true,
   loadingText = 'Loading...',
 }) => {
+  const {t} = useTranslation();
+
   /**
    * Get form fields from the current authenticator.
    */
@@ -226,7 +229,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     <Card className={className}>
       <form onSubmit={handleSubmit}>
         <Card.Header>
-          <Card.Title level={2}>{currentAuthenticator.authenticator}</Card.Title>
+          <Card.Title level={2}>{t("signin.title")}</Card.Title>
           {messages.length > 0 && (
             <div style={{marginTop: '1rem'}}>
               {messages.map((message, index) => {

@@ -16,27 +16,52 @@
  * under the License.
  */
 
-import {getI18nBundles} from '@asgardeo/browser';
+import {useContext} from 'react';
+import I18nContext, {I18nContextValue} from '../contexts/I18nContext';
 
-export type UseTranslation = {
+export interface UseTranslation {
+  /**
+   * Translation function that returns a translated string for the given key
+   */
   t: (key: string, params?: Record<string, string | number>) => string;
-};
+  
+  /**
+   * The current language code
+   */
+  currentLanguage: string;
+  
+  /**
+   * Function to change the current language
+   */
+  setLanguage: (language: string) => void;
+  
+  /**
+   * All available language codes
+   */
+  availableLanguages: string[];
+}
 
+/**
+ * Hook for accessing translation functions and language management.
+ * Must be used within an I18nProvider context.
+ * 
+ * @returns An object containing translation function and language management utilities
+ * @throws Error if used outside of I18nProvider context
+ */
 const useTranslation = (): UseTranslation => {
-  const i18n = getI18nBundles();
-
-  const t = (key: string, params?: Record<string, string | number>): string => {
-    const translation = i18n[key] || key;
-    if (params) {
-      return Object.entries(params).reduce((acc, [paramKey, paramValue]) => {
-        return acc.replace(`{${paramKey}}`, String(paramValue));
-      }, translation);
-    }
-    return translation;
-  };
-
+  const context = useContext(I18nContext);
+  
+  if (!context) {
+    throw new Error('useTranslation must be used within an I18nProvider. Make sure your component is wrapped with AsgardeoProvider which includes I18nProvider.');
+  }
+  
+  const {t, currentLanguage, setLanguage, bundles} = context;
+  
   return {
     t,
+    currentLanguage,
+    setLanguage,
+    availableLanguages: Object.keys(bundles),
   };
 };
 

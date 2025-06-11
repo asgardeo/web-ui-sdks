@@ -17,6 +17,7 @@
  */
 
 import {ThemeConfig, ThemeMode} from '../theme/types';
+import { I18nBundle } from './i18n';
 import {RecursivePartial} from './utility-types';
 
 export interface BaseConfig<T = unknown> {
@@ -83,8 +84,23 @@ export interface ThemePreferences {
   overrides?: RecursivePartial<ThemeConfig>;
 }
 
-export interface TextPreferences {
-  [key: string]: string | undefined;
+export interface I18nPreferences {
+  /**
+   * The language to use for translations.
+   * Defaults to the browser's default language.
+   */
+  language?: string;
+  /**
+   * The fallback language to use if translations are not available in the specified language.
+   * Defaults to 'en-US'.
+   */
+  fallbackLanguage?: string;
+  /**
+   * Custom translations to override default ones.
+   */
+  bundles?: {
+    [key: string]: I18nBundle;
+  };
 }
 
 export interface Preferences {
@@ -93,7 +109,7 @@ export interface Preferences {
    */
   theme?: ThemePreferences;
   /**
-   * Text preferences for the Asgardeo UI components
+   * Internationalization preferences for the Asgardeo UI components
    */
-  text?: TextPreferences;
+  i18n?: I18nPreferences;
 }

@@ -46,7 +46,7 @@ export {
   ApplicationNativeAuthenticationAuthenticatorPromptType,
 } from './models/application-native-authentication';
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
-export {BaseConfig, Config, Preferences, ThemePreferences} from './models/config';
+export {BaseConfig, Config, Preferences, ThemePreferences, I18nPreferences} from './models/config';
 export {TokenResponse, IdTokenPayload} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';
 export {OAuthResponseMode} from './models/oauth-response';

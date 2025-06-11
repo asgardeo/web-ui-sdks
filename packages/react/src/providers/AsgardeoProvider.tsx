@@ -23,6 +23,7 @@ import AsgardeoContext from '../contexts/AsgardeoContext';
 import useBrowserUrl from '../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../models/config';
 import {ThemeProvider} from '../theme/ThemeProvider';
+import I18nProvider from './I18nProvider';
 
 /**
  * Props interface of {@link AsgardeoProvider}
@@ -173,9 +174,11 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         baseUrl,
       }}
     >
-      <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
-        {children}
-      </ThemeProvider>
+      <I18nProvider preferences={preferences?.i18n}>
+        <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
+          {children}
+        </ThemeProvider>
+      </I18nProvider>
     </AsgardeoContext.Provider>
   );
 };
