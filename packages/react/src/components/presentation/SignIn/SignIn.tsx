@@ -17,18 +17,11 @@
  */
 
 import {
-  initializeApplicationNativeAuthentication,
   handleApplicationNativeAuthentication,
   ApplicationNativeAuthenticationInitiateResponse,
   ApplicationNativeAuthenticationHandleResponse,
-  ApplicationNativeAuthenticationFlowStatus,
-  ApplicationNativeAuthenticationAuthenticator,
-  ApplicationNativeAuthenticationAuthenticatorPromptType,
-  AsgardeoAPIError,
-  withVendorCSSClassPrefix,
 } from '@asgardeo/browser';
-import {FC, useState, useEffect, ReactElement} from 'react';
-import {clsx} from 'clsx';
+import {FC} from 'react';
 import BaseSignIn from './BaseSignIn';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 
@@ -94,7 +87,7 @@ export interface SignInProps {
 
 /**
  * A styled SignIn component that provides native authentication flow with pre-built styling.
- * This component handles the API calls and state management for authentication.
+ * This component handles the API calls for authentication and delegates UI logic to BaseSignIn.
  *
  * @example
  * ```tsx
@@ -103,13 +96,6 @@ export interface SignInProps {
  * const App = () => {
  *   return (
  *     <SignIn
- *       baseUrl="https://api.asgardeo.io/t/your-org"
- *       initialPayload={{
- *         client_id: 'your-client-id',
- *         response_type: 'code',
- *         scope: 'openid',
- *         redirect_uri: 'http://localhost:3000'
- *       }}
  *       onSuccess={(authData) => {
  *         console.log('Authentication successful:', authData);
  *         // Handle successful authentication (e.g., redirect, store tokens)
@@ -137,347 +123,41 @@ const SignIn: FC<SignInProps> = ({
   loadingText = 'Loading...',
 }) => {
   const {signIn, baseUrl} = useAsgardeo();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [currentFlow, setCurrentFlow] = useState<ApplicationNativeAuthenticationInitiateResponse | null>(null);
-  const [currentAuthenticator, setCurrentAuthenticator] = useState<ApplicationNativeAuthenticationAuthenticator | null>(
-    null,
-  );
-  const [formValues, setFormValues] = useState<Record<string, string>>({});
-  const [error, setError] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Array<{type: string; message: string}>>([]);
 
   /**
    * Initialize the authentication flow.
    */
-  const initializeFlow = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await signIn({response_mode: 'direct'});
-
-      setCurrentFlow(response);
-      setIsInitialized(true);
-      onFlowChange?.(response);
-
-      if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
-        // Flow completed immediately
-        onSuccess?.((response as any).authData || {});
-        return;
-      }
-
-      if (response.nextStep?.authenticators?.length > 0) {
-        // Check if this is a multi-options prompt
-        if (response.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' && response.nextStep.authenticators.length > 1) {
-          // Don't auto-select when there are multiple options, let user choose
-          setCurrentAuthenticator(null);
-        } else {
-          // Single authenticator or AUTHENTICATOR_PROMPT, select automatically
-          const authenticator = response.nextStep.authenticators[0];
-          setCurrentAuthenticator(authenticator);
-          setupFormFields(authenticator);
-        }
-      }
-
-      // Handle any messages from the response
-      if ('nextStep' in response && response.nextStep && 'messages' in response.nextStep) {
-        const stepMessages = (response.nextStep as any).messages || [];
-        setMessages(
-          stepMessages.map((msg: any) => ({
-            type: msg.type || 'INFO',
-            message: msg.message || '',
-          })),
-        );
-      }
-    } catch (err) {
-      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Failed to initialize authentication';
-      setError(errorMessage);
-      onError?.(err as Error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleInitialize = async (): Promise<ApplicationNativeAuthenticationInitiateResponse> => {
+    return await signIn({response_mode: 'direct'});
   };
 
   /**
-   * Setup form fields based on the current authenticator.
+   * Handle authentication steps.
    */
-  const setupFormFields = (authenticator: ApplicationNativeAuthenticationAuthenticator) => {
-    // Initialize form values for the authenticator's parameters
-    const initialValues: Record<string, string> = {};
-    authenticator.metadata?.params?.forEach(param => {
-      initialValues[param.param] = '';
+  const handleAuthenticate = async (payload: {
+    flowId: string;
+    selectedAuthenticator: {
+      authenticatorId: string;
+      params: Record<string, string>;
+    };
+  }): Promise<ApplicationNativeAuthenticationHandleResponse> => {
+    return await handleApplicationNativeAuthentication({
+      baseUrl,
+      payload,
     });
-    setFormValues(initialValues);
   };
-
-  /**
-   * Handle form submission.
-   */
-  const handleSubmit = async (submittedValues: Record<string, string>) => {
-    if (!currentFlow || !currentAuthenticator) {
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    setMessages([]);
-
-    try {
-      const payload = {
-        flowId: currentFlow.flowId,
-        selectedAuthenticator: {
-          authenticatorId: currentAuthenticator.authenticatorId,
-          params: submittedValues,
-        },
-      };
-
-      const response = await handleApplicationNativeAuthentication({
-        baseUrl,
-        payload,
-      });
-
-      onFlowChange?.(response);
-
-      if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
-        onSuccess?.(response.authData);
-        return;
-      }
-
-      if (
-        response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
-        response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
-      ) {
-        setError('Authentication failed. Please check your credentials and try again.');
-        return;
-      }
-
-      // Continue with next step
-      if ('flowId' in response && 'nextStep' in response) {
-        const nextStepResponse = response as any;
-        setCurrentFlow(nextStepResponse);
-
-        if (nextStepResponse.nextStep?.authenticators?.length > 0) {
-          // Check if this is a multi-options prompt
-          if (
-            nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
-            nextStepResponse.nextStep.authenticators.length > 1
-          ) {
-            // Don't auto-select when there are multiple options, let user choose
-            setCurrentAuthenticator(null);
-          } else {
-            // Single authenticator or AUTHENTICATOR_PROMPT, select automatically
-            const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-            setCurrentAuthenticator(nextAuthenticator);
-            setupFormFields(nextAuthenticator);
-          }
-        }
-
-        // Handle any messages from the response
-        if (nextStepResponse.nextStep?.messages) {
-          setMessages(
-            nextStepResponse.nextStep.messages.map((msg: any) => ({
-              type: msg.type || 'INFO',
-              message: msg.message || '',
-            })),
-          );
-        }
-      }
-    } catch (err) {
-      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Authentication failed';
-      setError(errorMessage);
-      onError?.(err as Error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * Handle authenticator selection for multi-option prompts.
-   */
-  const handleAuthenticatorSelection = async (
-    authenticator: ApplicationNativeAuthenticationAuthenticator,
-    formData?: Record<string, string>,
-  ) => {
-    if (!currentFlow) {
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    setMessages([]);
-
-    try {
-      // Check if this is a redirection-based authenticator (like Google, GitHub)
-      if (
-        authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.REDIRECTION_PROMPT
-      ) {
-        // For redirection-based authentication, just select the authenticator
-        const payload = {
-          flowId: currentFlow.flowId,
-          selectedAuthenticator: {
-            authenticatorId: authenticator.authenticatorId,
-            params: {},
-          },
-        };
-
-        const response = await handleApplicationNativeAuthentication({
-          baseUrl,
-          payload,
-        });
-
-        onFlowChange?.(response);
-
-        if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
-          onSuccess?.(response.authData);
-          return;
-        }
-
-        // Handle redirection if needed - for now, we'll handle redirection in a future iteration
-        // TODO: Implement redirection handling for federated authentication
-      } else {
-        // For user prompt authenticators (like username/password)
-        if (formData) {
-          // Submit the form data directly
-          const payload = {
-            flowId: currentFlow.flowId,
-            selectedAuthenticator: {
-              authenticatorId: authenticator.authenticatorId,
-              params: formData,
-            },
-          };
-
-          const response = await handleApplicationNativeAuthentication({
-            baseUrl,
-            payload,
-          });
-
-          onFlowChange?.(response);
-
-          if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
-            onSuccess?.(response.authData);
-            return;
-          }
-
-          if (
-            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
-            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
-          ) {
-            setError('Authentication failed. Please check your credentials and try again.');
-            return;
-          }
-
-          // Continue with next step
-          if ('flowId' in response && 'nextStep' in response) {
-            const nextStepResponse = response as any;
-            setCurrentFlow(nextStepResponse);
-
-            if (nextStepResponse.nextStep?.authenticators?.length > 0) {
-              // Check if this is a multi-options prompt
-              if (
-                nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
-                nextStepResponse.nextStep.authenticators.length > 1
-              ) {
-                // Don't auto-select when there are multiple options, let user choose
-                setCurrentAuthenticator(null);
-              } else {
-                // Single authenticator or AUTHENTICATOR_PROMPT, select automatically
-                const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-                setCurrentAuthenticator(nextAuthenticator);
-                setupFormFields(nextAuthenticator);
-              }
-            }
-
-            // Handle any messages from the response
-            if (nextStepResponse.nextStep?.messages) {
-              setMessages(
-                nextStepResponse.nextStep.messages.map((msg: any) => ({
-                  type: msg.type || 'INFO',
-                  message: msg.message || '',
-                })),
-              );
-            }
-          }
-        } else {
-          // Just set up the form for the authenticator
-          setCurrentAuthenticator(authenticator);
-          setupFormFields(authenticator);
-        }
-      }
-    } catch (err) {
-      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Authenticator selection failed';
-      setError(errorMessage);
-      onError?.(err as Error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * Handle input value changes.
-   */
-  const handleInputChange = (param: string, value: string) => {
-    setFormValues(prev => ({
-      ...prev,
-      [param]: value,
-    }));
-  };
-
-  // Initialize the flow on component mount
-  useEffect(() => {
-    if (!isInitialized) {
-      initializeFlow();
-    }
-  }, [isInitialized]);
-
-  const containerClasses = clsx(
-    styled && [
-      withVendorCSSClassPrefix('signin'),
-      withVendorCSSClassPrefix(`signin--${size}`),
-      withVendorCSSClassPrefix(`signin--${variant}`),
-    ],
-    className,
-  );
-
-  const inputClasses = clsx(
-    styled && [
-      withVendorCSSClassPrefix('signin__input'),
-      size === 'small' && withVendorCSSClassPrefix('signin__input--small'),
-      size === 'large' && withVendorCSSClassPrefix('signin__input--large'),
-    ],
-  );
-
-  const buttonClasses = clsx(
-    styled && [
-      withVendorCSSClassPrefix('signin__button'),
-      size === 'small' && withVendorCSSClassPrefix('signin__button--small'),
-      size === 'large' && withVendorCSSClassPrefix('signin__button--large'),
-      variant === 'outlined' && withVendorCSSClassPrefix('signin__button--outlined'),
-      variant === 'filled' && withVendorCSSClassPrefix('signin__button--filled'),
-    ],
-  );
-
-  const errorClasses = clsx(styled && [withVendorCSSClassPrefix('signin__error')]);
-
-  const messageClasses = clsx(styled && [withVendorCSSClassPrefix('signin__messages')]);
 
   return (
     <BaseSignIn
-      currentFlow={currentFlow}
-      currentAuthenticator={currentAuthenticator}
-      formValues={formValues}
-      isLoading={isLoading}
-      error={error}
-      messages={messages}
-      isInitialized={isInitialized}
-      onSubmit={handleSubmit}
-      onInputChange={handleInputChange}
-      onAuthenticatorSelection={handleAuthenticatorSelection}
-      className={containerClasses}
-      inputClassName={inputClasses}
-      buttonClassName={buttonClasses}
-      errorClassName={errorClasses}
-      messageClassName={messageClasses}
+      onInitialize={handleInitialize}
+      onAuthenticate={handleAuthenticate}
+      onSuccess={onSuccess}
+      onError={onError}
+      onFlowChange={onFlowChange}
+      className={className}
+      styled={styled}
+      size={size}
+      variant={variant}
       submitButtonText={submitButtonText}
       showLoading={showLoading}
       loadingText={loadingText}

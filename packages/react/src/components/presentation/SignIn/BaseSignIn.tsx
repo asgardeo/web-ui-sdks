@@ -21,8 +21,13 @@ import {
   ApplicationNativeAuthenticationInitiateResponse,
   ApplicationNativeAuthenticationHandleResponse,
   ApplicationNativeAuthenticationStepType,
+  ApplicationNativeAuthenticationFlowStatus,
+  ApplicationNativeAuthenticationAuthenticatorPromptType,
+  AsgardeoAPIError,
+  withVendorCSSClassPrefix,
 } from '@asgardeo/browser';
-import {FC, ReactElement, FormEvent} from 'react';
+import {FC, ReactElement, FormEvent, useState, useEffect} from 'react';
+import {clsx} from 'clsx';
 import Card from '../../primitives/Card/Card';
 import Alert from '../../primitives/Alert/Alert';
 import Divider from '../../primitives/Divider/Divider';
@@ -34,56 +39,42 @@ import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory
  */
 export interface BaseSignInProps {
   /**
-   * Current authentication flow information.
+   * Function to initialize authentication flow.
+   * @returns Promise resolving to the initial authentication response.
    */
-  currentFlow: ApplicationNativeAuthenticationInitiateResponse | ApplicationNativeAuthenticationHandleResponse | null;
+  onInitialize: () => Promise<ApplicationNativeAuthenticationInitiateResponse>;
 
   /**
-   * Current authenticator information.
+   * Function to handle authentication steps.
+   * @param payload - The authentication payload.
+   * @returns Promise resolving to the authentication response.
    */
-  currentAuthenticator: ApplicationNativeAuthenticationAuthenticator | null;
+  onAuthenticate: (payload: {
+    flowId: string;
+    selectedAuthenticator: {
+      authenticatorId: string;
+      params: Record<string, string>;
+    };
+  }) => Promise<ApplicationNativeAuthenticationHandleResponse>;
 
   /**
-   * Form field values.
+   * Callback function called when authentication is successful.
+   * @param authData - The authentication data returned upon successful completion.
    */
-  formValues: Record<string, string>;
+  onSuccess?: (authData: Record<string, any>) => void;
 
   /**
-   * Whether the component is in loading state.
+   * Callback function called when authentication fails.
+   * @param error - The error that occurred during authentication.
    */
-  isLoading: boolean;
+  onError?: (error: Error) => void;
 
   /**
-   * Error message to display.
+   * Callback function called when authentication flow status changes.
+   * @param response - The current authentication response.
    */
-  error: string | null;
-
-  /**
-   * Messages to display to the user.
-   */
-  messages: Array<{type: string; message: string}>;
-
-  /**
-   * Whether the component has been initialized.
-   */
-  isInitialized: boolean;
-
-  /**
-   * Callback function called when form is submitted.
-   */
-  onSubmit: (formValues: Record<string, string>) => void;
-
-  /**
-   * Callback function called when input values change.
-   */
-  onInputChange: (param: string, value: string) => void;
-
-  /**
-   * Callback function called when an authenticator is selected from multiple options.
-   */
-  onAuthenticatorSelection?: (
-    authenticator: ApplicationNativeAuthenticationAuthenticator,
-    formData?: Record<string, string>,
+  onFlowChange?: (
+    response: ApplicationNativeAuthenticationInitiateResponse | ApplicationNativeAuthenticationHandleResponse,
   ) => void;
 
   /**
@@ -125,12 +116,27 @@ export interface BaseSignInProps {
    * Custom loading text.
    */
   loadingText?: string;
+
+  /**
+   * Apply default styling.
+   */
+  styled?: boolean;
+
+  /**
+   * Size variant for the component.
+   */
+  size?: 'small' | 'medium' | 'large';
+
+  /**
+   * Theme variant for the component.
+   */
+  variant?: 'default' | 'outlined' | 'filled';
 }
 
 /**
  * Base SignIn component that provides native authentication flow.
- * This component handles the presentation layer for authentication forms.
- * Now uses Card component for better visual structure.
+ * This component handles both the presentation layer and authentication flow logic.
+ * It accepts API functions as props to maintain framework independence.
  *
  * @example
  * ```tsx
@@ -139,14 +145,20 @@ export interface BaseSignInProps {
  * const MySignIn = () => {
  *   return (
  *     <BaseSignIn
- *       currentAuthenticator={authenticator}
- *       formValues={values}
- *       isLoading={loading}
- *       error={error}
- *       messages={messages}
- *       isInitialized={initialized}
- *       onSubmit={handleSubmit}
- *       onInputChange={handleInputChange}
+ *       onInitialize={async () => {
+ *         // Your API call to initialize authentication
+ *         return await initializeAuth();
+ *       }}
+ *       onAuthenticate={async (payload) => {
+ *         // Your API call to handle authentication
+ *         return await handleAuth(payload);
+ *       }}
+ *       onSuccess={(authData) => {
+ *         console.log('Success:', authData);
+ *       }}
+ *       onError={(error) => {
+ *         console.error('Error:', error);
+ *       }}
  *       className="max-w-md mx-auto"
  *     />
  *   );
@@ -154,16 +166,11 @@ export interface BaseSignInProps {
  * ```
  */
 const BaseSignIn: FC<BaseSignInProps> = ({
-  currentFlow,
-  currentAuthenticator,
-  formValues,
-  isLoading,
-  error,
-  messages,
-  isInitialized,
-  onSubmit,
-  onInputChange,
-  onAuthenticatorSelection,
+  onInitialize,
+  onAuthenticate,
+  onSuccess,
+  onError,
+  onFlowChange,
   className = '',
   inputClassName = '',
   buttonClassName = '',
@@ -172,8 +179,303 @@ const BaseSignIn: FC<BaseSignInProps> = ({
   submitButtonText = 'Sign In',
   showLoading = true,
   loadingText = 'Loading...',
+  styled = true,
+  size = 'medium',
+  variant = 'default',
 }) => {
   const {t} = useTranslation();
+  
+  // Internal state management
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [currentFlow, setCurrentFlow] = useState<ApplicationNativeAuthenticationInitiateResponse | null>(null);
+  const [currentAuthenticator, setCurrentAuthenticator] = useState<ApplicationNativeAuthenticationAuthenticator | null>(
+    null,
+  );
+  const [formValues, setFormValues] = useState<Record<string, string>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Array<{type: string; message: string}>>([]);
+
+  // Generate CSS classes
+  const containerClasses = clsx(
+    styled && [
+      withVendorCSSClassPrefix('signin'),
+      withVendorCSSClassPrefix(`signin--${size}`),
+      withVendorCSSClassPrefix(`signin--${variant}`),
+    ],
+    className,
+  );
+
+  const inputClasses = clsx(
+    styled && [
+      withVendorCSSClassPrefix('signin__input'),
+      size === 'small' && withVendorCSSClassPrefix('signin__input--small'),
+      size === 'large' && withVendorCSSClassPrefix('signin__input--large'),
+    ],
+    inputClassName,
+  );
+
+  const buttonClasses = clsx(
+    styled && [
+      withVendorCSSClassPrefix('signin__button'),
+      size === 'small' && withVendorCSSClassPrefix('signin__button--small'),
+      size === 'large' && withVendorCSSClassPrefix('signin__button--large'),
+      variant === 'outlined' && withVendorCSSClassPrefix('signin__button--outlined'),
+      variant === 'filled' && withVendorCSSClassPrefix('signin__button--filled'),
+    ],
+    buttonClassName,
+  );
+
+  const errorClasses = clsx(styled && [withVendorCSSClassPrefix('signin__error')], errorClassName);
+
+  const messageClasses = clsx(styled && [withVendorCSSClassPrefix('signin__messages')], messageClassName);
+
+  /**
+   * Setup form fields based on the current authenticator.
+   */
+  const setupFormFields = (authenticator: ApplicationNativeAuthenticationAuthenticator) => {
+    const initialValues: Record<string, string> = {};
+    authenticator.metadata?.params?.forEach(param => {
+      initialValues[param.param] = '';
+    });
+    setFormValues(initialValues);
+  };
+
+  /**
+   * Initialize the authentication flow.
+   */
+  const initializeFlow = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await onInitialize();
+
+      setCurrentFlow(response);
+      setIsInitialized(true);
+      onFlowChange?.(response);
+
+      if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+        onSuccess?.((response as any).authData || {});
+        return;
+      }
+
+      if (response.nextStep?.authenticators?.length > 0) {
+        if (response.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' && response.nextStep.authenticators.length > 1) {
+          setCurrentAuthenticator(null);
+        } else {
+          const authenticator = response.nextStep.authenticators[0];
+          setCurrentAuthenticator(authenticator);
+          setupFormFields(authenticator);
+        }
+      }
+
+      if ('nextStep' in response && response.nextStep && 'messages' in response.nextStep) {
+        const stepMessages = (response.nextStep as any).messages || [];
+        setMessages(
+          stepMessages.map((msg: any) => ({
+            type: msg.type || 'INFO',
+            message: msg.message || '',
+          })),
+        );
+      }
+    } catch (err) {
+      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Failed to initialize authentication';
+      setError(errorMessage);
+      onError?.(err as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Handle form submission.
+   */
+  const handleSubmit = async (submittedValues: Record<string, string>) => {
+    if (!currentFlow || !currentAuthenticator) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setMessages([]);
+
+    try {
+      const payload = {
+        flowId: currentFlow.flowId,
+        selectedAuthenticator: {
+          authenticatorId: currentAuthenticator.authenticatorId,
+          params: submittedValues,
+        },
+      };
+
+      const response = await onAuthenticate(payload);
+      onFlowChange?.(response);
+
+      if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+        onSuccess?.(response.authData);
+        return;
+      }
+
+      if (
+        response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
+        response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+      ) {
+        setError('Authentication failed. Please check your credentials and try again.');
+        return;
+      }
+
+      if ('flowId' in response && 'nextStep' in response) {
+        const nextStepResponse = response as any;
+        setCurrentFlow(nextStepResponse);
+
+        if (nextStepResponse.nextStep?.authenticators?.length > 0) {
+          if (
+            nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+            nextStepResponse.nextStep.authenticators.length > 1
+          ) {
+            setCurrentAuthenticator(null);
+          } else {
+            const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
+            setCurrentAuthenticator(nextAuthenticator);
+            setupFormFields(nextAuthenticator);
+          }
+        }
+
+        if (nextStepResponse.nextStep?.messages) {
+          setMessages(
+            nextStepResponse.nextStep.messages.map((msg: any) => ({
+              type: msg.type || 'INFO',
+              message: msg.message || '',
+            })),
+          );
+        }
+      }
+    } catch (err) {
+      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Authentication failed';
+      setError(errorMessage);
+      onError?.(err as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Handle authenticator selection for multi-option prompts.
+   */
+  const handleAuthenticatorSelection = async (
+    authenticator: ApplicationNativeAuthenticationAuthenticator,
+    formData?: Record<string, string>,
+  ) => {
+    if (!currentFlow) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setMessages([]);
+
+    try {
+      if (
+        authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.REDIRECTION_PROMPT
+      ) {
+        const payload = {
+          flowId: currentFlow.flowId,
+          selectedAuthenticator: {
+            authenticatorId: authenticator.authenticatorId,
+            params: {},
+          },
+        };
+
+        const response = await onAuthenticate(payload);
+        onFlowChange?.(response);
+
+        if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+          onSuccess?.(response.authData);
+          return;
+        }
+      } else {
+        if (formData) {
+          const payload = {
+            flowId: currentFlow.flowId,
+            selectedAuthenticator: {
+              authenticatorId: authenticator.authenticatorId,
+              params: formData,
+            },
+          };
+
+          const response = await onAuthenticate(payload);
+          onFlowChange?.(response);
+
+          if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+            onSuccess?.(response.authData);
+            return;
+          }
+
+          if (
+            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
+            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+          ) {
+            setError('Authentication failed. Please check your credentials and try again.');
+            return;
+          }
+
+          if ('flowId' in response && 'nextStep' in response) {
+            const nextStepResponse = response as any;
+            setCurrentFlow(nextStepResponse);
+
+            if (nextStepResponse.nextStep?.authenticators?.length > 0) {
+              if (
+                nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+                nextStepResponse.nextStep.authenticators.length > 1
+              ) {
+                setCurrentAuthenticator(null);
+              } else {
+                const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
+                setCurrentAuthenticator(nextAuthenticator);
+                setupFormFields(nextAuthenticator);
+              }
+            }
+
+            if (nextStepResponse.nextStep?.messages) {
+              setMessages(
+                nextStepResponse.nextStep.messages.map((msg: any) => ({
+                  type: msg.type || 'INFO',
+                  message: msg.message || '',
+                })),
+              );
+            }
+          }
+        } else {
+          setCurrentAuthenticator(authenticator);
+          setupFormFields(authenticator);
+        }
+      }
+    } catch (err) {
+      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Authenticator selection failed';
+      setError(errorMessage);
+      onError?.(err as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Handle input value changes.
+   */
+  const handleInputChange = (param: string, value: string) => {
+    setFormValues(prev => ({
+      ...prev,
+      [param]: value,
+    }));
+  };
+
+  // Initialize the flow on component mount
+  useEffect(() => {
+    if (!isInitialized) {
+      initializeFlow();
+    }
+  }, [isInitialized]);
 
   /**
    * Check if current flow has multiple authenticator options.
@@ -222,7 +524,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
 
   if (!isInitialized && isLoading) {
     return showLoading ? (
-      <Card className={className}>
+      <Card className={containerClasses}>
         <Card.Content>
           <p>{loadingText}</p>
         </Card.Content>
@@ -236,7 +538,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     const federatedAuths = getFederatedAuthenticators();
 
     return (
-      <Card className={className}>
+      <Card className={containerClasses}>
         <Card.Header>
           <Card.Title level={2}>{t('signin.title')}</Card.Title>
           {messages.length > 0 && (
@@ -252,7 +554,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
                     : 'info';
 
                 return (
-                  <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClassName}>
+                  <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClasses}>
                     <Alert.Description>{message.message}</Alert.Description>
                   </Alert>
                 );
@@ -263,7 +565,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
 
         <Card.Content>
           {error && (
-            <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClassName}>
+            <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClasses}>
               <Alert.Title>Error</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>
@@ -279,18 +581,17 @@ const BaseSignIn: FC<BaseSignInProps> = ({
                   usernamePasswordAuth.metadata?.params?.forEach(param => {
                     formData[param.param] = formValues[param.param] || '';
                   });
-                  onAuthenticatorSelection!(usernamePasswordAuth, formData);
+                  handleAuthenticatorSelection(usernamePasswordAuth, formData);
                 }}
-              >
-                {createSignInOptionFromAuthenticator(
+              >                {createSignInOptionFromAuthenticator(
                   usernamePasswordAuth,
                   formValues,
                   isLoading,
-                  onInputChange,
-                  onAuthenticatorSelection!,
+                  handleInputChange,
+                  handleAuthenticatorSelection,
                   {
-                    inputClassName,
-                    buttonClassName,
+                    inputClassName: inputClasses,
+                    buttonClassName: buttonClasses,
                     submitButtonText,
                     error,
                   },
@@ -311,11 +612,11 @@ const BaseSignIn: FC<BaseSignInProps> = ({
                     authenticator,
                     formValues,
                     isLoading,
-                    onInputChange,
-                    onAuthenticatorSelection!,
+                    handleInputChange,
+                    handleAuthenticatorSelection,
                     {
-                      inputClassName,
-                      buttonClassName,
+                      inputClassName: inputClasses,
+                      buttonClassName: buttonClasses,
                       error,
                     },
                   )}
@@ -330,7 +631,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
 
   if (!currentAuthenticator) {
     return (
-      <Card className={className}>
+      <Card className={containerClasses}>
         <Card.Content>
           {error && (
             <Alert variant="error">
@@ -345,7 +646,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
 
   // Single authenticator view
   return (
-    <Card className={className}>
+    <Card className={containerClasses}>
       <Card.Header>
         <Card.Title level={2}>{t('signin.title')}</Card.Title>
         {messages.length > 0 && (
@@ -361,7 +662,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
                   : 'info';
 
               return (
-                <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClassName}>
+                <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClasses}>
                   <Alert.Description>{message.message}</Alert.Description>
                 </Alert>
               );
@@ -372,7 +673,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
 
       <Card.Content>
         {error && (
-          <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClassName}>
+          <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClasses}>
             <Alert.Title>Error</Alert.Title>
             <Alert.Description>{error}</Alert.Description>
           </Alert>
@@ -385,18 +686,18 @@ const BaseSignIn: FC<BaseSignInProps> = ({
             currentAuthenticator.metadata?.params?.forEach(param => {
               formData[param.param] = formValues[param.param] || '';
             });
-            onSubmit(formData);
+            handleSubmit(formData);
           }}
         >
           {createSignInOptionFromAuthenticator(
             currentAuthenticator,
             formValues,
             isLoading,
-            onInputChange,
-            (authenticator, formData) => onSubmit(formData || formValues),
+            handleInputChange,
+            (authenticator, formData) => handleSubmit(formData || formValues),
             {
-              inputClassName,
-              buttonClassName,
+              inputClassName: inputClasses,
+              buttonClassName: buttonClasses,
               submitButtonText,
               error,
             },
