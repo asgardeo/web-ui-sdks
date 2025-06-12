@@ -30,7 +30,7 @@ const ApplicationNativeAuthenticationConstants = {
     SmsOtp: 'c21zLW90cC1hdXRoZW50aWNhdG9yOkxPQ0FM',
     MagicLink: 'TWFnaWNMaW5rQXV0aGVudGljYXRvcjpMT0NBTA',
     Google: 'R29vZ2xlT0lEQ0F1dGhlbnRpY2F0b3I6R29vZ2xl',
-    Github: 'R2l0aHViQXV0aGVudGljYXRvcjpHaXRIdWI',
+    GitHub: 'R2l0aHViQXV0aGVudGljYXRvcjpHaXRIdWI',
     Microsoft: 'T3BlbklEQ29ubmVjdEF1dGhlbnRpY2F0b3I6TWljcm9zb2Z0',
     Facebook: 'RmFjZWJvb2tBdXRoZW50aWNhdG9yOkZhY2Vib29r',
     LinkedIn: 'TGlua2VkSW5PSURDOkxpbmtlZElu',

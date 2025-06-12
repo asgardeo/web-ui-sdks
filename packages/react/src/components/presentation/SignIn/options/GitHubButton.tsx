@@ -19,7 +19,7 @@
 import {ApplicationNativeAuthenticationAuthenticator} from '@asgardeo/browser';
 import {FC} from 'react';
 import Button from '../../../primitives/Button/Button';
-import {BaseSignInOptionProps} from './types';
+import {BaseSignInOptionProps} from './SignInOptionFactory';
 
 /**
  * GitHub Sign-In Button Component.

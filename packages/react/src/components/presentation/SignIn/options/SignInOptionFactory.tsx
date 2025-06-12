@@ -19,6 +19,7 @@
 import {
   ApplicationNativeAuthenticationAuthenticator,
   ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
+  ApplicationNativeAuthenticationConstants,
 } from '@asgardeo/browser';
 import {ReactElement} from 'react';
 import UsernamePassword from './UsernamePassword';
@@ -33,105 +34,112 @@ import EmailOtp from './EmailOtp';
 import Totp from './Totp';
 import SmsOtp from './SmsOtp';
 import SocialLogin from './SocialLogin';
-import {SignInOptionType, SignInOptionFactoryProps} from './types';
 
 /**
- * Determines the appropriate sign-in option type based on the authenticator configuration.
+ * Base props that all sign-in option components share.
  */
-export const getSignInOptionType = (authenticator: ApplicationNativeAuthenticationAuthenticator): SignInOptionType => {
-  // For federated/social login providers, check specific providers
-  if (authenticator.idp !== ApplicationNativeAuthenticationAuthenticatorKnownIdPType.Local) {
-    const provider = authenticator.idp.toLowerCase();
+export interface BaseSignInOptionProps {
+  /**
+   * The authenticator configuration.
+   */
+  authenticator: ApplicationNativeAuthenticationAuthenticator;
 
-    switch (provider) {
-      case 'google':
-        return SignInOptionType.GoogleButton;
-      case 'github':
-        return SignInOptionType.GitHubButton;
-      case 'microsoft':
-        return SignInOptionType.MicrosoftButton;
-      case 'facebook':
-        return SignInOptionType.FacebookButton;
-      case 'linkedin':
-        return SignInOptionType.LinkedInButton;
-      case 'sign in with ethereum':
-        return SignInOptionType.SignInWithEthereumButton;
-      default:
-        // Fallback to generic social login for unknown providers
-        return SignInOptionType.SocialLogin;
-    }
-  }
+  /**
+   * Current form values.
+   */
+  formValues: Record<string, string>;
 
-  // For local authenticators, check the authenticator type
-  switch (authenticator.authenticator) {
-    case 'Username & Password':
-      return SignInOptionType.UsernamePassword;
-    case 'Identifier First':
-      return SignInOptionType.IdentifierFirst;
-    case 'TOTP':
-      return SignInOptionType.Totp;
-    case 'SMS OTP':
-      return SignInOptionType.SmsOtp;
-    case 'Email OTP':
-      return SignInOptionType.EmailOtp;
+  /**
+   * Whether the component is in loading state.
+   */
+  isLoading: boolean;
+
+  /**
+   * Error message to display.
+   */
+  error?: string | null;
+
+  /**
+   * Callback function called when input values change.
+   */
+  onInputChange: (param: string, value: string) => void;
+
+  /**
+   * Callback function called when the option is submitted.
+   */
+  onSubmit: (authenticator: ApplicationNativeAuthenticationAuthenticator, formData?: Record<string, string>) => void;
+
+  /**
+   * Custom CSS class name for form inputs.
+   */
+  inputClassName?: string;
+
+  /**
+   * Custom CSS class name for the submit button.
+   */
+  buttonClassName?: string;
+
+  /**
+   * Text for the submit button.
+   */
+  submitButtonText?: string;
+}
+
+/**
+ * Creates the appropriate sign-in option component based on the authenticator's ID.
+ */
+export const createSignInOption = (props: BaseSignInOptionProps): ReactElement => {
+  const {authenticator, ...optionProps} = props;
+
+  // Use authenticatorId to determine the component type
+  switch (authenticator.authenticatorId) {
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.UsernamePassword:
+      return <UsernamePassword {...props} />;
+
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.IdentifierFirst:
+      return <IdentifierFirst {...props} />;
+
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.Google:
+      return <GoogleButton {...props} />;
+
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.GitHub:
+      return <GitHubButton {...props} />;
+
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.Microsoft:
+      return <MicrosoftButton {...props} />;
+
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.Facebook:
+      return <FacebookButton {...props} />;
+
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.LinkedIn:
+      return <LinkedInButton {...props} />;
+
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.SignInWithEthereum:
+      return <SignInWithEthereumButton {...props} />;
+
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.EmailOtp:
+      return <EmailOtp {...props} />;
+
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.Totp:
+      return <Totp {...props} />;
+
+    case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.SmsOtp:
+      return <SmsOtp {...props} />;
+
     default:
-      // Default to username/password for unknown local authenticators
-      return SignInOptionType.UsernamePassword;
+      // Check if it's a federated authenticator (non-LOCAL idp)
+      if (authenticator.idp !== ApplicationNativeAuthenticationAuthenticatorKnownIdPType.Local) {
+        // For unknown federated authenticators, use generic social login
+        return <SocialLogin {...props} />;
+      }
+
+      // Fallback to username/password for unknown local authenticators
+      return <UsernamePassword {...props} />;
   }
 };
 
 /**
- * Factory function to create the appropriate sign-in option component.
- */
-export const createSignInOption = (props: SignInOptionFactoryProps): ReactElement => {
-  const {optionType, ...optionProps} = props;
-
-  switch (optionType) {
-    case SignInOptionType.UsernamePassword:
-      return <UsernamePassword {...optionProps} />;
-
-    case SignInOptionType.IdentifierFirst:
-      return <IdentifierFirst {...optionProps} />;
-
-    case SignInOptionType.GoogleButton:
-      return <GoogleButton {...optionProps} />;
-
-    case SignInOptionType.GitHubButton:
-      return <GitHubButton {...optionProps} />;
-
-    case SignInOptionType.MicrosoftButton:
-      return <MicrosoftButton {...optionProps} />;
-
-    case SignInOptionType.FacebookButton:
-      return <FacebookButton {...optionProps} />;
-
-    case SignInOptionType.LinkedInButton:
-      return <LinkedInButton {...optionProps} />;
-
-    case SignInOptionType.SignInWithEthereumButton:
-      return <SignInWithEthereumButton {...optionProps} />;
-
-    case SignInOptionType.EmailOtp:
-      return <EmailOtp {...optionProps} />;
-
-    case SignInOptionType.Totp:
-      return <Totp {...optionProps} />;
-
-    case SignInOptionType.SmsOtp:
-      return <SmsOtp {...optionProps} />;
-
-    case SignInOptionType.SocialLogin:
-      // Legacy fallback for generic social login
-      return <SocialLogin {...optionProps} />;
-
-    default:
-      // Fallback to username/password
-      return <UsernamePassword {...optionProps} />;
-  }
-};
-
-/**
- * Convenience function that automatically determines the option type and creates the component.
+ * Convenience function that creates the appropriate sign-in option component from an authenticator.
  */
 export const createSignInOptionFromAuthenticator = (
   authenticator: ApplicationNativeAuthenticationAuthenticator,
@@ -146,10 +154,7 @@ export const createSignInOptionFromAuthenticator = (
     error?: string | null;
   },
 ): ReactElement => {
-  const optionType = getSignInOptionType(authenticator);
-
   return createSignInOption({
-    optionType,
     authenticator,
     formValues,
     isLoading,

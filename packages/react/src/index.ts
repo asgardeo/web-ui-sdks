@@ -74,7 +74,6 @@ export {default as EmailOtp} from './components/presentation/SignIn/options/Emai
 export {default as Totp} from './components/presentation/SignIn/options/Totp';
 export {default as SmsOtp} from './components/presentation/SignIn/options/SmsOtp';
 export {default as SocialLogin} from './components/presentation/SignIn/options/SocialLogin';
-export * from './components/presentation/SignIn/options/types';
 export * from './components/presentation/SignIn/options/SignInOptionFactory';
 
 export {default as User} from './components/presentation/User';

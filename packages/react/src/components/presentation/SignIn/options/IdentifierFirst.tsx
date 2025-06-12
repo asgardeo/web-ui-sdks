@@ -24,7 +24,7 @@ import {
 import {FC} from 'react';
 import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
-import {BaseSignInOptionProps} from './types';
+import {BaseSignInOptionProps} from './SignInOptionFactory';
 
 /**
  * Identifier First Sign-In Option Component.
