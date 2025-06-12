@@ -25,6 +25,7 @@ export {default as initializeApplicationNativeAuthentication} from './api/initia
 export {default as handleApplicationNativeAuthentication} from './api/handleApplicationNativeAuthentication';
 export {default as getUserInfo} from './api/getUserInfo';
 
+export {default as ApplicationNativeAuthenticationConstants} from './constants/ApplicationNativeAuthenticationConstants';
 export {default as TokenConstants} from './constants/TokenConstants';
 export {default as OIDCRequestConstants} from './constants/OIDCRequestConstants';
 
@@ -44,6 +45,7 @@ export {
   ApplicationNativeAuthenticationHandleResponse,
   ApplicationNativeAuthenticationAuthenticatorParamType,
   ApplicationNativeAuthenticationAuthenticatorPromptType,
+  ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
 } from './models/application-native-authentication';
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 export {BaseConfig, Config, Preferences, ThemePreferences, I18nPreferences} from './models/config';

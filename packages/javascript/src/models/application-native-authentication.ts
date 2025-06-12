@@ -73,6 +73,10 @@ export enum ApplicationNativeAuthenticationAuthenticatorExtendedParamType {
   Otp = 'OTPCode',
 }
 
+export enum ApplicationNativeAuthenticationAuthenticatorKnownIdPType {
+  Local = 'LOCAL',
+}
+
 export enum ApplicationNativeAuthenticationAuthenticatorPromptType {
   /**
    * Prompt for user input, typically for username/password or similar credentials.

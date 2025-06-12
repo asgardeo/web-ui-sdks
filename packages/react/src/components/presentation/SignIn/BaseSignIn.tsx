@@ -18,33 +18,16 @@
 
 import {
   ApplicationNativeAuthenticationAuthenticator,
-  ApplicationNativeAuthenticationAuthenticatorParamType,
   ApplicationNativeAuthenticationInitiateResponse,
   ApplicationNativeAuthenticationHandleResponse,
-  resolveFieldName,
-  resolveFieldType,
-  FieldType,
   ApplicationNativeAuthenticationStepType,
 } from '@asgardeo/browser';
-import {FC, FormEvent, ReactElement} from 'react';
-import {createField} from '../../factories/FieldFactory';
-import Button from '../../primitives/Button/Button';
+import {FC, ReactElement, FormEvent} from 'react';
 import Card from '../../primitives/Card/Card';
 import Alert from '../../primitives/Alert/Alert';
 import Divider from '../../primitives/Divider/Divider';
 import useTranslation from '../../../hooks/useTranslation';
-
-/**
- * Interface for form field state.
- */
-interface FormField {
-  param: string;
-  type: ApplicationNativeAuthenticationAuthenticatorParamType;
-  displayName: string;
-  confidential: boolean;
-  required: boolean;
-  value: string;
-}
+import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory';
 
 /**
  * Props for the BaseSignIn component.
@@ -237,66 +220,6 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     return authenticators.filter(auth => auth.idp !== 'LOCAL');
   };
 
-  /**
-   * Get display name for an authenticator.
-   */
-  const getAuthenticatorDisplayName = (authenticator: ApplicationNativeAuthenticationAuthenticator): string => {
-    // For federated providers, use the IDP name
-    if (authenticator.idp !== 'LOCAL') {
-      return `Continue with ${authenticator.idp}`;
-    }
-    // For local authenticators, use appropriate display text
-    if (authenticator.authenticator === 'Identifier First') {
-      return 'Sign In';
-    }
-    return authenticator.authenticator;
-  };
-
-  /**
-   * Get icon or styling hint for an authenticator.
-   */
-  const getAuthenticatorStyle = (
-    authenticator: ApplicationNativeAuthenticationAuthenticator,
-  ): {variant: 'solid' | 'outline'; color: string} => {
-    const idp = authenticator.idp.toLowerCase();
-
-    if (idp === 'google') {
-      return {variant: 'outline', color: 'secondary'};
-    } else if (idp === 'github') {
-      return {variant: 'solid', color: 'secondary'};
-    } else if (idp === 'local') {
-      return {variant: 'solid', color: 'primary'};
-    } else {
-      return {variant: 'outline', color: 'secondary'};
-    }
-  };
-
-  /**
-   * Get form fields from the current authenticator.
-   */
-  const getFormFields = (): FormField[] => {
-    if (!currentAuthenticator) return [];
-
-    return currentAuthenticator.metadata?.params
-      ?.sort((a, b) => a.order - b.order)
-      ?.map(param => ({
-        param: param.param,
-        type: param.type,
-        displayName: param.displayName,
-        confidential: param.confidential,
-        required: currentAuthenticator.requiredParams.includes(param.param),
-        value: formValues[param.param] || '',
-      }));
-  };
-
-  /**
-   * Handle form submission.
-   */
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    onSubmit(formValues);
-  };
-
   if (!isInitialized && isLoading) {
     return showLoading ? (
       <Card className={className}>
@@ -329,7 +252,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
                     : 'info';
 
                 return (
-                  <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}}>
+                  <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClassName}>
                     <Alert.Description>{message.message}</Alert.Description>
                   </Alert>
                 );
@@ -340,7 +263,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
 
         <Card.Content>
           {error && (
-            <Alert variant="error" style={{marginBottom: '1rem'}}>
+            <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClassName}>
               <Alert.Title>Error</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>
@@ -350,50 +273,28 @@ const BaseSignIn: FC<BaseSignInProps> = ({
           {usernamePasswordAuth && (
             <>
               <form
-                onSubmit={e => {
+                onSubmit={(e: FormEvent<HTMLFormElement>) => {
                   e.preventDefault();
-                  // Collect form data from formValues
                   const formData: Record<string, string> = {};
                   usernamePasswordAuth.metadata?.params?.forEach(param => {
                     formData[param.param] = formValues[param.param] || '';
                   });
-                  onAuthenticatorSelection?.(usernamePasswordAuth, formData);
+                  onAuthenticatorSelection!(usernamePasswordAuth, formData);
                 }}
               >
-                {usernamePasswordAuth.metadata?.params
-                  ?.sort((a, b) => a.order - b.order)
-                  ?.map(param => (
-                    <div key={param.param} style={{marginBottom: '1rem'}}>
-                      {createField({
-                        name: param.param,
-                        type:
-                          param.type === 'STRING'
-                            ? param.confidential
-                              ? FieldType.Password
-                              : FieldType.Text
-                            : FieldType.Text,
-                        label: param.displayName,
-                        required: usernamePasswordAuth.requiredParams.includes(param.param),
-                        value: formValues[param.param] || '',
-                        onChange: value => onInputChange(param.param, value),
-                        disabled: isLoading,
-                        className: inputClassName,
-                      })}
-                    </div>
-                  ))}
-
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  loading={isLoading}
-                  className={buttonClassName}
-                  color="primary"
-                  variant="solid"
-                  fullWidth
-                  style={{marginBottom: '1rem'}}
-                >
-                  {submitButtonText}
-                </Button>
+                {createSignInOptionFromAuthenticator(
+                  usernamePasswordAuth,
+                  formValues,
+                  isLoading,
+                  onInputChange,
+                  onAuthenticatorSelection!,
+                  {
+                    inputClassName,
+                    buttonClassName,
+                    submitButtonText,
+                    error,
+                  },
+                )}
               </form>
 
               {/* Divider if there are federated options */}
@@ -404,23 +305,22 @@ const BaseSignIn: FC<BaseSignInProps> = ({
           {/* Federated login options */}
           {federatedAuths.length > 0 && (
             <div style={{display: 'flex', flexDirection: 'column', gap: '0.75rem'}}>
-              {federatedAuths.map(authenticator => {
-                const style = getAuthenticatorStyle(authenticator);
-                return (
-                  <Button
-                    key={authenticator.authenticatorId}
-                    variant={style.variant}
-                    color={style.color}
-                    fullWidth
-                    disabled={isLoading}
-                    loading={isLoading}
-                    onClick={() => onAuthenticatorSelection?.(authenticator)}
-                    className={buttonClassName}
-                  >
-                    {getAuthenticatorDisplayName(authenticator)}
-                  </Button>
-                );
-              })}
+              {federatedAuths.map(authenticator => (
+                <div key={authenticator.authenticatorId}>
+                  {createSignInOptionFromAuthenticator(
+                    authenticator,
+                    formValues,
+                    isLoading,
+                    onInputChange,
+                    onAuthenticatorSelection!,
+                    {
+                      inputClassName,
+                      buttonClassName,
+                      error,
+                    },
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </Card.Content>
@@ -443,73 +343,66 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     );
   }
 
-  const formFields = getFormFields();
-
+  // Single authenticator view
   return (
     <Card className={className}>
-      <form onSubmit={handleSubmit}>
-        <Card.Header>
-          <Card.Title level={2}>{t('signin.title')}</Card.Title>
-          {messages.length > 0 && (
-            <div style={{marginTop: '1rem'}}>
-              {messages.map((message, index) => {
-                const variant =
-                  message.type.toLowerCase() === 'error'
-                    ? 'error'
-                    : message.type.toLowerCase() === 'warning'
-                    ? 'warning'
-                    : message.type.toLowerCase() === 'success'
-                    ? 'success'
-                    : 'info';
+      <Card.Header>
+        <Card.Title level={2}>{t('signin.title')}</Card.Title>
+        {messages.length > 0 && (
+          <div style={{marginTop: '1rem'}}>
+            {messages.map((message, index) => {
+              const variant =
+                message.type.toLowerCase() === 'error'
+                  ? 'error'
+                  : message.type.toLowerCase() === 'warning'
+                  ? 'warning'
+                  : message.type.toLowerCase() === 'success'
+                  ? 'success'
+                  : 'info';
 
-                return (
-                  <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}}>
-                    <Alert.Description>{message.message}</Alert.Description>
-                  </Alert>
-                );
-              })}
-            </div>
+              return (
+                <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClassName}>
+                  <Alert.Description>{message.message}</Alert.Description>
+                </Alert>
+              );
+            })}
+          </div>
+        )}
+      </Card.Header>
+
+      <Card.Content>
+        {error && (
+          <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClassName}>
+            <Alert.Title>Error</Alert.Title>
+            <Alert.Description>{error}</Alert.Description>
+          </Alert>
+        )}
+
+        <form
+          onSubmit={(e: FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            const formData: Record<string, string> = {};
+            currentAuthenticator.metadata?.params?.forEach(param => {
+              formData[param.param] = formValues[param.param] || '';
+            });
+            onSubmit(formData);
+          }}
+        >
+          {createSignInOptionFromAuthenticator(
+            currentAuthenticator,
+            formValues,
+            isLoading,
+            onInputChange,
+            (authenticator, formData) => onSubmit(formData || formValues),
+            {
+              inputClassName,
+              buttonClassName,
+              submitButtonText,
+              error,
+            },
           )}
-        </Card.Header>
-
-        <Card.Content>
-          {error && (
-            <Alert variant="error" style={{marginBottom: '1rem'}}>
-              <Alert.Title>Error</Alert.Title>
-              <Alert.Description>{error}</Alert.Description>
-            </Alert>
-          )}
-
-          {formFields.map(field => (
-            <div key={field.param} style={{marginBottom: '1rem'}}>
-              {createField({
-                name: resolveFieldName(field),
-                type: resolveFieldType(field),
-                label: field.displayName,
-                required: field.required,
-                value: field.value,
-                onChange: value => onInputChange(resolveFieldName(field), value),
-                disabled: isLoading,
-                className: inputClassName,
-              })}
-            </div>
-          ))}
-        </Card.Content>
-
-        <Card.Footer>
-          <Button
-            type="submit"
-            disabled={isLoading}
-            loading={isLoading}
-            className={buttonClassName}
-            color="primary"
-            variant="solid"
-            fullWidth
-          >
-            {submitButtonText}
-          </Button>
-        </Card.Footer>
-      </form>
+        </form>
+      </Card.Content>
     </Card>
   );
 };

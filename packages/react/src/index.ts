@@ -61,6 +61,22 @@ export * from './components/presentation/SignIn/BaseSignIn';
 export {default as SignIn} from './components/presentation/SignIn/SignIn';
 export * from './components/presentation/SignIn/SignIn';
 
+// Sign-In Options
+export {default as IdentifierFirst} from './components/presentation/SignIn/options/IdentifierFirst';
+export {default as UsernamePassword} from './components/presentation/SignIn/options/UsernamePassword';
+export {default as GoogleButton} from './components/presentation/SignIn/options/GoogleButton';
+export {default as GitHubButton} from './components/presentation/SignIn/options/GitHubButton';
+export {default as MicrosoftButton} from './components/presentation/SignIn/options/MicrosoftButton';
+export {default as FacebookButton} from './components/presentation/SignIn/options/FacebookButton';
+export {default as LinkedInButton} from './components/presentation/SignIn/options/LinkedInButton';
+export {default as SignInWithEthereumButton} from './components/presentation/SignIn/options/SignInWithEthereumButton';
+export {default as EmailOtp} from './components/presentation/SignIn/options/EmailOtp';
+export {default as Totp} from './components/presentation/SignIn/options/Totp';
+export {default as SmsOtp} from './components/presentation/SignIn/options/SmsOtp';
+export {default as SocialLogin} from './components/presentation/SignIn/options/SocialLogin';
+export * from './components/presentation/SignIn/options/types';
+export * from './components/presentation/SignIn/options/SignInOptionFactory';
+
 export {default as User} from './components/presentation/User';
 export * from './components/presentation/User';
 
