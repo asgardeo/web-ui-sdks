@@ -19,6 +19,7 @@
 import {FC} from 'react';
 import Button from '../../../primitives/Button/Button';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
+import useTranslation from '../../../../hooks/useTranslation';
 
 /**
  * Microsoft Sign-In Button Component.
@@ -29,8 +30,9 @@ const MicrosoftButton: FC<BaseSignInOptionProps> = ({
   isLoading,
   onSubmit,
   buttonClassName = '',
-  submitButtonText = 'Continue with Microsoft',
+  preferences,
 }) => {
+  const {t} = useTranslation(preferences?.i18n);
   /**
    * Handle button click.
    */
@@ -58,7 +60,7 @@ const MicrosoftButton: FC<BaseSignInOptionProps> = ({
         </svg>
       }
     >
-      {submitButtonText}
+      {t('elements.buttons.microsoft')}
     </Button>
   );
 };

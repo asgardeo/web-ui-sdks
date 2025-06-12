@@ -16,7 +16,8 @@
  * under the License.
  */
 
-import {useContext} from 'react';
+import {useContext, useMemo} from 'react';
+import {deepMerge, I18nBundle, I18nPreferences} from '@asgardeo/browser';
 import I18nContext, {I18nContextValue} from '../contexts/I18n/I18nContext';
 
 export interface UseTranslation {
@@ -41,14 +42,22 @@ export interface UseTranslation {
   availableLanguages: string[];
 }
 
+export interface UseTranslationWithPreferences extends UseTranslation {
+  /**
+   * Enhanced translation function that merges component-level preferences
+   */
+  t: (key: string, params?: Record<string, string | number>) => string;
+}
+
 /**
  * Hook for accessing translation functions and language management.
  * Must be used within an I18nProvider context.
  *
+ * @param componentPreferences - Optional component-level i18n preferences to merge with global ones
  * @returns An object containing translation function and language management utilities
  * @throws Error if used outside of I18nProvider context
  */
-const useTranslation = (): UseTranslation => {
+const useTranslation = (componentPreferences?: I18nPreferences): UseTranslationWithPreferences => {
   const context = useContext(I18nContext);
 
   if (!context) {
@@ -57,13 +66,86 @@ const useTranslation = (): UseTranslation => {
     );
   }
 
-  const {t, currentLanguage, setLanguage, bundles} = context;
+  const {t: globalT, currentLanguage, setLanguage, bundles: globalBundles, fallbackLanguage} = context;
+
+  // Merge global bundles with component-level bundles if provided
+  const mergedBundles = useMemo(() => {
+    if (!componentPreferences?.bundles) {
+      return globalBundles;
+    }
+
+    const merged: Record<string, I18nBundle> = {};
+
+    // Start with global bundles
+    Object.entries(globalBundles).forEach(([key, bundle]) => {
+      merged[key] = bundle;
+    });
+
+    // Merge component-level bundles using deepMerge for better merging
+    Object.entries(componentPreferences.bundles).forEach(([key, componentBundle]) => {
+      if (merged[key]) {
+        // Deep merge component bundle with existing global bundle
+        merged[key] = {
+          ...merged[key],
+          translations: deepMerge(merged[key].translations, componentBundle.translations),
+          metadata: componentBundle.metadata
+            ? {...merged[key].metadata, ...componentBundle.metadata}
+            : merged[key].metadata,
+        };
+      } else {
+        // No global bundle for this language, use component bundle as-is
+        merged[key] = componentBundle;
+      }
+    });
+
+    return merged;
+  }, [globalBundles, componentPreferences?.bundles]);
+
+  // Create enhanced translation function that uses merged bundles
+  const enhancedT = useMemo(() => {
+    if (!componentPreferences?.bundles) {
+      // No component preferences, use global translation function
+      return globalT;
+    }
+
+    return (key: string, params?: Record<string, string | number>): string => {
+      let translation: string | undefined;
+
+      // Try to get translation from current language bundle
+      const currentBundle = mergedBundles[currentLanguage];
+      if (currentBundle?.translations[key]) {
+        translation = currentBundle.translations[key];
+      }
+
+      // Fallback to fallback language if translation not found
+      if (!translation && currentLanguage !== fallbackLanguage) {
+        const fallbackBundle = mergedBundles[fallbackLanguage];
+        if (fallbackBundle?.translations[key]) {
+          translation = fallbackBundle.translations[key];
+        }
+      }
+
+      // If still no translation found, return the key itself
+      if (!translation) {
+        translation = key;
+      }
+
+      // Replace parameters if provided
+      if (params && Object.keys(params).length > 0) {
+        return Object.entries(params).reduce((acc, [paramKey, paramValue]) => {
+          return acc.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), String(paramValue));
+        }, translation);
+      }
+
+      return translation;
+    };
+  }, [mergedBundles, currentLanguage, fallbackLanguage, globalT, componentPreferences?.bundles]);
 
   return {
-    t,
+    t: enhancedT,
     currentLanguage,
     setLanguage,
-    availableLanguages: Object.keys(bundles),
+    availableLanguages: Object.keys(mergedBundles),
   };
 };
 

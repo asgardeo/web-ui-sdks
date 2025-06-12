@@ -48,7 +48,7 @@ export {
   ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
 } from './models/application-native-authentication';
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
-export {BaseConfig, Config, Preferences, ThemePreferences, I18nPreferences} from './models/config';
+export {BaseConfig, Config, Preferences, ThemePreferences, I18nPreferences, WithPreferences} from './models/config';
 export {TokenResponse, IdTokenPayload} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';
 export {OAuthResponseMode} from './models/oauth-response';
@@ -71,6 +71,7 @@ export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 export {default as createTheme} from './theme/createTheme';
 export {ThemeColors, ThemeConfig, Theme, ThemeMode} from './theme/types';
 
+export {default as deepMerge} from './utils/deepMerge';
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
 export {default as extractPkceStorageKeyFromState} from './utils/extractPkceStorageKeyFromState';
 export {default as getI18nBundles} from './utils/getI18nBundles';

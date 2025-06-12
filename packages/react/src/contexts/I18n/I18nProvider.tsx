@@ -17,7 +17,7 @@
  */
 
 import {FC, PropsWithChildren, ReactElement, useCallback, useEffect, useMemo, useState} from 'react';
-import {I18nBundle, I18nPreferences} from '@asgardeo/browser';
+import {I18nBundle, I18nPreferences, deepMerge} from '@asgardeo/browser';
 import {getI18nBundles} from '@asgardeo/browser';
 import I18nContext, {I18nContextValue} from './I18nContext';
 
@@ -107,10 +107,20 @@ const I18nProvider: FC<PropsWithChildren<I18nProviderProps>> = ({
       merged[languageKey] = bundle;
     });
 
-    // Add user-provided bundles (these take precedence)
+    // Add user-provided bundles using deepMerge for better merging
     if (preferences?.bundles) {
-      Object.entries(preferences.bundles).forEach(([key, bundle]) => {
-        merged[key] = bundle;
+      Object.entries(preferences.bundles).forEach(([key, userBundle]) => {
+        if (merged[key]) {
+          // Deep merge user bundle with existing default bundle
+          merged[key] = {
+            ...merged[key],
+            translations: deepMerge(merged[key].translations, userBundle.translations),
+            metadata: userBundle.metadata ? {...merged[key].metadata, ...userBundle.metadata} : merged[key].metadata,
+          };
+        } else {
+          // No default bundle for this language, use user bundle as-is
+          merged[key] = userBundle;
+        }
       });
     }
 

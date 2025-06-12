@@ -8,7 +8,12 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
+ * Unless require        }
+      }
+    } catch (err) {
+      const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.authenticationFailed');
+      setError(errorMessage);
+      onError?.(err as Error);pplicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the
@@ -103,11 +108,6 @@ export interface BaseSignInProps {
   messageClassName?: string;
 
   /**
-   * Text for the submit button.
-   */
-  submitButtonText?: string;
-
-  /**
    * Whether to show loading state.
    */
   showLoading?: boolean;
@@ -176,15 +176,14 @@ const BaseSignIn: FC<BaseSignInProps> = ({
   buttonClassName = '',
   errorClassName = '',
   messageClassName = '',
-  submitButtonText = 'Sign In',
   showLoading = true,
-  loadingText = 'Loading...',
+  loadingText,
   styled = true,
   size = 'medium',
   variant = 'default',
 }) => {
   const {t} = useTranslation();
-  
+
   // Internal state management
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -280,7 +279,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
         );
       }
     } catch (err) {
-      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Failed to initialize authentication';
+      const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.initializationFailed');
       setError(errorMessage);
       onError?.(err as Error);
     } finally {
@@ -321,7 +320,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
         response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
         response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
       ) {
-        setError('Authentication failed. Please check your credentials and try again.');
+        setError(t('errors.authenticationFailedDetail'));
         return;
       }
 
@@ -352,7 +351,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
         }
       }
     } catch (err) {
-      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Authentication failed';
+      const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.authenticationFailed');
       setError(errorMessage);
       onError?.(err as Error);
     } finally {
@@ -500,33 +499,11 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     return currentFlow.nextStep.authenticators;
   };
 
-  /**
-   * Get the username & password authenticator (LOCAL).
-   */
-  const getUsernamePasswordAuthenticator = (): ApplicationNativeAuthenticationAuthenticator | null => {
-    const authenticators = getAvailableAuthenticators();
-    return (
-      authenticators.find(
-        auth =>
-          auth.idp === 'LOCAL' &&
-          (auth.authenticator === 'Username & Password' || auth.authenticator === 'Identifier First'),
-      ) || null
-    );
-  };
-
-  /**
-   * Get federated login authenticators (non-LOCAL).
-   */
-  const getFederatedAuthenticators = (): ApplicationNativeAuthenticationAuthenticator[] => {
-    const authenticators = getAvailableAuthenticators();
-    return authenticators.filter(auth => auth.idp !== 'LOCAL');
-  };
-
   if (!isInitialized && isLoading) {
     return showLoading ? (
       <Card className={containerClasses}>
         <Card.Content>
-          <p>{loadingText}</p>
+          <p>{loadingText ?? t('messages.loading')}</p>
         </Card.Content>
       </Card>
     ) : null;
@@ -534,8 +511,18 @@ const BaseSignIn: FC<BaseSignInProps> = ({
 
   // Handle multiple authenticator options
   if (hasMultipleOptions() && !currentAuthenticator) {
-    const usernamePasswordAuth = getUsernamePasswordAuthenticator();
-    const federatedAuths = getFederatedAuthenticators();
+    const availableAuthenticators = getAvailableAuthenticators();
+
+    // Separate authenticators by prompt type and characteristics
+    const userPromptAuthenticators = availableAuthenticators.filter(
+      auth =>
+        auth.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.USER_PROMPT ||
+        // Fallback: LOCAL authenticators with params are typically user prompts
+        (auth.idp === 'LOCAL' && auth.metadata?.params && auth.metadata.params.length > 0),
+    );
+
+    // All other authenticators are treated as options/buttons
+    const optionAuthenticators = availableAuthenticators.filter(auth => !userPromptAuthenticators.includes(auth));
 
     return (
       <Card className={containerClasses}>
@@ -571,43 +558,21 @@ const BaseSignIn: FC<BaseSignInProps> = ({
             </Alert>
           )}
 
-          {/* Username & Password form at the top */}
-          {usernamePasswordAuth && (
-            <>
-              <form
-                onSubmit={(e: FormEvent<HTMLFormElement>) => {
-                  e.preventDefault();
-                  const formData: Record<string, string> = {};
-                  usernamePasswordAuth.metadata?.params?.forEach(param => {
-                    formData[param.param] = formValues[param.param] || '';
-                  });
-                  handleAuthenticatorSelection(usernamePasswordAuth, formData);
-                }}
-              >                {createSignInOptionFromAuthenticator(
-                  usernamePasswordAuth,
-                  formValues,
-                  isLoading,
-                  handleInputChange,
-                  handleAuthenticatorSelection,
-                  {
-                    inputClassName: inputClasses,
-                    buttonClassName: buttonClasses,
-                    submitButtonText,
-                    error,
-                  },
-                )}
-              </form>
-
-              {/* Divider if there are federated options */}
-              {federatedAuths.length > 0 && <Divider style={{margin: '1.5rem 0'}}>OR</Divider>}
-            </>
-          )}
-
-          {/* Federated login options */}
-          {federatedAuths.length > 0 && (
-            <div style={{display: 'flex', flexDirection: 'column', gap: '0.75rem'}}>
-              {federatedAuths.map(authenticator => (
-                <div key={authenticator.authenticatorId}>
+          <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+            {/* Render USER_PROMPT authenticators as form fields */}
+            {userPromptAuthenticators.map((authenticator, index) => (
+              <div key={authenticator.authenticatorId}>
+                {index > 0 && <Divider style={{margin: '0.5rem 0'}}>OR</Divider>}
+                <form
+                  onSubmit={e => {
+                    e.preventDefault();
+                    const formData: Record<string, string> = {};
+                    authenticator.metadata?.params?.forEach(param => {
+                      formData[param.param] = formValues[param.param] || '';
+                    });
+                    handleAuthenticatorSelection(authenticator, formData);
+                  }}
+                >
                   {createSignInOptionFromAuthenticator(
                     authenticator,
                     formValues,
@@ -620,10 +585,33 @@ const BaseSignIn: FC<BaseSignInProps> = ({
                       error,
                     },
                   )}
-                </div>
-              ))}
-            </div>
-          )}
+                </form>
+              </div>
+            ))}
+
+            {/* Add divider between user prompts and option authenticators if both exist */}
+            {userPromptAuthenticators.length > 0 && optionAuthenticators.length > 0 && (
+              <Divider style={{margin: '0.5rem 0'}}>OR</Divider>
+            )}
+
+            {/* Render all other authenticators (REDIRECTION_PROMPT, multi-option buttons, etc.) */}
+            {optionAuthenticators.map((authenticator, index) => (
+              <div key={authenticator.authenticatorId}>
+                {createSignInOptionFromAuthenticator(
+                  authenticator,
+                  formValues,
+                  isLoading,
+                  handleInputChange,
+                  handleAuthenticatorSelection,
+                  {
+                    inputClassName: inputClasses,
+                    buttonClassName: buttonClasses,
+                    error,
+                  },
+                )}
+              </div>
+            ))}
+          </div>
         </Card.Content>
       </Card>
     );
@@ -635,7 +623,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
         <Card.Content>
           {error && (
             <Alert variant="error">
-              <Alert.Title>Authentication Error</Alert.Title>
+              <Alert.Title>{t('errors.authenticationError')}</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>
           )}
@@ -644,7 +632,6 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     );
   }
 
-  // Single authenticator view
   return (
     <Card className={containerClasses}>
       <Card.Header>
@@ -674,7 +661,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
       <Card.Content>
         {error && (
           <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClasses}>
-            <Alert.Title>Error</Alert.Title>
+            <Alert.Title>{t('errors.title')}</Alert.Title>
             <Alert.Description>{error}</Alert.Description>
           </Alert>
         )}
@@ -698,7 +685,6 @@ const BaseSignIn: FC<BaseSignInProps> = ({
             {
               inputClassName: inputClasses,
               buttonClassName: buttonClasses,
-              submitButtonText,
               error,
             },
           )}

@@ -73,7 +73,8 @@ export {default as SignInWithEthereumButton} from './components/presentation/Sig
 export {default as EmailOtp} from './components/presentation/SignIn/options/EmailOtp';
 export {default as Totp} from './components/presentation/SignIn/options/Totp';
 export {default as SmsOtp} from './components/presentation/SignIn/options/SmsOtp';
-export {default as SocialLogin} from './components/presentation/SignIn/options/SocialLogin';
+export {default as SocialButton} from './components/presentation/SignIn/options/SocialButton';
+export {default as MultiOptionButton} from './components/presentation/SignIn/options/MultiOptionButton';
 export * from './components/presentation/SignIn/options/SignInOptionFactory';
 
 export {default as User} from './components/presentation/User';

@@ -25,6 +25,7 @@ import {FC} from 'react';
 import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
+import useTranslation from '../../../../hooks/useTranslation';
 
 /**
  * Identifier First Sign-In Option Component.
@@ -38,8 +39,10 @@ const IdentifierFirst: FC<BaseSignInOptionProps> = ({
   onSubmit,
   inputClassName = '',
   buttonClassName = '',
-  submitButtonText = 'Continue',
+  preferences,
 }) => {
+  const {t} = useTranslation(preferences?.i18n);
+
   const formFields = authenticator.metadata?.params?.sort((a, b) => a.order - b.order) || [];
 
   return (
@@ -74,7 +77,7 @@ const IdentifierFirst: FC<BaseSignInOptionProps> = ({
         fullWidth
         style={{marginBottom: '1rem'}}
       >
-        {submitButtonText}
+        {t('identifier.first.submit.button')}
       </Button>
     </>
   );

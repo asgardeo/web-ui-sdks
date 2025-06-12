@@ -25,7 +25,7 @@ import {
   Ref,
   RefAttributes,
 } from 'react';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import Button from '../../primitives/Button/Button';
 
@@ -53,7 +53,8 @@ export type BaseSignInButtonRenderProps = CommonBaseSignInButtonProps;
  */
 export interface BaseSignInButtonProps
   extends Partial<CommonBaseSignInButtonProps>,
-    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>,
+    WithPreferences {
   /**
    * Render prop function that receives sign-in props, or traditional ReactNode children
    */
@@ -82,7 +83,7 @@ export interface BaseSignInButtonProps
 const BaseSignInButton: ForwardRefExoticComponent<BaseSignInButtonProps & RefAttributes<HTMLButtonElement>> =
   forwardRef<HTMLButtonElement, BaseSignInButtonProps>(
     (
-      {children, className, style, signIn, isLoading, ...rest}: BaseSignInButtonProps,
+      {children, className, style, signIn, isLoading, preferences, ...rest}: BaseSignInButtonProps,
       ref: Ref<HTMLButtonElement>,
     ): ReactElement => {
       if (typeof children === 'function') {

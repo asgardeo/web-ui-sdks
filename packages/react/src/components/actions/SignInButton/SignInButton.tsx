@@ -18,7 +18,9 @@
 
 import {forwardRef, ForwardRefExoticComponent, MouseEvent, ReactElement, Ref, RefAttributes, useState} from 'react';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
+import useTranslation from '../../../hooks/useTranslation';
 import BaseSignInButton, {BaseSignInButtonProps} from './BaseSignInButton';
+import {AsgardeoRuntimeError} from '@asgardeo/browser';
 
 /**
  * Props interface of {@link SignInButton}
@@ -45,12 +47,33 @@ export type SignInButtonProps = BaseSignInButtonProps;
  * ```tsx
  * <SignInButton className="custom-button">Sign In</SignInButton>
  * ```
+ *
+ * @example Using component-level preferences
+ * ```tsx
+ * <SignInButton
+ *   preferences={{
+ *     i18n: {
+ *       bundles: {
+ *         'en-US': {
+ *           translations: {
+ *             'buttons.signIn': 'Custom Sign In Text'
+ *           }
+ *         }
+ *       }
+ *     }
+ *   }}
+ * >
+ *   Custom Sign In
+ * </SignInButton>
+ * ```
  */
 const SignInButton: ForwardRefExoticComponent<SignInButtonProps & RefAttributes<HTMLButtonElement>> = forwardRef<
   HTMLButtonElement,
   SignInButtonProps
->(({children = 'Sign In', onClick, ...rest}: SignInButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+>(({children, onClick, preferences, ...rest}: SignInButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
   const {signIn} = useAsgardeo();
+  const {t} = useTranslation(preferences?.i18n);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = async (e?: MouseEvent<HTMLButtonElement>): Promise<void> => {
@@ -63,15 +86,27 @@ const SignInButton: ForwardRefExoticComponent<SignInButtonProps & RefAttributes<
         onClick(e);
       }
     } catch (error) {
-      throw new Error(`Sign in failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw new AsgardeoRuntimeError(
+        `Sign in failed: ${error instanceof Error ? error.message : String(error)}`,
+        'handleSignIn-RuntimeError-001',
+        'react',
+        'Something went wrong while trying to sign in. Please try again later.',
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <BaseSignInButton ref={ref} onClick={handleSignIn} isLoading={isLoading} signIn={handleSignIn} {...rest}>
-      {children}
+    <BaseSignInButton
+      ref={ref}
+      onClick={handleSignIn}
+      isLoading={isLoading}
+      signIn={handleSignIn}
+      preferences={preferences}
+      {...rest}
+    >
+      {children ?? t('elements.buttons.signIn')}
     </BaseSignInButton>
   );
 });

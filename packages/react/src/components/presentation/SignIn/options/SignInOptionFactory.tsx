@@ -20,6 +20,7 @@ import {
   ApplicationNativeAuthenticationAuthenticator,
   ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
   ApplicationNativeAuthenticationConstants,
+  WithPreferences,
 } from '@asgardeo/browser';
 import {ReactElement} from 'react';
 import UsernamePassword from './UsernamePassword';
@@ -33,12 +34,13 @@ import SignInWithEthereumButton from './SignInWithEthereumButton';
 import EmailOtp from './EmailOtp';
 import Totp from './Totp';
 import SmsOtp from './SmsOtp';
-import SocialLogin from './SocialLogin';
+import SocialButton from './SocialButton';
+import MultiOptionButton from './MultiOptionButton';
 
 /**
  * Base props that all sign-in option components share.
  */
-export interface BaseSignInOptionProps {
+export interface BaseSignInOptionProps extends WithPreferences {
   /**
    * The authenticator configuration.
    */
@@ -91,6 +93,9 @@ export interface BaseSignInOptionProps {
 export const createSignInOption = (props: BaseSignInOptionProps): ReactElement => {
   const {authenticator, ...optionProps} = props;
 
+  // Check if this authenticator has params (indicating it needs user input)
+  const hasParams = authenticator.metadata?.params && authenticator.metadata.params.length > 0;
+
   // Use authenticatorId to determine the component type
   switch (authenticator.authenticatorId) {
     case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.UsernamePassword:
@@ -118,23 +123,32 @@ export const createSignInOption = (props: BaseSignInOptionProps): ReactElement =
       return <SignInWithEthereumButton {...props} />;
 
     case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.EmailOtp:
-      return <EmailOtp {...props} />;
+      // If it has params, render as input form, otherwise as selection button
+      return hasParams ? <EmailOtp {...props} /> : <MultiOptionButton {...props} />;
 
     case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.Totp:
-      return <Totp {...props} />;
+      // If it has params, render as input form, otherwise as selection button
+      return hasParams ? <Totp {...props} /> : <MultiOptionButton {...props} />;
 
     case ApplicationNativeAuthenticationConstants.SupportedAuthenticators.SmsOtp:
-      return <SmsOtp {...props} />;
+      // If it has params, render as input form, otherwise as selection button
+      return hasParams ? <SmsOtp {...props} /> : <MultiOptionButton {...props} />;
 
     default:
       // Check if it's a federated authenticator (non-LOCAL idp)
       if (authenticator.idp !== ApplicationNativeAuthenticationAuthenticatorKnownIdPType.Local) {
         // For unknown federated authenticators, use generic social login
-        return <SocialLogin {...props} />;
+        return <SocialButton {...props} />;
       }
 
-      // Fallback to username/password for unknown local authenticators
-      return <UsernamePassword {...props} />;
+      // For LOCAL authenticators, decide based on whether they have params
+      if (hasParams) {
+        // Fallback to username/password for unknown local authenticators with params
+        return <UsernamePassword {...props} />;
+      } else {
+        // Use multi-option button for LOCAL authenticators without params
+        return <MultiOptionButton {...props} />;
+      }
   }
 };
 
@@ -150,7 +164,6 @@ export const createSignInOptionFromAuthenticator = (
   options?: {
     inputClassName?: string;
     buttonClassName?: string;
-    submitButtonText?: string;
     error?: string | null;
   },
 ): ReactElement => {

@@ -25,6 +25,7 @@ import {FC} from 'react';
 import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
+import useTranslation from '../../../../hooks/useTranslation';
 
 /**
  * Username Password Sign-In Option Component.
@@ -38,8 +39,10 @@ const UsernamePassword: FC<BaseSignInOptionProps> = ({
   onSubmit,
   inputClassName = '',
   buttonClassName = '',
-  submitButtonText = 'Sign In',
+  preferences,
 }) => {
+  const {t} = useTranslation(preferences?.i18n);
+
   const formFields =
     authenticator.metadata?.params?.sort((a, b) => a.order - b.order)?.filter(param => param.param !== 'totp') || []; // Exclude TOTP fields for username/password
 
@@ -75,7 +78,7 @@ const UsernamePassword: FC<BaseSignInOptionProps> = ({
         fullWidth
         style={{marginBottom: '1rem'}}
       >
-        {submitButtonText}
+        {t('username.password.submit.button')}
       </Button>
     </>
   );

@@ -26,6 +26,7 @@ import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
 import OtpField from '../../../primitives/OtpField/OtpField';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
+import useTranslation from '../../../../hooks/useTranslation';
 
 /**
  * TOTP Sign-In Option Component.
@@ -39,8 +40,10 @@ const Totp: FC<BaseSignInOptionProps> = ({
   onSubmit,
   inputClassName = '',
   buttonClassName = '',
-  submitButtonText = 'Verify TOTP',
+  preferences,
 }) => {
+  const {t} = useTranslation(preferences?.i18n);
+
   const formFields = authenticator.metadata?.params?.sort((a, b) => a.order - b.order) || [];
 
   // Check if this is a TOTP field
@@ -95,7 +98,7 @@ const Totp: FC<BaseSignInOptionProps> = ({
         fullWidth
         style={{marginBottom: '1rem'}}
       >
-        {submitButtonText}
+        {t('totp.submit.button')}
       </Button>
     </>
   );

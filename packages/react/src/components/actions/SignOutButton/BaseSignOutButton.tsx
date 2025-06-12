@@ -25,7 +25,7 @@ import {
   Ref,
   RefAttributes,
 } from 'react';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import Button from '../../primitives/Button/Button';
 
@@ -53,7 +53,8 @@ export type BaseSignOutButtonRenderProps = CommonBaseSignOutButtonProps;
  */
 export interface BaseSignOutButtonProps
   extends Partial<CommonBaseSignOutButtonProps>,
-    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>,
+    WithPreferences {
   /**
    * Render prop function that receives sign-out props, or traditional ReactNode children
    */
@@ -82,7 +83,7 @@ export interface BaseSignOutButtonProps
 const BaseSignOutButton: ForwardRefExoticComponent<BaseSignOutButtonProps & RefAttributes<HTMLButtonElement>> =
   forwardRef<HTMLButtonElement, BaseSignOutButtonProps>(
     (
-      {children, className, style, signOut, isLoading, ...rest}: BaseSignOutButtonProps,
+      {children, className, style, signOut, isLoading, preferences, ...rest}: BaseSignOutButtonProps,
       ref: Ref<HTMLButtonElement>,
     ): ReactElement => {
       if (typeof children === 'function') {

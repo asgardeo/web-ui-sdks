@@ -26,6 +26,7 @@ import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
 import OtpField from '../../../primitives/OtpField/OtpField';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
+import useTranslation from '../../../../hooks/useTranslation';
 
 /**
  * Email OTP Sign-In Option Component.
@@ -39,8 +40,10 @@ const EmailOtp: FC<BaseSignInOptionProps> = ({
   onSubmit,
   inputClassName = '',
   buttonClassName = '',
-  submitButtonText = 'Verify Email OTP',
+  preferences,
 }) => {
+  const {t} = useTranslation(preferences?.i18n);
+
   const formFields = authenticator.metadata?.params?.sort((a, b) => a.order - b.order) || [];
 
   // Check if this is an OTP field (typically has 'otpCode' or similar parameter)
@@ -95,7 +98,7 @@ const EmailOtp: FC<BaseSignInOptionProps> = ({
         fullWidth
         style={{marginBottom: '1rem'}}
       >
-        {submitButtonText}
+        {t('email.otp.submit.button')}
       </Button>
     </>
   );

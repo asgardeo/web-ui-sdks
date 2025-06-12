@@ -25,7 +25,7 @@ import {
   Ref,
   RefAttributes,
 } from 'react';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import Button from '../../primitives/Button/Button';
 
@@ -53,7 +53,8 @@ export type BaseSignUpButtonRenderProps = CommonBaseSignUpButtonProps;
  */
 export interface BaseSignUpButtonProps
   extends CommonBaseSignUpButtonProps,
-    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>,
+    WithPreferences {
   /**
    * Render prop function that receives sign-up props, or traditional ReactNode children
    */
@@ -82,7 +83,7 @@ export interface BaseSignUpButtonProps
 const BaseSignUpButton: ForwardRefExoticComponent<BaseSignUpButtonProps & RefAttributes<HTMLButtonElement>> =
   forwardRef<HTMLButtonElement, BaseSignUpButtonProps>(
     (
-      {children, className, style, signUp, isLoading, ...rest}: BaseSignUpButtonProps,
+      {children, className, style, signUp, isLoading, preferences, ...rest}: BaseSignUpButtonProps,
       ref: Ref<HTMLButtonElement>,
     ): ReactElement => {
       if (typeof children === 'function') {

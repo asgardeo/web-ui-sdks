@@ -17,10 +17,10 @@
  */
 
 import {ThemeConfig, ThemeMode} from '../theme/types';
-import { I18nBundle } from './i18n';
+import {I18nBundle} from './i18n';
 import {RecursivePartial} from './utility-types';
 
-export interface BaseConfig<T = unknown> {
+export interface BaseConfig<T = unknown> extends WithPreferences {
   /**
    * Optional URL where the authorization server should redirect after authentication.
    * This must match one of the allowed redirect URIs configured in your IdP.
@@ -64,7 +64,9 @@ export interface BaseConfig<T = unknown> {
    * scopes: ["openid", "profile", "email"]
    */
   scopes?: string | string[] | undefined;
+}
 
+export interface WithPreferences {
   /**
    * Preferences for customizing the Asgardeo UI components
    */

@@ -70,11 +70,6 @@ export interface SignInProps {
   variant?: 'default' | 'outlined' | 'filled';
 
   /**
-   * Text for the submit button.
-   */
-  submitButtonText?: string;
-
-  /**
    * Whether to show loading state.
    */
   showLoading?: boolean;
@@ -118,7 +113,6 @@ const SignIn: FC<SignInProps> = ({
   styled = true,
   size = 'medium',
   variant = 'default',
-  submitButtonText = 'Sign In',
   showLoading = true,
   loadingText = 'Loading...',
 }) => {
@@ -158,7 +152,6 @@ const SignIn: FC<SignInProps> = ({
       styled={styled}
       size={size}
       variant={variant}
-      submitButtonText={submitButtonText}
       showLoading={showLoading}
       loadingText={loadingText}
     />
