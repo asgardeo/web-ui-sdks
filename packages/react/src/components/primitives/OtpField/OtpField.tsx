@@ -21,6 +21,7 @@ import {useTheme} from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
+import {withVendorCSSClassPrefix} from 'packages/browser/dist';
 
 export interface OtpInputProps {
   /**
@@ -252,7 +253,7 @@ const OtpField: FC<OtpInputProps> = ({
     <FormControl
       error={error}
       helperText={helperText}
-      className={clsx('asgardeo-otp-input', className)}
+      className={clsx(withVendorCSSClassPrefix('otp-input'), className)}
       style={style}
       helperTextAlign="center"
     >

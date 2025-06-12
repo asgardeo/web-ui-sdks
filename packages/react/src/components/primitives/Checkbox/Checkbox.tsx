@@ -21,6 +21,7 @@ import {useTheme} from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
+import { withVendorCSSClassPrefix } from 'packages/browser/dist';
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'type'> {
   /**
@@ -65,7 +66,7 @@ const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperT
     <FormControl
       error={error}
       helperText={helperText}
-      className={clsx('asgardeo-checkbox', className)}
+      className={clsx(withVendorCSSClassPrefix('checkbox'), className)}
       helperTextMarginLeft={theme.spacing.unit * 3.5 + 'px'}
     >
       <div style={containerStyle}>

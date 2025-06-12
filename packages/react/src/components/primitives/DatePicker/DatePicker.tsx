@@ -21,6 +21,7 @@ import {useTheme} from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
+import {withVendorCSSClassPrefix} from 'packages/browser/dist';
 
 export interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'type'> {
   /**
@@ -82,7 +83,7 @@ const DatePicker: FC<DatePickerProps> = ({
     <FormControl
       error={error}
       helperText={helperText}
-      className={clsx('asgardeo-date-picker', className)}
+      className={clsx(withVendorCSSClassPrefix('date-picker'), className)}
       style={style}
     >
       {label && (

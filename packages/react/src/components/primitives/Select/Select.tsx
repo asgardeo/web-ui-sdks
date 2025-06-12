@@ -21,6 +21,7 @@ import {useTheme} from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
+import {withVendorCSSClassPrefix} from 'packages/browser/dist';
 
 export interface SelectOption {
   /**
@@ -96,7 +97,12 @@ const Select: FC<SelectProps> = ({
   };
 
   return (
-    <FormControl error={error} helperText={helperText} className={clsx('asgardeo-select', className)} style={style}>
+    <FormControl
+      error={error}
+      helperText={helperText}
+      className={clsx(withVendorCSSClassPrefix('select'), className)}
+      style={style}
+    >
       {label && (
         <InputLabel required={required} error={!!error}>
           {label}

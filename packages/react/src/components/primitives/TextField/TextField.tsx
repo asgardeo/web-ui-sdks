@@ -21,6 +21,7 @@ import {useTheme} from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
+import { withVendorCSSClassPrefix } from 'packages/browser/dist';
 
 export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className'> {
   /**
@@ -132,7 +133,7 @@ const TextField: FC<TextFieldProps> = ({
   };
 
   return (
-    <FormControl error={error} helperText={helperText} className={clsx('asgardeo-text-field', className)} style={style}>
+    <FormControl error={error} helperText={helperText} className={clsx(withVendorCSSClassPrefix('text-field'), className)} style={style}>
       {label && (
         <InputLabel required={required} error={!!error}>
           {label}
