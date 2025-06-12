@@ -134,7 +134,7 @@ const OtpField: FC<OtpInputProps> = ({
   const inputContainerStyle: CSSProperties = {
     display: 'flex',
     gap: theme.spacing.unit + 'px',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     flexWrap: 'wrap',
   };

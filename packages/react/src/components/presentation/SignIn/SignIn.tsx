@@ -198,7 +198,7 @@ const SignIn: FC<SignInProps> = ({
   const setupFormFields = (authenticator: ApplicationNativeAuthenticationAuthenticator) => {
     // Initialize form values for the authenticator's parameters
     const initialValues: Record<string, string> = {};
-    authenticator.metadata.params.forEach(param => {
+    authenticator.metadata?.params?.forEach(param => {
       initialValues[param.param] = '';
     });
     setFormValues(initialValues);

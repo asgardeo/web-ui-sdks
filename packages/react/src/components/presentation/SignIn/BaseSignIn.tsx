@@ -178,9 +178,9 @@ const BaseSignIn: FC<BaseSignInProps> = ({
   const getFormFields = (): FormField[] => {
     if (!currentAuthenticator) return [];
 
-    return currentAuthenticator.metadata.params
-      .sort((a, b) => a.order - b.order)
-      .map(param => ({
+    return currentAuthenticator.metadata?.params
+      ?.sort((a, b) => a.order - b.order)
+      ?.map(param => ({
         param: param.param,
         type: param.type,
         displayName: param.displayName,
@@ -229,7 +229,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     <Card className={className}>
       <form onSubmit={handleSubmit}>
         <Card.Header>
-          <Card.Title level={2}>{t("signin.title")}</Card.Title>
+          <Card.Title level={2}>{t('signin.title')}</Card.Title>
           {messages.length > 0 && (
             <div style={{marginTop: '1rem'}}>
               {messages.map((message, index) => {
