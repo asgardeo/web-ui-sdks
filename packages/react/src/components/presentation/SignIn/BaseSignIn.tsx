@@ -24,6 +24,7 @@ import {
   resolveFieldName,
   resolveFieldType,
   FieldType,
+  ApplicationNativeAuthenticationStepType,
 } from '@asgardeo/browser';
 import {FC, FormEvent, ReactElement} from 'react';
 import {createField} from '../../factories/FieldFactory';
@@ -198,7 +199,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     return (
       currentFlow &&
       'nextStep' in currentFlow &&
-      currentFlow.nextStep?.stepType === 'MULTI_OPTIONS_PROMPT' &&
+      currentFlow.nextStep?.stepType === ApplicationNativeAuthenticationStepType.MultOptionsPrompt &&
       currentFlow.nextStep?.authenticators &&
       currentFlow.nextStep.authenticators.length > 1
     );
@@ -219,7 +220,13 @@ const BaseSignIn: FC<BaseSignInProps> = ({
    */
   const getUsernamePasswordAuthenticator = (): ApplicationNativeAuthenticationAuthenticator | null => {
     const authenticators = getAvailableAuthenticators();
-    return authenticators.find(auth => auth.idp === 'LOCAL' && auth.authenticator === 'Username & Password') || null;
+    return (
+      authenticators.find(
+        auth =>
+          auth.idp === 'LOCAL' &&
+          (auth.authenticator === 'Username & Password' || auth.authenticator === 'Identifier First'),
+      ) || null
+    );
   };
 
   /**
@@ -238,7 +245,10 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     if (authenticator.idp !== 'LOCAL') {
       return `Continue with ${authenticator.idp}`;
     }
-    // For local authenticators, use the authenticator name
+    // For local authenticators, use appropriate display text
+    if (authenticator.authenticator === 'Identifier First') {
+      return 'Sign In';
+    }
     return authenticator.authenticator;
   };
 
