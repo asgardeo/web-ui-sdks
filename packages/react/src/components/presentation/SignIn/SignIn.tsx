@@ -23,6 +23,7 @@ import {
   ApplicationNativeAuthenticationHandleResponse,
   ApplicationNativeAuthenticationFlowStatus,
   ApplicationNativeAuthenticationAuthenticator,
+  ApplicationNativeAuthenticationAuthenticatorPromptType,
   AsgardeoAPIError,
   withVendorCSSClassPrefix,
 } from '@asgardeo/browser';
@@ -167,10 +168,16 @@ const SignIn: FC<SignInProps> = ({
       }
 
       if (response.nextStep?.authenticators?.length > 0) {
-        // For now, select the first authenticator
-        const authenticator = response.nextStep.authenticators[0];
-        setCurrentAuthenticator(authenticator);
-        setupFormFields(authenticator);
+        // Check if this is a multi-options prompt
+        if (response.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' && response.nextStep.authenticators.length > 1) {
+          // Don't auto-select when there are multiple options, let user choose
+          setCurrentAuthenticator(null);
+        } else {
+          // Single authenticator or AUTHENTICATOR_PROMPT, select automatically
+          const authenticator = response.nextStep.authenticators[0];
+          setCurrentAuthenticator(authenticator);
+          setupFormFields(authenticator);
+        }
       }
 
       // Handle any messages from the response
@@ -251,9 +258,19 @@ const SignIn: FC<SignInProps> = ({
         setCurrentFlow(nextStepResponse);
 
         if (nextStepResponse.nextStep?.authenticators?.length > 0) {
-          const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-          setCurrentAuthenticator(nextAuthenticator);
-          setupFormFields(nextAuthenticator);
+          // Check if this is a multi-options prompt
+          if (
+            nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+            nextStepResponse.nextStep.authenticators.length > 1
+          ) {
+            // Don't auto-select when there are multiple options, let user choose
+            setCurrentAuthenticator(null);
+          } else {
+            // Single authenticator or AUTHENTICATOR_PROMPT, select automatically
+            const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
+            setCurrentAuthenticator(nextAuthenticator);
+            setupFormFields(nextAuthenticator);
+          }
         }
 
         // Handle any messages from the response
@@ -268,6 +285,127 @@ const SignIn: FC<SignInProps> = ({
       }
     } catch (err) {
       const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Authentication failed';
+      setError(errorMessage);
+      onError?.(err as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Handle authenticator selection for multi-option prompts.
+   */
+  const handleAuthenticatorSelection = async (
+    authenticator: ApplicationNativeAuthenticationAuthenticator,
+    formData?: Record<string, string>,
+  ) => {
+    if (!currentFlow) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setMessages([]);
+
+    try {
+      // Check if this is a redirection-based authenticator (like Google, GitHub)
+      if (
+        authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.REDIRECTION_PROMPT
+      ) {
+        // For redirection-based authentication, just select the authenticator
+        const payload = {
+          flowId: currentFlow.flowId,
+          selectedAuthenticator: {
+            authenticatorId: authenticator.authenticatorId,
+            params: {},
+          },
+        };
+
+        const response = await handleApplicationNativeAuthentication({
+          baseUrl,
+          payload,
+        });
+
+        onFlowChange?.(response);
+
+        if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+          onSuccess?.(response.authData);
+          return;
+        }
+
+        // Handle redirection if needed - for now, we'll handle redirection in a future iteration
+        // TODO: Implement redirection handling for federated authentication
+      } else {
+        // For user prompt authenticators (like username/password)
+        if (formData) {
+          // Submit the form data directly
+          const payload = {
+            flowId: currentFlow.flowId,
+            selectedAuthenticator: {
+              authenticatorId: authenticator.authenticatorId,
+              params: formData,
+            },
+          };
+
+          const response = await handleApplicationNativeAuthentication({
+            baseUrl,
+            payload,
+          });
+
+          onFlowChange?.(response);
+
+          if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+            onSuccess?.(response.authData);
+            return;
+          }
+
+          if (
+            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
+            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+          ) {
+            setError('Authentication failed. Please check your credentials and try again.');
+            return;
+          }
+
+          // Continue with next step
+          if ('flowId' in response && 'nextStep' in response) {
+            const nextStepResponse = response as any;
+            setCurrentFlow(nextStepResponse);
+
+            if (nextStepResponse.nextStep?.authenticators?.length > 0) {
+              // Check if this is a multi-options prompt
+              if (
+                nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+                nextStepResponse.nextStep.authenticators.length > 1
+              ) {
+                // Don't auto-select when there are multiple options, let user choose
+                setCurrentAuthenticator(null);
+              } else {
+                // Single authenticator or AUTHENTICATOR_PROMPT, select automatically
+                const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
+                setCurrentAuthenticator(nextAuthenticator);
+                setupFormFields(nextAuthenticator);
+              }
+            }
+
+            // Handle any messages from the response
+            if (nextStepResponse.nextStep?.messages) {
+              setMessages(
+                nextStepResponse.nextStep.messages.map((msg: any) => ({
+                  type: msg.type || 'INFO',
+                  message: msg.message || '',
+                })),
+              );
+            }
+          }
+        } else {
+          // Just set up the form for the authenticator
+          setCurrentAuthenticator(authenticator);
+          setupFormFields(authenticator);
+        }
+      }
+    } catch (err) {
+      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Authenticator selection failed';
       setError(errorMessage);
       onError?.(err as Error);
     } finally {
@@ -325,6 +463,7 @@ const SignIn: FC<SignInProps> = ({
 
   return (
     <BaseSignIn
+      currentFlow={currentFlow}
       currentAuthenticator={currentAuthenticator}
       formValues={formValues}
       isLoading={isLoading}
@@ -333,6 +472,7 @@ const SignIn: FC<SignInProps> = ({
       isInitialized={isInitialized}
       onSubmit={handleSubmit}
       onInputChange={handleInputChange}
+      onAuthenticatorSelection={handleAuthenticatorSelection}
       className={containerClasses}
       inputClassName={inputClasses}
       buttonClassName={buttonClasses}

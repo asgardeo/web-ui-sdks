@@ -106,6 +106,9 @@ export * from './components/primitives/FormControl/FormControl';
 export {default as InputLabel} from './components/primitives/InputLabel/InputLabel';
 export * from './components/primitives/InputLabel/InputLabel';
 
+export {default as Divider} from './components/primitives/Divider/Divider';
+export * from './components/primitives/Divider/Divider';
+
 export {default as Eye} from './components/primitives/Icons/Eye';
 export {default as EyeOff} from './components/primitives/Icons/EyeOff';
 export {default as CircleCheck} from './components/primitives/Icons/CircleCheck';
