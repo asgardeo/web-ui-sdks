@@ -29,6 +29,7 @@ import {
 import {useTheme} from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
+import Typography from '../Typography/Typography';
 
 export type CardVariant = 'default' | 'outlined' | 'elevated';
 
@@ -158,10 +159,7 @@ const useCardTitleStyles = () => {
   return useMemo(
     (): CSSProperties => ({
       margin: 0,
-      color: theme.colors.text.primary,
-      fontSize: '1.25rem',
-      fontWeight: 600,
-      lineHeight: 1.4,
+      // Typography component will handle color, fontSize, fontWeight, lineHeight
     }),
     [theme],
   );
@@ -290,81 +288,62 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
   ({children, level = 3, className, style, ...rest}, ref) => {
     const titleStyle = useCardTitleStyles();
 
-    if (level === 1) {
-      return (
-        <h1
-          ref={ref}
-          style={{...titleStyle, ...style}}
-          className={clsx(withVendorCSSClassPrefix('card-title'), className)}
-          {...rest}
-        >
-          {children}
-        </h1>
-      );
-    }
+    // Map level to Typography variant
+    const getVariantFromLevel = (level: number) => {
+      switch (level) {
+        case 1:
+          return 'h1';
+        case 2:
+          return 'h2';
+        case 3:
+          return 'h3';
+        case 4:
+          return 'h4';
+        case 5:
+          return 'h5';
+        case 6:
+          return 'h6';
+        default:
+          return 'h3';
+      }
+    };
 
-    if (level === 2) {
-      return (
-        <h2
-          ref={ref}
-          style={{...titleStyle, ...style}}
-          className={clsx(withVendorCSSClassPrefix('card-title'), className)}
-          {...rest}
-        >
-          {children}
-        </h2>
-      );
-    }
+    // Map level to HTML element for ref forwarding
+    const getComponentFromLevel = (level: number) => {
+      switch (level) {
+        case 1:
+          return 'h1';
+        case 2:
+          return 'h2';
+        case 3:
+          return 'h3';
+        case 4:
+          return 'h4';
+        case 5:
+          return 'h5';
+        case 6:
+          return 'h6';
+        default:
+          return 'h3';
+      }
+    };
 
-    if (level === 4) {
-      return (
-        <h4
-          ref={ref}
-          style={{...titleStyle, ...style}}
-          className={clsx(withVendorCSSClassPrefix('card-title'), className)}
-          {...rest}
-        >
-          {children}
-        </h4>
-      );
-    }
+    // Filter out conflicting props that shouldn't be passed to Typography
+    const {color, ...filteredRest} = rest;
 
-    if (level === 5) {
-      return (
-        <h5
-          ref={ref}
-          style={{...titleStyle, ...style}}
-          className={clsx(withVendorCSSClassPrefix('card-title'), className)}
-          {...rest}
-        >
-          {children}
-        </h5>
-      );
-    }
-
-    if (level === 6) {
-      return (
-        <h6
-          ref={ref}
-          style={{...titleStyle, ...style}}
-          className={clsx(withVendorCSSClassPrefix('card-title'), className)}
-          {...rest}
-        >
-          {children}
-        </h6>
-      );
-    }
-
-    // Default to h3
     return (
-      <h3
-        ref={ref}
+      <Typography
+        component={getComponentFromLevel(level)}
+        variant={getVariantFromLevel(level)}
         style={{...titleStyle, ...style}}
         className={clsx(withVendorCSSClassPrefix('card-title'), className)}
-        {...rest}
+        fontWeight={600}
+        {...filteredRest}
+        // We can't forward ref to Typography since it doesn't use forwardRef
+        // The ref will be handled by the Typography component's underlying element
       >
         {children}
-      </h3>
+      </Typography>
     );
   },
 );
@@ -376,15 +355,20 @@ const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
   ({children, className, style, ...rest}, ref) => {
     const descriptionStyle = useCardDescriptionStyles();
 
+    // Filter out conflicting props that shouldn't be passed to Typography
+    const {color, ...filteredRest} = rest;
+
     return (
-      <p
-        ref={ref}
+      <Typography
+        component="p"
+        variant="body2"
+        color="textSecondary"
         style={{...descriptionStyle, ...style}}
         className={clsx(withVendorCSSClassPrefix('card-description'), className)}
-        {...rest}
+        {...filteredRest}
       >
         {children}
-      </p>
+      </Typography>
     );
   },
 );

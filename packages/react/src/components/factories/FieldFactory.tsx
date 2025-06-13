@@ -69,6 +69,10 @@ export interface FieldConfig {
    * Whether the field has been touched/interacted with by the user.
    */
   touched?: boolean;
+  /**
+   * Placeholder text for the field.
+   */
+  placeholder?: string;
 }
 
 /**
@@ -152,6 +156,7 @@ export const createField = (config: FieldConfig): ReactElement => {
     className,
     options = [],
     touched = false,
+    placeholder,
   } = config;
 
   // Auto-validate the field value
@@ -165,22 +170,12 @@ export const createField = (config: FieldConfig): ReactElement => {
     error: validationError,
     className,
     value,
+    placeholder,
   };
 
   switch (type) {
     case FieldType.Password:
-      return (
-        <PasswordField
-          name={name}
-          label={label}
-          required={required}
-          disabled={disabled}
-          error={validationError}
-          className={className}
-          value={value}
-          onChange={onChange}
-        />
-      );
+      return <PasswordField {...commonProps} onChange={onChange} />;
     case FieldType.Text:
       return <TextField {...commonProps} type="text" onChange={e => onChange(e.target.value)} autoComplete="off" />;
     case FieldType.Otp:

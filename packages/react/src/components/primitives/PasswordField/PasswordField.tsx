@@ -17,39 +17,11 @@
  */
 
 import {FC, useState} from 'react';
-import TextField from '../TextField/TextField';
+import TextField, {TextFieldProps} from '../TextField/TextField';
 import Eye from '../Icons/Eye';
 import EyeOff from '../Icons/EyeOff';
 
-export interface PasswordFieldProps {
-  /**
-   * Field name
-   */
-  name: string;
-  /**
-   * Label text to display above the input
-   */
-  label: string;
-  /**
-   * Whether the field is required
-   */
-  required: boolean;
-  /**
-   * Whether the field is disabled
-   */
-  disabled: boolean;
-  /**
-   * Error message to display below the input
-   */
-  error?: string | null;
-  /**
-   * Additional CSS class names
-   */
-  className?: string;
-  /**
-   * Current value of the field
-   */
-  value: string;
+export interface PasswordFieldProps extends Omit<TextFieldProps, 'type' | 'endIcon' | 'onEndIconClick' | 'onChange'> {
   /**
    * Callback function when the field value changes
    */
@@ -58,29 +30,17 @@ export interface PasswordFieldProps {
 
 /**
  * Password field component with show/hide toggle functionality.
- * This component is extracted to prevent re-rendering issues that cause loss of focus.
+ * This component extends TextField and adds password visibility toggle functionality.
  */
 const PasswordField: FC<PasswordFieldProps> = ({
-  name,
-  label,
-  required,
-  disabled,
-  error,
-  className,
-  value,
   onChange,
+  ...textFieldProps
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <TextField
-      name={name}
-      label={label}
-      required={required}
-      disabled={disabled}
-      error={error}
-      className={className}
-      value={value}
+      {...textFieldProps}
       type={showPassword ? 'text' : 'password'}
       onChange={e => onChange(e.target.value)}
       autoComplete="current-password"

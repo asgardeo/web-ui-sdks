@@ -31,6 +31,7 @@ import {clsx} from 'clsx';
 import Card from '../../primitives/Card/Card';
 import Alert from '../../primitives/Alert/Alert';
 import Divider from '../../primitives/Divider/Divider';
+import Typography from '../../primitives/Typography/Typography';
 import useTranslation from '../../../hooks/useTranslation';
 import {useForm, FormField} from '../../../hooks/useForm';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
@@ -606,7 +607,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     return showLoading ? (
       <Card className={containerClasses}>
         <Card.Content>
-          <p>{loadingText ?? t('messages.loading')}</p>
+          <Typography variant="body1">{loadingText ?? t('messages.loading')}</Typography>
         </Card.Content>
       </Card>
     ) : null;
@@ -629,9 +630,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         <Card.Header>
           <Card.Title level={2}>{flow?.title || t('signin.title')}</Card.Title>
           {flow?.subtitle && (
-            <Card.Title level={3} style={{marginTop: '0.5rem'}}>
+            <Typography variant="body1" style={{marginTop: '0.5rem'}}>
               {flow?.subtitle || t('signin.subtitle')}
-            </Card.Title>
+            </Typography>
           )}
           {flow?.messages && flow.messages.length > 0 && (
             <div style={{marginTop: '1rem'}}>

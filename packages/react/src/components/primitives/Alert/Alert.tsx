@@ -28,6 +28,7 @@ import {
 import {useTheme} from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
+import Typography from '../Typography/Typography';
 import CircleCheck from '../Icons/CircleCheck';
 import CircleAlert from '../Icons/CircleAlert';
 import TriangleAlert from '../Icons/TriangleAlert';
@@ -222,15 +223,20 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
 const AlertTitle = forwardRef<HTMLHeadingElement, AlertTitleProps>(({children, className, style, ...rest}, ref) => {
   const titleStyle = useAlertTitleStyles();
 
+  // Filter out conflicting props that shouldn't be passed to Typography
+  const {color, ...filteredRest} = rest;
+
   return (
-    <h3
-      ref={ref}
+    <Typography
+      component="h3"
+      variant="h6"
+      fontWeight={600}
       style={{...titleStyle, ...style}}
       className={clsx(withVendorCSSClassPrefix('alert-title'), className)}
-      {...rest}
+      {...filteredRest}
     >
       {children}
-    </h3>
+    </Typography>
   );
 });
 
@@ -241,15 +247,19 @@ const AlertDescription = forwardRef<HTMLParagraphElement, AlertDescriptionProps>
   ({children, className, style, ...rest}, ref) => {
     const descriptionStyle = useAlertDescriptionStyles();
 
+    // Filter out conflicting props that shouldn't be passed to Typography
+    const {color, ...filteredRest} = rest;
+
     return (
-      <p
-        ref={ref}
+      <Typography
+        component="p"
+        variant="body2"
         style={{...descriptionStyle, ...style}}
         className={clsx(withVendorCSSClassPrefix('alert-description'), className)}
-        {...rest}
+        {...filteredRest}
       >
         {children}
-      </p>
+      </Typography>
     );
   },
 );

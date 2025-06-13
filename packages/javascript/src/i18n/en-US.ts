@@ -35,6 +35,9 @@ const translations: I18nTranslations = {
   'elements.buttons.ethereum': 'Continue With Sign In Ethereum',
   'elements.buttons.multi.option': 'Continue With {connection}',
   'elements.buttons.social': 'Continue With {connection}',
+  
+  /* Fields */
+  'elements.fields.placeholder': 'Enter your {field}',
 
   /* |---------------------------------------------------------------| */
   /* |                        Widgets                                | */

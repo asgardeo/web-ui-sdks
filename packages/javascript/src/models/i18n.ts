@@ -34,6 +34,9 @@ export interface I18nTranslations {
   'elements.buttons.multi.option': string;
   'elements.buttons.social': string;
 
+  /* Fields */
+  'elements.fields.placeholder': string;
+
   /* |---------------------------------------------------------------| */
   /* |                        Widgets                                | */
   /* |---------------------------------------------------------------| */

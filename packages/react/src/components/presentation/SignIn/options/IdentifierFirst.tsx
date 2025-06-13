@@ -72,6 +72,9 @@ const IdentifierFirst: FC<BaseSignInOptionProps> = ({
             disabled: isLoading,
             className: inputClassName,
             touched: touchedFields[param.param] || false,
+            placeholder: t(`elements.fields.placeholder`, {
+              field: (param.displayName || param.param).toLowerCase(),
+            }),
           })}
         </div>
       ))}

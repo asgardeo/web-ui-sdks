@@ -20,6 +20,7 @@ import {FC, HTMLAttributes, useMemo} from 'react';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import {clsx} from 'clsx';
 import {useTheme} from '../../../contexts/Theme/useTheme';
+import Typography from '../Typography/Typography';
 
 export type DividerOrientation = 'horizontal' | 'vertical';
 export type DividerVariant = 'solid' | 'dashed' | 'dotted';
@@ -72,8 +73,6 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
       alignItems: 'center',
       width: '100%',
       margin: `${theme.spacing.unit * 2}px 0`,
-      fontSize: '0.875rem',
-      color: theme.colors.text.secondary,
     };
 
     if (hasChildren) {
@@ -158,7 +157,9 @@ const Divider: FC<DividerProps> = ({
         {...rest}
       >
         <div style={styles.line} />
-        <span style={styles.text}>{children}</span>
+        <Typography variant="body2" color="textSecondary" style={styles.text} inline>
+          {children}
+        </Typography>
         <div style={styles.line} />
       </div>
     );

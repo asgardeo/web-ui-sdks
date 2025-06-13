@@ -19,6 +19,7 @@
 import {CSSProperties, FC, ReactNode} from 'react';
 import {useTheme} from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
+import Typography from '../Typography/Typography';
 
 export interface FormControlProps {
   /**
@@ -68,8 +69,6 @@ const FormControl: FC<FormControlProps> = ({
   };
 
   const helperTextStyle: CSSProperties = {
-    fontSize: '0.75rem',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
     marginTop: theme.spacing.unit / 2 + 'px',
     textAlign: helperTextAlign,
     ...(helperTextMarginLeft && {marginLeft: helperTextMarginLeft}),
@@ -78,7 +77,11 @@ const FormControl: FC<FormControlProps> = ({
   return (
     <div style={containerStyle} className={className}>
       {children}
-      {(error || helperText) && <div style={helperTextStyle}>{error || helperText}</div>}
+      {(error || helperText) && (
+        <Typography variant="caption" color={error ? 'error' : 'textSecondary'} style={helperTextStyle}>
+          {error || helperText}
+        </Typography>
+      )}
     </div>
   );
 };

@@ -72,7 +72,6 @@ const SmsOtp: FC<BaseSignInOptionProps> = ({
                 onChange={event => onInputChange(param.param, event.target.value)}
                 disabled={isLoading}
                 className={inputClassName}
-                placeholder="."
               />
             ) : (
               createField({
