@@ -239,7 +239,7 @@ const useButtonStyles = (
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: theme.spacing.unit / 2 + 'px',
+      gap: `${theme.spacing.unit}px`,
       borderRadius: theme.borderRadius.small,
       fontWeight: 500,
       cursor: disabled || loading ? 'not-allowed' : 'pointer',
