@@ -16,14 +16,13 @@
  * under the License.
  */
 
-import {FieldType} from '@asgardeo/browser';
-import {FC, ReactElement, useState} from 'react';
+import {FC, ReactElement} from 'react';
 import TextField from '../primitives/TextField/TextField';
 import Select from '../primitives/Select/Select';
 import {SelectOption} from '../primitives/Select/Select';
-import Eye from '../primitives/Icons/Eye';
-import EyeOff from '../primitives/Icons/EyeOff';
 import OtpField from '../primitives/OtpField/OtpField';
+import PasswordField from '../primitives/PasswordField/PasswordField';
+import {FieldType} from '@asgardeo/browser';
 
 /**
  * Interface for field configuration.
@@ -147,24 +146,20 @@ export const createField = (config: FieldConfig): ReactElement => {
     value,
   };
 
-  const PasswordToggleField: FC = () => {
-    const [showPassword, setShowPassword] = useState(false);
-
-    return (
-      <TextField
-        {...commonProps}
-        type={showPassword ? 'text' : 'password'}
-        onChange={e => onChange(e.target.value)}
-        autoComplete="current-password"
-        endIcon={showPassword ? <EyeOff width={16} height={16} /> : <Eye width={16} height={16} />}
-        onEndIconClick={() => setShowPassword(!showPassword)}
-      />
-    );
-  };
-
   switch (type) {
     case FieldType.Password:
-      return <PasswordToggleField />;
+      return (
+        <PasswordField
+          name={name}
+          label={label}
+          required={required}
+          disabled={disabled}
+          error={validationError}
+          className={className}
+          value={value}
+          onChange={onChange}
+        />
+      );
     case FieldType.Text:
       return <TextField {...commonProps} type="text" onChange={e => onChange(e.target.value)} autoComplete="off" />;
     case FieldType.Otp:

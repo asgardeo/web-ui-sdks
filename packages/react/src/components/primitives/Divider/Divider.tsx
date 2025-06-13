@@ -62,7 +62,7 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
           width: '1px',
           borderLeft: `1px ${borderStyle} ${baseColor}`,
           margin: `0 ${theme.spacing.unit}px`,
-        }
+        },
       };
     }
 
@@ -88,7 +88,7 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
           backgroundColor: 'var(--background-color, #fff)',
           padding: `0 ${theme.spacing.unit}px`,
           whiteSpace: 'nowrap' as const,
-        }
+        },
       };
     }
 
@@ -97,7 +97,7 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
         ...baseStyle,
         height: '1px',
         borderTop: `1px ${borderStyle} ${baseColor}`,
-      }
+      },
     };
   }, [orientation, variant, color, hasChildren, theme]);
 };
@@ -158,9 +158,7 @@ const Divider: FC<DividerProps> = ({
         {...rest}
       >
         <div style={styles.line} />
-        <span style={styles.text}>
-          {children}
-        </span>
+        <span style={styles.text}>{children}</span>
         <div style={styles.line} />
       </div>
     );
