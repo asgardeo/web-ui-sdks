@@ -504,8 +504,66 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
               }
             }
           } else {
-            setCurrentAuthenticator(authenticator);
-            setupFormFields(authenticator);
+            // Check if the authenticator requires user input
+            const hasParams = authenticator.metadata?.params && authenticator.metadata.params.length > 0;
+
+            if (!hasParams) {
+              // If no parameters are required, directly authenticate
+              const payload = {
+                flowId: currentFlow.flowId,
+                selectedAuthenticator: {
+                  authenticatorId: authenticator.authenticatorId,
+                  params: {},
+                },
+              };
+
+              const response = await onAuthenticate(payload);
+              onFlowChange?.(response);
+
+              if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+                onSuccess?.(response.authData);
+                return;
+              }
+
+              if (
+                response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
+                response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+              ) {
+                setError('Authentication failed. Please try again.');
+                return;
+              }
+
+              if ('flowId' in response && 'nextStep' in response) {
+                const nextStepResponse = response as any;
+                setCurrentFlow(nextStepResponse);
+
+                if (nextStepResponse.nextStep?.authenticators?.length > 0) {
+                  if (
+                    nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+                    nextStepResponse.nextStep.authenticators.length > 1
+                  ) {
+                    setCurrentAuthenticator(null);
+                  } else {
+                    const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
+                    setCurrentAuthenticator(nextAuthenticator);
+                    setupFormFields(nextAuthenticator);
+                  }
+                }
+
+                if (nextStepResponse.nextStep?.messages) {
+                  setMessages(
+                    nextStepResponse.nextStep.messages.map((msg: any) => ({
+                      type: msg.type || 'INFO',
+                      message: msg.message || '',
+                    })),
+                  );
+                }
+              }
+            } else {
+              // If parameters are required, show the form
+              setCurrentAuthenticator(authenticator);
+              setupFormFields(authenticator);
+            }
           }
         }
       } catch (err) {
