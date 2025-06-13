@@ -263,9 +263,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   /**
    * Mark all fields as touched for validation purposes.
    */
-  const markAllFieldsAsTouched = useCallback(() => {
+  const markAllFieldsAsTouched = () => {
     touchAllFields();
-  }, [touchAllFields]);
+  };
 
   /**
    * Initialize the authentication flow.
@@ -317,30 +317,112 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   /**
    * Handle form submission.
    */
-  const handleSubmit = useCallback(
-    async (submittedValues: Record<string, string>) => {
-      if (!currentFlow || !currentAuthenticator) {
+  const handleSubmit = async (submittedValues: Record<string, string>) => {
+    if (!currentFlow || !currentAuthenticator) {
+      return;
+    }
+
+    // Mark all fields as touched before validation
+    touchAllFields();
+
+    const validation = validateForm();
+    if (!validation.isValid) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setMessages([]);
+
+    try {
+      const payload = {
+        flowId: currentFlow.flowId,
+        selectedAuthenticator: {
+          authenticatorId: currentAuthenticator.authenticatorId,
+          params: submittedValues,
+        },
+      };
+
+      const response = await onAuthenticate(payload);
+      onFlowChange?.(response);
+
+      if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+        onSuccess?.(response.authData);
         return;
       }
 
-      // Mark all fields as touched before validation
-      markAllFieldsAsTouched();
-
-      const validation = validateForm();
-      if (!validation.isValid) {
+      if (
+        response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
+        response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+      ) {
+        setError(t('errors.authenticationFailedDetail'));
         return;
       }
 
-      setIsLoading(true);
-      setError(null);
-      setMessages([]);
+      if ('flowId' in response && 'nextStep' in response) {
+        const nextStepResponse = response as any;
+        setCurrentFlow(nextStepResponse);
 
-      try {
+        if (nextStepResponse.nextStep?.authenticators?.length > 0) {
+          if (
+            nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+            nextStepResponse.nextStep.authenticators.length > 1
+          ) {
+            setCurrentAuthenticator(null);
+          } else {
+            const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
+            setCurrentAuthenticator(nextAuthenticator);
+            setupFormFields(nextAuthenticator);
+          }
+        }
+
+        if (nextStepResponse.nextStep?.messages) {
+          setMessages(
+            nextStepResponse.nextStep.messages.map((msg: any) => ({
+              type: msg.type || 'INFO',
+              message: msg.message || '',
+            })),
+          );
+        }
+      }
+    } catch (err) {
+      const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.authenticationFailed');
+      setError(errorMessage);
+      onError?.(err as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Handle authenticator selection for multi-option prompts.
+   */
+  const handleAuthenticatorSelection = async (
+    authenticator: ApplicationNativeAuthenticationAuthenticator,
+    formData?: Record<string, string>,
+  ) => {
+    if (!currentFlow) {
+      return;
+    }
+
+    // Mark all fields as touched if we have form data (i.e., this is a submission)
+    if (formData) {
+      touchAllFields();
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setMessages([]);
+
+    try {
+      if (
+        authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.REDIRECTION_PROMPT
+      ) {
         const payload = {
           flowId: currentFlow.flowId,
           selectedAuthenticator: {
-            authenticatorId: currentAuthenticator.authenticatorId,
-            params: submittedValues,
+            authenticatorId: authenticator.authenticatorId,
+            params: {},
           },
         };
 
@@ -351,91 +433,18 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           onSuccess?.(response.authData);
           return;
         }
-
-        if (
-          response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
-          response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
-        ) {
-          setError(t('errors.authenticationFailedDetail'));
-          return;
-        }
-
-        if ('flowId' in response && 'nextStep' in response) {
-          const nextStepResponse = response as any;
-          setCurrentFlow(nextStepResponse);
-
-          if (nextStepResponse.nextStep?.authenticators?.length > 0) {
-            if (
-              nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
-              nextStepResponse.nextStep.authenticators.length > 1
-            ) {
-              setCurrentAuthenticator(null);
-            } else {
-              const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-              setCurrentAuthenticator(nextAuthenticator);
-              setupFormFields(nextAuthenticator);
-            }
+      } else {
+        if (formData) {
+          const validation = validateForm();
+          if (!validation.isValid) {
+            return;
           }
 
-          if (nextStepResponse.nextStep?.messages) {
-            setMessages(
-              nextStepResponse.nextStep.messages.map((msg: any) => ({
-                type: msg.type || 'INFO',
-                message: msg.message || '',
-              })),
-            );
-          }
-        }
-      } catch (err) {
-        const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.authenticationFailed');
-        setError(errorMessage);
-        onError?.(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [
-      currentFlow,
-      currentAuthenticator,
-      markAllFieldsAsTouched,
-      validateForm,
-      onAuthenticate,
-      onFlowChange,
-      onSuccess,
-      onError,
-      setupFormFields,
-      t,
-    ],
-  );
-
-  /**
-   * Handle authenticator selection for multi-option prompts.
-   */
-  const handleAuthenticatorSelection = useCallback(
-    async (authenticator: ApplicationNativeAuthenticationAuthenticator, formData?: Record<string, string>) => {
-      if (!currentFlow) {
-        return;
-      }
-
-      // Mark all fields as touched if we have form data (i.e., this is a submission)
-      if (formData) {
-        markAllFieldsAsTouched();
-      }
-
-      setIsLoading(true);
-      setError(null);
-      setMessages([]);
-
-      try {
-        if (
-          authenticator.metadata?.promptType ===
-          ApplicationNativeAuthenticationAuthenticatorPromptType.REDIRECTION_PROMPT
-        ) {
           const payload = {
             flowId: currentFlow.flowId,
             selectedAuthenticator: {
               authenticatorId: authenticator.authenticatorId,
-              params: {},
+              params: formData,
             },
           };
 
@@ -446,18 +455,52 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             onSuccess?.(response.authData);
             return;
           }
-        } else {
-          if (formData) {
-            const validation = validateForm();
-            if (!validation.isValid) {
-              return;
+
+          if (
+            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
+            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+          ) {
+            setError('Authentication failed. Please check your credentials and try again.');
+            return;
+          }
+
+          if ('flowId' in response && 'nextStep' in response) {
+            const nextStepResponse = response as any;
+            setCurrentFlow(nextStepResponse);
+
+            if (nextStepResponse.nextStep?.authenticators?.length > 0) {
+              if (
+                nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+                nextStepResponse.nextStep.authenticators.length > 1
+              ) {
+                setCurrentAuthenticator(null);
+              } else {
+                const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
+                setCurrentAuthenticator(nextAuthenticator);
+                setupFormFields(nextAuthenticator);
+              }
             }
 
+            if (nextStepResponse.nextStep?.messages) {
+              setMessages(
+                nextStepResponse.nextStep.messages.map((msg: any) => ({
+                  type: msg.type || 'INFO',
+                  message: msg.message || '',
+                })),
+              );
+            }
+          }
+        } else {
+          // Check if the authenticator requires user input
+          const hasParams = authenticator.metadata?.params && authenticator.metadata.params.length > 0;
+
+          if (!hasParams) {
+            // If no parameters are required, directly authenticate
             const payload = {
               flowId: currentFlow.flowId,
               selectedAuthenticator: {
                 authenticatorId: authenticator.authenticatorId,
-                params: formData,
+                params: {},
               },
             };
 
@@ -473,7 +516,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
               response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
               response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
             ) {
-              setError('Authentication failed. Please check your credentials and try again.');
+              setError('Authentication failed. Please try again.');
               return;
             }
 
@@ -504,98 +547,28 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
               }
             }
           } else {
-            // Check if the authenticator requires user input
-            const hasParams = authenticator.metadata?.params && authenticator.metadata.params.length > 0;
-
-            if (!hasParams) {
-              // If no parameters are required, directly authenticate
-              const payload = {
-                flowId: currentFlow.flowId,
-                selectedAuthenticator: {
-                  authenticatorId: authenticator.authenticatorId,
-                  params: {},
-                },
-              };
-
-              const response = await onAuthenticate(payload);
-              onFlowChange?.(response);
-
-              if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
-                onSuccess?.(response.authData);
-                return;
-              }
-
-              if (
-                response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
-                response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
-              ) {
-                setError('Authentication failed. Please try again.');
-                return;
-              }
-
-              if ('flowId' in response && 'nextStep' in response) {
-                const nextStepResponse = response as any;
-                setCurrentFlow(nextStepResponse);
-
-                if (nextStepResponse.nextStep?.authenticators?.length > 0) {
-                  if (
-                    nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
-                    nextStepResponse.nextStep.authenticators.length > 1
-                  ) {
-                    setCurrentAuthenticator(null);
-                  } else {
-                    const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-                    setCurrentAuthenticator(nextAuthenticator);
-                    setupFormFields(nextAuthenticator);
-                  }
-                }
-
-                if (nextStepResponse.nextStep?.messages) {
-                  setMessages(
-                    nextStepResponse.nextStep.messages.map((msg: any) => ({
-                      type: msg.type || 'INFO',
-                      message: msg.message || '',
-                    })),
-                  );
-                }
-              }
-            } else {
-              // If parameters are required, show the form
-              setCurrentAuthenticator(authenticator);
-              setupFormFields(authenticator);
-            }
+            // If parameters are required, show the form
+            setCurrentAuthenticator(authenticator);
+            setupFormFields(authenticator);
           }
         }
-      } catch (err) {
-        const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Authenticator selection failed';
-        setError(errorMessage);
-        onError?.(err as Error);
-      } finally {
-        setIsLoading(false);
       }
-    },
-    [
-      currentFlow,
-      markAllFieldsAsTouched,
-      validateForm,
-      onAuthenticate,
-      onFlowChange,
-      onSuccess,
-      onError,
-      setupFormFields,
-    ],
-  );
+    } catch (err) {
+      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Authenticator selection failed';
+      setError(errorMessage);
+      onError?.(err as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   /**
    * Handle input value changes.
    */
-  const handleInputChange = useCallback(
-    (param: string, value: string) => {
-      setFormValue(param, value);
-      setFormTouched(param, true);
-    },
-    [setFormValue, setFormTouched],
-  );
+  const handleInputChange = (param: string, value: string) => {
+    setFormValue(param, value);
+    setFormTouched(param, true);
+  };
 
   /**
    * Check if current flow has multiple authenticator options.
@@ -757,7 +730,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                     touchedFields,
                     isLoading,
                     handleInputChange,
-                    handleAuthenticatorSelection,
+                    (auth, formData) => {
+                      return handleAuthenticatorSelection(auth, formData);
+                    },
                     {
                       inputClassName: inputClasses,
                       buttonClassName: buttonClasses,
@@ -782,7 +757,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                   touchedFields,
                   isLoading,
                   handleInputChange,
-                  handleAuthenticatorSelection,
+                  (auth, formData) => {
+                    return handleAuthenticatorSelection(auth, formData);
+                  },
                   {
                     inputClassName: inputClasses,
                     buttonClassName: buttonClasses,
@@ -879,7 +856,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             touchedFields,
             isLoading,
             handleInputChange,
-            (authenticator, formData) => handleSubmit(formData || formValues),
+            (authenticator, formData) => {
+              return handleSubmit(formData || formValues);
+            },
             {
               inputClassName: inputClasses,
               buttonClassName: buttonClasses,
