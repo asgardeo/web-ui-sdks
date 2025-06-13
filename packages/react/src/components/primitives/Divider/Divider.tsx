@@ -55,12 +55,14 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
 
     if (orientation === 'vertical') {
       return {
-        display: 'inline-block',
-        height: '100%',
-        minHeight: '1rem',
-        width: '1px',
-        borderLeft: `1px ${borderStyle} ${baseColor}`,
-        margin: `0 ${theme.spacing.unit}px`,
+        container: {
+          display: 'inline-block',
+          height: '100%',
+          minHeight: '1rem',
+          width: '1px',
+          borderLeft: `1px ${borderStyle} ${baseColor}`,
+          margin: `0 ${theme.spacing.unit}px`,
+        }
       };
     }
 
@@ -76,28 +78,26 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
 
     if (hasChildren) {
       return {
-        ...baseStyle,
-        '&::before': {
-          content: '""',
+        container: baseStyle,
+        line: {
           flex: 1,
           height: '1px',
           borderTop: `1px ${borderStyle} ${baseColor}`,
-          marginRight: `${theme.spacing.unit}px`,
         },
-        '&::after': {
-          content: '""',
-          flex: 1,
-          height: '1px',
-          borderTop: `1px ${borderStyle} ${baseColor}`,
-          marginLeft: `${theme.spacing.unit}px`,
-        },
+        text: {
+          backgroundColor: 'var(--background-color, #fff)',
+          padding: `0 ${theme.spacing.unit}px`,
+          whiteSpace: 'nowrap' as const,
+        }
       };
     }
 
     return {
-      ...baseStyle,
-      height: '1px',
-      borderTop: `1px ${borderStyle} ${baseColor}`,
+      container: {
+        ...baseStyle,
+        height: '1px',
+        borderTop: `1px ${borderStyle} ${baseColor}`,
+      }
     };
   }, [orientation, variant, color, hasChildren, theme]);
 };
@@ -129,13 +129,13 @@ const Divider: FC<DividerProps> = ({
   style,
   ...rest
 }) => {
-  const dividerStyle = useStyles(orientation, variant, color, !!children);
+  const styles = useStyles(orientation, variant, color, !!children);
 
   if (orientation === 'vertical') {
     return (
       <div
         className={clsx(withVendorCSSClassPrefix('divider'), withVendorCSSClassPrefix('divider-vertical'), className)}
-        style={{...dividerStyle, ...style}}
+        style={{...styles.container, ...style}}
         role="separator"
         aria-orientation="vertical"
         {...rest}
@@ -152,20 +152,16 @@ const Divider: FC<DividerProps> = ({
           withVendorCSSClassPrefix('divider-with-text'),
           className,
         )}
-        style={{...dividerStyle, ...style}}
+        style={{...styles.container, ...style}}
         role="separator"
         aria-orientation="horizontal"
         {...rest}
       >
-        <span
-          style={{
-            backgroundColor: 'var(--background-color, #fff)',
-            padding: '0 0.5rem',
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <div style={styles.line} />
+        <span style={styles.text}>
           {children}
         </span>
+        <div style={styles.line} />
       </div>
     );
   }
@@ -173,7 +169,7 @@ const Divider: FC<DividerProps> = ({
   return (
     <div
       className={clsx(withVendorCSSClassPrefix('divider'), withVendorCSSClassPrefix('divider-horizontal'), className)}
-      style={{...dividerStyle, ...style}}
+      style={{...styles.container, ...style}}
       role="separator"
       aria-orientation="horizontal"
       {...rest}
