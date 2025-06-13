@@ -16,39 +16,29 @@
  * under the License.
  */
 
+import {useState, useCallback, useMemo} from 'react';
 import {
   ApplicationNativeAuthenticationAuthenticator,
   ApplicationNativeAuthenticationInitiateResponse,
   ApplicationNativeAuthenticationHandleResponse,
-  ApplicationNativeAuthenticationStepType,
   ApplicationNativeAuthenticationFlowStatus,
   ApplicationNativeAuthenticationAuthenticatorPromptType,
   AsgardeoAPIError,
-  withVendorCSSClassPrefix,
 } from '@asgardeo/browser';
-import {FC, ReactElement, FormEvent, useEffect, useState, useCallback} from 'react';
-import {clsx} from 'clsx';
-import Card from '../../primitives/Card/Card';
-import Alert from '../../primitives/Alert/Alert';
-import Divider from '../../primitives/Divider/Divider';
-import useTranslation from '../../../hooks/useTranslation';
-import {useForm, FormField} from '../../../hooks/useForm';
-import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory';
+import useTranslation from './useTranslation';
+import {useForm, FormField} from './useForm';
 
 /**
- * Props for the BaseSignIn component.
+ * Props for the useSignInForm hook.
  */
-export interface BaseSignInProps {
+export interface UseSignInFormProps {
   /**
    * Function to initialize authentication flow.
-   * @returns Promise resolving to the initial authentication response.
    */
   onInitialize: () => Promise<ApplicationNativeAuthenticationInitiateResponse>;
 
   /**
    * Function to handle authentication steps.
-   * @param payload - The authentication payload.
-   * @returns Promise resolving to the authentication response.
    */
   onAuthenticate: (payload: {
     flowId: string;
@@ -60,124 +50,99 @@ export interface BaseSignInProps {
 
   /**
    * Callback function called when authentication is successful.
-   * @param authData - The authentication data returned upon successful completion.
    */
   onSuccess?: (authData: Record<string, any>) => void;
 
   /**
    * Callback function called when authentication fails.
-   * @param error - The error that occurred during authentication.
    */
   onError?: (error: Error) => void;
 
   /**
    * Callback function called when authentication flow status changes.
-   * @param response - The current authentication response.
    */
   onFlowChange?: (
     response: ApplicationNativeAuthenticationInitiateResponse | ApplicationNativeAuthenticationHandleResponse,
   ) => void;
-
-  /**
-   * Custom CSS class name for the form container.
-   */
-  className?: string;
-
-  /**
-   * Custom CSS class name for form inputs.
-   */
-  inputClassName?: string;
-
-  /**
-   * Custom CSS class name for the submit button.
-   */
-  buttonClassName?: string;
-
-  /**
-   * Custom CSS class name for error messages.
-   */
-  errorClassName?: string;
-
-  /**
-   * Custom CSS class name for info messages.
-   */
-  messageClassName?: string;
-
-  /**
-   * Whether to show loading state.
-   */
-  showLoading?: boolean;
-
-  /**
-   * Custom loading text.
-   */
-  loadingText?: string;
-
-  /**
-   * Apply default styling.
-   */
-  styled?: boolean;
-
-  /**
-   * Size variant for the component.
-   */
-  size?: 'small' | 'medium' | 'large';
-
-  /**
-   * Theme variant for the component.
-   */
-  variant?: 'default' | 'outlined' | 'filled';
 }
 
 /**
- * Base SignIn component that provides native authentication flow.
- * This component handles both the presentation layer and authentication flow logic.
- * It accepts API functions as props to maintain framework independence.
+ * Return type for the useSignInForm hook.
+ */
+export interface UseSignInFormReturn {
+  // State
+  isLoading: boolean;
+  isInitialized: boolean;
+  currentFlow: ApplicationNativeAuthenticationInitiateResponse | null;
+  currentAuthenticator: ApplicationNativeAuthenticationAuthenticator | null;
+  error: string | null;
+  messages: Array<{type: string; message: string}>;
+
+  // Form state and methods (from useForm)
+  formValues: Record<string, string>;
+  touchedFields: Record<string, boolean>;
+  formErrors: Record<string, string>;
+  isFormValid: boolean;
+  setFormValue: (name: string, value: string) => void;
+  setFormTouched: (name: string, touched?: boolean) => void;
+  clearFormErrors: () => void;
+  validateFormField: (name: string) => string | null;
+  validateForm: () => {isValid: boolean; errors: Record<string, string>};
+
+  // Actions
+  initializeFlow: () => Promise<void>;
+  handleSubmit: (submittedValues: Record<string, string>) => Promise<void>;
+  handleAuthenticatorSelection: (
+    authenticator: ApplicationNativeAuthenticationAuthenticator,
+    formData?: Record<string, string>,
+  ) => Promise<void>;
+  handleInputChange: (param: string, value: string) => void;
+  markAllFieldsAsTouched: () => void;
+  setupFormFields: (authenticator: ApplicationNativeAuthenticationAuthenticator) => void;
+
+  // Utilities
+  hasMultipleOptions: () => boolean;
+  getAvailableAuthenticators: () => ApplicationNativeAuthenticationAuthenticator[];
+}
+
+/**
+ * Custom hook for managing sign-in form state and logic.
+ *
+ * This hook encapsulates all the form-related functionality including:
+ * - Form field values and touched state management using the generic useForm hook
+ * - Authentication flow handling
+ * - Error and message state management
+ * - Field validation triggering
+ *
+ * @param props - Configuration for the sign-in form
+ * @returns Object containing state and action handlers for the sign-in form
  *
  * @example
  * ```tsx
- * import { BaseSignIn } from '@asgardeo/react';
- *
- * const MySignIn = () => {
- *   return (
- *     <BaseSignIn
- *       onInitialize={async () => {
- *         // Your API call to initialize authentication
- *         return await initializeAuth();
- *       }}
- *       onAuthenticate={async (payload) => {
- *         // Your API call to handle authentication
- *         return await handleAuth(payload);
- *       }}
- *       onSuccess={(authData) => {
- *         console.log('Success:', authData);
- *       }}
- *       onError={(error) => {
- *         console.error('Error:', error);
- *       }}
- *       className="max-w-md mx-auto"
- *     />
- *   );
- * };
+ * const {
+ *   isLoading,
+ *   currentAuthenticator,
+ *   formValues,
+ *   touchedFields,
+ *   error,
+ *   handleSubmit,
+ *   handleInputChange,
+ *   initializeFlow
+ * } = useSignInForm({
+ *   onInitialize: async () => await signIn(),
+ *   onAuthenticate: async (payload) => await authenticate(payload),
+ *   onSuccess: (authData) => console.log('Success:', authData),
+ *   onError: (error) => console.error('Error:', error)
+ * });
  * ```
  */
-const BaseSignIn: FC<BaseSignInProps> = ({
+export const useSignInForm = ({
   onInitialize,
   onAuthenticate,
   onSuccess,
   onError,
   onFlowChange,
-  className = '',
-  inputClassName = '',
-  buttonClassName = '',
-  errorClassName = '',
-  messageClassName = '',
-  showLoading = true,
-  loadingText,
-  styled = true,
-  size = 'medium',
-  variant = 'default',
-}) => {
+}: UseSignInFormProps): UseSignInFormReturn => {
   const {t} = useTranslation();
 
   // Authentication state management
@@ -191,18 +156,24 @@ const BaseSignIn: FC<BaseSignInProps> = ({
   const [messages, setMessages] = useState<Array<{type: string; message: string}>>([]);
 
   // Create form fields configuration based on current authenticator
-  const formFields: FormField[] =
-    currentAuthenticator?.metadata?.params?.map(param => ({
+  const formFields = useMemo((): FormField[] => {
+    if (!currentAuthenticator?.metadata?.params) {
+      return [];
+    }
+
+    return currentAuthenticator.metadata.params.map(param => ({
       name: param.param,
       required: currentAuthenticator.requiredParams.includes(param.param),
       initialValue: '',
       validator: (value: string) => {
+        // Add custom validation logic here if needed
         if (currentAuthenticator.requiredParams.includes(param.param) && (!value || value.trim() === '')) {
           return t('field.required');
         }
         return null;
       },
-    })) || [];
+    }));
+  }, [currentAuthenticator, t]);
 
   // Initialize form with dynamic fields
   const form = useForm<Record<string, string>>({
@@ -552,243 +523,38 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     return currentFlow.nextStep.authenticators;
   }, [currentFlow]);
 
-  // Generate CSS classes
-  const containerClasses = clsx(
-    styled && [
-      withVendorCSSClassPrefix('signin'),
-      withVendorCSSClassPrefix(`signin--${size}`),
-      withVendorCSSClassPrefix(`signin--${variant}`),
-    ],
-    className,
-  );
+  return {
+    // State
+    isLoading,
+    isInitialized,
+    currentFlow,
+    currentAuthenticator,
+    error,
+    messages,
 
-  const inputClasses = clsx(
-    styled && [
-      withVendorCSSClassPrefix('signin__input'),
-      size === 'small' && withVendorCSSClassPrefix('signin__input--small'),
-      size === 'large' && withVendorCSSClassPrefix('signin__input--large'),
-    ],
-    inputClassName,
-  );
+    // Form state and methods (from useForm)
+    formValues,
+    touchedFields,
+    formErrors,
+    isFormValid,
+    setFormValue,
+    setFormTouched,
+    clearFormErrors,
+    validateFormField,
+    validateForm,
 
-  const buttonClasses = clsx(
-    styled && [
-      withVendorCSSClassPrefix('signin__button'),
-      size === 'small' && withVendorCSSClassPrefix('signin__button--small'),
-      size === 'large' && withVendorCSSClassPrefix('signin__button--large'),
-      variant === 'outlined' && withVendorCSSClassPrefix('signin__button--outlined'),
-      variant === 'filled' && withVendorCSSClassPrefix('signin__button--filled'),
-    ],
-    buttonClassName,
-  );
+    // Actions
+    initializeFlow,
+    handleSubmit,
+    handleAuthenticatorSelection,
+    handleInputChange,
+    markAllFieldsAsTouched,
+    setupFormFields,
 
-  const errorClasses = clsx(styled && [withVendorCSSClassPrefix('signin__error')], errorClassName);
-
-  const messageClasses = clsx(styled && [withVendorCSSClassPrefix('signin__messages')], messageClassName);
-
-  // Initialize the flow on component mount
-  useEffect(() => {
-    if (!isInitialized) {
-      initializeFlow();
-    }
-  }, [isInitialized, initializeFlow]);
-
-  if (!isInitialized && isLoading) {
-    return showLoading ? (
-      <Card className={containerClasses}>
-        <Card.Content>
-          <p>{loadingText ?? t('messages.loading')}</p>
-        </Card.Content>
-      </Card>
-    ) : null;
-  }
-
-  // Handle multiple authenticator options
-  if (hasMultipleOptions() && !currentAuthenticator) {
-    const availableAuthenticators = getAvailableAuthenticators();
-
-    // Separate authenticators by prompt type and characteristics
-    const userPromptAuthenticators = availableAuthenticators.filter(
-      auth =>
-        auth.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.USER_PROMPT ||
-        // Fallback: LOCAL authenticators with params are typically user prompts
-        (auth.idp === 'LOCAL' && auth.metadata?.params && auth.metadata.params.length > 0),
-    );
-
-    // All other authenticators are treated as options/buttons
-    const optionAuthenticators = availableAuthenticators.filter(auth => !userPromptAuthenticators.includes(auth));
-
-    return (
-      <Card className={containerClasses}>
-        <Card.Header>
-          <Card.Title level={2}>{t('signin.title')}</Card.Title>
-          {messages.length > 0 && (
-            <div style={{marginTop: '1rem'}}>
-              {messages.map((message, index) => {
-                const variant =
-                  message.type.toLowerCase() === 'error'
-                    ? 'error'
-                    : message.type.toLowerCase() === 'warning'
-                    ? 'warning'
-                    : message.type.toLowerCase() === 'success'
-                    ? 'success'
-                    : 'info';
-
-                return (
-                  <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClasses}>
-                    <Alert.Description>{message.message}</Alert.Description>
-                  </Alert>
-                );
-              })}
-            </div>
-          )}
-        </Card.Header>
-
-        <Card.Content>
-          {error && (
-            <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClasses}>
-              <Alert.Title>Error</Alert.Title>
-              <Alert.Description>{error}</Alert.Description>
-            </Alert>
-          )}
-
-          <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
-            {/* Render USER_PROMPT authenticators as form fields */}
-            {userPromptAuthenticators.map((authenticator, index) => (
-              <div key={authenticator.authenticatorId}>
-                {index > 0 && <Divider style={{margin: '0.5rem 0'}}>OR</Divider>}
-                <form
-                  onSubmit={e => {
-                    e.preventDefault();
-                    const formData: Record<string, string> = {};
-                    authenticator.metadata?.params?.forEach(param => {
-                      formData[param.param] = formValues[param.param] || '';
-                    });
-                    handleAuthenticatorSelection(authenticator, formData);
-                  }}
-                >
-                  {createSignInOptionFromAuthenticator(
-                    authenticator,
-                    formValues,
-                    touchedFields,
-                    isLoading,
-                    handleInputChange,
-                    handleAuthenticatorSelection,
-                    {
-                      inputClassName: inputClasses,
-                      buttonClassName: buttonClasses,
-                      error,
-                    },
-                  )}
-                </form>
-              </div>
-            ))}
-
-            {/* Add divider between user prompts and option authenticators if both exist */}
-            {userPromptAuthenticators.length > 0 && optionAuthenticators.length > 0 && (
-              <Divider style={{margin: '0.5rem 0'}}>OR</Divider>
-            )}
-
-            {/* Render all other authenticators (REDIRECTION_PROMPT, multi-option buttons, etc.) */}
-            {optionAuthenticators.map((authenticator, index) => (
-              <div key={authenticator.authenticatorId}>
-                {createSignInOptionFromAuthenticator(
-                  authenticator,
-                  formValues,
-                  touchedFields,
-                  isLoading,
-                  handleInputChange,
-                  handleAuthenticatorSelection,
-                  {
-                    inputClassName: inputClasses,
-                    buttonClassName: buttonClasses,
-                    error,
-                  },
-                )}
-              </div>
-            ))}
-          </div>
-        </Card.Content>
-      </Card>
-    );
-  }
-
-  if (!currentAuthenticator) {
-    return (
-      <Card className={containerClasses}>
-        <Card.Content>
-          {error && (
-            <Alert variant="error">
-              <Alert.Title>{t('errors.authenticationError')}</Alert.Title>
-              <Alert.Description>{error}</Alert.Description>
-            </Alert>
-          )}
-        </Card.Content>
-      </Card>
-    );
-  }
-
-  return (
-    <Card className={containerClasses}>
-      <Card.Header>
-        <Card.Title level={2}>{t('signin.title')}</Card.Title>
-        {messages.length > 0 && (
-          <div style={{marginTop: '1rem'}}>
-            {messages.map((message, index) => {
-              const variant =
-                message.type.toLowerCase() === 'error'
-                  ? 'error'
-                  : message.type.toLowerCase() === 'warning'
-                  ? 'warning'
-                  : message.type.toLowerCase() === 'success'
-                  ? 'success'
-                  : 'info';
-
-              return (
-                <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClasses}>
-                  <Alert.Description>{message.message}</Alert.Description>
-                </Alert>
-              );
-            })}
-          </div>
-        )}
-      </Card.Header>
-
-      <Card.Content>
-        {error && (
-          <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClasses}>
-            <Alert.Title>{t('errors.title')}</Alert.Title>
-            <Alert.Description>{error}</Alert.Description>
-          </Alert>
-        )}
-
-        <form
-          onSubmit={(e: FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            const formData: Record<string, string> = {};
-            currentAuthenticator.metadata?.params?.forEach(param => {
-              formData[param.param] = formValues[param.param] || '';
-            });
-            handleSubmit(formData);
-          }}
-        >
-          {createSignInOptionFromAuthenticator(
-            currentAuthenticator,
-            formValues,
-            touchedFields,
-            isLoading,
-            handleInputChange,
-            (authenticator, formData) => handleSubmit(formData || formValues),
-            {
-              inputClassName: inputClasses,
-              buttonClassName: buttonClasses,
-              error,
-            },
-          )}
-        </form>
-      </Card.Content>
-    </Card>
-  );
+    // Utilities
+    hasMultipleOptions,
+    getAvailableAuthenticators,
+  };
 };
 
-export default BaseSignIn;
+export default useSignInForm;

@@ -3,8 +3,8 @@
 import {useState, useRef, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {useApp} from '../App';
-import {Users, ChevronDown, Settings, User, LogOut, Plus, Check, Building2} from 'lucide-react';
-import {SignedOut, SignInButton, SignOutButton, UserProfile} from '@asgardeo/react';
+import {Users, ChevronDown, Settings, User as UserIcon, LogOut, Plus, Check, Building2} from 'lucide-react';
+import {SignedOut, SignInButton, SignOutButton, User, UserProfile} from '@asgardeo/react';
 import {Button} from './ui/button';
 
 export default function Header() {
@@ -141,7 +141,7 @@ export default function Header() {
                 onClick={() => setShowUserDropdown(!showUserDropdown)}
                 className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50"
               >
-                <img src={user?.avatar || '/placeholder.svg'} alt={user?.name} className="w-8 h-8 rounded-full" />
+                <User>{user => <img src={user?.picture} alt={user?.userName} className="w-8 h-8 rounded-full" />}</User>
                 <ChevronDown className="h-4 w-4 text-gray-500" />
               </button>
 
@@ -160,7 +160,7 @@ export default function Header() {
                       setShowUserDropdown(false);
                     }}
                   >
-                    <User className="h-4 w-4 mr-3" />
+                    <UserIcon className="h-4 w-4 mr-3" />
                     Your profile
                   </div>
 

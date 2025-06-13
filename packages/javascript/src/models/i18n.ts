@@ -17,7 +17,41 @@
  */
 
 export interface I18nTranslations {
-  'signin.title': string;
+  /* |---------------------------------------------------------------| */
+  /* |                        Elements                               | */
+  /* |---------------------------------------------------------------| */
+
+  //* Buttons */
+  'elements.buttons.signIn': string;
+  'elements.buttons.signOut': string;
+  'elements.buttons.signUp': string;
+  'elements.buttons.facebook': string;
+  'elements.buttons.google': string;
+  'elements.buttons.github': string;
+  'elements.buttons.microsoft': string;
+  'elements.buttons.linkedin': string;
+  'elements.buttons.ethereum': string;
+  'elements.buttons.multi.option': string;
+  'elements.buttons.social': string;
+
+  /* |---------------------------------------------------------------| */
+  /* |                        Widgets                                | */
+  /* |---------------------------------------------------------------| */
+
+  /* Email OTP */
+  'email.otp.submit.button': string;
+
+  /* Identifier First */
+  'identifier.first.submit.button': string;
+
+  /* SMS OTP */
+  'sms.otp.submit.button': string;
+
+  /* TOTP */
+  'totp.submit.button': string;
+
+  /* Username Password */
+  'username.password.submit.button': string;
 }
 
 export type I18nTextDirection = 'ltr' | 'rtl';

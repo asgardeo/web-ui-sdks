@@ -92,7 +92,12 @@ export const formatMultiValuedString = (values: string[]): string => {
 /**
  * Utility function to validate field values based on type
  */
-export const validateFieldValue = (value: string, type: FieldType, required: boolean = false, touched: boolean = false): string | null => {
+export const validateFieldValue = (
+  value: string,
+  type: FieldType,
+  required: boolean = false,
+  touched: boolean = false,
+): string | null => {
   // Only show required field errors if the field has been touched
   if (required && touched && (!value || value.trim() === '')) {
     return 'This field is required';
@@ -135,7 +140,19 @@ export const validateFieldValue = (value: string, type: FieldType, required: boo
  * ```
  */
 export const createField = (config: FieldConfig): ReactElement => {
-  const {name, type, label, required, value, onChange, disabled = false, error, className, options = [], touched = false} = config;
+  const {
+    name,
+    type,
+    label,
+    required,
+    value,
+    onChange,
+    disabled = false,
+    error,
+    className,
+    options = [],
+    touched = false,
+  } = config;
 
   // Auto-validate the field value
   const validationError = error || validateFieldValue(value, type, required, touched);
