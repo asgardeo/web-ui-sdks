@@ -128,6 +128,9 @@ export * from './components/primitives/FormControl/FormControl';
 export {default as InputLabel} from './components/primitives/InputLabel/InputLabel';
 export * from './components/primitives/InputLabel/InputLabel';
 
+export {default as Typography} from './components/primitives/Typography/Typography';
+export * from './components/primitives/Typography/Typography';
+
 export {default as Divider} from './components/primitives/Divider/Divider';
 export * from './components/primitives/Divider/Divider';
 
