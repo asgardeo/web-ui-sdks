@@ -35,7 +35,7 @@ import Typography from '../../primitives/Typography/Typography';
 import useTranslation from '../../../hooks/useTranslation';
 import {useForm, FormField} from '../../../hooks/useForm';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
-import useFlowOptional from '../../../contexts/Flow/useFlowOptional';
+import useFlow from '../../../contexts/Flow/useFlow';
 import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory';
 
 /**
@@ -193,7 +193,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   variant = 'default',
 }) => {
   const {t} = useTranslation();
-  const flow = useFlowOptional();
+  const {subtitle: flowSubtitle, title: flowTitle, messages: flowMessages} = useFlow();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -628,15 +628,15 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     return (
       <Card className={containerClasses}>
         <Card.Header>
-          <Card.Title level={2}>{flow?.title || t('signin.title')}</Card.Title>
-          {flow?.subtitle && (
+          <Card.Title level={2}>{flowTitle || t('signin.title')}</Card.Title>
+          {flowSubtitle && (
             <Typography variant="body1" style={{marginTop: '0.5rem'}}>
-              {flow?.subtitle || t('signin.subtitle')}
+              {flowSubtitle || t('signin.subtitle')}
             </Typography>
           )}
-          {flow?.messages && flow.messages.length > 0 && (
+          {flowMessages && flowMessages.length > 0 && (
             <div style={{marginTop: '1rem'}}>
-              {flow.messages.map((flowMessage, index) => (
+              {flowMessages.map((flowMessage, index) => (
                 <Alert
                   key={flowMessage.id || index}
                   variant={flowMessage.type}
@@ -757,10 +757,13 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   return (
     <Card className={containerClasses}>
       <Card.Header>
-        <Card.Title level={2}>{flow?.title || t('signin.title')}</Card.Title>
-        {flow?.messages && flow.messages.length > 0 && (
+        <Card.Title level={2}>{flowTitle || t('signin.title')}</Card.Title>
+        <Typography variant="body1" style={{marginTop: '0.5rem'}}>
+          {flowSubtitle || t('signin.subtitle')}
+        </Typography>
+        {flowMessages && flowMessages.length > 0 && (
           <div style={{marginTop: '1rem'}}>
-            {flow.messages.map((flowMessage, index) => (
+            {flowMessages.map((flowMessage, index) => (
               <Alert
                 key={flowMessage.id || index}
                 variant={flowMessage.type}
