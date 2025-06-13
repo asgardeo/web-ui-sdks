@@ -27,7 +27,7 @@ import Button from '../../../primitives/Button/Button';
 import OtpField from '../../../primitives/OtpField/OtpField';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
-import {useFlow} from '../../../../contexts/Flow';
+import useFlow from '../../../../contexts/Flow/useFlow';
 
 /**
  * Email OTP Sign-In Option Component.
