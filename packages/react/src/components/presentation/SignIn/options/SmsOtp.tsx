@@ -35,6 +35,7 @@ import useTranslation from '../../../../hooks/useTranslation';
 const SmsOtp: FC<BaseSignInOptionProps> = ({
   authenticator,
   formValues,
+  touchedFields,
   isLoading,
   onInputChange,
   onSubmit,
@@ -82,6 +83,7 @@ const SmsOtp: FC<BaseSignInOptionProps> = ({
                 onChange: value => onInputChange(param.param, value),
                 disabled: isLoading,
                 className: inputClassName,
+                touched: touchedFields[param.param] || false,
               })
             )}
           </div>

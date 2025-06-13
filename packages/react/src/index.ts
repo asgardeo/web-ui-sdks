@@ -31,6 +31,9 @@ export * from './hooks/useBrowserUrl';
 export {default as useTranslation} from './hooks/useTranslation';
 export * from './hooks/useTranslation';
 
+export {default as useForm} from './hooks/useForm';
+export * from './hooks/useForm';
+
 export {default as BaseSignInButton} from './components/actions/SignInButton/BaseSignInButton';
 export * from './components/actions/SignInButton/BaseSignInButton';
 

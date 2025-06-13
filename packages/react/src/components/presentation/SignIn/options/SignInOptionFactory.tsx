@@ -52,6 +52,11 @@ export interface BaseSignInOptionProps extends WithPreferences {
   formValues: Record<string, string>;
 
   /**
+   * Touched state for form fields.
+   */
+  touchedFields: Record<string, boolean>;
+
+  /**
    * Whether the component is in loading state.
    */
   isLoading: boolean;
@@ -158,6 +163,7 @@ export const createSignInOption = (props: BaseSignInOptionProps): ReactElement =
 export const createSignInOptionFromAuthenticator = (
   authenticator: ApplicationNativeAuthenticationAuthenticator,
   formValues: Record<string, string>,
+  touchedFields: Record<string, boolean>,
   isLoading: boolean,
   onInputChange: (param: string, value: string) => void,
   onSubmit: (authenticator: ApplicationNativeAuthenticationAuthenticator, formData?: Record<string, string>) => void,
@@ -170,6 +176,7 @@ export const createSignInOptionFromAuthenticator = (
   return createSignInOption({
     authenticator,
     formValues,
+    touchedFields,
     isLoading,
     onInputChange,
     onSubmit,

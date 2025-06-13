@@ -8,12 +8,7 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless require        }
-      }
-    } catch (err) {
-      const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.authenticationFailed');
-      setError(errorMessage);
-      onError?.(err as Error);pplicable law or agreed to in writing,
+ * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the
@@ -31,12 +26,13 @@ import {
   AsgardeoAPIError,
   withVendorCSSClassPrefix,
 } from '@asgardeo/browser';
-import {FC, ReactElement, FormEvent, useState, useEffect} from 'react';
+import {FC, ReactElement, FormEvent, useEffect, useState, useCallback} from 'react';
 import {clsx} from 'clsx';
 import Card from '../../primitives/Card/Card';
 import Alert from '../../primitives/Alert/Alert';
 import Divider from '../../primitives/Divider/Divider';
 import useTranslation from '../../../hooks/useTranslation';
+import {useForm, FormField} from '../../../hooks/useForm';
 import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory';
 
 /**
@@ -184,66 +180,81 @@ const BaseSignIn: FC<BaseSignInProps> = ({
 }) => {
   const {t} = useTranslation();
 
-  // Internal state management
+  // Authentication state management
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentFlow, setCurrentFlow] = useState<ApplicationNativeAuthenticationInitiateResponse | null>(null);
   const [currentAuthenticator, setCurrentAuthenticator] = useState<ApplicationNativeAuthenticationAuthenticator | null>(
     null,
   );
-  const [formValues, setFormValues] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Array<{type: string; message: string}>>([]);
 
-  // Generate CSS classes
-  const containerClasses = clsx(
-    styled && [
-      withVendorCSSClassPrefix('signin'),
-      withVendorCSSClassPrefix(`signin--${size}`),
-      withVendorCSSClassPrefix(`signin--${variant}`),
-    ],
-    className,
-  );
+  // Create form fields configuration based on current authenticator
+  const formFields: FormField[] = currentAuthenticator?.metadata?.params?.map(param => ({
+    name: param.param,
+    required: currentAuthenticator.requiredParams.includes(param.param),
+    initialValue: '',
+    validator: (value: string) => {
+      if (currentAuthenticator.requiredParams.includes(param.param) && (!value || value.trim() === '')) {
+        return t('field.required');
+      }
+      return null;
+    },
+  })) || [];
 
-  const inputClasses = clsx(
-    styled && [
-      withVendorCSSClassPrefix('signin__input'),
-      size === 'small' && withVendorCSSClassPrefix('signin__input--small'),
-      size === 'large' && withVendorCSSClassPrefix('signin__input--large'),
-    ],
-    inputClassName,
-  );
+  // Initialize form with dynamic fields
+  const form = useForm<Record<string, string>>({
+    initialValues: {},
+    fields: formFields,
+    validateOnBlur: true,
+    validateOnChange: false,
+    requiredMessage: t('field.required'),
+  });
 
-  const buttonClasses = clsx(
-    styled && [
-      withVendorCSSClassPrefix('signin__button'),
-      size === 'small' && withVendorCSSClassPrefix('signin__button--small'),
-      size === 'large' && withVendorCSSClassPrefix('signin__button--large'),
-      variant === 'outlined' && withVendorCSSClassPrefix('signin__button--outlined'),
-      variant === 'filled' && withVendorCSSClassPrefix('signin__button--filled'),
-    ],
-    buttonClassName,
-  );
-
-  const errorClasses = clsx(styled && [withVendorCSSClassPrefix('signin__error')], errorClassName);
-
-  const messageClasses = clsx(styled && [withVendorCSSClassPrefix('signin__messages')], messageClassName);
+  const {
+    values: formValues,
+    touched: touchedFields,
+    errors: formErrors,
+    isValid: isFormValid,
+    setValue: setFormValue,
+    setTouched: setFormTouched,
+    clearErrors: clearFormErrors,
+    validateField: validateFormField,
+    validateForm,
+    touchAllFields,
+    reset: resetForm,
+  } = form;
 
   /**
    * Setup form fields based on the current authenticator.
    */
-  const setupFormFields = (authenticator: ApplicationNativeAuthenticationAuthenticator) => {
+  const setupFormFields = useCallback((authenticator: ApplicationNativeAuthenticationAuthenticator) => {
     const initialValues: Record<string, string> = {};
     authenticator.metadata?.params?.forEach(param => {
       initialValues[param.param] = '';
     });
-    setFormValues(initialValues);
-  };
+    
+    // Reset form with new values
+    resetForm();
+    
+    // Set initial values for all fields
+    Object.keys(initialValues).forEach(key => {
+      setFormValue(key, initialValues[key]);
+    });
+  }, [resetForm, setFormValue]);
+
+  /**
+   * Mark all fields as touched for validation purposes.
+   */
+  const markAllFieldsAsTouched = useCallback(() => {
+    touchAllFields();
+  }, [touchAllFields]);
 
   /**
    * Initialize the authentication flow.
    */
-  const initializeFlow = async () => {
+  const initializeFlow = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -285,13 +296,22 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [onInitialize, onFlowChange, onSuccess, onError, setupFormFields, t]);
 
   /**
    * Handle form submission.
    */
-  const handleSubmit = async (submittedValues: Record<string, string>) => {
+  const handleSubmit = useCallback(async (submittedValues: Record<string, string>) => {
     if (!currentFlow || !currentAuthenticator) {
+      return;
+    }
+
+    // Mark all fields as touched before validation
+    markAllFieldsAsTouched();
+
+    // Validate form before submission
+    const validation = validateForm();
+    if (!validation.isValid) {
       return;
     }
 
@@ -357,17 +377,22 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentFlow, currentAuthenticator, markAllFieldsAsTouched, validateForm, onAuthenticate, onFlowChange, onSuccess, onError, setupFormFields, t]);
 
   /**
    * Handle authenticator selection for multi-option prompts.
    */
-  const handleAuthenticatorSelection = async (
+  const handleAuthenticatorSelection = useCallback(async (
     authenticator: ApplicationNativeAuthenticationAuthenticator,
     formData?: Record<string, string>,
   ) => {
     if (!currentFlow) {
       return;
+    }
+
+    // Mark all fields as touched if we have form data (i.e., this is a submission)
+    if (formData) {
+      markAllFieldsAsTouched();
     }
 
     setIsLoading(true);
@@ -395,6 +420,12 @@ const BaseSignIn: FC<BaseSignInProps> = ({
         }
       } else {
         if (formData) {
+          // Validate form before submission
+          const validation = validateForm();
+          if (!validation.isValid) {
+            return;
+          }
+
           const payload = {
             flowId: currentFlow.flowId,
             selectedAuthenticator: {
@@ -457,47 +488,79 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentFlow, markAllFieldsAsTouched, validateForm, onAuthenticate, onFlowChange, onSuccess, onError, setupFormFields]);
 
   /**
    * Handle input value changes.
    */
-  const handleInputChange = (param: string, value: string) => {
-    setFormValues(prev => ({
-      ...prev,
-      [param]: value,
-    }));
-  };
+  const handleInputChange = useCallback((param: string, value: string) => {
+    setFormValue(param, value);
+    setFormTouched(param, true);
+  }, [setFormValue, setFormTouched]);
+
+  /**
+   * Check if current flow has multiple authenticator options.
+   */
+  const hasMultipleOptions = useCallback((): boolean => {
+    return (
+      currentFlow &&
+      'nextStep' in currentFlow &&
+      currentFlow.nextStep?.stepType === 'MULTI_OPTIONS_PROMPT' &&
+      currentFlow.nextStep?.authenticators &&
+      currentFlow.nextStep.authenticators.length > 1
+    );
+  }, [currentFlow]);
+
+  /**
+   * Get available authenticators for selection.
+   */
+  const getAvailableAuthenticators = useCallback((): ApplicationNativeAuthenticationAuthenticator[] => {
+    if (!currentFlow || !('nextStep' in currentFlow) || !currentFlow.nextStep?.authenticators) {
+      return [];
+    }
+    return currentFlow.nextStep.authenticators;
+  }, [currentFlow]);
+
+  // Generate CSS classes
+  const containerClasses = clsx(
+    styled && [
+      withVendorCSSClassPrefix('signin'),
+      withVendorCSSClassPrefix(`signin--${size}`),
+      withVendorCSSClassPrefix(`signin--${variant}`),
+    ],
+    className,
+  );
+
+  const inputClasses = clsx(
+    styled && [
+      withVendorCSSClassPrefix('signin__input'),
+      size === 'small' && withVendorCSSClassPrefix('signin__input--small'),
+      size === 'large' && withVendorCSSClassPrefix('signin__input--large'),
+    ],
+    inputClassName,
+  );
+
+  const buttonClasses = clsx(
+    styled && [
+      withVendorCSSClassPrefix('signin__button'),
+      size === 'small' && withVendorCSSClassPrefix('signin__button--small'),
+      size === 'large' && withVendorCSSClassPrefix('signin__button--large'),
+      variant === 'outlined' && withVendorCSSClassPrefix('signin__button--outlined'),
+      variant === 'filled' && withVendorCSSClassPrefix('signin__button--filled'),
+    ],
+    buttonClassName,
+  );
+
+  const errorClasses = clsx(styled && [withVendorCSSClassPrefix('signin__error')], errorClassName);
+
+  const messageClasses = clsx(styled && [withVendorCSSClassPrefix('signin__messages')], messageClassName);
 
   // Initialize the flow on component mount
   useEffect(() => {
     if (!isInitialized) {
       initializeFlow();
     }
-  }, [isInitialized]);
-
-  /**
-   * Check if current flow has multiple authenticator options.
-   */
-  const hasMultipleOptions = (): boolean => {
-    return (
-      currentFlow &&
-      'nextStep' in currentFlow &&
-      currentFlow.nextStep?.stepType === ApplicationNativeAuthenticationStepType.MultOptionsPrompt &&
-      currentFlow.nextStep?.authenticators &&
-      currentFlow.nextStep.authenticators.length > 1
-    );
-  };
-
-  /**
-   * Get available authenticators for selection.
-   */
-  const getAvailableAuthenticators = (): ApplicationNativeAuthenticationAuthenticator[] => {
-    if (!currentFlow || !('nextStep' in currentFlow) || !currentFlow.nextStep?.authenticators) {
-      return [];
-    }
-    return currentFlow.nextStep.authenticators;
-  };
+  }, [isInitialized, initializeFlow]);
 
   if (!isInitialized && isLoading) {
     return showLoading ? (
@@ -576,6 +639,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
                   {createSignInOptionFromAuthenticator(
                     authenticator,
                     formValues,
+                    touchedFields,
                     isLoading,
                     handleInputChange,
                     handleAuthenticatorSelection,
@@ -600,6 +664,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
                 {createSignInOptionFromAuthenticator(
                   authenticator,
                   formValues,
+                  touchedFields,
                   isLoading,
                   handleInputChange,
                   handleAuthenticatorSelection,
@@ -679,6 +744,7 @@ const BaseSignIn: FC<BaseSignInProps> = ({
           {createSignInOptionFromAuthenticator(
             currentAuthenticator,
             formValues,
+            touchedFields,
             isLoading,
             handleInputChange,
             (authenticator, formData) => handleSubmit(formData || formValues),
