@@ -21,11 +21,12 @@ import {
   ApplicationNativeAuthenticationAuthenticatorParamType,
   FieldType,
 } from '@asgardeo/browser';
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
+import {useFlow} from '../../../../contexts/Flow';
 
 /**
  * Identifier First Sign-In Option Component.
@@ -43,8 +44,14 @@ const IdentifierFirst: FC<BaseSignInOptionProps> = ({
   preferences,
 }) => {
   const {t} = useTranslation(preferences?.i18n);
+  const {setTitle, setSubtitle} = useFlow();
 
   const formFields = authenticator.metadata?.params?.sort((a, b) => a.order - b.order) || [];
+
+  useEffect(() => {
+    setTitle(t('identifier.first.title'));
+    setSubtitle(t('identifier.first.subtitle'));
+  }, [setTitle, setSubtitle, t]);
 
   return (
     <>

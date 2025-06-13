@@ -21,11 +21,12 @@ import {
   ApplicationNativeAuthenticationAuthenticatorParamType,
   FieldType,
 } from '@asgardeo/browser';
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
+import {useFlow} from '../../../../contexts/Flow';
 
 /**
  * Username Password Sign-In Option Component.
@@ -43,9 +44,15 @@ const UsernamePassword: FC<BaseSignInOptionProps> = ({
   preferences,
 }) => {
   const {t} = useTranslation(preferences?.i18n);
+  const {setTitle, setSubtitle} = useFlow();
 
   const formFields =
     authenticator.metadata?.params?.sort((a, b) => a.order - b.order)?.filter(param => param.param !== 'totp') || []; // Exclude TOTP fields for username/password
+
+  useEffect(() => {
+    setTitle(t('username.password.title'));
+    setSubtitle(t('username.password.subtitle'));
+  }, [setTitle, setSubtitle, t]);
 
   return (
     <>

@@ -24,6 +24,7 @@ import useBrowserUrl from '../../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../../models/config';
 import {ThemeProvider} from '../Theme/ThemeProvider';
 import I18nProvider from '../I18n/I18nProvider';
+import FlowProvider from '../Flow/FlowProvider';
 
 /**
  * Props interface of {@link AsgardeoProvider}
@@ -176,7 +177,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     >
       <I18nProvider preferences={preferences?.i18n}>
         <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
-          {children}
+          <FlowProvider>{children}</FlowProvider>
         </ThemeProvider>
       </I18nProvider>
     </AsgardeoContext.Provider>

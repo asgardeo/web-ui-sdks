@@ -33,6 +33,8 @@ import Alert from '../../primitives/Alert/Alert';
 import Divider from '../../primitives/Divider/Divider';
 import useTranslation from '../../../hooks/useTranslation';
 import {useForm, FormField} from '../../../hooks/useForm';
+import FlowProvider from '../../../contexts/Flow/FlowProvider';
+import useFlowOptional from '../../../contexts/Flow/useFlowOptional';
 import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory';
 
 /**
@@ -161,7 +163,18 @@ export interface BaseSignInProps {
  * };
  * ```
  */
-const BaseSignIn: FC<BaseSignInProps> = ({
+const BaseSignIn: FC<BaseSignInProps> = props => {
+  return (
+    <FlowProvider>
+      <BaseSignInContent {...props} />
+    </FlowProvider>
+  );
+};
+
+/**
+ * Internal component that consumes FlowContext and renders the sign-in UI.
+ */
+const BaseSignInContent: FC<BaseSignInProps> = ({
   onInitialize,
   onAuthenticate,
   onSuccess,
@@ -179,8 +192,8 @@ const BaseSignIn: FC<BaseSignInProps> = ({
   variant = 'default',
 }) => {
   const {t} = useTranslation();
+  const flow = useFlowOptional();
 
-  // Authentication state management
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentFlow, setCurrentFlow] = useState<ApplicationNativeAuthenticationInitiateResponse | null>(null);
@@ -190,7 +203,6 @@ const BaseSignIn: FC<BaseSignInProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Array<{type: string; message: string}>>([]);
 
-  // Create form fields configuration based on current authenticator
   const formFields: FormField[] =
     currentAuthenticator?.metadata?.params?.map(param => ({
       name: param.param,
@@ -204,7 +216,6 @@ const BaseSignIn: FC<BaseSignInProps> = ({
       },
     })) || [];
 
-  // Initialize form with dynamic fields
   const form = useForm<Record<string, string>>({
     initialValues: {},
     fields: formFields,
@@ -314,7 +325,6 @@ const BaseSignIn: FC<BaseSignInProps> = ({
       // Mark all fields as touched before validation
       markAllFieldsAsTouched();
 
-      // Validate form before submission
       const validation = validateForm();
       if (!validation.isValid) {
         return;
@@ -437,7 +447,6 @@ const BaseSignIn: FC<BaseSignInProps> = ({
           }
         } else {
           if (formData) {
-            // Validate form before submission
             const validation = validateForm();
             if (!validation.isValid) {
               return;
@@ -603,11 +612,9 @@ const BaseSignIn: FC<BaseSignInProps> = ({
     ) : null;
   }
 
-  // Handle multiple authenticator options
   if (hasMultipleOptions() && !currentAuthenticator) {
     const availableAuthenticators = getAvailableAuthenticators();
 
-    // Separate authenticators by prompt type and characteristics
     const userPromptAuthenticators = availableAuthenticators.filter(
       auth =>
         auth.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.USER_PROMPT ||
@@ -615,13 +622,31 @@ const BaseSignIn: FC<BaseSignInProps> = ({
         (auth.idp === 'LOCAL' && auth.metadata?.params && auth.metadata.params.length > 0),
     );
 
-    // All other authenticators are treated as options/buttons
     const optionAuthenticators = availableAuthenticators.filter(auth => !userPromptAuthenticators.includes(auth));
 
     return (
       <Card className={containerClasses}>
         <Card.Header>
-          <Card.Title level={2}>{t('signin.title')}</Card.Title>
+          <Card.Title level={2}>{flow?.title || t('signin.title')}</Card.Title>
+          {flow?.subtitle && (
+            <Card.Title level={3} style={{marginTop: '0.5rem'}}>
+              {flow?.subtitle || t('signin.subtitle')}
+            </Card.Title>
+          )}
+          {flow?.messages && flow.messages.length > 0 && (
+            <div style={{marginTop: '1rem'}}>
+              {flow.messages.map((flowMessage, index) => (
+                <Alert
+                  key={flowMessage.id || index}
+                  variant={flowMessage.type}
+                  style={{marginBottom: '0.5rem'}}
+                  className={messageClasses}
+                >
+                  <Alert.Description>{flowMessage.message}</Alert.Description>
+                </Alert>
+              ))}
+            </div>
+          )}
           {messages.length > 0 && (
             <div style={{marginTop: '1rem'}}>
               {messages.map((message, index) => {
@@ -731,7 +756,21 @@ const BaseSignIn: FC<BaseSignInProps> = ({
   return (
     <Card className={containerClasses}>
       <Card.Header>
-        <Card.Title level={2}>{t('signin.title')}</Card.Title>
+        <Card.Title level={2}>{flow?.title || t('signin.title')}</Card.Title>
+        {flow?.messages && flow.messages.length > 0 && (
+          <div style={{marginTop: '1rem'}}>
+            {flow.messages.map((flowMessage, index) => (
+              <Alert
+                key={flowMessage.id || index}
+                variant={flowMessage.type}
+                style={{marginBottom: '0.5rem'}}
+                className={messageClasses}
+              >
+                <Alert.Description>{flowMessage.message}</Alert.Description>
+              </Alert>
+            ))}
+          </div>
+        )}
         {messages.length > 0 && (
           <div style={{marginTop: '1rem'}}>
             {messages.map((message, index) => {

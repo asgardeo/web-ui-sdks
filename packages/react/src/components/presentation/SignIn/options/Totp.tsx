@@ -21,12 +21,13 @@ import {
   ApplicationNativeAuthenticationAuthenticatorParamType,
   FieldType,
 } from '@asgardeo/browser';
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
 import OtpField from '../../../primitives/OtpField/OtpField';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
+import {useFlow} from '../../../../contexts/Flow';
 
 /**
  * TOTP Sign-In Option Component.
@@ -44,10 +45,15 @@ const Totp: FC<BaseSignInOptionProps> = ({
   preferences,
 }) => {
   const {t} = useTranslation(preferences?.i18n);
+  const {setTitle, setSubtitle} = useFlow();
 
   const formFields = authenticator.metadata?.params?.sort((a, b) => a.order - b.order) || [];
 
-  // Check if this is a TOTP field
+  useEffect(() => {
+    setTitle(t('totp.title'));
+    setSubtitle(t('totp.subtitle'));
+  }, [setTitle, setSubtitle, t]);
+
   const hasTotpField = formFields.some(
     param => param.param.toLowerCase().includes('totp') || param.param.toLowerCase().includes('token'),
   );

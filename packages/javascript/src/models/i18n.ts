@@ -38,20 +38,33 @@ export interface I18nTranslations {
   /* |                        Widgets                                | */
   /* |---------------------------------------------------------------| */
 
+  /* Base Sign In */
+  'signin.title': string;
+
   /* Email OTP */
+  'email.otp.title': string;
+  'email.otp.subtitle': string;
   'email.otp.submit.button': string;
 
   /* Identifier First */
+  'identifier.first.title': string;
+  'identifier.first.subtitle': string;
   'identifier.first.submit.button': string;
 
   /* SMS OTP */
+  'sms.otp.title': string;
+  'sms.otp.subtitle': string;
   'sms.otp.submit.button': string;
 
   /* TOTP */
+  'totp.title': string;
+  'totp.subtitle': string;
   'totp.submit.button': string;
 
   /* Username Password */
   'username.password.submit.button': string;
+  'username.password.title': string;
+  'username.password.subtitle': string;
 }
 
 export type I18nTextDirection = 'ltr' | 'rtl';

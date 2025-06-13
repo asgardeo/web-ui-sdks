@@ -40,20 +40,33 @@ const translations: I18nTranslations = {
   /* |                        Widgets                                | */
   /* |---------------------------------------------------------------| */
 
+  /* Base Sign In */
+  'signin.title': 'Sign In',
+
   /* Email OTP */
+  'email.otp.title': 'OTP Verification',
+  'email.otp.subtitle': 'Enter the code sent to your email address.',
   'email.otp.submit.button': 'Continue',
-  
+
   /* Identifier First */
+  'identifier.first.title': 'Sign In',
+  'identifier.first.subtitle': 'Enter your username or email address.',
   'identifier.first.submit.button': 'Continue',
-  
+
   /* SMS OTP */
+  'sms.otp.title': 'OTP Verification',
+  'sms.otp.subtitle': 'Enter the code sent to your phone number.',
   'sms.otp.submit.button': 'Continue',
-  
+
   /* TOTP */
+  'totp.title': 'Verify Your Identity',
+  'totp.subtitle': 'Enter the code from your authenticator app.',
   'totp.submit.button': 'Continue',
-  
+
   /* Username Password */
   'username.password.submit.button': 'Continue',
+  'username.password.title': 'Sign In',
+  'username.password.subtitle': 'Enter your username and password to continue.',
 };
 
 const metadata: I18nMetadata = {

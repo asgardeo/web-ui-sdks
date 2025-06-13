@@ -21,12 +21,13 @@ import {
   ApplicationNativeAuthenticationAuthenticatorParamType,
   FieldType,
 } from '@asgardeo/browser';
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
 import OtpField from '../../../primitives/OtpField/OtpField';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
+import {useFlow} from '../../../../contexts/Flow';
 
 /**
  * SMS OTP Sign-In Option Component.
@@ -44,10 +45,15 @@ const SmsOtp: FC<BaseSignInOptionProps> = ({
   preferences,
 }) => {
   const {t} = useTranslation(preferences?.i18n);
+  const {setTitle, setSubtitle} = useFlow();
 
   const formFields = authenticator.metadata?.params?.sort((a, b) => a.order - b.order) || [];
 
-  // Check if this is an OTP field (typically has 'otpCode' or similar parameter)
+  useEffect(() => {
+    setTitle(t('sms.otp.title'));
+    setSubtitle(t('sms.otp.subtitle'));
+  }, [setTitle, setSubtitle, t]);
+
   const hasOtpField = formFields.some(
     param => param.param.toLowerCase().includes('otp') || param.param.toLowerCase().includes('code'),
   );

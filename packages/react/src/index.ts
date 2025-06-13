@@ -147,4 +147,13 @@ export {
 } from './components/factories/FieldFactory';
 export * from './components/factories/FieldFactory';
 
+export {default as FlowContext} from './contexts/Flow/FlowContext';
+export {default as FlowProvider} from './contexts/Flow/FlowProvider';
+export {default as useFlow} from './contexts/Flow/useFlow';
+export {default as useFlowOptional} from './contexts/Flow/useFlowOptional';
+
+export type {FlowStep, FlowMessage, FlowContextValue} from './contexts/Flow/FlowContext';
+
+export type {FlowProviderProps} from './contexts/Flow/FlowProvider';
+
 export * from '@asgardeo/browser';

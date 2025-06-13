@@ -21,12 +21,13 @@ import {
   ApplicationNativeAuthenticationAuthenticatorParamType,
   FieldType,
 } from '@asgardeo/browser';
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
 import OtpField from '../../../primitives/OtpField/OtpField';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
+import {useFlow} from '../../../../contexts/Flow';
 
 /**
  * Email OTP Sign-In Option Component.
@@ -44,8 +45,14 @@ const EmailOtp: FC<BaseSignInOptionProps> = ({
   preferences,
 }) => {
   const {t} = useTranslation(preferences?.i18n);
+  const {setTitle, setSubtitle} = useFlow();
 
   const formFields = authenticator.metadata?.params?.sort((a, b) => a.order - b.order) || [];
+
+  useEffect(() => {
+    setTitle(t('email.otp.title'));
+    setSubtitle(t('email.otp.subtitle'));
+  }, [setTitle, setSubtitle, t]);
 
   // Check if this is an OTP field (typically has 'otpCode' or similar parameter)
   const hasOtpField = formFields.some(
