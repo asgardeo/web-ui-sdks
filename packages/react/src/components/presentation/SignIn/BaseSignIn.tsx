@@ -315,6 +315,33 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   }, [onInitialize, onFlowChange, onSuccess, onError, setupFormFields, t]);
 
   /**
+   * Check if the response contains a redirection URL and perform the redirect if necessary.
+   * @param response - The authentication response
+   * @returns true if a redirect was performed, false otherwise
+   */
+  const handleRedirectionIfNeeded = (response: ApplicationNativeAuthenticationHandleResponse): boolean => {
+    if (
+      'nextStep' in response &&
+      response.nextStep &&
+      (response.nextStep as any).stepType === ApplicationNativeAuthenticationStepType.AuthenticatorPrompt &&
+      (response.nextStep as any).authenticators &&
+      (response.nextStep as any).authenticators.length === 1
+    ) {
+      const responseAuthenticator = (response.nextStep as any).authenticators[0];
+      if (
+        responseAuthenticator.metadata?.promptType ===
+          ApplicationNativeAuthenticationAuthenticatorPromptType.RedirectionPrompt &&
+        (responseAuthenticator.metadata as any)?.additionalData?.redirectUrl
+      ) {
+        // Perform the redirect immediately
+        window.location.href = (responseAuthenticator.metadata as any).additionalData.redirectUrl;
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /**
    * Handle form submission.
    */
   const handleSubmit = async (submittedValues: Record<string, string>) => {
@@ -356,6 +383,11 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
       ) {
         setError(t('errors.authenticationFailedDetail'));
+        return;
+      }
+
+      // Check if the response contains a redirection URL and redirect if needed
+      if (handleRedirectionIfNeeded(response)) {
         return;
       }
 
@@ -416,7 +448,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
     try {
       if (
-        authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.REDIRECTION_PROMPT
+        authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.RedirectionPrompt
       ) {
         const payload = {
           flowId: currentFlow.flowId,
@@ -431,6 +463,11 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
         if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
           onSuccess?.(response.authData);
+          return;
+        }
+
+        // Check if the response contains a redirection URL and redirect if needed
+        if (handleRedirectionIfNeeded(response)) {
           return;
         }
       } else {
@@ -461,6 +498,11 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
           ) {
             setError('Authentication failed. Please check your credentials and try again.');
+            return;
+          }
+
+          // Check if the response contains a redirection URL and redirect if needed
+          if (handleRedirectionIfNeeded(response)) {
             return;
           }
 
@@ -517,6 +559,11 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
               response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
             ) {
               setError('Authentication failed. Please try again.');
+              return;
+            }
+
+            // Check if the response contains a redirection URL and redirect if needed
+            if (handleRedirectionIfNeeded(response)) {
               return;
             }
 
@@ -649,7 +696,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
     const userPromptAuthenticators = availableAuthenticators.filter(
       auth =>
-        auth.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.USER_PROMPT ||
+        auth.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.UserPrompt ||
         // Fallback: LOCAL authenticators with params are typically user prompts
         (auth.idp === 'LOCAL' && auth.metadata?.params && auth.metadata.params.length > 0),
     );

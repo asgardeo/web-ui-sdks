@@ -81,13 +81,13 @@ export enum ApplicationNativeAuthenticationAuthenticatorPromptType {
   /**
    * Prompt for user input, typically for username/password or similar credentials.
    */
-  USER_PROMPT,
+  UserPrompt = 'USER_PROMPT',
   /**
    * Prompt for internal system use, such as API keys or tokens.
    */
-  INTERNAL_PROMPT,
+  InternalPrompt = 'INTERNAL_PROMPT',
   /**
    * Prompt for redirection to another page or service.
    */
-  REDIRECTION_PROMPT,
+  RedirectionPrompt = 'REDIRECTION_PROMPT',
 }
