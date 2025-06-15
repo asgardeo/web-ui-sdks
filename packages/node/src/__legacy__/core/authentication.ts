@@ -24,7 +24,6 @@ import {
   TokenExchangeRequestConfig,
   StorageManager,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
   SessionData,
   Storage,
@@ -231,7 +230,7 @@ export class AsgardeoNodeCore<T> {
   public async exchangeToken(
     config: TokenExchangeRequestConfig,
     userId?: string,
-  ): Promise<TokenResponse | FetchResponse> {
+  ): Promise<TokenResponse | Response> {
     return this._auth.exchangeToken(config, userId);
   }
 
@@ -239,7 +238,7 @@ export class AsgardeoNodeCore<T> {
     return this._auth.reInitialize(config);
   }
 
-  public async revokeAccessToken(userId?: string): Promise<FetchResponse> {
+  public async revokeAccessToken(userId?: string): Promise<Response> {
     return this._auth.revokeAccessToken(userId);
   }
 

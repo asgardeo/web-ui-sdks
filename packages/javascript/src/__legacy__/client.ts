@@ -17,7 +17,7 @@
  */
 
 import StorageManager from '../StorageManager';
-import {AuthClientConfig, FetchRequestConfig, FetchResponse, StrictAuthClientConfig} from './models';
+import {AuthClientConfig, StrictAuthClientConfig} from './models';
 import {ExtendedAuthorizeRequestUrlParams} from '../models/oauth-request';
 import {Crypto} from '../models/crypto';
 import {TokenResponse, IdTokenPayload, TokenExchangeRequestConfig} from '../models/token';
@@ -690,7 +690,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async revokeAccessToken(userId?: string): Promise<FetchResponse> {
+  public async revokeAccessToken(userId?: string): Promise<Response> {
     const revokeTokenEndpoint: string | undefined = (await this._oidcProviderMetaData()).revocation_endpoint;
     const configData: StrictAuthClientConfig = await this._config();
 
@@ -894,7 +894,7 @@ export class AsgardeoAuthClient<T> {
   public async exchangeToken(
     config: TokenExchangeRequestConfig,
     userId?: string,
-  ): Promise<TokenResponse | FetchResponse> {
+  ): Promise<TokenResponse | Response> {
     const oidcProviderMetadata: OIDCDiscoveryApiResponse = await this._oidcProviderMetaData();
     const configData: StrictAuthClientConfig = await this._config();
 
@@ -938,7 +938,7 @@ export class AsgardeoAuthClient<T> {
       };
     }
 
-    const requestConfig: FetchRequestConfig = {
+    const requestConfig: RequestInit = {
       body: data.join('&'),
       credentials: configData.sendCookiesInRequests ? 'include' : 'same-origin',
       headers: new Headers(requestHeaders),
@@ -968,7 +968,7 @@ export class AsgardeoAuthClient<T> {
     if (config.returnsSession) {
       return this._authenticationHelper.handleTokenResponse(response, userId);
     } else {
-      return Promise.resolve((await response.json()) as TokenResponse | FetchResponse);
+      return Promise.resolve((await response.json()) as TokenResponse | Response);
     }
   }
 

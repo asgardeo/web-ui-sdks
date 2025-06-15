@@ -21,7 +21,6 @@ import {
   BasicUserInfo,
   Config,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   SPACustomGrantConfig,
@@ -248,7 +247,7 @@ describe('asgardeoPlugin', () => {
       signInRequired: true,
     };
 
-    const customGrantResponse: BasicUserInfo | FetchResponse<any> = {
+    const customGrantResponse: BasicUserInfo | Response = {
       allowedScopes: 'openid',
       sessionState: 'test',
     };

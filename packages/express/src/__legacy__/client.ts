@@ -26,7 +26,6 @@ import {
   OIDCEndpoints,
   IdTokenPayload,
   TokenExchangeRequestConfig,
-  FetchResponse,
   AsgardeoAuthException,
   Logger,
 } from '@asgardeo/node';
@@ -185,7 +184,7 @@ export class AsgardeoExpressClient {
   public async exchangeToken(
     config: TokenExchangeRequestConfig,
     userId?: string,
-  ): Promise<TokenResponse | FetchResponse> {
+  ): Promise<TokenResponse | Response> {
     return this._authClient.exchangeToken(config, userId);
   }
 
@@ -193,7 +192,7 @@ export class AsgardeoExpressClient {
     return this._authClient.reInitialize(config);
   }
 
-  public async revokeAccessToken(userId?: string): Promise<FetchResponse> {
+  public async revokeAccessToken(userId?: string): Promise<Response> {
     return this._authClient.revokeAccessToken(userId);
   }
 

@@ -21,7 +21,6 @@ import {
   TokenExchangeRequestConfig,
   StorageManager,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
   Storage,
   TokenResponse,
@@ -268,7 +267,7 @@ export class AsgardeoNodeClient<T> {
      * @param {string} userId - The userId of the user.
      * (If you are using ExpressJS, you may get this from the request cookies)
      *
-     * @return {Promise<TokenResponse | FetchResponse>} -A Promise that resolves with the token information
+     * @return {Promise<TokenResponse | Response>} -A Promise that resolves with the token information
      * or the response returned by the server depending on the configuration passed.
      *
      * @example
@@ -302,7 +301,7 @@ export class AsgardeoNodeClient<T> {
   public async exchangeToken(
     config: TokenExchangeRequestConfig,
     userId?: string,
-  ): Promise<TokenResponse | FetchResponse> {
+  ): Promise<TokenResponse | Response> {
     return this._authCore.exchangeToken(config, userId);
   }
 
@@ -334,7 +333,7 @@ export class AsgardeoNodeClient<T> {
    * @param {string} userId - The userId of the user.
    * (If you are using ExpressJS, you may get this from the request cookies)
    *
-   * @return {Promise<FetchResponse>} -A Promise that resolves with the response returned by the server.
+   * @return {Promise<Response>} -A Promise that resolves with the response returned by the server.
    *
    * @example
    * ```
@@ -346,7 +345,7 @@ export class AsgardeoNodeClient<T> {
    * @memberof AsgardeoNodeClient
    *
    */
-  public async revokeAccessToken(userId?: string): Promise<FetchResponse> {
+  public async revokeAccessToken(userId?: string): Promise<Response> {
     return this._authCore.revokeAccessToken(userId);
   }
 

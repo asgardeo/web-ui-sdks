@@ -24,7 +24,6 @@ import {
   Config,
   TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -109,7 +108,7 @@ export interface AuthContextInterface {
   refreshAccessToken(): Promise<BasicUserInfo>;
   exchangeToken(
     config: TokenExchangeRequestConfig,
-    callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
+    callback?: (response: BasicUserInfo | Response) => void,
   ): void;
   revokeAccessToken(): Promise<boolean>;
   signIn: (

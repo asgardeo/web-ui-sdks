@@ -24,7 +24,6 @@ import {
   IsomorphicCrypto,
   TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
   OIDCRequestConstants,
   SessionData,
@@ -138,7 +137,7 @@ export const WebWorkerCore = async (
     return await _authenticationClient.getSignOutUrl();
   };
 
-  const exchangeToken = async (config: TokenExchangeRequestConfig): Promise<User | FetchResponse> => {
+  const exchangeToken = async (config: TokenExchangeRequestConfig): Promise<User | Response> => {
     return await _authenticationHelper.exchangeToken(config);
   };
 

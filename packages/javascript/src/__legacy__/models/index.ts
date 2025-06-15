@@ -17,4 +17,3 @@
  */
 
 export * from './client-config';
-export * from './fetch';

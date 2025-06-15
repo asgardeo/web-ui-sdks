@@ -23,7 +23,6 @@ import {
   BasicUserInfo,
   Config,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -152,7 +151,7 @@ class AuthAPI {
    *
    * @param {HttpRequestConfig} config - The config object containing attributes necessary to send a request.
    *
-   * @return {Promise<FetchResponse>} - Returns a Promise that resolves with the response to the request.
+   * @return {Promise<Response>} - Returns a Promise that resolves with the response to the request.
    */
   public async httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>> {
     return this._client.httpRequest(config);
@@ -166,7 +165,7 @@ class AuthAPI {
    *
    * @param {HttpRequestConfig[]} configs - The config object containing attributes necessary to send a request.
    *
-   * @return {Promise<FetchResponse[]>} a Promise that resolves with the responses to the requests.
+   * @return {Promise<Response>} a Promise that resolves with the responses to the requests.
    */
   public async httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> {
     return this._client.httpRequestAll(configs);
@@ -176,18 +175,18 @@ class AuthAPI {
    * This method allows you to send a request with a custom grant.
    *
    * @param {CustomGrantRequestParams} config - The request parameters.
-   * @param {(response: BasicUserInfo | FetchResponse<any>) => void} [callback] - An optional callback function.
+   * @param {(response: BasicUserInfo | Response) => void} [callback] - An optional callback function.
    *
-   * @return {Promise<FetchResponse<any> | SignInResponse>} a promise that resolves with
+   * @return {Promise<Response | SignInResponse>} a promise that resolves with
    * the value returned by the custom grant request.
    */
   public exchangeToken(
     config: SPACustomGrantConfig,
-    callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
-  ): Promise<BasicUserInfo | FetchResponse<any>> {
+    callback?: (response: BasicUserInfo | Response) => void,
+  ): Promise<BasicUserInfo | Response> {
     return this._client
       .exchangeToken(config)
-      .then((response: BasicUserInfo | FetchResponse<any>) => {
+      .then((response: BasicUserInfo | Response) => {
         if (!response) {
           return response;
         }

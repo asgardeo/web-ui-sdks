@@ -22,7 +22,6 @@ import {
   User,
   LegacyConfig as Config,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -210,7 +209,7 @@ class AuthAPI {
    *
    * @param {HttpRequestConfig} config -  The config object containing attributes necessary to send a request.
    *
-   * @return {Promise<FetchResponse>} - Returns a Promise that resolves with the response to the request.
+   * @return {Promise<Response>} - Returns a Promise that resolves with the response to the request.
    */
   public async httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>> {
     return this._client.httpRequest(config);
@@ -224,7 +223,7 @@ class AuthAPI {
    *
    * @param {HttpRequestConfig[]} config -  The config object containing attributes necessary to send a request.
    *
-   * @return {Promise<FetchResponse[]>} - Returns a Promise that resolves with the responses to the requests.
+   * @return {Promise<Response>} - Returns a Promise that resolves with the responses to the requests.
    */
   public async httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> {
     return this._client.httpRequestAll(configs);
@@ -235,17 +234,17 @@ class AuthAPI {
    *
    * @param {CustomGrantRequestParams} config - The request parameters.
    *
-   * @return {Promise<FetchResponse<any> | SignInResponse>} - A Promise that resolves with
+   * @return {Promise<Response | SignInResponse>} - A Promise that resolves with
    * the value returned by the custom grant request.
    */
   public exchangeToken(
     config: SPACustomGrantConfig,
-    callback: (response: User | FetchResponse<any>) => void,
+    callback: (response: User | Response) => void,
     dispatch: (state: AuthStateInterface) => void,
-  ): Promise<User | FetchResponse<any>> {
+  ): Promise<User | Response> {
     return this._client
       .exchangeToken(config)
-      .then((response: User | FetchResponse<any>) => {
+      .then((response: User | Response) => {
         if (!response) {
           return null; // FIXME: Validate this. Temp fix for: error TS7030: Not all code paths return a value.
         }

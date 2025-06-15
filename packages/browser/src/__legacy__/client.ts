@@ -24,7 +24,6 @@ import {
   TokenExchangeRequestConfig,
   StorageManager,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
   User,
 } from '@asgardeo/javascript';
@@ -607,7 +606,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async exchangeToken(config: TokenExchangeRequestConfig): Promise<FetchResponse<any> | User | undefined> {
+  public async exchangeToken(config: TokenExchangeRequestConfig): Promise<Response | User | undefined> {
     if (config.signInRequired) {
       await this._validateMethod();
     } else {

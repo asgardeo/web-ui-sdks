@@ -23,7 +23,6 @@ import {
   IsomorphicCrypto,
   StorageManager,
   IdTokenPayload,
-  FetchResponse,
   ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   OIDCRequestConstants,
@@ -279,7 +278,7 @@ export const MainThreadClient = async (
     }
   };
 
-  const exchangeToken = async (config: SPACustomGrantConfig): Promise<User | FetchResponse> => {
+  const exchangeToken = async (config: SPACustomGrantConfig): Promise<User | Response> => {
     return await _authenticationHelper.exchangeToken(config, enableRetrievingSignOutURLFromSession);
   };
 

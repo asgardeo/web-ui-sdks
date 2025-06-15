@@ -24,7 +24,6 @@ import {
   Config,
   TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -92,7 +91,7 @@ export interface AuthContextInterface {
   getUser(): Promise<User>;
   httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
-  exchangeToken(config: TokenExchangeRequestConfig, callback?: (response: User | FetchResponse<any>) => void): void;
+  exchangeToken(config: TokenExchangeRequestConfig, callback?: (response: User | Response) => void): void;
   revokeAccessToken(): Promise<boolean>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getHttpClient(): Promise<HttpClientInstance>;

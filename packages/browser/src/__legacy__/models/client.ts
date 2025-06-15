@@ -23,7 +23,6 @@ import {
   TokenExchangeRequestConfig,
   StorageManager,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
 } from '@asgardeo/javascript';
 import {
@@ -56,7 +55,7 @@ export interface MainThreadClientInterface {
     },
   ): Promise<User>;
   signOut(afterSignOutUrl?: string): Promise<boolean>;
-  exchangeToken(config: TokenExchangeRequestConfig): Promise<User | FetchResponse>;
+  exchangeToken(config: TokenExchangeRequestConfig): Promise<User | Response>;
   refreshAccessToken(): Promise<User>;
   revokeAccessToken(): Promise<boolean>;
   getUser(): Promise<User>;
@@ -77,7 +76,7 @@ export interface MainThreadClientInterface {
 }
 
 export interface WebWorkerClientInterface {
-  exchangeToken(requestParams: TokenExchangeRequestConfig): Promise<FetchResponse | User>;
+  exchangeToken(requestParams: TokenExchangeRequestConfig): Promise<Response | User>;
   httpRequest<T = any>(config: HttpRequestConfig): Promise<HttpResponse<T>>;
   httpRequestAll<T = any>(configs: HttpRequestConfig[]): Promise<HttpResponse<T>[]>;
   enableHttpHandler(): Promise<boolean>;

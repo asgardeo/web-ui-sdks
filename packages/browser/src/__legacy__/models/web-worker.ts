@@ -23,7 +23,6 @@ import {
   IsomorphicCrypto,
   TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
 } from '@asgardeo/javascript';
 import {HttpRequestConfig, HttpResponse, Message} from '.';
@@ -49,7 +48,7 @@ export interface WebWorkerCoreInterface {
   requestAccessToken(authorizationCode?: string, sessionState?: string, pkce?: string, state?: string): Promise<User>;
   signOut(afterSignOutUrl?: string): Promise<string>;
   getSignOutUrl(afterSignOutUrl?: string): Promise<string>;
-  exchangeToken(config: TokenExchangeRequestConfig): Promise<User | FetchResponse>;
+  exchangeToken(config: TokenExchangeRequestConfig): Promise<User | Response>;
   refreshAccessToken(): Promise<User>;
   revokeAccessToken(): Promise<boolean>;
   getUser(): Promise<User>;

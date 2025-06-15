@@ -24,7 +24,6 @@ import {
   IsomorphicCrypto,
   TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
   ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   OIDCRequestConstants,
@@ -188,13 +187,13 @@ export const WebWorkerClient = async (
    * @returns {Promise<HttpResponse|boolean>} A promise that resolves with a boolean value or the request
    * response if the the `returnResponse` attribute in the `requestParams` object is set to `true`.
    */
-  const exchangeToken = (requestParams: SPACustomGrantConfig): Promise<FetchResponse | User> => {
+  const exchangeToken = (requestParams: SPACustomGrantConfig): Promise<Response | User> => {
     const message: Message<TokenExchangeRequestConfig> = {
       data: requestParams,
       type: REQUEST_CUSTOM_GRANT,
     };
 
-    return communicate<TokenExchangeRequestConfig, FetchResponse | User>(message)
+    return communicate<TokenExchangeRequestConfig, Response | User>(message)
       .then(response => {
         if (requestParams.preventSignOutURLUpdate) {
           _getSignOutURLFromSessionStorage = true;

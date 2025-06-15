@@ -25,7 +25,6 @@ import {
   TokenExchangeRequestConfig,
   StorageManager,
   IdTokenPayload,
-  FetchResponse,
   ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   TokenResponse,
@@ -103,7 +102,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
   public async exchangeToken(
     config: SPACustomGrantConfig,
     enableRetrievingSignOutURLFromSession?: (config: SPACustomGrantConfig) => void,
-  ): Promise<User | FetchResponse> {
+  ): Promise<User | Response> {
     let useDefaultEndpoint = true;
     let matches = false;
 
@@ -127,7 +126,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     if (useDefaultEndpoint || matches) {
       return this._authenticationClient
         .exchangeToken(config)
-        .then(async (response: FetchResponse | TokenResponse) => {
+        .then(async (response: Response | TokenResponse) => {
           if (enableRetrievingSignOutURLFromSession && typeof enableRetrievingSignOutURLFromSession === 'function') {
             enableRetrievingSignOutURLFromSession(config);
           }
@@ -137,7 +136,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
 
             return this._authenticationClient.getUser();
           } else {
-            return response as FetchResponse;
+            return response as Response;
           }
         })
         .catch(error => {

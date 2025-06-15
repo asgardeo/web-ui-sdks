@@ -22,7 +22,6 @@ import {
   type BasicUserInfo,
   type Config,
   type IdTokenPayload,
-  type FetchResponse,
   Hooks,
   type HttpRequestConfig,
   type HttpResponse,
@@ -232,7 +231,7 @@ describe('AuthAPI', () => {
       };
       const callback: Mock = vi.fn();
 
-      const result: BasicUserInfo | FetchResponse<any> = await authApi.exchangeToken(config, callback);
+      const result: BasicUserInfo | Response = await authApi.exchangeToken(config, callback);
 
       expect(mockClient.exchangeToken).toHaveBeenCalledWith(config);
       expect(callback).toHaveBeenCalledWith(result);
@@ -273,7 +272,7 @@ describe('AuthAPI', () => {
         signInRequired: true,
       };
 
-      const result: BasicUserInfo | FetchResponse<any> = await authApi.exchangeToken(config);
+      const result: BasicUserInfo | Response = await authApi.exchangeToken(config);
       expect(result).toBeNull();
     });
 
