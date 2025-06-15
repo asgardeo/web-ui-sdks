@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {User} from './user';
+import {User, UserProfile} from './user';
 
 export type SignInOptions = Record<string, unknown>;
 export type SignOutOptions = Record<string, unknown>;
@@ -38,6 +38,13 @@ export interface AsgardeoClient<T> {
    * @returns User object containing user details.
    */
   getUser(): Promise<User>;
+
+  /**
+   * Fetches the user profile along with its schemas and a flattened version of the profile.
+   *
+   * @returns A promise resolving to a UserProfile object containing the user's profile information.
+   */
+  getUserProfile(): Promise<UserProfile>;
 
   /**
    * Initializes the authentication client with provided configuration.

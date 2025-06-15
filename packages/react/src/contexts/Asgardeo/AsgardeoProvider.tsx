@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {SignInOptions, SignOutOptions, User} from '@asgardeo/browser';
+import {SignInOptions, SignOutOptions, User, UserProfile} from '@asgardeo/browser';
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, use} from 'react';
 import AsgardeoReactClient from '../../AsgardeoReactClient';
 import AsgardeoContext from './AsgardeoContext';
@@ -46,6 +46,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const [user, setUser] = useState<any | null>(null);
 
   const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
+
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     (async (): Promise<void> => {
@@ -78,6 +80,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       // User is already authenticated. Skip...
       if (await asgardeo.isSignedIn()) {
         setUser(await asgardeo.getUser());
+        setUserProfile(await asgardeo.getUserProfile());
 
         return;
       }
@@ -179,7 +182,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       <I18nProvider preferences={preferences?.i18n}>
         <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
-            <UserProvider>{children}</UserProvider>
+            <UserProvider profile={userProfile}>{children}</UserProvider>
           </FlowProvider>
         </ThemeProvider>
       </I18nProvider>

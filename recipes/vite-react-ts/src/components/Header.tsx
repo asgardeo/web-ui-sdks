@@ -4,7 +4,7 @@ import {useState, useRef, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {useApp} from '../App';
 import {Users, ChevronDown, Settings, User as UserIcon, LogOut, Plus, Check, Building2} from 'lucide-react';
-import {SignedOut, SignInButton, SignOutButton, User, UserProfile} from '@asgardeo/react';
+import {SignedOut, SignInButton, SignOutButton, User, UserDropdown, UserProfile} from '@asgardeo/react';
 import {Button} from './ui/button';
 
 export default function Header() {
@@ -141,9 +141,12 @@ export default function Header() {
                 onClick={() => setShowUserDropdown(!showUserDropdown)}
                 className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50"
               >
-                <User>{user => <img src={user?.picture} alt={user?.userName} className="w-8 h-8 rounded-full" />}</User>
+                <User>
+                  {user => <img src={user?.profileUrl} alt={user?.userName} className="w-8 h-8 rounded-full" />}
+                </User>
                 <ChevronDown className="h-4 w-4 text-gray-500" />
               </button>
+              <UserDropdown />
 
               {showUserDropdown && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">

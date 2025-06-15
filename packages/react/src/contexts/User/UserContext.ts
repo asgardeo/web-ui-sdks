@@ -23,52 +23,18 @@ import {User, Schema, FlattenedSchema} from '@asgardeo/browser';
  * Props interface of {@link UserContext}
  */
 export type UserContextProps = {
-  /**
-   * Flag indicating whether the user data is loading.
-   */
-  isLoading: boolean;
-  /**
-   * The raw ME API response object containing user profile information.
-   */
-  profile: any | null;
-  /**
-   * Array of SCIM2 schemas used for user profile structure.
-   */
+  profile: User | null;
   schemas: Schema[] | null;
-  /**
-   * Flattened user profile with dot-notation keys for easier access.
-   */
-  flattenedUser: User | null;
-  /**
-   * The processed user object with nested structure.
-   */
-  user: User | null;
-  /**
-   * Function to refresh user data from the server.
-   */
-  refreshUser: () => Promise<void>;
-  /**
-   * Function to update user profile.
-   */
-  updateUser: (payload: any) => Promise<void>;
-  /**
-   * Error object if there was an issue fetching user data.
-   */
-  error: Error | null;
+  flattenedProfile: User | null;
 };
 
 /**
  * Context object for managing user profile data and related operations.
  */
 const UserContext: Context<UserContextProps | null> = createContext<null | UserContextProps>({
-  isLoading: true,
   profile: null,
   schemas: null,
-  flattenedUser: null,
-  user: null,
-  refreshUser: async () => {},
-  updateUser: async () => {},
-  error: null,
+  flattenedProfile: null,
 });
 
 UserContext.displayName = 'UserContext';

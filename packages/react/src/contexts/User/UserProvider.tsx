@@ -17,14 +17,7 @@
  */
 
 import {FC, PropsWithChildren, ReactElement, useEffect, useState, useCallback, useMemo} from 'react';
-import {
-  User,
-  Schema,
-  AsgardeoAPIError,
-  flattenSchemaAttributes,
-  generateUserProfile,
-  generateFlattenedUserProfile,
-} from '@asgardeo/browser';
+import {UserProfile} from '@asgardeo/browser';
 import UserContext from './UserContext';
 import useAsgardeo from '../Asgardeo/useAsgardeo';
 import getMeProfile from '../../api/scim2/getMeProfile';
@@ -35,15 +28,7 @@ import updateMeProfile from '../../api/scim2/updateMeProfile';
  * Props interface of {@link UserProvider}
  */
 export interface UserProviderProps {
-  /**
-   * Whether to automatically fetch user data when the component mounts.
-   * @default true
-   */
-  autoFetch?: boolean;
-  /**
-   * Custom error handler for user data operations.
-   */
-  onError?: (error: Error) => void;
+  profile: UserProfile;
 }
 
 /**
@@ -76,135 +61,15 @@ export interface UserProviderProps {
  */
 const UserProvider: FC<PropsWithChildren<UserProviderProps>> = ({
   children,
-  autoFetch = true,
-  onError,
+  profile,
 }: PropsWithChildren<UserProviderProps>): ReactElement => {
-  const {isSignedIn, baseUrl} = useAsgardeo();
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [profile, setProfile] = useState<any | null>(null);
-  const [schemas, setSchemas] = useState<Schema[] | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [flattenedUser, setFlattenedUser] = useState<User | null>(null);
-  const [error, setError] = useState<Error | null>(null);
-
-  /**
-   * Fetches user profile data including ME response and schemas.
-   */
-  const fetchUserData = useCallback(async (): Promise<void> => {
-    if (!isSignedIn || !baseUrl) {
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const [meResponse, schemasResponse] = await Promise.all([
-        getMeProfile({url: `${baseUrl}/scim2/Me`}),
-        getSchemas({url: `${baseUrl}/scim2/Schemas`}),
-      ]);
-
-      const processedSchemas = flattenSchemaAttributes(schemasResponse);
-
-      const userProfile = generateUserProfile(meResponse, processedSchemas);
-      const flatProfile = generateFlattenedUserProfile(meResponse, processedSchemas);
-
-      setProfile(meResponse);
-      setSchemas(schemasResponse);
-      setUser(userProfile);
-      setFlattenedUser(flatProfile);
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to fetch user data');
-      setError(error);
-
-      if (onError) {
-        onError(error);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isSignedIn, baseUrl, onError]);
-
-  /**
-   * Refreshes user data by re-fetching from the server.
-   */
-  const refreshUser = useCallback(async (): Promise<void> => {
-    await fetchUserData();
-  }, [fetchUserData]);
-
-  /**
-   * Updates user profile with the provided payload.
-   */
-  const updateUser = useCallback(
-    async (payload: any): Promise<void> => {
-      if (!baseUrl) {
-        throw new AsgardeoAPIError(
-          'Base URL is not available',
-          'updateUser-NoBaseUrl-001',
-          'javascript',
-          400,
-          'Bad Request',
-        );
-      }
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        await updateMeProfile({url: `${baseUrl}/scim2/Me`, payload});
-        await fetchUserData();
-      } catch (err) {
-        const error = err instanceof Error ? err : new Error('Failed to update user profile');
-        setError(error);
-
-        if (onError) {
-          onError(error);
-        }
-
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [baseUrl, fetchUserData, onError],
-  );
-
-  /**
-   * Auto-fetch user data when user signs in and autoFetch is enabled.
-   */
-  useEffect(() => {
-    if (autoFetch && isSignedIn) {
-      fetchUserData();
-    }
-  }, [autoFetch, isSignedIn, fetchUserData]);
-
-  /**
-   * Clear user data when user signs out.
-   */
-  useEffect(() => {
-    if (!isSignedIn) {
-      setProfile(null);
-      setSchemas(null);
-      setUser(null);
-      setFlattenedUser(null);
-      setError(null);
-      setIsLoading(false);
-    }
-  }, [isSignedIn]);
-
   const contextValue = useMemo(
     () => ({
-      isLoading,
-      profile,
-      schemas,
-      flattenedUser,
-      user,
-      refreshUser,
-      updateUser,
-      error,
+      schemas: profile?.schemas,
+      profile: profile?.profile,
+      flattenedProfile: profile?.flattenedProfile,
     }),
-    [isLoading, profile, schemas, flattenedUser, user, refreshUser, updateUser, error],
+    [profile],
   );
 
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>;

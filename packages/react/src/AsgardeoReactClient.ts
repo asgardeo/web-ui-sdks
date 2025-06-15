@@ -18,15 +18,18 @@
 
 import {
   AsgardeoBrowserClient,
-  extractUserClaimsFromIdToken,
-  getUserInfo,
+  flattenUserSchema,
+  generateFlattenedUserProfile,
+  UserProfile,
   SignInOptions,
   SignOutOptions,
   User,
+  generateUserProfile,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import {AsgardeoReactConfig} from './models/config';
-import getUserProfile from './utils/getUserProfile';
+import getMeProfile from './api/scim2/getMeProfile';
+import getSchemas from './api/scim2/getSchemas';
 
 /**
  * Client for mplementing Asgardeo in React applications.
@@ -55,13 +58,31 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     });
   }
 
-  override async getUser(): Promise<any> {
+  override async getUser(): Promise<User> {
     const baseUrl = await (await this.asgardeo.getConfigData()).baseUrl;
-    const profile = await getUserProfile({baseUrl});
+    const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
+    const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
 
-    console.log('User Profile:', profile);
+    return generateUserProfile(profile, flattenUserSchema(schemas));
+  }
 
-    return profile;
+  async getUserProfile(): Promise<UserProfile> {
+    const baseUrl: string = (await this.asgardeo.getConfigData()).baseUrl;
+
+    const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
+    const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
+    
+    console.log('Raw Schemas:', JSON.stringify(schemas, null, 2));
+
+    const processedSchemas = flattenUserSchema(schemas);
+    
+    console.log('Processed Schemas:', JSON.stringify(processedSchemas, null, 2));
+
+    return {
+      schemas: processedSchemas,
+      flattenedProfile: generateFlattenedUserProfile(profile, processedSchemas),
+      profile,
+    };
   }
 
   override isLoading(): boolean {

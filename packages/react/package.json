@@ -63,6 +63,7 @@
   },
   "dependencies": {
     "@asgardeo/browser": "workspace:^",
+    "@floating-ui/react": "^0.27.12",
     "@types/react-dom": "^19.1.5",
     "clsx": "^2.1.1",
     "esbuild": "^0.25.4",

@@ -16,30 +16,64 @@
  * under the License.
  */
 
-const getMappedUserProfileValue = (key: string, mappings, user) => {
-  const mappedKey = mappings[key];
+import {User, get} from '@asgardeo/browser';
 
-  if (Array.isArray(user)) {
-    if (Array.isArray(mappedKey)) {
-      for (const field of mappedKey) {
-        const found = user.find(u => u.name === field);
-        if (found?.value !== undefined) {
-          return found.value;
-        }
-      }
-    } else {
-      const found = user.find(u => u.name === mappedKey);
-      if (found?.value !== undefined) {
-        return found.value;
-      }
-    }
-
-    const found = user.find(u => u.name === key);
-
-    return found?.value;
+/**
+ * Retrieves a user profile value based on attribute mapping configuration.
+ *
+ * This function allows flexible mapping of component attribute names to actual
+ * user profile field paths. It supports both simple string mappings and arrays
+ * of potential field paths for fallback scenarios.
+ *
+ * @param key - The logical attribute name to retrieve (e.g., 'firstName', 'email')
+ * @param mappings - Object mapping logical names to user profile field paths
+ * @param user - The user object to extract values from
+ * @returns The mapped value from the user profile, or undefined if not found
+ *
+ * @example
+ * ```typescript
+ * const mappings = {
+ *   firstName: 'name.givenName',
+ *   email: 'emails[0]',
+ *   picture: ['profileUrl', 'profile', 'avatar'] // fallback options
+ * };
+ *
+ * const user = {
+ *   name: { givenName: 'John' },
+ *   emails: ['john@example.com'],
+ *   profileUrl: 'https://example.com/avatar.jpg'
+ * };
+ *
+ * getMappedUserProfileValue('firstName', mappings, user); // 'John'
+ * getMappedUserProfileValue('email', mappings, user); // 'john@example.com'
+ * getMappedUserProfileValue('picture', mappings, user); // 'https://example.com/avatar.jpg'
+ * ```
+ */
+const getMappedUserProfileValue = (key: string, mappings: Record<string, string | string[]>, user: User): any => {
+  if (!key || !mappings || !user) {
+    return undefined;
   }
 
-  return mappedKey ? user[mappedKey] : user[key];
+  const mapping = mappings[key];
+
+  if (!mapping) {
+    // If no mapping defined, try to get the value directly from the user object
+    return get(user, key);
+  }
+
+  // If mapping is an array, try each path until we find a value
+  if (Array.isArray(mapping)) {
+    for (const path of mapping) {
+      const value = get(user, path);
+      if (value !== undefined && value !== null && value !== '') {
+        return value;
+      }
+    }
+    return undefined;
+  }
+
+  // For single string mapping, get the value directly
+  return get(user, mapping);
 };
 
 export default getMappedUserProfileValue;
