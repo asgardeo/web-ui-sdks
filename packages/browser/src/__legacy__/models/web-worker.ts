@@ -21,7 +21,7 @@ import {
   AuthorizeRequestUrlParams,
   User,
   IsomorphicCrypto,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
@@ -46,15 +46,10 @@ export interface WebWorkerCoreInterface {
   enableHttpHandler(): void;
   disableHttpHandler(): void;
   getSignInUrl(params?: AuthorizeRequestUrlParams, afterSignInUrl?: string): Promise<AuthorizationResponse>;
-  requestAccessToken(
-    authorizationCode?: string,
-    sessionState?: string,
-    pkce?: string,
-    state?: string,
-  ): Promise<User>;
+  requestAccessToken(authorizationCode?: string, sessionState?: string, pkce?: string, state?: string): Promise<User>;
   signOut(afterSignOutUrl?: string): Promise<string>;
   getSignOutUrl(afterSignOutUrl?: string): Promise<string>;
-  exchangeToken(config: CustomGrantConfig): Promise<User | FetchResponse>;
+  exchangeToken(config: TokenExchangeRequestConfig): Promise<User | FetchResponse>;
   refreshAccessToken(): Promise<User>;
   revokeAccessToken(): Promise<boolean>;
   getUser(): Promise<User>;

@@ -22,7 +22,7 @@ import {
   AuthClientConfig,
   User,
   IsomorphicCrypto,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
   FetchResponse,
   ExtendedAuthorizeRequestUrlParams,
@@ -189,12 +189,12 @@ export const WebWorkerClient = async (
    * response if the the `returnResponse` attribute in the `requestParams` object is set to `true`.
    */
   const exchangeToken = (requestParams: SPACustomGrantConfig): Promise<FetchResponse | User> => {
-    const message: Message<CustomGrantConfig> = {
+    const message: Message<TokenExchangeRequestConfig> = {
       data: requestParams,
       type: REQUEST_CUSTOM_GRANT,
     };
 
-    return communicate<CustomGrantConfig, FetchResponse | User>(message)
+    return communicate<TokenExchangeRequestConfig, FetchResponse | User>(message)
       .then(response => {
         if (requestParams.preventSignOutURLUpdate) {
           _getSignOutURLFromSessionStorage = true;

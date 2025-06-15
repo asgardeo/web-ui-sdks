@@ -22,7 +22,7 @@ import {
   AuthorizeRequestUrlParams,
   User,
   IsomorphicCrypto,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
@@ -138,7 +138,7 @@ export const WebWorkerCore = async (
     return await _authenticationClient.getSignOutUrl();
   };
 
-  const exchangeToken = async (config: CustomGrantConfig): Promise<User | FetchResponse> => {
+  const exchangeToken = async (config: TokenExchangeRequestConfig): Promise<User | FetchResponse> => {
     return await _authenticationHelper.exchangeToken(config);
   };
 

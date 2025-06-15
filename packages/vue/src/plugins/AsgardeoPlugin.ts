@@ -20,7 +20,7 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   Config,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
   FetchResponse,
   Hooks,
@@ -176,7 +176,7 @@ export const asgardeoPlugin: Plugin = {
       },
       refreshAccessToken: (): Promise<BasicUserInfo> => AuthClient.refreshAccessToken(),
       exchangeToken: async (
-        config: CustomGrantConfig,
+        config: TokenExchangeRequestConfig,
         callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
       ): Promise<BasicUserInfo | FetchResponse<any>> => {
         try {

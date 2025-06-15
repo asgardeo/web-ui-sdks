@@ -17,5 +17,4 @@
  */
 
 export * from './client-config';
-export * from './custom-grant';
 export * from './fetch';

@@ -21,7 +21,7 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   IsomorphicCrypto,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   StorageManager,
   IdTokenPayload,
   FetchResponse,
@@ -607,7 +607,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async exchangeToken(config: CustomGrantConfig): Promise<FetchResponse<any> | User | undefined> {
+  public async exchangeToken(config: TokenExchangeRequestConfig): Promise<FetchResponse<any> | User | undefined> {
     if (config.signInRequired) {
       await this._validateMethod();
     } else {

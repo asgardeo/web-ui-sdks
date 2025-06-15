@@ -22,7 +22,7 @@ import {
   AuthSPAClientConfig,
   User,
   Config,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
   FetchResponse,
   Hooks,
@@ -92,7 +92,7 @@ export interface AuthContextInterface {
   getUser(): Promise<User>;
   httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
-  exchangeToken(config: CustomGrantConfig, callback?: (response: User | FetchResponse<any>) => void): void;
+  exchangeToken(config: TokenExchangeRequestConfig, callback?: (response: User | FetchResponse<any>) => void): void;
   revokeAccessToken(): Promise<boolean>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getHttpClient(): Promise<HttpClientInstance>;

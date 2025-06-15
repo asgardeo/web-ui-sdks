@@ -17,10 +17,10 @@
  */
 
 import StorageManager from '../StorageManager';
-import {AuthClientConfig, CustomGrantConfig, FetchRequestConfig, FetchResponse, StrictAuthClientConfig} from './models';
+import {AuthClientConfig, FetchRequestConfig, FetchResponse, StrictAuthClientConfig} from './models';
 import {ExtendedAuthorizeRequestUrlParams} from '../models/oauth-request';
 import {Crypto} from '../models/crypto';
-import {TokenResponse, IdTokenPayload} from '../models/token';
+import {TokenResponse, IdTokenPayload, TokenExchangeRequestConfig} from '../models/token';
 import {OIDCEndpoints} from '../models/oidc-endpoints';
 import {Storage} from '../models/store';
 import ScopeConstants from '../constants/ScopeConstants';
@@ -894,7 +894,10 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async exchangeToken(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
+  public async exchangeToken(
+    config: TokenExchangeRequestConfig,
+    userId?: string,
+  ): Promise<TokenResponse | FetchResponse> {
     const oidcProviderMetadata: OIDCDiscoveryApiResponse = await this._oidcProviderMetaData();
     const configData: StrictAuthClientConfig = await this._config();
 

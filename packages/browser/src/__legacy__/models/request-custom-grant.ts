@@ -16,11 +16,11 @@
  * under the License.
  */
 
-import {CustomGrantConfig} from '@asgardeo/javascript';
+import {TokenExchangeRequestConfig} from '@asgardeo/javascript';
 
 /**
  * SPA Custom Request Grant config model
  */
-export interface SPACustomGrantConfig extends CustomGrantConfig {
+export interface SPACustomGrantConfig extends TokenExchangeRequestConfig {
   preventSignOutURLUpdate?: boolean;
 }

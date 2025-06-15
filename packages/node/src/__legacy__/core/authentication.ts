@@ -21,7 +21,7 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   Crypto,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   StorageManager,
   IdTokenPayload,
   FetchResponse,
@@ -228,7 +228,10 @@ export class AsgardeoNodeCore<T> {
     return this._auth.getAccessToken(userId);
   }
 
-  public async exchangeToken(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
+  public async exchangeToken(
+    config: TokenExchangeRequestConfig,
+    userId?: string,
+  ): Promise<TokenResponse | FetchResponse> {
     return this._auth.exchangeToken(config, userId);
   }
 

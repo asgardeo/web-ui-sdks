@@ -28,7 +28,7 @@ export interface DefaultAuthClientConfig {
   enablePKCE?: boolean;
   prompt?: string;
   responseMode?: OAuthResponseMode;
-  scope?: string[];
+  scopes?: string[];
   validateIDToken?: boolean;
   validateIDTokenIssuer?: boolean;
   /**

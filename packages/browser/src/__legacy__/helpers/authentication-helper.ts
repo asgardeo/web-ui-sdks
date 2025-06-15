@@ -22,7 +22,7 @@ import {
   AuthClientConfig,
   User,
   IsomorphicCrypto,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   StorageManager,
   IdTokenPayload,
   FetchResponse,
@@ -156,7 +156,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     }
   }
 
-  public async getCustomGrantConfigData(): Promise<AuthClientConfig<CustomGrantConfig> | null> {
+  public async getCustomGrantConfigData(): Promise<AuthClientConfig<TokenExchangeRequestConfig> | null> {
     const configString = await this._storageManager.getTemporaryDataParameter(CUSTOM_GRANT_CONFIG);
 
     if (configString) {

@@ -25,7 +25,7 @@ import {
   User,
   OIDCEndpoints,
   IdTokenPayload,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   FetchResponse,
   AsgardeoAuthException,
   Logger,
@@ -182,7 +182,10 @@ export class AsgardeoExpressClient {
     return this._authClient.getAccessToken(userId);
   }
 
-  public async exchangeToken(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
+  public async exchangeToken(
+    config: TokenExchangeRequestConfig,
+    userId?: string,
+  ): Promise<TokenResponse | FetchResponse> {
     return this._authClient.exchangeToken(config, userId);
   }
 

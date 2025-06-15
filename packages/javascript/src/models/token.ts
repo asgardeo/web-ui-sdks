@@ -178,3 +178,13 @@ export interface IdTokenPayload extends IdTokenPayloadStandardClaims {
    */
   [claim: string]: any;
 }
+
+export interface TokenExchangeRequestConfig {
+  id: string;
+  data: any;
+  signInRequired: boolean;
+  attachToken: boolean;
+  returnsSession: boolean;
+  tokenEndpoint?: string;
+  shouldReplayAfterRefresh?: boolean;
+}

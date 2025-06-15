@@ -18,7 +18,7 @@
 
 import {
   AuthClientConfig,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   StorageManager,
   IdTokenPayload,
   FetchResponse,
@@ -262,7 +262,7 @@ export class AsgardeoNodeClient<T> {
   /**
      * This method returns Promise that resolves with the token information
      * or the response returned by the server depending on the configuration passed.
-     * @param {CustomGrantConfig} config - The config object contains attributes that would be used
+     * @param {TokenExchangeRequestConfig} config - The config object contains attributes that would be used
      * to configure the custom grant request.
      *
      * @param {string} userId - The userId of the user.
@@ -299,7 +299,10 @@ export class AsgardeoNodeClient<T> {
      * @memberof AsgardeoNodeClient
      *
      */
-  public async exchangeToken(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
+  public async exchangeToken(
+    config: TokenExchangeRequestConfig,
+    userId?: string,
+  ): Promise<TokenResponse | FetchResponse> {
     return this._authCore.exchangeToken(config, userId);
   }
 

@@ -20,7 +20,7 @@ import {
   AuthClientConfig,
   User,
   IsomorphicCrypto,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   StorageManager,
   IdTokenPayload,
   FetchResponse,
@@ -56,7 +56,7 @@ export interface MainThreadClientInterface {
     },
   ): Promise<User>;
   signOut(afterSignOutUrl?: string): Promise<boolean>;
-  exchangeToken(config: CustomGrantConfig): Promise<User | FetchResponse>;
+  exchangeToken(config: TokenExchangeRequestConfig): Promise<User | FetchResponse>;
   refreshAccessToken(): Promise<User>;
   revokeAccessToken(): Promise<boolean>;
   getUser(): Promise<User>;
@@ -77,7 +77,7 @@ export interface MainThreadClientInterface {
 }
 
 export interface WebWorkerClientInterface {
-  exchangeToken(requestParams: CustomGrantConfig): Promise<FetchResponse | User>;
+  exchangeToken(requestParams: TokenExchangeRequestConfig): Promise<FetchResponse | User>;
   httpRequest<T = any>(config: HttpRequestConfig): Promise<HttpResponse<T>>;
   httpRequestAll<T = any>(configs: HttpRequestConfig[]): Promise<HttpResponse<T>[]>;
   enableHttpHandler(): Promise<boolean>;
