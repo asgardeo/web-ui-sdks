@@ -25,6 +25,7 @@ import {AsgardeoReactConfig} from '../../models/config';
 import {ThemeProvider} from '../Theme/ThemeProvider';
 import I18nProvider from '../I18n/I18nProvider';
 import FlowProvider from '../Flow/FlowProvider';
+import UserProvider from '../User/UserProvider';
 
 /**
  * Props interface of {@link AsgardeoProvider}
@@ -177,7 +178,9 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     >
       <I18nProvider preferences={preferences?.i18n}>
         <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
-          <FlowProvider>{children}</FlowProvider>
+          <FlowProvider>
+            <UserProvider>{children}</UserProvider>
+          </FlowProvider>
         </ThemeProvider>
       </I18nProvider>
     </AsgardeoContext.Provider>
