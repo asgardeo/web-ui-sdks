@@ -17,15 +17,7 @@
  */
 
 import StorageManager from '../StorageManager';
-import {
-  AuthClientConfig,
-  AuthenticatedUserInfo,
-  BasicUserInfo,
-  CustomGrantConfig,
-  FetchRequestConfig,
-  FetchResponse,
-  StrictAuthClientConfig,
-} from './models';
+import {AuthClientConfig, CustomGrantConfig, FetchRequestConfig, FetchResponse, StrictAuthClientConfig} from './models';
 import {ExtendedAuthorizeRequestUrlParams} from '../models/oauth-request';
 import {Crypto} from '../models/crypto';
 import {TokenResponse, IdTokenPayload} from '../models/token';
@@ -39,13 +31,14 @@ import extractPkceStorageKeyFromState from '../utils/extractPkceStorageKeyFromSt
 import generateStateParamForRequestCorrelation from '../utils/generateStateParamForRequestCorrelation';
 import {AsgardeoAuthException} from '../errors/exception';
 import {AuthenticationHelper} from './helpers';
-import {SessionData} from '../models/session';
+import {SessionData, UserSession} from '../models/session';
 import {AuthorizeRequestUrlParams} from '../models/oauth-request';
 import {TemporaryStore} from '../models/store';
 import generatePkceStorageKey from '../utils/generatePkceStorageKey';
 import {OIDCDiscoveryApiResponse} from '../models/oidc-discovery';
 import getAuthorizeRequestUrlParams from '../utils/getAuthorizeRequestUrlParams';
 import PKCEConstants from '../constants/PKCEConstants';
+import {User} from '../models/user';
 
 /**
  * Default configurations.
@@ -637,16 +630,9 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getUser(userId?: string): Promise<BasicUserInfo> {
+  public async getUser(userId?: string): Promise<User> {
     const sessionData: SessionData = await this._storageManager.getSessionData(userId);
-    const authenticatedUser: AuthenticatedUserInfo = this._authenticationHelper.getAuthenticatedUserInfo(
-      sessionData?.id_token,
-    );
-
-    let basicUserInfo: BasicUserInfo = {
-      allowedScopes: sessionData.scope,
-      sessionState: sessionData.session_state,
-    };
+    const authenticatedUser: User = this._authenticationHelper.getAuthenticatedUserInfo(sessionData?.id_token);
 
     Object.keys(authenticatedUser).forEach((key: string) => {
       if (authenticatedUser[key] === undefined || authenticatedUser[key] === '' || authenticatedUser[key] === null) {
@@ -654,9 +640,16 @@ export class AsgardeoAuthClient<T> {
       }
     });
 
-    basicUserInfo = {...basicUserInfo, ...authenticatedUser};
+    return authenticatedUser;
+  }
 
-    return basicUserInfo;
+  public async getUserSession(userId?: string): Promise<UserSession> {
+    const sessionData: SessionData = await this._storageManager.getSessionData(userId);
+
+    return {
+      scopes: sessionData?.scope?.split(' '),
+      sessionState: sessionData?.session_state ?? '',
+    };
   }
 
   /**

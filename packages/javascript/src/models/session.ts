@@ -17,12 +17,17 @@
  */
 
 export interface SessionData {
-    access_token: string;
-    id_token: string;
-    expires_in: string;
-    scope: string;
-    refresh_token?: string;
-    token_type: string;
-    session_state: string;
-    created_at: number;
+  access_token: string;
+  id_token: string;
+  expires_in: string;
+  scope: string;
+  refresh_token?: string;
+  token_type: string;
+  session_state: string;
+  created_at: number;
+}
+
+export interface UserSession {
+  scopes: string[];
+  sessionState: string;
 }

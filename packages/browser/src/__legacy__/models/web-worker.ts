@@ -19,7 +19,7 @@
 import {
   AuthClientConfig,
   AuthorizeRequestUrlParams,
-  BasicUserInfo,
+  User,
   IsomorphicCrypto,
   CustomGrantConfig,
   IdTokenPayload,
@@ -51,13 +51,13 @@ export interface WebWorkerCoreInterface {
     sessionState?: string,
     pkce?: string,
     state?: string,
-  ): Promise<BasicUserInfo>;
+  ): Promise<User>;
   signOut(afterSignOutUrl?: string): Promise<string>;
   getSignOutUrl(afterSignOutUrl?: string): Promise<string>;
-  exchangeToken(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
-  refreshAccessToken(): Promise<BasicUserInfo>;
+  exchangeToken(config: CustomGrantConfig): Promise<User | FetchResponse>;
+  refreshAccessToken(): Promise<User>;
   revokeAccessToken(): Promise<boolean>;
-  getUser(): Promise<BasicUserInfo>;
+  getUser(): Promise<User>;
   getDecodedIdToken(): Promise<IdTokenPayload>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
   getCrypto(): Promise<IsomorphicCrypto>;

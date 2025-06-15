@@ -20,7 +20,7 @@ import {
   AsgardeoAuthClient,
   AsgardeoAuthException,
   AuthClientConfig,
-  BasicUserInfo,
+  User,
   IsomorphicCrypto,
   CustomGrantConfig,
   IdTokenPayload,
@@ -188,13 +188,13 @@ export const WebWorkerClient = async (
    * @returns {Promise<HttpResponse|boolean>} A promise that resolves with a boolean value or the request
    * response if the the `returnResponse` attribute in the `requestParams` object is set to `true`.
    */
-  const exchangeToken = (requestParams: SPACustomGrantConfig): Promise<FetchResponse | BasicUserInfo> => {
+  const exchangeToken = (requestParams: SPACustomGrantConfig): Promise<FetchResponse | User> => {
     const message: Message<CustomGrantConfig> = {
       data: requestParams,
       type: REQUEST_CUSTOM_GRANT,
     };
 
-    return communicate<CustomGrantConfig, FetchResponse | BasicUserInfo>(message)
+    return communicate<CustomGrantConfig, FetchResponse | User>(message)
       .then(response => {
         if (requestParams.preventSignOutURLUpdate) {
           _getSignOutURLFromSessionStorage = true;
@@ -385,7 +385,7 @@ export const WebWorkerClient = async (
     _authenticationHelper.initializeSessionManger(
       config,
       oidcEndpoints,
-      async () => (await getUser()).sessionState,
+      async () => (await _authenticationClient.getUserSession()).sessionState,
       async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> =>
         (await getSignInUrl(params)).authorizationURL,
       _sessionManagementHelper,
@@ -427,13 +427,13 @@ export const WebWorkerClient = async (
    * This method checks if there is an active user session in the server by sending a prompt none request.
    * If the user is signed in, this method sends a token request. Returns false otherwise.
    *
-   * @return {Promise<BasicUserInfo|boolean} Returns a Promise that resolves with the BasicUserInfo
+   * @return {Promise<User|boolean} Returns a Promise that resolves with the User
    * if the user is signed in or with `false` if there is no active user session in the server.
    */
   const trySignInSilently = async (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean> => {
+  ): Promise<User | boolean> => {
     return await _authenticationHelper.trySignInSilently(
       constructSilentSignInUrl,
       requestAccessToken,
@@ -479,7 +479,7 @@ export const WebWorkerClient = async (
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> => {
+  ): Promise<User> => {
     const config: AuthClientConfig<WebWorkerClientConfig> = await getConfigData();
     const pkceKey: string = extractPkceStorageKeyFromState(resolvedState);
 
@@ -496,7 +496,7 @@ export const WebWorkerClient = async (
 
     config.enablePKCE && SPAUtils.removePKCE(pkceKey);
 
-    return communicate<AuthorizationInfo, BasicUserInfo>(message)
+    return communicate<AuthorizationInfo, User>(message)
       .then(response => {
         const message: Message<null> = {
           type: GET_SIGN_OUT_URL,
@@ -530,7 +530,7 @@ export const WebWorkerClient = async (
     });
   };
 
-  const tryRetrievingUserInfo = async (): Promise<BasicUserInfo | undefined> => {
+  const tryRetrievingUserInfo = async (): Promise<User | undefined> => {
     if (await isSignedIn()) {
       await startAutoRefreshToken();
 
@@ -558,7 +558,7 @@ export const WebWorkerClient = async (
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> => {
+  ): Promise<User> => {
     const basicUserInfo = await _authenticationHelper.handleSignIn(
       shouldStopAuthn,
       checkSession,
@@ -693,12 +693,12 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getUser = (): Promise<BasicUserInfo> => {
+  const getUser = (): Promise<User> => {
     const message: Message<null> = {
       type: GET_BASIC_USER_INFO,
     };
 
-    return communicate<null, BasicUserInfo>(message)
+    return communicate<null, User>(message)
       .then(response => {
         return Promise.resolve(response);
       })
@@ -777,12 +777,12 @@ export const WebWorkerClient = async (
       });
   };
 
-  const refreshAccessToken = (): Promise<BasicUserInfo> => {
+  const refreshAccessToken = (): Promise<User> => {
     const message: Message<null> = {
       type: REFRESH_ACCESS_TOKEN,
     };
 
-    return communicate<null, BasicUserInfo>(message);
+    return communicate<null, User>(message);
   };
 
   const setHttpRequestSuccessCallback = (callback: (response: HttpResponse) => void): void => {

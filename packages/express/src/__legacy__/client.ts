@@ -22,7 +22,7 @@ import {
   AuthURLCallback,
   TokenResponse,
   Storage,
-  BasicUserInfo,
+  User,
   OIDCEndpoints,
   IdTokenPayload,
   CustomGrantConfig,
@@ -166,7 +166,7 @@ export class AsgardeoExpressClient {
     return this._authClient.getIdToken(userId);
   }
 
-  public async getUser(userId: string): Promise<BasicUserInfo> {
+  public async getUser(userId: string): Promise<User> {
     return this._authClient.getUser(userId);
   }
 

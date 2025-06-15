@@ -20,7 +20,7 @@ import {
   AsgardeoAuthClient,
   AsgardeoAuthException,
   AuthClientConfig,
-  BasicUserInfo,
+  User,
   IsomorphicCrypto,
   CustomGrantConfig,
   StorageManager,
@@ -103,7 +103,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
   public async exchangeToken(
     config: SPACustomGrantConfig,
     enableRetrievingSignOutURLFromSession?: (config: SPACustomGrantConfig) => void,
-  ): Promise<BasicUserInfo | FetchResponse> {
+  ): Promise<User | FetchResponse> {
     let useDefaultEndpoint = true;
     let matches = false;
 
@@ -168,7 +168,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
 
   public async refreshAccessToken(
     enableRetrievingSignOutURLFromSession?: (config: SPACustomGrantConfig) => void,
-  ): Promise<BasicUserInfo> {
+  ): Promise<User> {
     try {
       await this._authenticationClient.refreshAccessToken();
       const customGrantConfig = await this.getCustomGrantConfigData();
@@ -256,7 +256,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
 
             this._isTokenRefreshing = true;
             // Try to refresh the token
-            let refreshAccessTokenResponse: BasicUserInfo;
+            let refreshAccessTokenResponse: User;
             try {
               refreshAccessTokenResponse = await this.refreshAccessToken(enableRetrievingSignOutURLFromSession);
 
@@ -372,7 +372,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
           })
           .catch(async (error: HttpError) => {
             if (error?.response?.status === 401 || !error?.response) {
-              let refreshTokenResponse: TokenResponse | BasicUserInfo;
+              let refreshTokenResponse: TokenResponse | User;
               try {
                 refreshTokenResponse = await this._authenticationClient.refreshAccessToken();
               } catch (refreshError: any) {
@@ -453,7 +453,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> {
+  ): Promise<User> {
     const config = await this._storageManager.getConfigData();
 
     if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE && sessionState) {
@@ -513,11 +513,11 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       sessionState: string,
       state: string,
       tokenRequestConfig?: {params: Record<string, unknown>},
-    ) => Promise<BasicUserInfo>,
+    ) => Promise<User>,
     sessionManagementHelper: SessionManagementHelperInterface,
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean> {
+  ): Promise<User | boolean> {
     // This block is executed by the iFrame when the server redirects with the authorization code.
     if (SPAUtils.isInitializedSilentSignIn()) {
       await sessionManagementHelper.receivePromptNoneResponse();
@@ -564,7 +564,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
 
         if (data?.type == CHECK_SESSION_SIGNED_IN && data?.data?.code) {
           requestAccessToken(data?.data?.code, data?.data?.sessionState, data?.data?.state, tokenRequestConfig)
-            .then((response: BasicUserInfo) => {
+            .then((response: User) => {
               window.removeEventListener('message', listenToPromptNoneIFrame);
               resolve(response);
             })
@@ -585,8 +585,8 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
   public async handleSignIn(
     shouldStopAuthn: () => Promise<boolean>,
     checkSession: () => Promise<void>,
-    tryRetrievingUserInfo?: () => Promise<BasicUserInfo | undefined>,
-  ): Promise<BasicUserInfo | undefined> {
+    tryRetrievingUserInfo?: () => Promise<User | undefined>,
+  ): Promise<User | undefined> {
     const config = await this._storageManager.getConfigData();
 
     if (await shouldStopAuthn()) {
@@ -656,7 +656,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     }
   }
 
-  public async getUser(): Promise<BasicUserInfo> {
+  public async getUser(): Promise<User> {
     return this._authenticationClient.getUser();
   }
 

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, AsgardeoAuthException, AuthClientConfig, BasicUserInfo} from '@asgardeo/javascript';
+import {AsgardeoAuthClient, AsgardeoAuthException, AuthClientConfig, User} from '@asgardeo/javascript';
 import {WebWorkerCore} from './worker-core';
 import {
   DISABLE_HTTP_HANDLER,
@@ -109,7 +109,7 @@ export const workerReceiver = (
       case REQUEST_ACCESS_TOKEN:
         webWorker
           .requestAccessToken(data?.data?.code, data?.data?.sessionState, data?.data?.pkce, data?.data?.state)
-          .then((response: BasicUserInfo) => {
+          .then((response: User) => {
             port.postMessage(MessageUtils.generateSuccessMessage(response));
           })
           .catch(error => {

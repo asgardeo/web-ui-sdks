@@ -20,7 +20,7 @@ import {
   AsgardeoAuthClient,
   AuthClientConfig,
   AuthorizeRequestUrlParams,
-  BasicUserInfo,
+  User,
   IsomorphicCrypto,
   CustomGrantConfig,
   IdTokenPayload,
@@ -124,7 +124,7 @@ export const WebWorkerCore = async (
     sessionState?: string,
     pkce?: string,
     state?: string,
-  ): Promise<BasicUserInfo> => {
+  ): Promise<User> => {
     return await _authenticationHelper.requestAccessToken(authorizationCode, sessionState, undefined, pkce, state);
   };
 
@@ -138,11 +138,11 @@ export const WebWorkerCore = async (
     return await _authenticationClient.getSignOutUrl();
   };
 
-  const exchangeToken = async (config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse> => {
+  const exchangeToken = async (config: CustomGrantConfig): Promise<User | FetchResponse> => {
     return await _authenticationHelper.exchangeToken(config);
   };
 
-  const refreshAccessToken = async (): Promise<BasicUserInfo> => {
+  const refreshAccessToken = async (): Promise<User> => {
     try {
       return await _authenticationHelper.refreshAccessToken();
     } catch (error) {
@@ -163,7 +163,7 @@ export const WebWorkerCore = async (
       .catch(error => Promise.reject(error));
   };
 
-  const getUser = async (): Promise<BasicUserInfo> => {
+  const getUser = async (): Promise<User> => {
     return _authenticationHelper.getUser();
   };
 

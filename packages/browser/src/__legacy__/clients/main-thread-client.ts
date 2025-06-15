@@ -19,7 +19,7 @@
 import {
   AsgardeoAuthClient,
   AuthClientConfig,
-  BasicUserInfo,
+  User,
   IsomorphicCrypto,
   StorageManager,
   IdTokenPayload,
@@ -157,7 +157,7 @@ export const MainThreadClient = async (
     _authenticationHelper.initializeSessionManger(
       config,
       oidcEndpoints,
-      async () => (await _authenticationClient.getUser()).sessionState,
+      async () => (await _authenticationClient.getUserSession()).sessionState,
       async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> => _authenticationClient.getSignInUrl(params),
       _sessionManagementHelper,
     );
@@ -185,7 +185,7 @@ export const MainThreadClient = async (
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> => {
+  ): Promise<User> => {
     const basicUserInfo = await _authenticationHelper.handleSignIn(shouldStopAuthn, checkSession, undefined);
 
     if (basicUserInfo) {
@@ -279,11 +279,11 @@ export const MainThreadClient = async (
     }
   };
 
-  const exchangeToken = async (config: SPACustomGrantConfig): Promise<BasicUserInfo | FetchResponse> => {
+  const exchangeToken = async (config: SPACustomGrantConfig): Promise<User | FetchResponse> => {
     return await _authenticationHelper.exchangeToken(config, enableRetrievingSignOutURLFromSession);
   };
 
-  const refreshAccessToken = async (): Promise<BasicUserInfo> => {
+  const refreshAccessToken = async (): Promise<User> => {
     try {
       return await _authenticationHelper.refreshAccessToken(enableRetrievingSignOutURLFromSession);
     } catch (error) {
@@ -312,7 +312,7 @@ export const MainThreadClient = async (
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> => {
+  ): Promise<User> => {
     return await _authenticationHelper.requestAccessToken(
       resolvedAuthorizationCode,
       resolvedSessionState,
@@ -352,13 +352,13 @@ export const MainThreadClient = async (
    * This method checks if there is an active user session in the server by sending a prompt none request.
    * If the user is signed in, this method sends a token request. Returns false otherwise.
    *
-   * @return {Promise<BasicUserInfo|boolean} Returns a Promise that resolves with the BasicUserInfo
+   * @return {Promise<User|boolean} Returns a Promise that resolves with the User
    * if the user is signed in or with `false` if there is no active user session in the server.
    */
   const trySignInSilently = async (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean> => {
+  ): Promise<User | boolean> => {
     return await _authenticationHelper.trySignInSilently(
       constructSilentSignInUrl,
       requestAccessToken,
@@ -368,7 +368,7 @@ export const MainThreadClient = async (
     );
   };
 
-  const getUser = async (): Promise<BasicUserInfo> => {
+  const getUser = async (): Promise<User> => {
     return _authenticationHelper.getUser();
   };
 

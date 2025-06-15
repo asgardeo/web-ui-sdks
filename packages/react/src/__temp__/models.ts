@@ -20,7 +20,7 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   AuthSPAClientConfig,
-  BasicUserInfo,
+  User,
   Config,
   CustomGrantConfig,
   IdTokenPayload,
@@ -56,10 +56,6 @@ export type AuthReactConfig = AuthSPAClientConfig & ReactConfig;
  */
 export interface AuthStateInterface {
   /**
-   * The scopes that are allowed for the user.
-   */
-  allowedScopes: string;
-  /**
    * The display name of the user.
    */
   displayName?: string;
@@ -76,10 +72,6 @@ export interface AuthStateInterface {
    */
   isLoading: boolean;
   /**
-   * The uid corresponding to the user who the ID token belonged to.
-   */
-  sub?: string;
-  /**
    * The username of the user.
    */
   username?: string;
@@ -91,16 +83,16 @@ export interface AuthContextInterface {
     authorizationCode?: string,
     sessionState?: string,
     state?: string,
-    callback?: (response: BasicUserInfo) => void,
+    callback?: (response: User) => void,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ) => Promise<BasicUserInfo>;
+  ) => Promise<User>;
   signOut: (callback?: (response: boolean) => void) => Promise<boolean>;
-  getUser(): Promise<BasicUserInfo>;
+  getUser(): Promise<User>;
   httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
-  exchangeToken(config: CustomGrantConfig, callback?: (response: BasicUserInfo | FetchResponse<any>) => void): void;
+  exchangeToken(config: CustomGrantConfig, callback?: (response: User | FetchResponse<any>) => void): void;
   revokeAccessToken(): Promise<boolean>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getHttpClient(): Promise<HttpClientInstance>;
@@ -108,7 +100,7 @@ export interface AuthContextInterface {
   getDecodedIdToken(): Promise<IdTokenPayload>;
   getIdToken(): Promise<string>;
   getAccessToken(): Promise<string>;
-  refreshAccessToken(): Promise<BasicUserInfo>;
+  refreshAccessToken(): Promise<User>;
   isSignedIn(): Promise<boolean>;
   enableHttpHandler(): Promise<boolean>;
   disableHttpHandler(): Promise<boolean>;
@@ -116,7 +108,7 @@ export interface AuthContextInterface {
   trySignInSilently: (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ) => Promise<boolean | BasicUserInfo>;
+  ) => Promise<boolean | User>;
   on(hook: Hooks.CustomGrant, callback: (response?: any) => void, id: string): void;
   on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): void;
   on(hook: Hooks, callback: (response?: any) => void, id?: string): void;

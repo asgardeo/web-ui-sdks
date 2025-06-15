@@ -19,7 +19,8 @@
 import {IsomorphicCrypto} from '../../IsomorphicCrypto';
 import StorageManager from '../../StorageManager';
 import {AsgardeoAuthException} from '../../errors/exception';
-import {AuthClientConfig, AuthenticatedUserInfo, StrictAuthClientConfig} from '../models';
+import {AuthClientConfig, StrictAuthClientConfig} from '../models';
+import {User} from '../../models/user';
 import {SessionData} from '../../models/session';
 import {JWKInterface} from '../../models/crypto';
 import {TokenResponse, AccessTokenApiResponse} from '../../models/token';
@@ -204,9 +205,8 @@ export class AuthenticationHelper<T> {
     );
   }
 
-  public getAuthenticatedUserInfo(idToken: string): AuthenticatedUserInfo {
+  public getAuthenticatedUserInfo(idToken: string): User {
     const payload: IdTokenPayload = this._cryptoHelper.decodeIdToken(idToken);
-    const tenantDomain: string = extractTenantDomainFromIdTokenPayload(payload);
     const username: string = payload?.['username'] ?? '';
     const givenName: string = payload?.['given_name'] ?? '';
     const familyName: string = payload?.['family_name'] ?? '';
@@ -216,7 +216,6 @@ export class AuthenticationHelper<T> {
 
     return {
       displayName: displayName,
-      tenantDomain,
       username: username,
       ...extractUserClaimsFromIdToken(payload),
     };

@@ -19,7 +19,7 @@
 import {
   AsgardeoSPAClient,
   AuthClientConfig,
-  BasicUserInfo,
+  User,
   LegacyConfig as Config,
   IdTokenPayload,
   FetchResponse,
@@ -105,7 +105,7 @@ class AuthAPI {
     authorizationCode?: string,
     sessionState?: string,
     authState?: string,
-    callback?: (response: BasicUserInfo) => void,
+    callback?: (response: User) => void,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
@@ -129,20 +129,18 @@ class AuthAPI {
 
     return this._client
       .signIn(config, authorizationCode, sessionState, authState, tokenRequestConfig)
-      .then(async (response: BasicUserInfo) => {
+      .then(async (response: User) => {
         if (!response) {
           return null; // FIXME: Validate this. Temp fix for: error TS7030: Not all code paths return a value.
         }
 
         if (await this._client.isSignedIn()) {
           const stateToUpdate = {
-            allowedScopes: response.allowedScopes,
             displayName: response.displayName,
             email: response.email,
             isSignedIn: true,
             isLoading: false,
             isSigningOut: false,
-            sub: response.sub,
             username: response.username,
           };
 
@@ -197,9 +195,9 @@ class AuthAPI {
   /**
    * This method returns a Promise that resolves with the basic user information obtained from the ID token.
    *
-   * @return {Promise<BasicUserInfo>} - A promise that resolves with the user information.
+   * @return {Promise<User>} - A promise that resolves with the user information.
    */
-  public async getUser(): Promise<BasicUserInfo> {
+  public async getUser(): Promise<User> {
     return this._client.getUser();
   }
 
@@ -241,12 +239,12 @@ class AuthAPI {
    */
   public exchangeToken(
     config: SPACustomGrantConfig,
-    callback: (response: BasicUserInfo | FetchResponse<any>) => void,
+    callback: (response: User | FetchResponse<any>) => void,
     dispatch: (state: AuthStateInterface) => void,
-  ): Promise<BasicUserInfo | FetchResponse<any>> {
+  ): Promise<User | FetchResponse<any>> {
     return this._client
       .exchangeToken(config)
-      .then((response: BasicUserInfo | FetchResponse<any>) => {
+      .then((response: User | FetchResponse<any>) => {
         if (!response) {
           return null; // FIXME: Validate this. Temp fix for: error TS7030: Not all code paths return a value.
         }
@@ -254,12 +252,12 @@ class AuthAPI {
         if (config.returnsSession) {
           this.updateState({
             ...this.getState(),
-            ...(response as BasicUserInfo),
+            ...(response as User),
             isSignedIn: true,
             isLoading: false,
           });
 
-          dispatch({...(response as BasicUserInfo), isSignedIn: true, isLoading: false});
+          dispatch({...(response as User), isSignedIn: true, isLoading: false});
         }
 
         callback && callback(response);
@@ -365,7 +363,7 @@ class AuthAPI {
    * @return {TokenResponseInterface} - A Promise that resolves with an object containing
    * information about the refreshed access token.
    */
-  public async refreshAccessToken(): Promise<BasicUserInfo> {
+  public async refreshAccessToken(): Promise<User> {
     return this._client.refreshAccessToken();
   }
 
@@ -438,7 +436,7 @@ class AuthAPI {
    * First, this method sends a prompt none request to see if there is an active user session in the identity server.
    * If there is one, then it requests the access token and stores it. Else, it returns false.
    *
-   * @return {Promise<BasicUserInfo | boolean>} - A Promise that resolves with the user information after signing in
+   * @return {Promise<User | boolean>} - A Promise that resolves with the user information after signing in
    * or with `false` if the user is not signed in.
    *
    * @example
@@ -451,10 +449,10 @@ class AuthAPI {
     dispatch: (state: AuthStateInterface) => void,
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean | undefined> {
+  ): Promise<User | boolean | undefined> {
     return this._client
       .trySignInSilently(additionalParams, tokenRequestConfig)
-      .then(async (response: BasicUserInfo | boolean) => {
+      .then(async (response: User | boolean) => {
         if (!response) {
           this.updateState({...this.getState(), isLoading: false});
           dispatch({...state, isLoading: false});
@@ -463,15 +461,13 @@ class AuthAPI {
         }
 
         if (await this._client.isSignedIn()) {
-          const basicUserInfo = response as BasicUserInfo;
+          const basicUserInfo = response as User;
           const stateToUpdate = {
-            allowedScopes: basicUserInfo.allowedScopes,
             displayName: basicUserInfo.displayName,
             email: basicUserInfo.email,
             isSignedIn: true,
             isLoading: false,
             isSigningOut: false,
-            sub: basicUserInfo.sub,
             username: basicUserInfo.username,
           };
 
@@ -489,12 +485,10 @@ class AuthAPI {
 }
 
 AuthAPI.DEFAULT_STATE = {
-  allowedScopes: '',
   displayName: '',
   email: '',
   isSignedIn: false,
   isLoading: true,
-  sub: '',
   username: '',
 };
 

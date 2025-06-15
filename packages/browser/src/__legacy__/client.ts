@@ -20,13 +20,13 @@ import {
   AsgardeoAuthClient,
   AsgardeoAuthException,
   AuthClientConfig,
-  BasicUserInfo,
   IsomorphicCrypto,
   CustomGrantConfig,
   StorageManager,
   IdTokenPayload,
   FetchResponse,
   OIDCEndpoints,
+  User,
 } from '@asgardeo/javascript';
 import WorkerFile from '../worker';
 import {MainThreadClient, WebWorkerClient} from './clients';
@@ -75,7 +75,7 @@ export class AsgardeoSPAClient {
   protected _worker: new () => Worker = WorkerFile;
   protected _initialized: boolean = false;
   protected _startedInitialize: boolean = false;
-  protected _onSignInCallback: (response: BasicUserInfo) => void = () => null;
+  protected _onSignInCallback: (response: User) => void = () => null;
   protected _onSignOutCallback: () => void = () => null;
   protected _onSignOutFailedCallback: (error: SignOutError) => void = () => null;
   protected _onEndUserSession: (response: any) => void = () => null;
@@ -327,7 +327,7 @@ export class AsgardeoSPAClient {
   /**
    * This method returns a Promise that resolves with the basic user information obtained from the ID token.
    *
-   * @return {Promise<BasicUserInfo>} - A promise that resolves with the user information.
+   * @return {Promise<User>} - A promise that resolves with the user information.
    *
    * @example
    * ```
@@ -344,7 +344,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getUser(): Promise<BasicUserInfo | undefined> {
+  public async getUser(): Promise<User | undefined> {
     await this._validateMethod();
 
     return this._client?.getUser();
@@ -373,7 +373,7 @@ export class AsgardeoSPAClient {
    * @param {string} sessionState - The session state. (Optional)
    * @param {string} state - The state. (Optional)
    *
-   * @return {Promise<BasicUserInfo>} - A promise that resolves with the user information.
+   * @return {Promise<User>} - A promise that resolves with the user information.
    *
    * @example
    * ```
@@ -394,7 +394,7 @@ export class AsgardeoSPAClient {
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo | undefined> {
+  ): Promise<User | undefined> {
     await this.isInitialized();
 
     // Discontinues the execution of this method if `config.callOnlyOnRedirect` is true and the `signIn` method
@@ -407,11 +407,9 @@ export class AsgardeoSPAClient {
 
     return this._client
       ?.signIn(config, authorizationCode, sessionState, state, tokenRequestConfig)
-      .then((response: BasicUserInfo) => {
+      .then((response: User) => {
         if (this._onSignInCallback) {
-          if (response.allowedScopes || response.displayName || response.email || response.username) {
-            this._onSignInCallback(response);
-          }
+          this._onSignInCallback(response);
         }
 
         return response;
@@ -426,7 +424,7 @@ export class AsgardeoSPAClient {
    * If this method is to be called on page load and the `signIn` method is also to be called on page load,
    * then it is advisable to call this method after the `signIn` call.
    *
-   * @return {Promise<BasicUserInfo | boolean>} - A Promise that resolves with the user information after signing in
+   * @return {Promise<User | boolean>} - A Promise that resolves with the user information after signing in
    * or with `false` if the user is not signed in.
    *
    * @example
@@ -437,7 +435,7 @@ export class AsgardeoSPAClient {
   public async trySignInSilently(
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean | undefined> {
+  ): Promise<User | boolean | undefined> {
     await this.isInitialized();
 
     // checks if the `signIn` method has been called.
@@ -445,23 +443,13 @@ export class AsgardeoSPAClient {
       return undefined;
     }
 
-    return this._client
-      ?.trySignInSilently(additionalParams, tokenRequestConfig)
-      .then((response: BasicUserInfo | boolean) => {
-        if (this._onSignInCallback && response) {
-          const basicUserInfo = response as BasicUserInfo;
-          if (
-            basicUserInfo.allowedScopes ||
-            basicUserInfo.displayName ||
-            basicUserInfo.email ||
-            basicUserInfo.username
-          ) {
-            this._onSignInCallback(basicUserInfo);
-          }
-        }
+    return this._client?.trySignInSilently(additionalParams, tokenRequestConfig).then((response: User | boolean) => {
+      if (this._onSignInCallback && response) {
+        this._onSignInCallback(response as User);
+      }
 
-        return response;
-      });
+      return response;
+    });
   }
 
   /**
@@ -619,7 +607,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async exchangeToken(config: CustomGrantConfig): Promise<FetchResponse<any> | BasicUserInfo | undefined> {
+  public async exchangeToken(config: CustomGrantConfig): Promise<FetchResponse<any> | User | undefined> {
     if (config.signInRequired) {
       await this._validateMethod();
     } else {
@@ -968,7 +956,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async refreshAccessToken(): Promise<BasicUserInfo | undefined> {
+  public async refreshAccessToken(): Promise<User | undefined> {
     await this._validateMethod(false);
 
     return this._client?.refreshAccessToken();

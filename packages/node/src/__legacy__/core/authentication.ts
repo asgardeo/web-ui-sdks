@@ -20,7 +20,6 @@ import {
   AsgardeoAuthClient,
   AsgardeoAuthException,
   AuthClientConfig,
-  BasicUserInfo,
   Crypto,
   CustomGrantConfig,
   StorageManager,
@@ -30,6 +29,7 @@ import {
   SessionData,
   Storage,
   TokenResponse,
+  User,
 } from '@asgardeo/javascript';
 import {AuthURLCallback} from '../models';
 import {MemoryCacheStore} from '../stores';
@@ -212,7 +212,7 @@ export class AsgardeoNodeCore<T> {
     return Promise.resolve(signOutURL);
   }
 
-  public async getUser(userId: string): Promise<BasicUserInfo> {
+  public async getUser(userId: string): Promise<User> {
     return this._auth.getUser(userId);
   }
 

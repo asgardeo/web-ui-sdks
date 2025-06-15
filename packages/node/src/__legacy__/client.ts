@@ -18,7 +18,6 @@
 
 import {
   AuthClientConfig,
-  BasicUserInfo,
   CustomGrantConfig,
   StorageManager,
   IdTokenPayload,
@@ -26,6 +25,7 @@ import {
   OIDCEndpoints,
   Storage,
   TokenResponse,
+  User,
 } from '@asgardeo/javascript';
 import {AsgardeoNodeCore} from './core';
 import {AuthURLCallback} from './models';
@@ -192,7 +192,7 @@ export class AsgardeoNodeClient<T> {
    * @memberof AsgardeoNodeClient
    *
    */
-  public async getUser(userId: string): Promise<BasicUserInfo> {
+  public async getUser(userId: string): Promise<User> {
     return this._authCore.getUser(userId);
   }
 
@@ -260,15 +260,15 @@ export class AsgardeoNodeClient<T> {
   }
 
   /**
-     * This method returns Promise that resolves with the token information 
+     * This method returns Promise that resolves with the token information
      * or the response returned by the server depending on the configuration passed.
-     * @param {CustomGrantConfig} config - The config object contains attributes that would be used 
+     * @param {CustomGrantConfig} config - The config object contains attributes that would be used
      * to configure the custom grant request.
      *
      * @param {string} userId - The userId of the user.
      * (If you are using ExpressJS, you may get this from the request cookies)
-     * 
-     * @return {Promise<TokenResponse | FetchResponse>} -A Promise that resolves with the token information 
+     *
+     * @return {Promise<TokenResponse | FetchResponse>} -A Promise that resolves with the token information
      * or the response returned by the server depending on the configuration passed.
      *
      * @example
