@@ -17,7 +17,7 @@
  */
 
 import {CSSProperties, FC, ReactNode} from 'react';
-import {useTheme} from '../../../contexts/Theme/useTheme';
+import useTheme from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import Typography from '../Typography/Typography';
 

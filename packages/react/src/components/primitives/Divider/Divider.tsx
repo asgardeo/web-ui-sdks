@@ -19,7 +19,7 @@
 import {FC, HTMLAttributes, useMemo} from 'react';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import {clsx} from 'clsx';
-import {useTheme} from '../../../contexts/Theme/useTheme';
+import useTheme from '../../../contexts/Theme/useTheme';
 import Typography from '../Typography/Typography';
 
 export type DividerOrientation = 'horizontal' | 'vertical';

@@ -23,7 +23,7 @@ import TextField from '../../primitives/TextField/TextField';
 import DatePicker from '../../primitives/DatePicker/DatePicker';
 import Checkbox from '../../primitives/Checkbox/Checkbox';
 import Button from '../../primitives/Button/Button';
-import {useTheme} from '../../../contexts/Theme/useTheme';
+import useTheme from '../../../contexts/Theme/useTheme';
 import {User, withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';

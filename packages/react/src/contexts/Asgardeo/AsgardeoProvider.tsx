@@ -22,7 +22,7 @@ import AsgardeoReactClient from '../../AsgardeoReactClient';
 import AsgardeoContext from './AsgardeoContext';
 import useBrowserUrl from '../../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../../models/config';
-import {ThemeProvider} from '../Theme/ThemeProvider';
+import ThemeProvider from '../Theme/ThemeProvider';
 import I18nProvider from '../I18n/I18nProvider';
 import FlowProvider from '../Flow/FlowProvider';
 import UserProvider from '../User/UserProvider';

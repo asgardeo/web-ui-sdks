@@ -17,7 +17,7 @@
  */
 
 import {CSSProperties, FC, useMemo} from 'react';
-import {useTheme} from '../../../contexts/Theme/useTheme';
+import useTheme from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 

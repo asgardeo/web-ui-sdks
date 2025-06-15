@@ -17,36 +17,36 @@
  */
 
 import {CSSProperties, FC, ReactNode, ComponentPropsWithoutRef, ElementType} from 'react';
-import {useTheme} from '../../../contexts/Theme/useTheme';
+import useTheme from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 
 // Typography variants mapped to HTML elements and styling
-export type TypographyVariant = 
-  | 'h1' 
-  | 'h2' 
-  | 'h3' 
-  | 'h4' 
-  | 'h5' 
-  | 'h6' 
-  | 'subtitle1' 
-  | 'subtitle2' 
-  | 'body1' 
-  | 'body2' 
-  | 'caption' 
+export type TypographyVariant =
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'h6'
+  | 'subtitle1'
+  | 'subtitle2'
+  | 'body1'
+  | 'body2'
+  | 'caption'
   | 'overline'
   | 'button';
 
 export type TypographyAlign = 'left' | 'center' | 'right' | 'justify';
 
-export type TypographyColor = 
-  | 'primary' 
-  | 'secondary' 
-  | 'error' 
-  | 'success' 
-  | 'warning' 
+export type TypographyColor =
+  | 'primary'
+  | 'secondary'
+  | 'error'
+  | 'success'
+  | 'warning'
   | 'info'
-  | 'textPrimary' 
-  | 'textSecondary' 
+  | 'textPrimary'
+  | 'textSecondary'
   | 'inherit';
 
 export interface TypographyProps {
@@ -169,7 +169,7 @@ const Typography: FC<TypographyProps> = ({
   // Get variant styles
   const getVariantStyles = (variantName: TypographyVariant): CSSProperties => {
     const baseUnit = theme.spacing.unit;
-    
+
     switch (variantName) {
       case 'h1':
         return {
@@ -278,9 +278,9 @@ const Typography: FC<TypographyProps> = ({
     display: inline ? 'inline' : variantMapping[variant] === 'span' ? 'inline' : 'block',
     ...variantStyles,
     // Custom overrides
-    ...(fontWeight && { fontWeight }),
-    ...(fontSize && { fontSize: typeof fontSize === 'number' ? `${fontSize}px` : fontSize }),
-    ...(lineHeight && { lineHeight }),
+    ...(fontWeight && {fontWeight}),
+    ...(fontSize && {fontSize: typeof fontSize === 'number' ? `${fontSize}px` : fontSize}),
+    ...(lineHeight && {lineHeight}),
     ...(noWrap && {
       overflow: 'hidden',
       textOverflow: 'ellipsis',
@@ -304,11 +304,7 @@ const Typography: FC<TypographyProps> = ({
   );
 
   return (
-    <Component 
-      className={classes} 
-      style={typographyStyle} 
-      {...rest}
-    >
+    <Component className={classes} style={typographyStyle} {...rest}>
       {children}
     </Component>
   );

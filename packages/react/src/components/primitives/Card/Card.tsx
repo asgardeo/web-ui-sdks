@@ -1,6 +1,6 @@
 /**
  * Copyright (import {CSSProperties, HTMLAttributes, forwardRef, useMemo, ReactNode, ForwardRefExoticComponent, Ref} from 'react';
-import {useTheme} from '../../../theme/useTheme'; 2025, WSO2 LLC. (https://www.wso2.com).
+import useTheme from '../../../theme/useTheme'; 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -26,7 +26,7 @@ import {
   ForwardRefExoticComponent,
   RefAttributes,
 } from 'react';
-import {useTheme} from '../../../contexts/Theme/useTheme';
+import useTheme from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import Typography from '../Typography/Typography';

@@ -17,11 +17,11 @@
  */
 
 import {CSSProperties, FC, InputHTMLAttributes} from 'react';
-import {useTheme} from '../../../contexts/Theme/useTheme';
+import useTheme from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
-import { withVendorCSSClassPrefix } from 'packages/browser/dist';
+import {withVendorCSSClassPrefix} from 'packages/browser/dist';
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'type'> {
   /**

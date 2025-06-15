@@ -35,7 +35,7 @@ import {
   UseFloatingReturn,
   UseInteractionsReturn,
 } from '@floating-ui/react';
-import {useTheme} from '../../../contexts/Theme/useTheme';
+import useTheme from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import Button from '../Button/Button';

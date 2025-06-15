@@ -17,7 +17,7 @@
  */
 
 import {CSSProperties, FC, LabelHTMLAttributes, ReactNode} from 'react';
-import {useTheme} from '../../../contexts/Theme/useTheme';
+import useTheme from '../../../contexts/Theme/useTheme';
 
 export interface InputLabelProps extends Omit<LabelHTMLAttributes<HTMLLabelElement>, 'style'> {
   /**

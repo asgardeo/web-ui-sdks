@@ -31,7 +31,7 @@ const applyThemeToDOM = (theme: Theme) => {
   });
 };
 
-export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
+const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
   theme: themeConfig,
   defaultColorScheme = 'light',
@@ -56,3 +56,5 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
+
+export default ThemeProvider;
