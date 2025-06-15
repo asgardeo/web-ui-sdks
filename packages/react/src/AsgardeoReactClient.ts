@@ -51,7 +51,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       baseUrl: config.baseUrl,
       clientId: config.clientId,
       afterSignInUrl: config.afterSignInUrl,
-      scope: [...scopes, 'internal_login'],
+      scopes: [...scopes, 'internal_login'],
     });
   }
 

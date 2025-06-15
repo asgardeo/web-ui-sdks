@@ -32,6 +32,7 @@ import ScopeConstants from '../../constants/ScopeConstants';
 import OIDCDiscoveryConstants from '../../constants/OIDCDiscoveryConstants';
 import TokenExchangeConstants from '../../constants/TokenExchangeConstants';
 import {OIDCDiscoveryEndpointsApiResponse, OIDCDiscoveryApiResponse} from '../../models/oidc-discovery';
+import processOpenIDScopes from '../../utils/processOpenIDScopes';
 
 export class AuthenticationHelper<T> {
   private _storageManager: StorageManager<T>;
@@ -222,16 +223,10 @@ export class AuthenticationHelper<T> {
   }
 
   public async replaceCustomGrantTemplateTags(text: string, userId?: string): Promise<string> {
-    let scope: string = ScopeConstants.OPENID;
     const configData: StrictAuthClientConfig = await this._config();
     const sessionData: SessionData = await this._storageManager.getSessionData(userId);
 
-    if (configData.scope && configData.scope.length > 0) {
-      if (!configData.scope.includes(ScopeConstants.OPENID)) {
-        configData.scope.push(ScopeConstants.OPENID);
-      }
-      scope = configData.scope.join(' ');
-    }
+    let scope: string = processOpenIDScopes(configData.scopes);
 
     return text
       .replace(TokenExchangeConstants.Placeholders.TOKEN, sessionData.access_token)

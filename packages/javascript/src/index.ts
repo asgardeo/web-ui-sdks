@@ -49,7 +49,7 @@ export {
 } from './models/application-native-authentication';
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 export {BaseConfig, Config, Preferences, ThemePreferences, I18nPreferences, WithPreferences} from './models/config';
-export {TokenResponse, IdTokenPayload} from './models/token';
+export {TokenResponse, IdTokenPayload, TokenExchangeRequestConfig} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';
 export {OAuthResponseMode} from './models/oauth-response';
 export {
@@ -78,5 +78,6 @@ export {default as getI18nBundles} from './utils/getI18nBundles';
 export {default as removeTrailingSlash} from './utils/removeTrailingSlash';
 export {default as resolveFieldType} from './utils/resolveFieldType';
 export {default as resolveFieldName} from './utils/resolveFieldName';
+export {default as processOpenIDScopes} from './utils/processOpenIDScopes';
 
 export {default as StorageManager} from './StorageManager';

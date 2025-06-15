@@ -55,7 +55,7 @@ const getAuthorizeRequestUrlParams = (
   options: {
     redirectUri: string;
     clientId: string;
-    scope?: string | string[];
+    scopes?: string;
     responseMode?: string;
     codeChallenge?: string;
     codeChallengeMethod?: string;
@@ -64,33 +64,13 @@ const getAuthorizeRequestUrlParams = (
   pkceOptions: {key: string},
   customParams: Record<string, string | number | boolean>,
 ): Map<string, string> => {
-  const {redirectUri, clientId, scope, responseMode, codeChallenge, codeChallengeMethod, prompt} = options;
+  const {redirectUri, clientId, scopes, responseMode, codeChallenge, codeChallengeMethod, prompt} = options;
   const authorizeRequestParams: Map<string, string> = new Map<string, string>();
 
   authorizeRequestParams.set('response_type', 'code');
   authorizeRequestParams.set('client_id', clientId as string);
 
-  let resolvedScopes: string = ScopeConstants.OPENID;
-
-  if (scope) {
-    if (Array.isArray(scope)) {
-      if (!scope.includes(ScopeConstants.OPENID)) {
-        scope.push(ScopeConstants.OPENID);
-      }
-
-      resolvedScopes = scope.join(' ');
-    } else if (typeof scope === 'string') {
-      const scopesArray = scope.split(' ').filter(Boolean);
-
-      if (!scopesArray.includes(ScopeConstants.OPENID)) {
-        scopesArray.push(ScopeConstants.OPENID);
-      }
-
-      resolvedScopes = scopesArray.join(' ');
-    }
-  }
-
-  authorizeRequestParams.set('scope', resolvedScopes);
+  authorizeRequestParams.set('scope', scopes);
   authorizeRequestParams.set('redirect_uri', redirectUri as string);
 
   if (responseMode) {

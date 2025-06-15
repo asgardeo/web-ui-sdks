@@ -39,6 +39,7 @@ import {OIDCDiscoveryApiResponse} from '../models/oidc-discovery';
 import getAuthorizeRequestUrlParams from '../utils/getAuthorizeRequestUrlParams';
 import PKCEConstants from '../constants/PKCEConstants';
 import {User} from '../models/user';
+import processOpenIDScopes from '../utils/processOpenIDScopes';
 
 /**
  * Default configurations.
@@ -47,7 +48,6 @@ const DefaultConfig: Partial<AuthClientConfig<unknown>> = {
   clockTolerance: 300,
   enablePKCE: true,
   responseMode: 'query',
-  scope: [ScopeConstants.OPENID],
   sendCookiesInRequests: true,
   validateIDToken: true,
   validateIDTokenIssuer: true,
@@ -143,10 +143,7 @@ export class AsgardeoAuthClient<T> {
     await this._storageManager.setConfigData({
       ...DefaultConfig,
       ...config,
-      scope: [
-        ...(DefaultConfig.scope ?? []),
-        ...(config.scope?.filter((scope: string) => !DefaultConfig?.scope?.includes(scope)) ?? []),
-      ],
+      scope: processOpenIDScopes(config.scopes),
     });
   }
 
@@ -244,7 +241,7 @@ export class AsgardeoAuthClient<T> {
         {
           redirectUri: configData.afterSignInUrl,
           clientId: configData.clientId,
-          scope: configData.scope as unknown as any,
+          scopes: processOpenIDScopes(configData.scopes),
           responseMode: configData.responseMode,
           codeChallengeMethod: PKCEConstants.DEFAULT_CODE_CHALLENGE_METHOD,
           codeChallenge,

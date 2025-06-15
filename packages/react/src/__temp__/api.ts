@@ -31,6 +31,7 @@ import {
   SignInConfig,
   SPACustomGrantConfig,
   initializeApplicationNativeAuthentication,
+  processOpenIDScopes
 } from '@asgardeo/browser';
 import {AuthStateInterface} from './models';
 
@@ -119,7 +120,7 @@ class AuthAPI {
           client_id: (await this.getConfigData())?.clientId,
           redirect_uri: (await this.getConfigData())?.afterSignInUrl,
           response_type: 'code',
-          scope: (await this.getConfigData())?.scope as any,
+          scope: processOpenIDScopes((await this.getConfigData())?.scopes) as any,
           response_mode: 'direct',
         },
       };
