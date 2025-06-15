@@ -17,7 +17,7 @@
  */
 
 export interface KnownUser {
-  username: string;
+  username?: string;
   email?: string;
   givenName?: string;
   familyName?: string;

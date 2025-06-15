@@ -17,7 +17,14 @@
  */
 
 import getMeProfile from '../api/scim2/getMeProfile';
-import {AsgardeoAPIError, User, WellKnownSchemaIds} from '@asgardeo/browser';
+import {
+  AsgardeoAPIError,
+  flattenSchemaAttributes,
+  FlattenedSchema,
+  SchemaAttribute,
+  User,
+  generateFlatUserProfile,
+} from '@asgardeo/browser';
 import getSchemas from '../api/scim2/getSchemas';
 
 /**
@@ -36,21 +43,21 @@ import getSchemas from '../api/scim2/getSchemas';
  * ```typescript
  * try {
  *   const userProfile = await getUserProfile({
- *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/scim2/Me",
+ *     baseUrl: "https://api.asgardeo.io/t/<ORGANIZATION>",
  *   });
  *
  *   // Access flattened properties directly:
- *   console.log("Email:", userProfile.emails[0]);
- *   console.log("Name:", userProfile.name.formatted);
+ *   console.log("Email:", userProfile.emails);
+ *   console.log("Given Name:", userProfile.name?.givenName);
  *   console.log("Username:", userProfile.userName);
  *
  *   // WSO2 specific properties:
- *   console.log("Account State:", userProfile.accountState);
- *   console.log("Email Verified:", userProfile.emailVerified);
+ *   console.log("Country:", userProfile.country);
+ *   console.log("Date of Birth:", userProfile.dateOfBirth);
  *
  *   // Enterprise properties (if available):
- *   console.log("Employee Number:", userProfile.employeeNumber);
- *   console.log("Cost Center:", userProfile.costCenter);
+ *   console.log("Verified Emails:", userProfile.verifiedEmailAddresses);
+ *   console.log("Mobile Numbers:", userProfile.mobileNumbers);
  * } catch (error) {
  *   if (error instanceof AsgardeoAPIError) {
  *     console.error('Failed to get user profile:', error.message);
@@ -58,65 +65,21 @@ import getSchemas from '../api/scim2/getSchemas';
  * }
  * ```
  */
-const getUserProfile = async ({baseUrl}): Promise<any> => {
+const getUserProfile = async ({baseUrl}): Promise<User> => {
   try {
     const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
     const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
 
-    const result = [];
+    const processedSchemas = flattenSchemaAttributes(schemas);
 
-    for (const schema of schemas) {
-      const schemaId = schema.id;
+    console.log('Processed Schemas:', JSON.stringify(processedSchemas));
 
-      const source = schemaId.startsWith('urn:ietf:params:scim:schemas:core:2.0') ? profile : profile[schemaId] ?? {};
+    // Create flat profile from ME response and processed schemas
+    const flatProfile = generateFlatUserProfile(profile, processedSchemas);
 
-      for (const attr of schema.attributes || []) {
-        const {name, type, subAttributes, multiValued, caseExact, returned} = attr;
+    console.log('Flat Profile:', JSON.stringify(flatProfile, null, 2));
 
-        if (type === 'COMPLEX' && subAttributes?.length && typeof source[name] === 'object') {
-          // For complex attributes with subAttributes, create an entry for each subAttribute
-          const complexValue = source[name];
-          for (const subAttr of subAttributes) {
-            if (complexValue[subAttr.name] !== undefined) {
-              const {subAttributes, ...attrWithoutSubAttrs} = attr;
-
-              // UPDATED PATH: prefix with schemaId except for core user schema
-              const basePath =
-                schemaId === 'urn:ietf:params:scim:schemas:core:2.0:User'
-                  ? `${name}.${subAttr.name}`
-                  : `${schemaId}.${name}.${subAttr.name}`;
-
-              result.push({
-                schemaId,
-                ...subAttr,
-                value: complexValue[subAttr.name],
-                parent: {
-                  ...attrWithoutSubAttrs,
-                },
-                path: basePath,
-              });
-            }
-          }
-        } else {
-          const value = source[name];
-          // Only include if value exists
-
-          if (value !== undefined) {
-            // UPDATED PATH: prefix with schemaId except for core user schema
-            const basePath = schemaId === 'urn:ietf:params:scim:schemas:core:2.0:User' ? name : `${schemaId}.${name}`;
-
-            result.push({
-              schemaId,
-              ...attr,
-              value,
-              path: basePath,
-            });
-          }
-        }
-      }
-    }
-
-    return result;
+    return flatProfile;
   } catch (error) {
     throw new AsgardeoAPIError(
       'Failed to get user profile',

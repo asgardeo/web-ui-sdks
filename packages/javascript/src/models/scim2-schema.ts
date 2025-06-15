@@ -48,6 +48,10 @@ export interface Schema {
   attributes: SchemaAttribute[];
 }
 
+export interface FlattenedSchema extends Schema {
+  schemaId: string;
+}
+
 /**
  * Well-known SCIM2 schema IDs
  */

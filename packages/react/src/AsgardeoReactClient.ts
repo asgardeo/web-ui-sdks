@@ -59,6 +59,8 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     const baseUrl = await (await this.asgardeo.getConfigData()).baseUrl;
     const profile = await getUserProfile({baseUrl});
 
+    console.log('User Profile:', profile);
+
     return profile;
   }
 
