@@ -59,7 +59,7 @@ export {
 } from './models/oauth-request';
 export {OIDCEndpoints} from './models/oidc-endpoints';
 export {Storage} from './models/store';
-export {User} from './models/user';
+export {User, UserProfile} from './models/user';
 export {SessionData} from './models/session';
 export {Schema, SchemaAttribute, WellKnownSchemaIds, FlattenedSchema} from './models/scim2-schema';
 export {RecursivePartial} from './models/utility-types';
@@ -74,7 +74,7 @@ export {ThemeColors, ThemeConfig, Theme, ThemeMode} from './theme/types';
 export {default as deepMerge} from './utils/deepMerge';
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
 export {default as extractPkceStorageKeyFromState} from './utils/extractPkceStorageKeyFromState';
-export {default as flattenSchemaAttributes} from './utils/flattenUserSchema';
+export {default as flattenUserSchema} from './utils/flattenUserSchema';
 export {default as generateUserProfile} from './utils/generateUserProfile';
 export {default as generateFlattenedUserProfile} from './utils/generateFlattenedUserProfile';
 export {default as getI18nBundles} from './utils/getI18nBundles';

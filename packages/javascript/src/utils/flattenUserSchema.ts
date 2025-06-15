@@ -22,10 +22,10 @@ import {Schema, FlattenedSchema} from '../models/scim2-schema';
  * Flattens nested schema attributes into a flat structure for easier processing
  *
  * This function processes SCIM2 schemas and creates a flattened representation by:
- * - Extracting all top-level attributes from each schema
  * - Processing sub-attributes and creating dot-notation names (e.g., 'name.givenName')
  * - Adding schema ID reference to each flattened attribute
  * - Preserving all original attribute properties while adding schema context
+ * - Only including leaf-level attributes (sub-attributes) and top-level simple attributes
  *
  * @param schemas - Array of SCIM2 schemas containing nested attribute structures
  * @returns Array of flattened schema attributes with dot-notation names and schema references
@@ -54,26 +54,21 @@ import {Schema, FlattenedSchema} from '../models/scim2-schema';
  *   }
  * ];
  *
- * const flattened = flattenSchemaAttributes(schemas);
+ * const flattened = flattenUserSchema(schemas);
  * // Result: [
  * //   { name: 'userName', type: 'string', multiValued: false, schemaId: 'urn:ietf:params:scim:schemas:core:2.0:User' },
- * //   { name: 'name', type: 'complex', multiValued: false, schemaId: 'urn:ietf:params:scim:schemas:core:2.0:User' },
  * //   { name: 'name.givenName', type: 'string', multiValued: false, schemaId: 'urn:ietf:params:scim:schemas:core:2.0:User' },
  * //   { name: 'name.familyName', type: 'string', multiValued: false, schemaId: 'urn:ietf:params:scim:schemas:core:2.0:User' }
  * // ]
  * ```
  */
-const flattenSchemaAttributes = (schemas: Schema[]): FlattenedSchema[] => {
+const flattenUserSchema = (schemas: Schema[]): FlattenedSchema[] => {
   const flattenedAttributes: FlattenedSchema[] = [];
 
   schemas.forEach(schema => {
     if (schema.attributes && Array.isArray(schema.attributes)) {
       schema.attributes.forEach(attribute => {
-        flattenedAttributes.push({
-          ...attribute,
-          schemaId: schema.id,
-        } as unknown as FlattenedSchema);
-
+        // If the attribute has sub-attributes, only add the flattened sub-attributes
         if (attribute.subAttributes && Array.isArray(attribute.subAttributes)) {
           attribute.subAttributes.forEach(subAttribute => {
             flattenedAttributes.push({
@@ -82,6 +77,12 @@ const flattenSchemaAttributes = (schemas: Schema[]): FlattenedSchema[] => {
               schemaId: schema.id,
             } as unknown as FlattenedSchema);
           });
+        } else {
+          // If it's a simple attribute (no sub-attributes), add it directly
+          flattenedAttributes.push({
+            ...attribute,
+            schemaId: schema.id,
+          } as unknown as FlattenedSchema);
         }
       });
     }
@@ -90,4 +91,4 @@ const flattenSchemaAttributes = (schemas: Schema[]): FlattenedSchema[] => {
   return flattenedAttributes;
 };
 
-export default flattenSchemaAttributes;
+export default flattenUserSchema;
