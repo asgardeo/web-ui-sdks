@@ -146,7 +146,6 @@ export default function Header() {
                 </User>
                 <ChevronDown className="h-4 w-4 text-gray-500" />
               </button>
-              <UserDropdown />
 
               {showUserDropdown && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">

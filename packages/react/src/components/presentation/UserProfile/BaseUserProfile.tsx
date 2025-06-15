@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactElement, useMemo, useState, useCallback} from 'react';
-import {Popover} from '../../primitives/Popover/Popover';
+import {CSSProperties, FC, ReactElement, useMemo, useState, useCallback, useRef} from 'react';
+import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import TextField from '../../primitives/TextField/TextField';
 import DatePicker from '../../primitives/DatePicker/DatePicker';
@@ -57,7 +57,6 @@ export interface BaseUserProfileProps {
   flattenedProfile?: User;
   schemas: Schema[];
   mode?: 'inline' | 'popup';
-  portalId?: string;
   title?: string;
   attributeMapping?: {
     picture?: string | string[];
@@ -82,7 +81,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   schemas,
   flattenedProfile,
   mode = 'inline',
-  portalId = 'asgardeo-user-profile',
   title = 'User Profile',
   attributeMapping = {},
   editable = true,
@@ -96,6 +94,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const [isOpen, setIsOpen] = useState(mode === 'popup');
   const [editedUser, setEditedUser] = useState(flattenedProfile || profile);
   const [editingFields, setEditingFields] = useState<Record<string, boolean>>({});
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const PencilIcon = () => (
     <svg
@@ -499,10 +498,12 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
   if (mode === 'popup') {
     return (
-      <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} portalId={portalId}>
-        <Popover.Header>{title}</Popover.Header>
-        <Popover.Content>{profileContent}</Popover.Content>
-      </Popover>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent>
+          <DialogHeading>{title}</DialogHeading>
+          <div style={{padding: '1rem'}}>{profileContent}</div>
+        </DialogContent>
+      </Dialog>
     );
   }
 
