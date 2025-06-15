@@ -25,6 +25,15 @@ export * from './contexts/Asgardeo/AsgardeoContext';
 export {default as useAsgardeo} from './contexts/Asgardeo/useAsgardeo';
 export * from './contexts/Asgardeo/useAsgardeo';
 
+export {default as UserContext} from './contexts/User/UserContext';
+export * from './contexts/User/UserContext';
+
+export {default as UserProvider} from './contexts/User/UserProvider';
+export * from './contexts/User/UserProvider';
+
+export {default as useUser} from './contexts/User/useUser';
+export * from './contexts/User/useUser';
+
 export {default as useBrowserUrl} from './hooks/useBrowserUrl';
 export * from './hooks/useBrowserUrl';
 
