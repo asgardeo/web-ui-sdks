@@ -23,7 +23,8 @@ import {
   FlattenedSchema,
   SchemaAttribute,
   User,
-  generateFlatUserProfile,
+  generateUserProfile,
+  generateFlattenedUserProfile
 } from '@asgardeo/browser';
 import getSchemas from '../api/scim2/getSchemas';
 
@@ -75,8 +76,10 @@ const getUserProfile = async ({baseUrl}): Promise<User> => {
     console.log('Processed Schemas:', JSON.stringify(processedSchemas));
 
     // Create flat profile from ME response and processed schemas
-    const flatProfile = generateFlatUserProfile(profile, processedSchemas);
+    const profles = generateUserProfile(profile, processedSchemas);
+    const flatProfile = generateFlattenedUserProfile(profile, processedSchemas);
 
+    console.log('profles profles:', JSON.stringify(profles, null, 2));
     console.log('Flat Profile:', JSON.stringify(flatProfile, null, 2));
 
     return flatProfile;

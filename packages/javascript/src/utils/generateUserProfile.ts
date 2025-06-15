@@ -21,7 +21,7 @@ import set from './set';
 import {User} from '../models/user';
 
 /**
- * Creates a flat profile structure from ME response based on processed schemas
+ * Creates a profile structure from ME response based on processed schemas
  *
  * This function processes each schema attribute and populates the profile dynamically by:
  * - Extracting values from the ME response using the schema attribute names
@@ -47,7 +47,7 @@ import {User} from '../models/user';
  *   { name: 'name.givenName', type: 'STRING', multiValued: false }
  * ];
  *
- * const profile = generateFlatUserProfile(meResponse, schemas);
+ * const profile = generateUserProfile(meResponse, schemas);
  * // Result: {
  * //   userName: 'john.doe',
  * //   emails: ['john@example.com', 'john.doe@work.com'],
@@ -55,7 +55,7 @@ import {User} from '../models/user';
  * // }
  * ```
  */
-const generateFlatUserProfile = (meResponse: any, processedSchemas: any[]): User => {
+const generateUserProfile = (meResponse: any, processedSchemas: any[]): User => {
   const profile: User = {};
 
   processedSchemas.forEach(schema => {
@@ -85,4 +85,4 @@ const generateFlatUserProfile = (meResponse: any, processedSchemas: any[]): User
   return profile;
 };
 
-export default generateFlatUserProfile;
+export default generateUserProfile;
