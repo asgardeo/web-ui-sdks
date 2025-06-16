@@ -10,10 +10,9 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Users, Eye, EyeOff } from "lucide-react"
-import { useAuth } from "@/hooks/use-auth"
 
 export default function SignInPage() {
-  const { signIn } = useAuth()
+  const signIn = () => null;
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")

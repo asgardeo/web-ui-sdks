@@ -1,103 +1,110 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { useAuth } from "@/hooks/use-auth"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { User, Mail, Calendar, MapPin, LinkIcon, Edit3, Save, X } from "lucide-react"
-import { Header } from "@/components/header"
-import { redirect } from "next/navigation"
+import {useState, useEffect} from 'react';
+import {Button} from '@/components/ui/button';
+import {Input} from '@/components/ui/input';
+import {Textarea} from '@/components/ui/textarea';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
+import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
+import {Badge} from '@/components/ui/badge';
+import {User, Mail, Calendar, MapPin, LinkIcon, Edit3, Save, X} from 'lucide-react';
+import {Header} from '@/components/header';
+import {redirect} from 'next/navigation';
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, isLoading } = useAuth()
-  const [isEditing, setIsEditing] = useState(false)
+  const user = {
+    name: 'John Doe',
+    email: '',
+    avatar: '/placeholder.svg?height=64&width=64',
+    username: 'johndoe',
+  };
+  const isAuthenticated = true; // Replace with actual authentication check
+  const isLoading = false; // Replace with actual loading state
+
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    bio: "Full-stack developer passionate about building great user experiences.",
-    location: "San Francisco, CA",
-    website: "https://johndoe.dev",
-    company: "Acme Corp",
-  })
+    name: '',
+    email: '',
+    bio: 'Full-stack developer passionate about building great user experiences.',
+    location: 'San Francisco, CA',
+    website: 'https://johndoe.dev',
+    company: 'Acme Corp',
+  });
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      redirect("/")
+      redirect('/');
     }
     if (user) {
       setFormData({
         name: user.name,
         email: user.email,
-        bio: "Full-stack developer passionate about building great user experiences.",
-        location: "San Francisco, CA",
-        website: "https://johndoe.dev",
-        company: "Acme Corp",
-      })
+        bio: 'Full-stack developer passionate about building great user experiences.',
+        location: 'San Francisco, CA',
+        website: 'https://johndoe.dev',
+        company: 'Acme Corp',
+      });
     }
-  }, [user, isAuthenticated, isLoading])
+  }, [user, isAuthenticated, isLoading]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    return null
+    return null;
   }
 
   const handleSave = () => {
     // In a real app, you'd save to your backend
-    console.log("Saving profile:", formData)
-    setIsEditing(false)
-  }
+    console.log('Saving profile:', formData);
+    setIsEditing(false);
+  };
 
   const handleCancel = () => {
     if (user) {
       setFormData({
         name: user.name,
         email: user.email,
-        bio: "Full-stack developer passionate about building great user experiences.",
-        location: "San Francisco, CA",
-        website: "https://johndoe.dev",
-        company: "Acme Corp",
-      })
+        bio: 'Full-stack developer passionate about building great user experiences.',
+        location: 'San Francisco, CA',
+        website: 'https://johndoe.dev',
+        company: 'Acme Corp',
+      });
     }
-    setIsEditing(false)
-  }
+    setIsEditing(false);
+  };
 
   const stats = [
-    { label: "Projects", value: "24" },
-    { label: "Organizations", value: "3" },
-    { label: "Contributions", value: "1,247" },
-    { label: "Followers", value: "89" },
-  ]
+    {label: 'Projects', value: '24'},
+    {label: 'Organizations', value: '3'},
+    {label: 'Contributions', value: '1,247'},
+    {label: 'Followers', value: '89'},
+  ];
 
   const recentProjects = [
     {
       id: 1,
-      name: "Mobile App Redesign",
-      description: "Complete UI/UX overhaul for mobile application",
-      status: "In Progress",
-      lastUpdated: "2 days ago",
+      name: 'Mobile App Redesign',
+      description: 'Complete UI/UX overhaul for mobile application',
+      status: 'In Progress',
+      lastUpdated: '2 days ago',
     },
     {
       id: 2,
-      name: "API Documentation",
-      description: "Comprehensive API documentation and examples",
-      status: "Completed",
-      lastUpdated: "1 week ago",
+      name: 'API Documentation',
+      description: 'Comprehensive API documentation and examples',
+      status: 'Completed',
+      lastUpdated: '1 week ago',
     },
     {
       id: 3,
-      name: "Team Dashboard",
-      description: "Analytics dashboard for team performance metrics",
-      status: "Planning",
-      lastUpdated: "3 days ago",
+      name: 'Team Dashboard',
+      description: 'Analytics dashboard for team performance metrics',
+      status: 'Planning',
+      lastUpdated: '3 days ago',
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -111,14 +118,14 @@ export default function ProfilePage() {
             <div className="flex items-end justify-between -mt-16 mb-6">
               <div className="flex items-end space-x-4">
                 <Avatar className="w-24 h-24 border-4 border-background">
-                  <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.name} />
+                  <AvatarImage src={user?.avatar || '/placeholder.svg'} alt={user?.name} />
                   <AvatarFallback className="text-2xl">{user?.name?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="pb-2">
                   {isEditing ? (
                     <Input
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={e => setFormData({...formData, name: e.target.value})}
                       className="text-2xl font-bold bg-transparent border-b border-border focus:border-primary"
                     />
                   ) : (
@@ -153,7 +160,7 @@ export default function ProfilePage() {
               {isEditing ? (
                 <Textarea
                   value={formData.bio}
-                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  onChange={e => setFormData({...formData, bio: e.target.value})}
                   rows={3}
                   placeholder="Tell us about yourself..."
                 />
@@ -167,7 +174,7 @@ export default function ProfilePage() {
                   {isEditing ? (
                     <Input
                       value={formData.company}
-                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                      onChange={e => setFormData({...formData, company: e.target.value})}
                       className="h-6 text-sm bg-transparent border-b border-border focus:border-primary"
                     />
                   ) : (
@@ -179,7 +186,7 @@ export default function ProfilePage() {
                   {isEditing ? (
                     <Input
                       value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                      onChange={e => setFormData({...formData, location: e.target.value})}
                       className="h-6 text-sm bg-transparent border-b border-border focus:border-primary"
                     />
                   ) : (
@@ -192,7 +199,7 @@ export default function ProfilePage() {
                     <Input
                       type="url"
                       value={formData.website}
-                      onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                      onChange={e => setFormData({...formData, website: e.target.value})}
                       className="h-6 text-sm bg-transparent border-b border-border focus:border-primary"
                     />
                   ) : (
@@ -216,7 +223,7 @@ export default function ProfilePage() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {stats.map((stat) => (
+          {stats.map(stat => (
             <Card key={stat.label} className="text-center">
               <CardContent className="pt-6">
                 <div className="text-2xl font-bold text-foreground">{stat.value}</div>
@@ -234,7 +241,7 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentProjects.map((project) => (
+              {recentProjects.map(project => (
                 <div
                   key={project.id}
                   className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
@@ -246,11 +253,11 @@ export default function ProfilePage() {
                   </div>
                   <Badge
                     variant={
-                      project.status === "Completed"
-                        ? "default"
-                        : project.status === "In Progress"
-                          ? "secondary"
-                          : "outline"
+                      project.status === 'Completed'
+                        ? 'default'
+                        : project.status === 'In Progress'
+                        ? 'secondary'
+                        : 'outline'
                     }
                   >
                     {project.status}
@@ -262,5 +269,5 @@ export default function ProfilePage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

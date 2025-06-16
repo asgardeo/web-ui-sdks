@@ -1,54 +1,81 @@
-"use client"
+'use client';
 
-import { useAuth } from "@/hooks/use-auth"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Building2, Users, Settings, Crown, Shield, User, Plus, ExternalLink } from "lucide-react"
-import Link from "next/link"
-import { Header } from "@/components/header"
-import { redirect } from "next/navigation"
-import { useEffect } from "react"
+import {Button} from '@/components/ui/button';
+import {Card, CardContent} from '@/components/ui/card';
+import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
+import {Badge} from '@/components/ui/badge';
+import {Building2, Users, Settings, Crown, Shield, User, Plus, ExternalLink} from 'lucide-react';
+import Link from 'next/link';
+import {Header} from '@/components/header';
+import {redirect} from 'next/navigation';
+import {useEffect} from 'react';
 
 export default function OrganizationsPage() {
-  const { organizations, currentOrg, setCurrentOrg, isAuthenticated, isLoading } = useAuth()
+  const organizations = [
+    {
+      id: '1',
+      name: 'Organization 1',
+      slug: 'organization-1',
+      avatar: '/placeholder.svg',
+      role: 'owner',
+      memberCount: 5,
+    },
+    {
+      id: '2',
+      name: 'Organization 2',
+      slug: 'organization-2',
+      avatar: '/placeholder.svg',
+      role: 'admin',
+      memberCount: 3,
+    },
+  ];
+  const setCurrentOrg = org => {
+    // This function should handle setting the current organization in your state management or API
+    console.log('Current organization set to:', org);
+  };
+  const isAuthenticated = true; // Replace with actual authentication check
+  const isLoading = false; // Replace with actual loading state
+  const redirect = path => {
+    // This function should handle redirection in your application
+    console.log('Redirecting to:', path);
+  };
+  const currentOrg = organizations[0] || null; // Default to first organization or null if none
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      redirect("/")
+      redirect('/');
     }
-  }, [isAuthenticated, isLoading])
+  }, [isAuthenticated, isLoading]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    return null
+    return null;
   }
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case "owner":
-        return <Crown className="h-4 w-4 text-yellow-500" />
-      case "admin":
-        return <Shield className="h-4 w-4 text-blue-500" />
+      case 'owner':
+        return <Crown className="h-4 w-4 text-yellow-500" />;
+      case 'admin':
+        return <Shield className="h-4 w-4 text-blue-500" />;
       default:
-        return <User className="h-4 w-4 text-muted-foreground" />
+        return <User className="h-4 w-4 text-muted-foreground" />;
     }
-  }
+  };
 
   const getRoleBadge = (role: string) => {
     switch (role) {
-      case "owner":
-        return "default"
-      case "admin":
-        return "secondary"
+      case 'owner':
+        return 'default';
+      case 'admin':
+        return 'secondary';
       default:
-        return "outline"
+        return 'outline';
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -77,14 +104,14 @@ export default function OrganizationsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src={currentOrg?.avatar || "/placeholder.svg"} alt={currentOrg?.name} />
+                    <AvatarImage src={currentOrg?.avatar || '/placeholder.svg'} alt={currentOrg?.name} />
                     <AvatarFallback>{currentOrg?.name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div>
                     <h3 className="text-lg font-medium text-foreground">{currentOrg?.name}</h3>
                     <div className="flex items-center space-x-2 mt-1">
-                      <Badge variant={getRoleBadge(currentOrg?.role || "member")}>
-                        {getRoleIcon(currentOrg?.role || "member")}
+                      <Badge variant={getRoleBadge(currentOrg?.role || 'member')}>
+                        {getRoleIcon(currentOrg?.role || 'member')}
                         <span className="ml-1 capitalize">{currentOrg?.role}</span>
                       </Badge>
                       <span className="text-sm text-muted-foreground">{currentOrg?.memberCount} members</span>
@@ -110,13 +137,13 @@ export default function OrganizationsPage() {
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-4">All Organizations</h2>
           <div className="space-y-4">
-            {organizations?.map((org) => (
-              <Card key={org.id} className={currentOrg?.id === org.id ? "border-primary/50 bg-primary/5" : ""}>
+            {organizations?.map(org => (
+              <Card key={org.id} className={currentOrg?.id === org.id ? 'border-primary/50 bg-primary/5' : ''}>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <Avatar className="w-12 h-12">
-                        <AvatarImage src={org.avatar || "/placeholder.svg"} alt={org.name} />
+                        <AvatarImage src={org.avatar || '/placeholder.svg'} alt={org.name} />
                         <AvatarFallback>{org.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div>
@@ -166,5 +193,5 @@ export default function OrganizationsPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -3,7 +3,7 @@ import type {Metadata} from 'next';
 import {Inter} from 'next/font/google';
 import './globals.css';
 import {ThemeProvider} from '@/components/theme-provider';
-import {AsgardeoProvider} from '@asgardeo/nextjs';
+// import {AsgardeoProvider} from '@asgardeo/nextjs';
 
 const inter = Inter({subsets: ['latin']});
 
@@ -18,9 +18,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          <AsgardeoProvider>
-            <div className="min-h-screen bg-background">{children}</div>
-          </AsgardeoProvider>
+          <div className="min-h-screen bg-background">{children}</div>
         </ThemeProvider>
       </body>
     </html>

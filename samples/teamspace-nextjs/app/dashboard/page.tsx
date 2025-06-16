@@ -1,6 +1,5 @@
 "use client"
 
-import { useAuth } from "@/hooks/use-auth"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -10,7 +9,10 @@ import { useEffect } from "react"
 import { Header } from "@/components/header"
 
 export default function DashboardPage() {
-  const { user, currentOrg, isAuthenticated, isLoading } = useAuth()
+  const user = { name: "John Doe" } // Replace with actual user data
+  const currentOrg = { name: "My Organization", memberCount: 10 } //
+  const isLoading = false // Replace with actual loading state
+  const isAuthenticated = true // Replace with actual authentication check
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {

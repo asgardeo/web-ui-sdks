@@ -11,10 +11,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Users, Eye, EyeOff } from "lucide-react"
-import { useAuth } from "@/hooks/use-auth"
 
 export default function SignUpPage() {
-  const { signUp } = useAuth()
+  const signUp = () => null;
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
