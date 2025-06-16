@@ -51,6 +51,7 @@ export type AsgardeoContextProps = {
   signUp: any;
   user: any;
   baseUrl: string;
+  afterSignInUrl: string;
 };
 
 /**
@@ -63,7 +64,8 @@ const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null
   signOut: null,
   signUp: null,
   user: null,
-  baseUrl: ''
+  baseUrl: '',
+  afterSignInUrl: '',
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';

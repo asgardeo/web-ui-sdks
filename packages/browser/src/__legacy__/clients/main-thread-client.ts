@@ -29,6 +29,9 @@ import {
   SessionData,
   Storage,
   extractPkceStorageKeyFromState,
+  initializeApplicationNativeAuthentication,
+  handleApplicationNativeAuthentication,
+  TemporaryStore,
 } from '@asgardeo/javascript';
 import {SILENT_SIGN_IN_STATE, TOKEN_REQUEST_CONFIG_KEY} from '../constants';
 import {AuthenticationHelper, SPAHelper, SessionManagementHelper} from '../helpers';
@@ -185,6 +188,13 @@ export const MainThreadClient = async (
       params: Record<string, unknown>;
     },
   ): Promise<User> => {
+    if (signInConfig['flow']) {
+      return handleApplicationNativeAuthentication({
+        url: signInConfig['flow']['requestConfig']['url'],
+        payload: signInConfig['flow']['payload'],
+      });
+    }
+
     const basicUserInfo = await _authenticationHelper.handleSignIn(shouldStopAuthn, checkSession, undefined);
 
     if (basicUserInfo) {
@@ -236,7 +246,16 @@ export const MainThreadClient = async (
           _dataLayer.setTemporaryDataParameter(TOKEN_REQUEST_CONFIG_KEY, JSON.stringify(tokenRequestConfig));
         }
 
-        location.href = url;
+        if (signInConfig['response_mode'] === 'direct') {
+          const authorizeUrl: URL = new URL(url);
+
+          return initializeApplicationNativeAuthentication({
+            url: `${authorizeUrl.origin}${authorizeUrl.pathname}`,
+            payload: Object.fromEntries(authorizeUrl.searchParams.entries()),
+          });
+        } else {
+          location.href = url;
+        }
 
         await SPAUtils.waitTillPageRedirect();
 

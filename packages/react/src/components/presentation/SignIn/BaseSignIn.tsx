@@ -26,7 +26,7 @@ import {
   AsgardeoAPIError,
   withVendorCSSClassPrefix,
 } from '@asgardeo/browser';
-import {FC, ReactElement, FormEvent, useEffect, useState, useCallback} from 'react';
+import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef} from 'react';
 import {clsx} from 'clsx';
 import Card from '../../primitives/Card/Card';
 import Alert from '../../primitives/Alert/Alert';
@@ -53,11 +53,17 @@ export interface BaseSignInProps {
    * @param payload - The authentication payload.
    * @returns Promise resolving to the authentication response.
    */
-  onAuthenticate: (payload: {
-    flowId: string;
-    selectedAuthenticator: {
-      authenticatorId: string;
-      params: Record<string, string>;
+  onSubmit: (flow: {
+    requestConfig?: {
+      method: string;
+      url: string;
+    };
+    payload: {
+      flowId: string;
+      selectedAuthenticator: {
+        authenticatorId: string;
+        params: Record<string, string>;
+      };
     };
   }) => Promise<ApplicationNativeAuthenticationHandleResponse>;
 
@@ -130,6 +136,7 @@ export interface BaseSignInProps {
    * Theme variant for the component.
    */
   variant?: 'default' | 'outlined' | 'filled';
+  afterSignInUrl?: string;
 }
 
 /**
@@ -148,7 +155,7 @@ export interface BaseSignInProps {
  *         // Your API call to initialize authentication
  *         return await initializeAuth();
  *       }}
- *       onAuthenticate={async (payload) => {
+ *       onSubmit={async (payload) => {
  *         // Your API call to handle authentication
  *         return await handleAuth(payload);
  *       }}
@@ -176,8 +183,9 @@ const BaseSignIn: FC<BaseSignInProps> = props => {
  * Internal component that consumes FlowContext and renders the sign-in UI.
  */
 const BaseSignInContent: FC<BaseSignInProps> = ({
+  afterSignInUrl,
   onInitialize,
-  onAuthenticate,
+  onSubmit,
   onSuccess,
   onError,
   onFlowChange,
@@ -203,6 +211,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   );
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Array<{type: string; message: string}>>([]);
+
+  // Ref to track if initialization has been attempted to prevent multiple calls
+  const initializationAttemptedRef = useRef(false);
 
   const formFields: FormField[] =
     currentAuthenticator?.metadata?.params?.map(param => ({
@@ -268,53 +279,6 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   };
 
   /**
-   * Initialize the authentication flow.
-   */
-  const initializeFlow = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await onInitialize();
-
-      setCurrentFlow(response);
-      setIsInitialized(true);
-      onFlowChange?.(response);
-
-      if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
-        onSuccess?.((response as any).authData || {});
-        return;
-      }
-
-      if (response.nextStep?.authenticators?.length > 0) {
-        if (response.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' && response.nextStep.authenticators.length > 1) {
-          setCurrentAuthenticator(null);
-        } else {
-          const authenticator = response.nextStep.authenticators[0];
-          setCurrentAuthenticator(authenticator);
-          setupFormFields(authenticator);
-        }
-      }
-
-      if ('nextStep' in response && response.nextStep && 'messages' in response.nextStep) {
-        const stepMessages = (response.nextStep as any).messages || [];
-        setMessages(
-          stepMessages.map((msg: any) => ({
-            type: msg.type || 'INFO',
-            message: msg.message || '',
-          })),
-        );
-      }
-    } catch (err) {
-      const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.initializationFailed');
-      setError(errorMessage);
-      onError?.(err as Error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [onInitialize, onFlowChange, onSuccess, onError, setupFormFields, t]);
-
-  /**
    * Check if the response contains a redirection URL and perform the redirect if necessary.
    * @param response - The authentication response
    * @returns true if a redirect was performed, false otherwise
@@ -333,8 +297,156 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           ApplicationNativeAuthenticationAuthenticatorPromptType.RedirectionPrompt &&
         (responseAuthenticator.metadata as any)?.additionalData?.redirectUrl
       ) {
-        // Perform the redirect immediately
-        window.location.href = (responseAuthenticator.metadata as any).additionalData.redirectUrl;
+        /**
+         * Open a popup window to handle redirection prompts
+         */
+        const redirectUrl = (responseAuthenticator.metadata as any)?.additionalData?.redirectUrl;
+        const popup = window.open(redirectUrl, 'oauth_popup', 'width=500,height=600,scrollbars=yes,resizable=yes');
+
+        if (!popup) {
+          console.error('Failed to open popup window');
+          return false;
+        }
+
+        /**
+         * Add an event listener to the window to capture the message from the popup
+         */
+        const messageHandler = async function messageEventHandler(event: MessageEvent) {
+          /**
+           * Check if the message is from our popup window
+           */
+          if (event.source !== popup) {
+            // Don't log every message rejection to reduce noise
+            if (event.source !== window && event.source !== window.parent) {
+              // TODO: Add logs
+            }
+            return;
+          }
+
+          /**
+           * Check the origin of the message to ensure it's from a trusted source
+           */
+          const expectedOrigin = afterSignInUrl ? new URL(afterSignInUrl).origin : window.location.origin;
+          if (event.origin !== expectedOrigin && event.origin !== window.location.origin) {
+            return;
+          }
+
+          const {code, state} = event.data;
+
+          if (code && state) {
+            const payload = {
+              flowId: currentFlow.flowId,
+              selectedAuthenticator: {
+                authenticatorId: responseAuthenticator.authenticatorId,
+                params: {
+                  code,
+                  state,
+                },
+              },
+            };
+
+            await onSubmit({
+              requestConfig: {
+                method: currentFlow?.links[0].method,
+                url: currentFlow?.links[0].href,
+              },
+              payload,
+            });
+
+            popup.close();
+            cleanup();
+          } else {
+            // TODO: Add logs
+          }
+        };
+
+        const cleanup = () => {
+          window.removeEventListener('message', messageHandler);
+          if (popupMonitor) {
+            clearInterval(popupMonitor);
+          }
+        };
+
+        window.addEventListener('message', messageHandler);
+
+        /**
+         * Monitor popup for closure and URL changes
+         */
+        let hasProcessedCallback = false; // Prevent multiple processing
+        const popupMonitor = setInterval(async () => {
+          try {
+            if (popup.closed) {
+              cleanup();
+
+              return;
+            }
+
+            // Skip if we've already processed a callback
+            if (hasProcessedCallback) {
+              return;
+            }
+
+            // Try to access popup URL to check for callback
+            try {
+              const popupUrl = popup.location.href;
+
+              // Check if we've been redirected to the callback URL
+              if (popupUrl && (popupUrl.includes('code=') || popupUrl.includes('error='))) {
+                hasProcessedCallback = true; // Set flag to prevent multiple processing
+
+                // Parse the URL for OAuth parameters
+                const url = new URL(popupUrl);
+                const code = url.searchParams.get('code');
+                const state = url.searchParams.get('state');
+                const error = url.searchParams.get('error');
+
+                if (error) {
+                  console.error('OAuth error:', error);
+                  popup.close();
+                  cleanup();
+                  return;
+                }
+
+                if (code && state) {
+                  const payload = {
+                    flowId: currentFlow.flowId,
+                    selectedAuthenticator: {
+                      authenticatorId: responseAuthenticator.authenticatorId,
+                      params: {
+                        code,
+                        state,
+                      },
+                    },
+                  };
+
+                  const response = await onSubmit({
+                    requestConfig: {
+                      method: currentFlow?.links[0].method,
+                      url: currentFlow?.links[0].href,
+                    },
+                    payload,
+                  });
+
+                  popup.close();
+
+                  onFlowChange?.(response);
+
+                  if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+                    onSuccess?.(response.authData);
+
+                    return;
+                  }
+                }
+              }
+            } catch (e) {
+              // Cross-origin error is expected when popup navigates to OAuth provider
+              // This is normal and we can ignore it
+            }
+          } catch (e) {
+            console.error('Error monitoring popup:', e);
+          }
+        }, 1000);
+
         return true;
       }
     }
@@ -370,7 +482,13 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         },
       };
 
-      const response = await onAuthenticate(payload);
+      const response = await onSubmit({
+        requestConfig: {
+          method: currentFlow?.links[0].method,
+          url: currentFlow?.links[0].href,
+        },
+        payload,
+      });
       onFlowChange?.(response);
 
       if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
@@ -458,7 +576,13 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           },
         };
 
-        const response = await onAuthenticate(payload);
+        const response = await onSubmit({
+          requestConfig: {
+            method: currentFlow?.links[0].method,
+            url: currentFlow?.links[0].href,
+          },
+          payload,
+        });
         onFlowChange?.(response);
 
         if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
@@ -485,7 +609,13 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             },
           };
 
-          const response = await onAuthenticate(payload);
+          const response = await onSubmit({
+            requestConfig: {
+              method: currentFlow?.links[0].method,
+              url: currentFlow?.links[0].href,
+            },
+            payload,
+          });
           onFlowChange?.(response);
 
           if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
@@ -546,7 +676,13 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
               },
             };
 
-            const response = await onAuthenticate(payload);
+            const response = await onSubmit({
+              requestConfig: {
+                method: currentFlow?.links[0].method,
+                url: currentFlow?.links[0].href,
+              },
+              payload,
+            });
             onFlowChange?.(response);
 
             if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
@@ -676,10 +812,62 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
   // Initialize the flow on component mount
   useEffect(() => {
-    if (!isInitialized) {
-      initializeFlow();
+    if (!isInitialized && !initializationAttemptedRef.current) {
+      initializationAttemptedRef.current = true;
+
+      // Inline initialization to avoid dependency issues
+      const performInitialization = async () => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+          const response = await onInitialize();
+
+          setCurrentFlow(response);
+          setIsInitialized(true);
+          onFlowChange?.(response);
+
+          if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+            onSuccess?.((response as any).authData || {});
+            return;
+          }
+
+          if (response.nextStep?.authenticators?.length > 0) {
+            if (response.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' && response.nextStep.authenticators.length > 1) {
+              setCurrentAuthenticator(null);
+            } else {
+              const authenticator = response.nextStep.authenticators[0];
+              setCurrentAuthenticator(authenticator);
+              setupFormFields(authenticator);
+            }
+          }
+
+          if ('nextStep' in response && response.nextStep && 'messages' in response.nextStep) {
+            const stepMessages = (response.nextStep as any).messages || [];
+            setMessages(
+              stepMessages.map((msg: any) => ({
+                type: msg.type || 'INFO',
+                message: msg.message || '',
+              })),
+            );
+          }
+        } catch (err) {
+          const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.initializationFailed');
+          setError(errorMessage);
+          onError?.(err as Error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      performInitialization();
     }
-  }, [isInitialized, initializeFlow]);
+
+    // Cleanup function to reset initialization state on unmount
+    return () => {
+      initializationAttemptedRef.current = false;
+    };
+  }, [isInitialized]);
 
   if (!isInitialized && isLoading) {
     return showLoading ? (

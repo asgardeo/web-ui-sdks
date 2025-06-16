@@ -58,7 +58,7 @@ export {
   ExtendedAuthorizeRequestUrlParams,
 } from './models/oauth-request';
 export {OIDCEndpoints} from './models/oidc-endpoints';
-export {Storage} from './models/store';
+export {Storage, TemporaryStore} from './models/store';
 export {User, UserProfile} from './models/user';
 export {SessionData} from './models/session';
 export {Schema, SchemaAttribute, WellKnownSchemaIds, FlattenedSchema} from './models/scim2-schema';
@@ -76,6 +76,7 @@ export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaims
 export {default as extractPkceStorageKeyFromState} from './utils/extractPkceStorageKeyFromState';
 export {default as flattenUserSchema} from './utils/flattenUserSchema';
 export {default as generateUserProfile} from './utils/generateUserProfile';
+export {default as getLatestStateParam} from './utils/getLatestStateParam';
 export {default as generateFlattenedUserProfile} from './utils/generateFlattenedUserProfile';
 export {default as getI18nBundles} from './utils/getI18nBundles';
 export {default as set} from './utils/set';

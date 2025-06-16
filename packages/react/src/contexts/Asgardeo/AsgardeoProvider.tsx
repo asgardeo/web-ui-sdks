@@ -177,6 +177,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         },
         user,
         baseUrl,
+        afterSignInUrl
       }}
     >
       <I18nProvider preferences={preferences?.i18n}>

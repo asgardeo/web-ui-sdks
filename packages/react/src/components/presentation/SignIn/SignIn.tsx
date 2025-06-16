@@ -116,7 +116,7 @@ const SignIn: FC<SignInProps> = ({
   showLoading = true,
   loadingText = 'Loading...',
 }) => {
-  const {signIn, baseUrl} = useAsgardeo();
+  const {signIn, baseUrl, afterSignInUrl} = useAsgardeo();
 
   /**
    * Initialize the authentication flow.
@@ -128,24 +128,52 @@ const SignIn: FC<SignInProps> = ({
   /**
    * Handle authentication steps.
    */
-  const handleAuthenticate = async (payload: {
-    flowId: string;
-    selectedAuthenticator: {
-      authenticatorId: string;
-      params: Record<string, string>;
+  const handleOnSubmit = async (flow: {
+    requestConfig?: {
+      method: string;
+      url: string;
+    };
+    payload: {
+      flowId: string;
+      selectedAuthenticator: {
+        authenticatorId: string;
+        params: Record<string, string>;
+      };
     };
   }): Promise<ApplicationNativeAuthenticationHandleResponse> => {
-    return await handleApplicationNativeAuthentication({
-      baseUrl,
-      payload,
+    return await signIn({
+      flow,
     });
+  };
+
+  /**
+   * Handle successful authentication and redirect with query params.
+   */
+  const handleSuccess = (authData: Record<string, any>) => {
+    // Call the user-provided onSuccess callback first
+    onSuccess?.(authData);
+
+    // Handle redirection for non-federated flows
+    if (authData && afterSignInUrl) {
+      const url = new URL(afterSignInUrl, window.location.origin);
+
+      Object.entries(authData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          url.searchParams.append(key, String(value));
+        }
+      });
+
+      // Redirect to the URL with query parameters
+      window.location.href = url.toString();
+    }
   };
 
   return (
     <BaseSignIn
+      afterSignInUrl={afterSignInUrl}
       onInitialize={handleInitialize}
-      onAuthenticate={handleAuthenticate}
-      onSuccess={onSuccess}
+      onSubmit={handleOnSubmit}
+      onSuccess={handleSuccess}
       onError={onError}
       onFlowChange={onFlowChange}
       className={className}

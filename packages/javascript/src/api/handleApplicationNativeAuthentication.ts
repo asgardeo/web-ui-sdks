@@ -29,7 +29,7 @@ export interface AuthorizeRequestConfig extends Partial<Request> {
   /**
    * The base URL of the Asgardeo server.
    */
-  baseUrl: string;
+  baseUrl?: string;
   /**
    * The authorization request payload.
    */
@@ -37,22 +37,11 @@ export interface AuthorizeRequestConfig extends Partial<Request> {
 }
 
 const handleApplicationNativeAuthentication = async ({
+  url,
   baseUrl,
   payload,
   ...requestConfig
 }: AuthorizeRequestConfig): Promise<ApplicationNativeAuthenticationHandleResponse> => {
-  try {
-    new URL(baseUrl);
-  } catch (error) {
-    throw new AsgardeoAPIError(
-      'Invalid base URL provided',
-      'handleApplicationNativeAuthentication-ValidationError-001',
-      'javascript',
-      400,
-      'If an invalid base URL is provided, the endpoint URL cannot be constructed correctly.',
-    );
-  }
-
   if (!payload) {
     throw new AsgardeoAPIError(
       'Authorization payload is required',
@@ -64,7 +53,7 @@ const handleApplicationNativeAuthentication = async ({
   }
 
   const {headers: customHeaders, ...otherConfig} = requestConfig;
-  const response: Response = await fetch(`${baseUrl}/oauth2/authn`, {
+  const response: Response = await fetch(url ?? `${baseUrl}/oauth2/authn`, {
     method: requestConfig.method || 'POST',
     headers: {
       'Content-Type': 'application/json',
