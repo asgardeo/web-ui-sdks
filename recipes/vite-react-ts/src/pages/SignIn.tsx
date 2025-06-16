@@ -1,20 +1,11 @@
 'use client';
 
-import {useState} from 'react';
-import {Button} from '@/components/ui/button';
-import {Input} from '@/components/ui/input';
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
-import {Label} from '@/components/ui/label';
-import {Users, Eye, EyeOff} from 'lucide-react';
-import {useAsgardeo, SignIn} from '@asgardeo/react';
+import {Users} from 'lucide-react';
+import {SignIn} from '@asgardeo/react';
 
 export default function SignInPage() {
-  const {isLoading} = useAsgardeo();
-
-  const [showPassword, setShowPassword] = useState(false);
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
@@ -24,20 +15,9 @@ export default function SignInPage() {
             </div>
             <span className="ml-2 text-2xl font-bold text-gray-900">Teamspace</span>
           </a>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="text-gray-600 mt-2">Sign in to your account to continue</p>
         </div>
 
-        <SignIn
-          onSuccess={authData => {
-            console.log('Authentication successful:', authData);
-            // Handle successful authentication
-          }}
-          onError={error => {
-            console.error('Authentication failed:', error);
-          }}
-          styled={false}
-        />
+        <SignIn />
 
         {/* <Card className="border-0 shadow-lg">
           <CardHeader className="space-y-1">

@@ -2,14 +2,15 @@
 
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import {useState, createContext, useContext} from 'react';
-import Header from './components/Header';
 import DashboardPage from './pages/Dashboard';
 import ProfilePage from './pages/Profile';
 import OrganizationsPage from './pages/Organizations';
 import CreateOrganizationPage from './pages/CreateOrganization';
 import SignInPage from './pages/SignIn';
 import LandingPage from './pages/LandingPage';
-import {SignedIn} from '@asgardeo/react';
+import LandingLayout from './layouts/LandingLayout';
+import DashboardLayout from './layouts/DashboardLayout';
+import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 
 // Types
 export interface User {
@@ -94,19 +95,43 @@ function App() {
       }}
     >
       <Router>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
-          <main>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/signin" element={<SignInPage />} />
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/organizations" element={<OrganizationsPage />} />
-              <Route path="/organizations/new" element={<CreateOrganizationPage />} />
-            </Routes>
-          </main>
-        </div>
+        <Routes>
+          {/* Landing/Public Routes */}
+          <Route path="/" element={
+            <LandingLayout>
+              <LandingPage />
+            </LandingLayout>
+          } />
+          
+          {/* Auth Routes */}
+          <Route path="/signin" element={
+            <AuthenticatedLayout>
+              <SignInPage />
+            </AuthenticatedLayout>
+          } />
+          
+          {/* Dashboard/Protected Routes */}
+          <Route path="/dashboard" element={
+            <DashboardLayout>
+              <DashboardPage />
+            </DashboardLayout>
+          } />
+          <Route path="/profile" element={
+            <DashboardLayout>
+              <ProfilePage />
+            </DashboardLayout>
+          } />
+          <Route path="/organizations" element={
+            <DashboardLayout>
+              <OrganizationsPage />
+            </DashboardLayout>
+          } />
+          <Route path="/organizations/new" element={
+            <DashboardLayout>
+              <CreateOrganizationPage />
+            </DashboardLayout>
+          } />
+        </Routes>
       </Router>
     </AppContext.Provider>
   );
