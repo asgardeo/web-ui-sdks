@@ -97,9 +97,9 @@ const handleWebAuthnAuthentication = async (challengeData: string): Promise<stri
     // Handle RP ID mismatch by checking domain compatibility
     const currentDomain = window.location.hostname;
     const challengeRpId = publicKeyCredentialRequestOptions.rpId;
-    
+
     let rpIdToUse = challengeRpId;
-    
+
     // Check if the challenge RP ID is compatible with current domain
     if (challengeRpId && !currentDomain.endsWith(challengeRpId) && challengeRpId !== currentDomain) {
       console.warn(`RP ID mismatch detected. Challenge RP ID: ${challengeRpId}, Current domain: ${currentDomain}`);
@@ -284,19 +284,9 @@ export interface BaseSignInProps {
   messageClassName?: string;
 
   /**
-   * Whether to show loading state.
-   */
-  showLoading?: boolean;
-
-  /**
    * Custom loading text.
    */
   loadingText?: string;
-
-  /**
-   * Apply default styling.
-   */
-  styled?: boolean;
 
   /**
    * Size variant for the component.
@@ -365,9 +355,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   buttonClassName = '',
   errorClassName = '',
   messageClassName = '',
-  showLoading = true,
   loadingText,
-  styled = true,
   size = 'medium',
   variant = 'default',
 }) => {
@@ -1058,7 +1046,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
   // Generate CSS classes
   const containerClasses = clsx(
-    styled && [
+    [
       withVendorCSSClassPrefix('signin'),
       withVendorCSSClassPrefix(`signin--${size}`),
       withVendorCSSClassPrefix(`signin--${variant}`),
@@ -1067,7 +1055,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   );
 
   const inputClasses = clsx(
-    styled && [
+    [
       withVendorCSSClassPrefix('signin__input'),
       size === 'small' && withVendorCSSClassPrefix('signin__input--small'),
       size === 'large' && withVendorCSSClassPrefix('signin__input--large'),
@@ -1076,7 +1064,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   );
 
   const buttonClasses = clsx(
-    styled && [
+    [
       withVendorCSSClassPrefix('signin__button'),
       size === 'small' && withVendorCSSClassPrefix('signin__button--small'),
       size === 'large' && withVendorCSSClassPrefix('signin__button--large'),
@@ -1086,9 +1074,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     buttonClassName,
   );
 
-  const errorClasses = clsx(styled && [withVendorCSSClassPrefix('signin__error')], errorClassName);
+  const errorClasses = clsx([withVendorCSSClassPrefix('signin__error')], errorClassName);
 
-  const messageClasses = clsx(styled && [withVendorCSSClassPrefix('signin__messages')], messageClassName);
+  const messageClasses = clsx([withVendorCSSClassPrefix('signin__messages')], messageClassName);
 
   // Initialize the flow on component mount
   useEffect(() => {
@@ -1150,13 +1138,13 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   }, [isInitialized]);
 
   if (!isInitialized && isLoading) {
-    return showLoading ? (
+    return (
       <Card className={containerClasses}>
         <Card.Content>
           <Typography variant="body1">{loadingText ?? t('messages.loading')}</Typography>
         </Card.Content>
       </Card>
-    ) : null;
+    );
   }
 
   if (hasMultipleOptions() && !currentAuthenticator) {

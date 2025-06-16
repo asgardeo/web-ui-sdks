@@ -30,34 +30,9 @@ import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
  */
 export interface SignInProps {
   /**
-   * Callback function called when authentication is successful.
-   * @param authData - The authentication data returned upon successful completion.
-   */
-  onSuccess?: (authData: Record<string, any>) => void;
-
-  /**
-   * Callback function called when authentication fails.
-   * @param error - The error that occurred during authentication.
-   */
-  onError?: (error: Error) => void;
-
-  /**
-   * Callback function called when authentication flow status changes.
-   * @param response - The current authentication response.
-   */
-  onFlowChange?: (
-    response: ApplicationNativeAuthenticationInitiateResponse | ApplicationNativeAuthenticationHandleResponse,
-  ) => void;
-
-  /**
    * Additional CSS class names for customization.
    */
   className?: string;
-
-  /**
-   * Apply default styling.
-   */
-  styled?: boolean;
 
   /**
    * Size variant for the component.
@@ -68,11 +43,6 @@ export interface SignInProps {
    * Theme variant for the component.
    */
   variant?: 'default' | 'outlined' | 'filled';
-
-  /**
-   * Whether to show loading state.
-   */
-  showLoading?: boolean;
 
   /**
    * Custom loading text.
@@ -105,17 +75,7 @@ export interface SignInProps {
  * };
  * ```
  */
-const SignIn: FC<SignInProps> = ({
-  onSuccess,
-  onError,
-  onFlowChange,
-  className,
-  styled = true,
-  size = 'medium',
-  variant = 'default',
-  showLoading = true,
-  loadingText = 'Loading...',
-}) => {
+const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'default'}) => {
   const {signIn, baseUrl, afterSignInUrl} = useAsgardeo();
 
   /**
@@ -150,10 +110,6 @@ const SignIn: FC<SignInProps> = ({
    * Handle successful authentication and redirect with query params.
    */
   const handleSuccess = (authData: Record<string, any>) => {
-    // Call the user-provided onSuccess callback first
-    onSuccess?.(authData);
-
-    // Handle redirection for non-federated flows
     if (authData && afterSignInUrl) {
       const url = new URL(afterSignInUrl, window.location.origin);
 
@@ -163,7 +119,6 @@ const SignIn: FC<SignInProps> = ({
         }
       });
 
-      // Redirect to the URL with query parameters
       window.location.href = url.toString();
     }
   };
@@ -174,14 +129,9 @@ const SignIn: FC<SignInProps> = ({
       onInitialize={handleInitialize}
       onSubmit={handleOnSubmit}
       onSuccess={handleSuccess}
-      onError={onError}
-      onFlowChange={onFlowChange}
       className={className}
-      styled={styled}
       size={size}
       variant={variant}
-      showLoading={showLoading}
-      loadingText={loadingText}
     />
   );
 };
