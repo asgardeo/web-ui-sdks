@@ -19,13 +19,13 @@
 'use client';
 
 import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
-import InternalAuthAPIRoutesConfig from '../../../configs/InternalAuthAPIRoutesConfig';
-import {BaseSignUpButton} from '@asgardeo/react';
+import InternalAuthAPIRoutesConfig from '../../../../configs/InternalAuthAPIRoutesConfig';
+import {BaseSignOutButton} from '@asgardeo/react';
 
 /**
  * Interface for SignInButton component props.
  */
-export type SignUpButtonProps = HTMLAttributes<HTMLButtonElement>;
+export type SignOutButtonProps = HTMLAttributes<HTMLButtonElement>;
 
 /**
  * SignInButton component. This button initiates the sign-in process when clicked.
@@ -44,20 +44,20 @@ export type SignUpButtonProps = HTMLAttributes<HTMLButtonElement>;
  * }
  * ```
  */
-const SignUpButton: FC<PropsWithChildren<SignUpButtonProps>> = forwardRef<
+const SignOutButton: FC<PropsWithChildren<SignOutButtonProps>> = forwardRef<
   HTMLButtonElement,
-  PropsWithChildren<SignUpButtonProps>
+  PropsWithChildren<SignOutButtonProps>
 >(
   (
-    {children = 'Sign Up', className, style, ...rest}: PropsWithChildren<SignUpButtonProps>,
+    {children = 'Sign Out', className, style, ...rest}: PropsWithChildren<SignOutButtonProps>,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => (
-    <form action={InternalAuthAPIRoutesConfig.signUp}>
-      <BaseSignUpButton className={className} style={style} ref={ref} type="submit" {...rest}>
+    <form action={InternalAuthAPIRoutesConfig.signOut}>
+      <BaseSignOutButton className={className} style={style} ref={ref} type="submit" {...rest}>
         {children}
-      </BaseSignUpButton>
+      </BaseSignOutButton>
     </form>
   ),
 );
 
-export default SignUpButton;
+export default SignOutButton;

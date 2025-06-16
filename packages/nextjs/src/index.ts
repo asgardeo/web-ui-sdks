@@ -21,16 +21,16 @@ export * from './server/AsgardeoProvider';
 
 export {default as isSignedIn} from './server/actions/isSignedIn';
 
-export {default as SignedIn} from './client/components/control/SignedIn';
-export * from './client/components/control/SignedIn';
+export {default as SignedIn} from './client/components/control/SignedIn/SignedIn';
+export * from './client/components/control/SignedIn/SignedIn';
 
-export {default as SignedOut} from './client/components/control/SignedOut';
-export * from './client/components/control/SignedOut';
+export {default as SignedOut} from './client/components/control/SignedOut/SignedOut';
+export * from './client/components/control/SignedOut/SignedOut';
 
-export {default as SignInButton} from './client/components/actions/SignInButton';
-export type {SignInButtonProps} from './client/components/actions/SignInButton';
+export {default as SignInButton} from './client/components/actions/SignInButton/SignInButton';
+export type {SignInButtonProps} from './client/components/actions/SignInButton/SignInButton';
 
-export {default as SignOutButton} from './client/components/actions/SignOutButton';
-export type {SignOutButtonProps} from './client/components/actions/SignOutButton';
+export {default as SignOutButton} from './client/components/actions/SignOutButton/SignOutButton';
+export type {SignOutButtonProps} from './client/components/actions/SignOutButton/SignOutButton';
 
 export {default as AsgardeoNext} from './AsgardeoNextClient';

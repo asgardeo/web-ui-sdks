@@ -19,38 +19,38 @@
 'use client';
 
 import {FC, PropsWithChildren, ReactNode, useEffect, useState} from 'react';
-import isSignedIn from '../../../server/actions/isSignedIn';
+import isSignedIn from '../../../../server/actions/isSignedIn';
 
 /**
- * Props interface of {@link SignedIn}
+ * Props interface of {@link SignedOut}
  */
-export interface SignedInProps {
+export interface SignedOutProps {
   /**
-   * Content to show when the user is not signed in.
+   * Content to show when the user is not signed-out.
    */
   fallback?: ReactNode;
 }
 
 /**
- * A component that only renders its children when the user is signed in.
+ * A component that only renders its children when the user is signed out.
  *
  * @example
  * ```tsx
- * import { SignedIn } from '@asgardeo/auth-next';
+ * import { SignedOut } from '@asgardeo/auth-next';
  *
  * const App = () => {
  *   return (
- *     <SignedIn fallback={<p>Please sign in to continue</p>}>
- *       <p>Welcome! You are signed in.</p>
- *     </SignedIn>
+ *     <SignedOut fallback={<p>Please sign out to continue</p>}>
+ *       <p>Welcome! You are signed out.</p>
+ *     </SignedOut>
  *   );
  * }
  * ```
  */
-const SignedIn: FC<PropsWithChildren<SignedInProps>> = ({
+const SignedOut: FC<PropsWithChildren<SignedOutProps>> = ({
   children,
   fallback = null,
-}: PropsWithChildren<SignedInProps>) => {
+}: PropsWithChildren<SignedOutProps>) => {
   const [isSignedInSync, setIsSignedInSync] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const SignedIn: FC<PropsWithChildren<SignedInProps>> = ({
 
   if (isSignedInSync === null) return null;
 
-  return <>{isSignedInSync ? children : fallback}</>;
+  return <>{!isSignedInSync ? children : fallback}</>;
 };
 
-export default SignedIn;
+export default SignedOut;
