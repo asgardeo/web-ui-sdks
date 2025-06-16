@@ -97,40 +97,58 @@ function App() {
       <Router>
         <Routes>
           {/* Landing/Public Routes */}
-          <Route path="/" element={
-            <LandingLayout>
-              <LandingPage />
-            </LandingLayout>
-          } />
-          
+          <Route
+            path="/"
+            element={
+              <LandingLayout>
+                <LandingPage />
+              </LandingLayout>
+            }
+          />
+
           {/* Auth Routes */}
-          <Route path="/signin" element={
-            <AuthenticatedLayout>
-              <SignInPage />
-            </AuthenticatedLayout>
-          } />
-          
+          <Route
+            path="/signin"
+            element={
+              <AuthenticatedLayout>
+                <SignInPage />
+              </AuthenticatedLayout>
+            }
+          />
+
           {/* Dashboard/Protected Routes */}
-          <Route path="/dashboard" element={
-            <DashboardLayout>
-              <DashboardPage />
-            </DashboardLayout>
-          } />
-          <Route path="/profile" element={
-            <DashboardLayout>
-              <ProfilePage />
-            </DashboardLayout>
-          } />
-          <Route path="/organizations" element={
-            <DashboardLayout>
-              <OrganizationsPage />
-            </DashboardLayout>
-          } />
-          <Route path="/organizations/new" element={
-            <DashboardLayout>
-              <CreateOrganizationPage />
-            </DashboardLayout>
-          } />
+          <Route
+            path="/dashboard"
+            element={
+              <DashboardLayout>
+                <DashboardPage />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <DashboardLayout>
+                <ProfilePage />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/organizations"
+            element={
+              <DashboardLayout>
+                <OrganizationsPage />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/organizations/new"
+            element={
+              <DashboardLayout>
+                <CreateOrganizationPage />
+              </DashboardLayout>
+            }
+          />
         </Routes>
       </Router>
     </AppContext.Provider>
