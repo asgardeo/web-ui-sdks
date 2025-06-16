@@ -7,6 +7,15 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.ctas}>
           <SignedOut>
+            <SignInButton>
+              {({isLoading}) => (
+                <button type="submit" disabled={isLoading} className={styles.primary}>
+                  {isLoading ? 'Signing in...' : 'Sign In'}
+                </button>
+              )}
+            </SignInButton>
+          </SignedOut>
+          <SignedOut>
             <SignInButton className={styles.primary}>Sign In</SignInButton>
           </SignedOut>
           <SignedIn>
