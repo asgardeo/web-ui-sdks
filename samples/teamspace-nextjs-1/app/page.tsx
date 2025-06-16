@@ -1,5 +1,8 @@
+'use client';
+
+import Link from 'next/link';
 import styles from './page.module.css';
-import {SignInButton, SignedIn, SignOutButton, SignedOut} from '@asgardeo/nextjs';
+import {SignInButton, SignedIn, SignOutButton, SignedOut, User} from '@asgardeo/nextjs';
 
 export default function Home() {
   return (
@@ -8,17 +11,26 @@ export default function Home() {
         <div className={styles.ctas}>
           <SignedOut>
             <SignInButton>
-              {({isLoading}) => (
-                <button type="submit" disabled={isLoading} className={styles.primary}>
+              {({signIn, isLoading}) => (
+                <button onClick={signIn} disabled={isLoading}>
                   {isLoading ? 'Signing in...' : 'Sign In'}
                 </button>
               )}
             </SignInButton>
           </SignedOut>
           <SignedOut>
-            <SignInButton className={styles.primary}>Sign In</SignInButton>
+            <SignInButton className={styles.primary}>Sign In with Redirect</SignInButton>
           </SignedOut>
           <SignedIn>
+            <User>
+              {({user}) => (
+                <div className={styles.user}>
+                  <img src={user?.profilePicture} alt="User Profile" className={styles.profilePicture} />
+                  <h2>{user?.displayName}</h2>
+                  <p>{user?.email}</p>
+                </div>
+              )}
+            </User>
             <SignOutButton className={styles.secondary}>Sign Out</SignOutButton>
           </SignedIn>
         </div>
