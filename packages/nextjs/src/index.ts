@@ -22,10 +22,10 @@ export * from './server/AsgardeoProvider';
 export {default as isSignedIn} from './server/actions/isSignedIn';
 
 export {default as SignedIn} from './client/components/control/SignedIn/SignedIn';
-export * from './client/components/control/SignedIn/SignedIn';
+export {SignedInProps} from './client/components/control/SignedIn/SignedIn';
 
 export {default as SignedOut} from './client/components/control/SignedOut/SignedOut';
-export * from './client/components/control/SignedOut/SignedOut';
+export {SignedOutProps} from './client/components/control/SignedOut/SignedOut';
 
 export {default as SignInButton} from './client/components/actions/SignInButton/SignInButton';
 export type {SignInButtonProps} from './client/components/actions/SignInButton/SignInButton';
