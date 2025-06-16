@@ -19,12 +19,19 @@
 'use client';
 
 import {AsgardeoContextProps as AsgardeoReactContextProps} from '@asgardeo/react';
+import {User} from '@asgardeo/node';
 import {Context, createContext} from 'react';
 
 /**
  * Props interface of {@link AsgardeoContext}
  */
-export type AsgardeoContextProps = Partial<AsgardeoReactContextProps>;
+export type AsgardeoContextProps = Partial<AsgardeoReactContextProps> & {
+  user?: User | null;
+  isSignedIn?: boolean;
+  isLoading?: boolean;
+  signIn?: () => void;
+  signOut?: () => void;
+};
 
 /**
  * Context object for managing the Authentication flow builder core context.

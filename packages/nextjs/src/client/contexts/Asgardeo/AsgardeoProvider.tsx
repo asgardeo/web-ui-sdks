@@ -20,7 +20,9 @@
 
 import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
 import {I18nProvider, FlowProvider, UserProvider, ThemeProvider} from '@asgardeo/react';
+import {User} from '@asgardeo/node';
 import AsgardeoContext from './AsgardeoContext';
+import InternalAuthAPIRoutesConfig from '../../../configs/InternalAuthAPIRoutesConfig';
 
 /**
  * Props interface of {@link AsgardeoClientProvider}
@@ -37,6 +39,9 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   preferences,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
     if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {
@@ -46,16 +51,57 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     }
   }, [preferences?.theme?.mode]);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setIsLoading(true);
+
+        const sessionResponse = await fetch(InternalAuthAPIRoutesConfig.session);
+        const sessionData = await sessionResponse.json();
+        setIsSignedIn(sessionData.isSignedIn);
+
+        if (sessionData.isSignedIn) {
+          const userResponse = await fetch(InternalAuthAPIRoutesConfig.user);
+
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            setUser(userData);
+          }
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        setUser(null);
+        setIsSignedIn(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      user,
+      isSignedIn,
+      isLoading,
+      signIn: () => (window.location.href = InternalAuthAPIRoutesConfig.signIn),
+      signOut: () => (window.location.href = InternalAuthAPIRoutesConfig.signOut),
+    }),
+    [user, isSignedIn, isLoading],
+  );
+
   return (
-    <AsgardeoContext.Provider value={{}}>
+    <AsgardeoContext.Provider value={contextValue}>
       <I18nProvider preferences={preferences?.i18n}>
         <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
             <UserProvider
               profile={{
                 schemas: [],
-                profile: {},
-                flattenedProfile: {},
+                profile: user || {},
+                flattenedProfile: user || {},
               }}
             >
               {children}

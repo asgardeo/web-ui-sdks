@@ -25,9 +25,9 @@ export default function Home() {
             <User>
               {({user}) => (
                 <div className={styles.user}>
-                  <img src={user?.profilePicture} alt="User Profile" className={styles.profilePicture} />
-                  <h2>{user?.displayName}</h2>
-                  <p>{user?.email}</p>
+                  <img src={user?.profileUrl} alt="User Profile" className={styles.profilePicture} />
+                  <h2>{user?.orgName}</h2>
+                  <p>{user?.username}</p>
                 </div>
               )}
             </User>

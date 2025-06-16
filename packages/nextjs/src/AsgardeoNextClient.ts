@@ -28,6 +28,7 @@ import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
 import deleteSessionId from './server/actions/deleteSessionId';
 import getSessionId from './server/actions/getSessionId';
+import getIsSignedIn from './server/actions/isSignedIn';
 import setSessionId from './server/actions/setSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
 import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
@@ -155,7 +156,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
     if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.session) {
       try {
-        const isSignedIn: boolean = await this.isSignedIn();
+        const isSignedIn: boolean = await getIsSignedIn();
 
         return NextResponse.json({isSignedIn: isSignedIn});
       } catch (error) {
@@ -167,7 +168,9 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       try {
         const user: User = await this.getUser();
 
-        return NextResponse.json(user);
+        console.log('[AsgardeoNextClient] User fetched successfully:', user);
+
+        return NextResponse.json({user});
       } catch (error) {
         console.error('[AsgardeoNextClient] Failed to get user:', error);
         return NextResponse.json({error: 'Failed to get user'}, {status: 500});

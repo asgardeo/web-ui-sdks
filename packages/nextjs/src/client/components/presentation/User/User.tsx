@@ -65,6 +65,8 @@ export interface UserProps extends Omit<BaseUserProps, 'user'> {
  * ```
  */
 const User: FC<UserProps> = ({children, fallback = null}): ReactElement => {
+  const {user} = useAsgardeo();
+
   return (
     <BaseUser user={user} fallback={fallback}>
       {children}
