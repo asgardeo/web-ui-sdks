@@ -77,12 +77,16 @@ const arrayBufferToBase64url = (buffer: ArrayBuffer): string => {
 const handleWebAuthnAuthentication = async (challengeData: string): Promise<string> => {
   // Check if WebAuthn is supported
   if (!window.navigator.credentials || !window.navigator.credentials.get) {
-    throw new Error('WebAuthn is not supported in this browser. Please use a modern browser or try a different authentication method.');
+    throw new Error(
+      'WebAuthn is not supported in this browser. Please use a modern browser or try a different authentication method.',
+    );
   }
 
   // Check if we're on HTTPS (required for WebAuthn)
   if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-    throw new Error('Passkey authentication requires a secure connection (HTTPS). Please ensure you are accessing this site over HTTPS.');
+    throw new Error(
+      'Passkey authentication requires a secure connection (HTTPS). Please ensure you are accessing this site over HTTPS.',
+    );
   }
 
   try {
@@ -90,23 +94,45 @@ const handleWebAuthnAuthentication = async (challengeData: string): Promise<stri
     const decodedChallenge = JSON.parse(atob(challengeData));
     const {publicKeyCredentialRequestOptions} = decodedChallenge;
 
+    // Handle RP ID mismatch by checking domain compatibility
+    const currentDomain = window.location.hostname;
+    const challengeRpId = publicKeyCredentialRequestOptions.rpId;
+    
+    let rpIdToUse = challengeRpId;
+    
+    // Check if the challenge RP ID is compatible with current domain
+    if (challengeRpId && !currentDomain.endsWith(challengeRpId) && challengeRpId !== currentDomain) {
+      console.warn(`RP ID mismatch detected. Challenge RP ID: ${challengeRpId}, Current domain: ${currentDomain}`);
+      // Use current domain as fallback to avoid errors
+      rpIdToUse = currentDomain;
+    }
+
+    const adjustedOptions = {
+      ...publicKeyCredentialRequestOptions,
+      rpId: rpIdToUse,
+      challenge: base64urlToArrayBuffer(publicKeyCredentialRequestOptions.challenge),
+      // Convert user handle if present
+      ...(publicKeyCredentialRequestOptions.userVerification && {
+        userVerification: publicKeyCredentialRequestOptions.userVerification,
+      }),
+      // Convert allowCredentials if present
+      ...(publicKeyCredentialRequestOptions.allowCredentials && {
+        allowCredentials: publicKeyCredentialRequestOptions.allowCredentials.map((cred: any) => ({
+          ...cred,
+          id: base64urlToArrayBuffer(cred.id),
+        })),
+      }),
+    };
+
+    console.log('WebAuthn authentication with options:', {
+      originalRpId: challengeRpId,
+      adjustedRpId: rpIdToUse,
+      currentDomain: currentDomain,
+    });
+
     // Convert challenge from base64url to ArrayBuffer
     const credential = (await navigator.credentials.get({
-      publicKey: {
-        ...publicKeyCredentialRequestOptions,
-        challenge: base64urlToArrayBuffer(publicKeyCredentialRequestOptions.challenge),
-        // Convert user handle if present
-        ...(publicKeyCredentialRequestOptions.userVerification && {
-          userVerification: publicKeyCredentialRequestOptions.userVerification,
-        }),
-        // Convert allowCredentials if present
-        ...(publicKeyCredentialRequestOptions.allowCredentials && {
-          allowCredentials: publicKeyCredentialRequestOptions.allowCredentials.map((cred: any) => ({
-            ...cred,
-            id: base64urlToArrayBuffer(cred.id),
-          })),
-        }),
-      },
+      publicKey: adjustedOptions,
     })) as PublicKeyCredential;
 
     if (!credential) {
@@ -142,15 +168,29 @@ const handleWebAuthnAuthentication = async (challengeData: string): Promise<stri
       if (error.name === 'NotAllowedError') {
         throw new Error('Passkey authentication was cancelled or timed out. Please try again.');
       } else if (error.name === 'SecurityError') {
-        throw new Error('Passkey authentication failed. Please ensure you are using HTTPS and that your browser supports passkeys.');
+        if (error.message.includes('relying party ID') || error.message.includes('RP ID')) {
+          throw new Error(
+            'Domain mismatch error. The passkey was registered for a different domain. Please contact support or try a different authentication method.',
+          );
+        } else {
+          throw new Error(
+            'Passkey authentication failed. Please ensure you are using HTTPS and that your browser supports passkeys.',
+          );
+        }
       } else if (error.name === 'InvalidStateError') {
-        throw new Error('No valid passkey found for this account. Please register a passkey first or use a different authentication method.');
+        throw new Error(
+          'No valid passkey found for this account. Please register a passkey first or use a different authentication method.',
+        );
       } else if (error.name === 'NotSupportedError') {
-        throw new Error('Passkey authentication is not supported on this device or browser. Please use a different authentication method.');
+        throw new Error(
+          'Passkey authentication is not supported on this device or browser. Please use a different authentication method.',
+        );
       } else if (error.name === 'NetworkError') {
         throw new Error('Network error during passkey authentication. Please check your connection and try again.');
       } else if (error.name === 'UnknownError') {
-        throw new Error('An unknown error occurred during passkey authentication. Please try again or use a different authentication method.');
+        throw new Error(
+          'An unknown error occurred during passkey authentication. Please try again or use a different authentication method.',
+        );
       }
     }
 
@@ -751,7 +791,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                 setCurrentAuthenticator(null);
               } else {
                 const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-                
+
                 // Check if the next authenticator is also a passkey - if so, auto-trigger it
                 if (isPasskeyAuthenticator(nextAuthenticator)) {
                   // Recursively handle the passkey authenticator without showing UI
@@ -775,15 +815,17 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           }
         } catch (passkeyError) {
           console.error('Passkey authentication error:', passkeyError);
-          
+
           // Provide more context for common errors
-          let errorMessage = passkeyError instanceof Error ? passkeyError.message : t('errors.passkeyAuthenticationFailed');
-          
+          let errorMessage =
+            passkeyError instanceof Error ? passkeyError.message : t('errors.passkeyAuthenticationFailed');
+
           // Add additional context for security errors
           if (passkeyError instanceof Error && passkeyError.message.includes('security')) {
-            errorMessage += ' This may be due to browser security settings, an insecure connection, or device restrictions.';
+            errorMessage +=
+              ' This may be due to browser security settings, an insecure connection, or device restrictions.';
           }
-          
+
           setError(errorMessage);
           return;
         }
@@ -870,7 +912,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                 setCurrentAuthenticator(null);
               } else {
                 const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-                
+
                 // Check if the next authenticator is a passkey - if so, auto-trigger it
                 if (isPasskeyAuthenticator(nextAuthenticator)) {
                   // Recursively handle the passkey authenticator without showing UI
@@ -945,7 +987,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                   setCurrentAuthenticator(null);
                 } else {
                   const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-                  
+
                   // Check if the next authenticator is a passkey - if so, auto-trigger it
                   if (isPasskeyAuthenticator(nextAuthenticator)) {
                     // Recursively handle the passkey authenticator without showing UI
