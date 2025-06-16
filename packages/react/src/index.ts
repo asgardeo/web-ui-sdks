@@ -116,8 +116,11 @@ export {default as SocialButton} from './components/presentation/SignIn/options/
 export {default as MultiOptionButton} from './components/presentation/SignIn/options/MultiOptionButton';
 export * from './components/presentation/SignIn/options/SignInOptionFactory';
 
-export {default as User} from './components/presentation/User';
-export * from './components/presentation/User';
+export {default as BaseUser} from './components/presentation/User/BaseUser';
+export * from './components/presentation/User/BaseUser';
+
+export {default as User} from './components/presentation/User/User';
+export * from './components/presentation/User/User';
 
 export {default as BaseUserProfile} from './components/presentation/UserProfile/BaseUserProfile';
 export * from './components/presentation/UserProfile/BaseUserProfile';
@@ -189,5 +192,3 @@ export * from './components/factories/FieldFactory';
 export type {FlowStep, FlowMessage, FlowContextValue} from './contexts/Flow/FlowContext';
 
 export type {FlowProviderProps} from './contexts/Flow/FlowProvider';
-
-export * from '@asgardeo/browser';
