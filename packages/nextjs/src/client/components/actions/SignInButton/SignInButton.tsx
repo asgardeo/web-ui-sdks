@@ -18,46 +18,49 @@
 
 'use client';
 
-import {FC, forwardRef, HTMLAttributes, PropsWithChildren, ReactElement, Ref} from 'react';
+import {forwardRef, ForwardRefExoticComponent, ReactElement, Ref, RefAttributes} from 'react';
 import InternalAuthAPIRoutesConfig from '../../../../configs/InternalAuthAPIRoutesConfig';
-import {BaseSignInButton} from '@asgardeo/react';
+import {BaseSignInButton, BaseSignInButtonProps} from '@asgardeo/react';
 
 /**
  * Props interface of {@link SignInButton}
  */
-export type SignInButtonProps = HTMLAttributes<HTMLButtonElement>;
+export type SignInButtonProps = BaseSignInButtonProps;
 
 /**
- * SignInButton component. This button initiates the sign-in process when clicked.
+ * SignInButton component that supports both render props and traditional props patterns for Next.js.
  *
- * @example
+ * @example Using render props
  * ```tsx
- * import { SignInButton } from '@asgardeo/auth-react';
- *
- * const App = () => {
- *   const buttonRef = useRef<HTMLButtonElement>(null);
- *   return (
- *     <SignInButton ref={buttonRef} className="custom-class" style={{ backgroundColor: 'blue' }}>
- *       Sign In
- *     </SignInButton>
- *   );
- * }
+ * <SignInButton>
+ *   {({isLoading}) => (
+ *     <button type="submit" disabled={isLoading}>
+ *       {isLoading ? 'Signing in...' : 'Sign In'}
+ *     </button>
+ *   )}
+ * </SignInButton>
  * ```
+ *
+ * @example Using traditional props
+ * ```tsx
+ * <SignInButton className="custom-button">Sign In</SignInButton>
+ * ```
+ *
+ * @remarks
+ * In Next.js with server actions, the sign-in is handled via form submission.
+ * When using render props, the custom button should use `type="submit"` instead of `onClick={signIn}`.
+ * The `signIn` function in render props is provided for API consistency but should not be used directly.
  */
-const SignInButton: FC<PropsWithChildren<SignInButtonProps>> = forwardRef<
-  HTMLButtonElement,
-  PropsWithChildren<SignInButtonProps>
->(
-  (
-    {children = 'Sign In', className, style, ...rest}: PropsWithChildren<SignInButtonProps>,
-    ref: Ref<HTMLButtonElement>,
-  ): ReactElement => (
-    <form action={InternalAuthAPIRoutesConfig.signIn}>
-      <BaseSignInButton className={className} style={style} ref={ref} type="submit" {...rest}>
-        {children}
-      </BaseSignInButton>
-    </form>
-  ),
+const SignInButton = forwardRef<HTMLButtonElement, SignInButtonProps>(
+  ({className, style, ...rest}: SignInButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+    return (
+      <form action={InternalAuthAPIRoutesConfig.signIn}>
+        <BaseSignInButton className={className} style={style} ref={ref} type="submit" {...rest} />
+      </form>
+    );
+  },
 );
+
+SignInButton.displayName = 'SignInButton';
 
 export default SignInButton;

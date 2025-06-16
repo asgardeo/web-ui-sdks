@@ -22,6 +22,11 @@
  */
 export interface InternalAuthAPIRoutes {
   /**
+   * Route for handling user information retrieval.
+   * This route should return the current user's information, such as username, email, etc.
+   */
+  user: string;
+  /**
    * Route for handling session management.
    * This route should return the current signed-in status.
    */

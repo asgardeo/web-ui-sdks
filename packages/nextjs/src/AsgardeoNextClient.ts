@@ -60,8 +60,10 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     } as any);
   }
 
-  override getUser(): Promise<User> {
-    throw new Error('Method not implemented.');
+  override async getUser(userId?: string): Promise<User> {
+    let resolvedSessionId: string = userId || ((await getSessionId()) as string);
+
+    return this.asgardeo.getUser(resolvedSessionId);
   }
 
   override getUserProfile(): Promise<UserProfile> {
@@ -158,6 +160,17 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
         return NextResponse.json({isSignedIn: isSignedIn});
       } catch (error) {
         return NextResponse.json({error: 'Failed to check session'}, {status: 500});
+      }
+    }
+
+    if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.user) {
+      try {
+        const user: User = await this.getUser();
+
+        return NextResponse.json(user);
+      } catch (error) {
+        console.error('[AsgardeoNextClient] Failed to get user:', error);
+        return NextResponse.json({error: 'Failed to get user'}, {status: 500});
       }
     }
 
