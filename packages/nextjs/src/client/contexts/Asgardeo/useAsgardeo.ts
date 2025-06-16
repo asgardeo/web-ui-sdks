@@ -19,7 +19,7 @@
 'use client';
 
 import {useContext} from 'react';
-import AsgardeoContext, {AsgardeoContextProps} from '../contexts/AsgardeoContext';
+import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
 
 const useAsgardeo = (): AsgardeoContextProps => {
   const context: AsgardeoContextProps | null = useContext(AsgardeoContext);
