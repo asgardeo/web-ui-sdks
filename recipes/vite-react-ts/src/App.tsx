@@ -8,6 +8,8 @@ import ProfilePage from './pages/Profile';
 import OrganizationsPage from './pages/Organizations';
 import CreateOrganizationPage from './pages/CreateOrganization';
 import SignInPage from './pages/SignIn';
+import LandingPage from './pages/LandingPage';
+import {SignedIn} from '@asgardeo/react';
 
 // Types
 export interface User {
@@ -96,6 +98,7 @@ function App() {
           <Header />
           <main>
             <Routes>
+              <Route path="/" element={<LandingPage />} />
               <Route path="/signin" element={<SignInPage />} />
               <Route path="/" element={<DashboardPage />} />
               <Route path="/profile" element={<ProfilePage />} />
