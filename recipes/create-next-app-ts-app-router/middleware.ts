@@ -8,6 +8,7 @@ asgardeo.initialize({
   clientId: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_ID,
   clientSecret: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_SECRET,
   afterSignInUrl: 'http://localhost:3000',
+  scopes: 'openid profile email',
 });
 
 export async function middleware(request: NextRequest) {

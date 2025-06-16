@@ -22,7 +22,7 @@ import {
   SignInOptions,
   SignOutOptions,
   User,
-  // removeTrailingSlash,
+  UserProfile,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
@@ -49,22 +49,22 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
   }
 
   override initialize(config: T): Promise<boolean> {
-    const {baseUrl, clientId, clientSecret, afterSignInUrl} = decorateConfigWithNextEnv({
-      afterSignInUrl: config.afterSignInUrl,
-      baseUrl: config.baseUrl,
-      clientId: config.clientId,
-      clientSecret: config.clientSecret,
-    });
+    const {baseUrl, clientId, clientSecret, afterSignInUrl, ...rest} = decorateConfigWithNextEnv(config);
 
     return this.asgardeo.initialize({
       baseUrl,
       clientId: clientId,
       clientSecret,
       afterSignInUrl: afterSignInUrl,
+      ...rest,
     } as any);
   }
 
   override getUser(): Promise<User> {
+    throw new Error('Method not implemented.');
+  }
+
+  override getUserProfile(): Promise<UserProfile> {
     throw new Error('Method not implemented.');
   }
 
