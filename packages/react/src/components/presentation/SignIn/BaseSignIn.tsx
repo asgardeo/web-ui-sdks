@@ -23,6 +23,7 @@ import {
   ApplicationNativeAuthenticationStepType,
   ApplicationNativeAuthenticationFlowStatus,
   ApplicationNativeAuthenticationAuthenticatorPromptType,
+  ApplicationNativeAuthenticationConstants,
   AsgardeoAPIError,
   withVendorCSSClassPrefix,
 } from '@asgardeo/browser';
@@ -37,6 +38,136 @@ import {useForm, FormField} from '../../../hooks/useForm';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
 import useFlow from '../../../contexts/Flow/useFlow';
 import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory';
+
+/**
+ * Utility functions for WebAuthn/Passkey operations
+ */
+
+/**
+ * Convert base64url string to ArrayBuffer
+ */
+const base64urlToArrayBuffer = (base64url: string): ArrayBuffer => {
+  // Add padding if needed
+  const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
+  const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/') + padding;
+
+  const binaryString = atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
+};
+
+/**
+ * Convert ArrayBuffer to base64url string
+ */
+const arrayBufferToBase64url = (buffer: ArrayBuffer): string => {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+};
+
+/**
+ * Handle WebAuthn authentication
+ */
+const handleWebAuthnAuthentication = async (challengeData: string): Promise<string> => {
+  // Check if WebAuthn is supported
+  if (!window.navigator.credentials || !window.navigator.credentials.get) {
+    throw new Error('WebAuthn is not supported in this browser. Please use a modern browser or try a different authentication method.');
+  }
+
+  // Check if we're on HTTPS (required for WebAuthn)
+  if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+    throw new Error('Passkey authentication requires a secure connection (HTTPS). Please ensure you are accessing this site over HTTPS.');
+  }
+
+  try {
+    // Decode the challenge data
+    const decodedChallenge = JSON.parse(atob(challengeData));
+    const {publicKeyCredentialRequestOptions} = decodedChallenge;
+
+    // Convert challenge from base64url to ArrayBuffer
+    const credential = (await navigator.credentials.get({
+      publicKey: {
+        ...publicKeyCredentialRequestOptions,
+        challenge: base64urlToArrayBuffer(publicKeyCredentialRequestOptions.challenge),
+        // Convert user handle if present
+        ...(publicKeyCredentialRequestOptions.userVerification && {
+          userVerification: publicKeyCredentialRequestOptions.userVerification,
+        }),
+        // Convert allowCredentials if present
+        ...(publicKeyCredentialRequestOptions.allowCredentials && {
+          allowCredentials: publicKeyCredentialRequestOptions.allowCredentials.map((cred: any) => ({
+            ...cred,
+            id: base64urlToArrayBuffer(cred.id),
+          })),
+        }),
+      },
+    })) as PublicKeyCredential;
+
+    if (!credential) {
+      throw new Error('No credential returned from WebAuthn');
+    }
+
+    const authData = credential.response as AuthenticatorAssertionResponse;
+
+    // Create the token response for the server
+    const tokenResponse = {
+      requestId: decodedChallenge.requestId,
+      credential: {
+        id: credential.id,
+        rawId: arrayBufferToBase64url(credential.rawId),
+        response: {
+          authenticatorData: arrayBufferToBase64url(authData.authenticatorData),
+          clientDataJSON: arrayBufferToBase64url(authData.clientDataJSON),
+          signature: arrayBufferToBase64url(authData.signature),
+          ...(authData.userHandle && {
+            userHandle: arrayBufferToBase64url(authData.userHandle),
+          }),
+        },
+        type: credential.type,
+      },
+    };
+
+    return JSON.stringify(tokenResponse);
+  } catch (error) {
+    console.error('WebAuthn authentication failed:', error);
+
+    // Handle specific error cases
+    if (error instanceof Error) {
+      if (error.name === 'NotAllowedError') {
+        throw new Error('Passkey authentication was cancelled or timed out. Please try again.');
+      } else if (error.name === 'SecurityError') {
+        throw new Error('Passkey authentication failed. Please ensure you are using HTTPS and that your browser supports passkeys.');
+      } else if (error.name === 'InvalidStateError') {
+        throw new Error('No valid passkey found for this account. Please register a passkey first or use a different authentication method.');
+      } else if (error.name === 'NotSupportedError') {
+        throw new Error('Passkey authentication is not supported on this device or browser. Please use a different authentication method.');
+      } else if (error.name === 'NetworkError') {
+        throw new Error('Network error during passkey authentication. Please check your connection and try again.');
+      } else if (error.name === 'UnknownError') {
+        throw new Error('An unknown error occurred during passkey authentication. Please try again or use a different authentication method.');
+      }
+    }
+
+    throw new Error(`Passkey authentication failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+};
+
+/**
+ * Check if the authenticator is a passkey/FIDO authenticator
+ */
+const isPasskeyAuthenticator = (authenticator: ApplicationNativeAuthenticationAuthenticator): boolean => {
+  return (
+    authenticator.authenticatorId === ApplicationNativeAuthenticationConstants.SupportedAuthenticators.Passkey &&
+    authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.InternalPrompt &&
+    (authenticator.metadata as any)?.additionalData?.challengeData
+  );
+};
 
 /**
  * Props for the BaseSignIn component.
@@ -565,7 +696,98 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     setMessages([]);
 
     try {
-      if (
+      // Handle passkey/FIDO authentication
+      if (isPasskeyAuthenticator(authenticator)) {
+        try {
+          const challengeData = (authenticator.metadata as any)?.additionalData?.challengeData;
+          if (!challengeData) {
+            throw new Error('Missing challenge data for passkey authentication');
+          }
+
+          const tokenResponse = await handleWebAuthnAuthentication(challengeData);
+
+          const payload = {
+            flowId: currentFlow.flowId,
+            selectedAuthenticator: {
+              authenticatorId: authenticator.authenticatorId,
+              params: {
+                tokenResponse,
+              },
+            },
+          };
+
+          const response = await onSubmit({
+            requestConfig: {
+              method: currentFlow?.links[0].method,
+              url: currentFlow?.links[0].href,
+            },
+            payload,
+          });
+          onFlowChange?.(response);
+
+          if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+            onSuccess?.(response.authData);
+            return;
+          }
+
+          if (
+            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
+            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+          ) {
+            setError(t('errors.passkeyAuthenticationFailed'));
+            return;
+          }
+
+          // Handle next step if authentication is not complete
+          if ('flowId' in response && 'nextStep' in response) {
+            const nextStepResponse = response as any;
+            setCurrentFlow(nextStepResponse);
+
+            if (nextStepResponse.nextStep?.authenticators?.length > 0) {
+              if (
+                nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+                nextStepResponse.nextStep.authenticators.length > 1
+              ) {
+                setCurrentAuthenticator(null);
+              } else {
+                const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
+                
+                // Check if the next authenticator is also a passkey - if so, auto-trigger it
+                if (isPasskeyAuthenticator(nextAuthenticator)) {
+                  // Recursively handle the passkey authenticator without showing UI
+                  handleAuthenticatorSelection(nextAuthenticator);
+                  return;
+                } else {
+                  setCurrentAuthenticator(nextAuthenticator);
+                  setupFormFields(nextAuthenticator);
+                }
+              }
+            }
+
+            if (nextStepResponse.nextStep?.messages) {
+              setMessages(
+                nextStepResponse.nextStep.messages.map((msg: any) => ({
+                  type: msg.type || 'INFO',
+                  message: msg.message || '',
+                })),
+              );
+            }
+          }
+        } catch (passkeyError) {
+          console.error('Passkey authentication error:', passkeyError);
+          
+          // Provide more context for common errors
+          let errorMessage = passkeyError instanceof Error ? passkeyError.message : t('errors.passkeyAuthenticationFailed');
+          
+          // Add additional context for security errors
+          if (passkeyError instanceof Error && passkeyError.message.includes('security')) {
+            errorMessage += ' This may be due to browser security settings, an insecure connection, or device restrictions.';
+          }
+          
+          setError(errorMessage);
+          return;
+        }
+      } else if (
         authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.RedirectionPrompt
       ) {
         const payload = {
@@ -648,8 +870,16 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                 setCurrentAuthenticator(null);
               } else {
                 const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-                setCurrentAuthenticator(nextAuthenticator);
-                setupFormFields(nextAuthenticator);
+                
+                // Check if the next authenticator is a passkey - if so, auto-trigger it
+                if (isPasskeyAuthenticator(nextAuthenticator)) {
+                  // Recursively handle the passkey authenticator without showing UI
+                  handleAuthenticatorSelection(nextAuthenticator);
+                  return;
+                } else {
+                  setCurrentAuthenticator(nextAuthenticator);
+                  setupFormFields(nextAuthenticator);
+                }
               }
             }
 
@@ -715,8 +945,16 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                   setCurrentAuthenticator(null);
                 } else {
                   const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-                  setCurrentAuthenticator(nextAuthenticator);
-                  setupFormFields(nextAuthenticator);
+                  
+                  // Check if the next authenticator is a passkey - if so, auto-trigger it
+                  if (isPasskeyAuthenticator(nextAuthenticator)) {
+                    // Recursively handle the passkey authenticator without showing UI
+                    handleAuthenticatorSelection(nextAuthenticator);
+                    return;
+                  } else {
+                    setCurrentAuthenticator(nextAuthenticator);
+                    setupFormFields(nextAuthenticator);
+                  }
                 }
               }
 
@@ -1015,10 +1253,40 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         <Card.Content>
           {error && (
             <Alert variant="error">
-              <Alert.Title>{t('errors.authenticationError')}</Alert.Title>
+              <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>
           )}
+        </Card.Content>
+      </Card>
+    );
+  }
+
+  // If the current authenticator is a passkey, auto-trigger it instead of showing a form
+  if (isPasskeyAuthenticator(currentAuthenticator) && !isLoading) {
+    // Auto-trigger passkey authentication
+    useEffect(() => {
+      handleAuthenticatorSelection(currentAuthenticator);
+    }, [currentAuthenticator]);
+
+    // Show loading state while passkey authentication is in progress
+    return (
+      <Card className={containerClasses}>
+        <Card.Content>
+          <div style={{textAlign: 'center', padding: '2rem'}}>
+            <div style={{marginBottom: '1rem'}}>
+              <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  fill="currentColor"
+                  d="M7 14c1.66 0 3-1.34 3-3S8.66 8 7 8s-3 1.34-3 3s1.34 3 3 3m0-4c.55 0 1 .45 1 1s-.45 1-1 1s-1-.45-1-1s.45-1 1-1m12-3h-8l1.5 1.5L9 12l1.5 1.5L8 16h8c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2m-1 5h-1v-1h1v1m0-2h-1V9h1v1"
+                />
+              </svg>
+            </div>
+            <Typography variant="body1">{t('passkey.authenticating') || 'Authenticating with passkey...'}</Typography>
+            <Typography variant="body2" style={{marginTop: '0.5rem', color: '#666'}}>
+              {t('passkey.instruction') || 'Please use your fingerprint, face, or security key to authenticate.'}
+            </Typography>
+          </div>
         </Card.Content>
       </Card>
     );
