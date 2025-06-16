@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@asgardep/vite-react-ts",
+  "name": "@asgardeo/teamspace-react",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
