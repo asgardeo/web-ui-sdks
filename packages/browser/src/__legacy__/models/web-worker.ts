@@ -32,8 +32,9 @@ interface WebWorkerEvent<T> extends MessageEvent {
   data: Message<T>;
 }
 
-export class WebWorkerClass<T> extends Worker {
-  public override onmessage: (this: Worker, event: WebWorkerEvent<T>) => any = () => null;
+export class WebWorkerClass<T> {
+  onmessage: (this: Worker, event: WebWorkerEvent<T>) => any = () => null;
+  postMessage: (message: Message<T>) => void = () => null;
 }
 
 export interface WebWorkerCoreInterface {
