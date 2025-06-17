@@ -88,7 +88,7 @@ const useStyles = () => {
         alignItems: 'center',
         justifyContent: 'flex-start',
         gap: theme.spacing.unit + 'px',
-        padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
+        padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px`,
         width: '100%',
         color: theme.colors.text.primary,
         textDecoration: 'none',
@@ -97,9 +97,25 @@ const useStyles = () => {
         cursor: 'pointer',
         fontSize: '0.875rem',
         textAlign: 'left',
-        '&:hover': {
-          backgroundColor: theme.colors.background,
-        },
+        borderRadius: theme.borderRadius.small,
+        transition: 'background-color 0.15s ease-in-out',
+      } as CSSProperties,
+      menuItemAnchor: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        gap: theme.spacing.unit + 'px',
+        padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px`,
+        width: '100%',
+        color: theme.colors.text.primary,
+        textDecoration: 'none',
+        border: 'none',
+        background: 'none',
+        cursor: 'pointer',
+        fontSize: '0.875rem',
+        textAlign: 'left',
+        borderRadius: theme.borderRadius.small,
+        transition: 'background-color 0.15s ease-in-out',
       } as CSSProperties,
       divider: {
         margin: `${theme.spacing.unit * 0.5}px 0`,
@@ -156,7 +172,7 @@ const useStyles = () => {
 };
 
 export interface MenuItem {
-  label: string;
+  label: ReactNode;
   icon?: ReactNode;
   onClick?: () => void;
   href?: string;
@@ -232,7 +248,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
   isLoading = false,
   portalId = 'asgardeo-user-dropdown',
   menuItems = [],
-  showTriggerLabel = true,
+  showTriggerLabel = false,
   avatarSize = 32,
   onManageProfile,
   onSignOut,
@@ -240,6 +256,10 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
 }): ReactElement => {
   const styles = useStyles();
   const [isOpen, setIsOpen] = useState(false);
+  const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
+  const {theme, colorScheme} = useTheme();
+
+  const hoverBackgroundColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)';
 
   const {refs, floatingStyles, context} = useFloating({
     open: isOpen,
@@ -389,21 +409,33 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                     ) : item.href ? (
                       <a
                         href={item.href}
-                        style={styles.menuItem}
+                        style={{
+                          ...styles.menuItemAnchor,
+                          backgroundColor: hoveredItemIndex === index ? hoverBackgroundColor : 'transparent',
+                        }}
                         className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
+                        onMouseEnter={() => setHoveredItemIndex(index)}
+                        onMouseLeave={() => setHoveredItemIndex(null)}
+                        onFocus={() => setHoveredItemIndex(index)}
+                        onBlur={() => setHoveredItemIndex(null)}
                       >
                         {item.icon}
-                        {item.label}
+                        <span>{item.label}</span>
                       </a>
                     ) : (
                       <Button
                         onClick={() => handleMenuItemClick(item)}
-                        style={styles.menuItem}
+                        style={{
+                          ...styles.menuItem,
+                          backgroundColor: hoveredItemIndex === index ? hoverBackgroundColor : 'transparent',
+                        }}
                         className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
                         color="tertiary"
                         variant="text"
                         size="small"
                         startIcon={item.icon}
+                        onMouseEnter={() => setHoveredItemIndex(index)}
+                        onMouseLeave={() => setHoveredItemIndex(null)}
                       >
                         {item.label}
                       </Button>

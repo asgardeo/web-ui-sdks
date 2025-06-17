@@ -2,8 +2,9 @@
 
 import {useState, useRef, useEffect} from 'react';
 import {Link} from 'react-router-dom';
-import {ChevronDown, Settings, User as UserIcon, LogOut} from 'lucide-react';
+import {ChevronDown, Settings, User as UserIcon, LogOut, CogIcon} from 'lucide-react';
 import {SignOutButton, User, UserProfile, UserDropdown as ReactUserDropdown} from '@asgardeo/react';
+import {PoundSterling} from 'lucide-react';
 import {useApp} from '../../App';
 
 export default function UserDropdown() {
@@ -33,7 +34,28 @@ export default function UserDropdown() {
           <User>{user => <img src={user?.profileUrl} alt={user?.userName} className="w-8 h-8 rounded-full" />}</User>
           <ChevronDown className="h-4 w-4 text-gray-500" />
         </button> */}
-        <ReactUserDropdown />
+        <ReactUserDropdown
+          menuItems={[
+            {
+              label: (
+                <span className="flex items-center">
+                  <PoundSterling className="h-4 w-4 mr-3" />
+                  Your profile
+                </span>
+              ),
+              onClick: () => null,
+            },
+            {
+              label: (
+                <span className="flex items-center">
+                  <CogIcon className="h-4 w-4 mr-3" />
+                  Settings
+                </span>
+              ),
+              href: '/settings',
+            },
+          ]}
+        />
 
         {showUserDropdown && (
           <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
