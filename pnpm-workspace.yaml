@@ -1,6 +1,7 @@
 packages:
   - 'docs'
   - 'packages/*'
+  - '!packages/nuxt'
   - '!packages/__legacy__'
   - 'samples/*'
   - '!samples/__legacy__/*'

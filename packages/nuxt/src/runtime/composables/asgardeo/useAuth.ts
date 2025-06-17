@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {BasicUserInfo, StorageManager, IdTokenPayload, OIDCEndpoints} from '@asgardeo/node';
+import type {User, StorageManager, IdTokenPayload, OIDCEndpoints} from '@asgardeo/node';
 import type {AuthInterface} from '../../types';
 import {navigateTo} from '#imports';
 
@@ -172,11 +172,11 @@ export const useAuth = (): AuthInterface => {
    * from the server-side '/api/auth/user' endpoint.
    * Updates the internal state variables with the result.
    *
-   * @returns {Promise<BasicUserInfo | null>} A promise resolving to user info or null.
+   * @returns {Promise<User | null>} A promise resolving to user info or null.
    */
-  const getUser = async (): Promise<BasicUserInfo | null> => {
+  const getUser = async (): Promise<User | null> => {
     try {
-      const userInfo: BasicUserInfo = await $fetch<BasicUserInfo>('/api/auth/user', {
+      const userInfo: User = await $fetch<User>('/api/auth/user', {
         method: 'GET',
       });
 
