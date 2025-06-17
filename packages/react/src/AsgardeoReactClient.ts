@@ -60,36 +60,44 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       afterSignOutUrl: config.afterSignOutUrl,
       baseUrl: config.baseUrl,
       clientId: config.clientId,
-      scopes: [...scopes, 'internal_login'],
       ...config,
+      scopes: [...scopes, 'internal_login'],
     });
   }
 
   override async getUser(): Promise<User> {
-    const baseUrl = await (await this.asgardeo.getConfigData()).baseUrl;
-    const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
-    const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
+    try {
+      const baseUrl = await (await this.asgardeo.getConfigData()).baseUrl;
+      const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
+      const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
 
-    return generateUserProfile(profile, flattenUserSchema(schemas));
+      return generateUserProfile(profile, flattenUserSchema(schemas));
+    } catch (error) {
+      return this.asgardeo.getDecodedIdToken();
+    }
   }
 
   async getUserProfile(): Promise<UserProfile> {
-    const {baseUrl} = await this.asgardeo.getConfigData();
+    try {
+      const {baseUrl} = await this.asgardeo.getConfigData();
 
-    const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
-    const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
+      const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
+      const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
 
-    console.log('Raw Schemas:', JSON.stringify(schemas, null, 2));
+      const processedSchemas = flattenUserSchema(schemas);
 
-    const processedSchemas = flattenUserSchema(schemas);
-
-    console.log('Processed Schemas:', JSON.stringify(processedSchemas, null, 2));
-
-    return {
-      schemas: processedSchemas,
-      flattenedProfile: generateFlattenedUserProfile(profile, processedSchemas),
-      profile,
-    };
+      return {
+        schemas: processedSchemas,
+        flattenedProfile: generateFlattenedUserProfile(profile, processedSchemas),
+        profile,
+      };
+    } catch (error) {
+      return {
+        schemas: [],
+        flattenedProfile: await this.asgardeo.getDecodedIdToken(),
+        profile: await this.asgardeo.getDecodedIdToken(),
+      };
+    }
   }
 
   override isLoading(): boolean {

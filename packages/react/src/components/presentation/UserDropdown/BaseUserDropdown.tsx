@@ -16,9 +16,7 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useRef, useState} from 'react';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
 import {
   useFloating,
   autoUpdate,
@@ -32,13 +30,15 @@ import {
   FloatingFocusManager,
   FloatingPortal,
 } from '@floating-ui/react';
+import clsx from 'clsx';
+import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useRef, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
+import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
-import Typography from '../../primitives/Typography/Typography';
-import User from '../../primitives/Icons/User';
 import LogOut from '../../primitives/Icons/LogOut';
-import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
+import User from '../../primitives/Icons/User';
+import Typography from '../../primitives/Typography/Typography';
 
 const useStyles = () => {
   const {theme, colorScheme} = useTheme();
@@ -48,8 +48,8 @@ const useStyles = () => {
       trigger: {
         display: 'inline-flex',
         alignItems: 'center',
-        gap: theme.spacing.unit + 'px',
-        padding: theme.spacing.unit * 0.5 + 'px',
+        gap: `${theme.spacing.unit}px`,
+        padding: `${theme.spacing.unit * 0.5}px`,
         border: 'none',
         background: 'none',
         cursor: 'pointer',
@@ -87,7 +87,7 @@ const useStyles = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        gap: theme.spacing.unit + 'px',
+        gap: `${theme.spacing.unit}px`,
         padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px`,
         width: '100%',
         color: theme.colors.text.primary,
@@ -104,7 +104,7 @@ const useStyles = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        gap: theme.spacing.unit + 'px',
+        gap: `${theme.spacing.unit}px`,
         padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px`,
         width: '100%',
         color: theme.colors.text.primary,
@@ -124,14 +124,14 @@ const useStyles = () => {
       dropdownHeader: {
         display: 'flex',
         alignItems: 'center',
-        gap: theme.spacing.unit + 'px',
+        gap: `${theme.spacing.unit}px`,
         padding: `${theme.spacing.unit * 1.5}px`,
         borderBottom: `1px solid ${theme.colors.border}`,
       } as CSSProperties,
       headerInfo: {
         display: 'flex',
         flexDirection: 'column',
-        gap: theme.spacing.unit / 4 + 'px',
+        gap: `${theme.spacing.unit / 4}px`,
         flex: 1,
         minWidth: 0,
         overflow: 'hidden',
@@ -160,7 +160,7 @@ const useStyles = () => {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '80px',
-        gap: theme.spacing.unit + 'px',
+        gap: `${theme.spacing.unit}px`,
       } as CSSProperties,
       loadingText: {
         color: theme.colors.text.secondary,
@@ -172,49 +172,44 @@ const useStyles = () => {
 };
 
 export interface MenuItem {
-  label: ReactNode;
-  icon?: ReactNode;
-  onClick?: () => void;
   href?: string;
+  icon?: ReactNode;
+  label: ReactNode;
+  onClick?: () => void;
 }
 
 export interface BaseUserDropdownProps {
   /**
-   * Optional element to render when no user is signed in.
+   * Mapping of component attribute names to identity provider field names.
+   * Allows customizing which user profile fields should be used for each attribute.
    */
-  fallback?: ReactElement;
+  attributeMapping?: {
+    [key: string]: string | string[] | undefined;
+    firstName?: string | string[];
+    lastName?: string | string[];
+    picture?: string | string[];
+    username?: string | string[];
+  };
+  /**
+   * Optional size for the avatar
+   */
+  avatarSize?: number;
   /**
    * Optional className for the dropdown container.
    */
   className?: string;
   /**
-   * The user object containing profile information
+   * Optional element to render when no user is signed in.
    */
-  user: any;
+  fallback?: ReactElement;
   /**
    * Whether the user data is currently loading
    */
   isLoading?: boolean;
   /**
-   * The HTML element ID where the portal should be mounted
-   */
-  portalId?: string;
-  /**
    * Menu items to display in the dropdown
    */
   menuItems?: MenuItem[];
-  /**
-   * Show user's display name next to avatar in the trigger button
-   */
-  showTriggerLabel?: boolean;
-  /**
-   * Show dropdown header with user information
-   */
-  showDropdownHeader?: boolean;
-  /**
-   * Optional size for the avatar
-   */
-  avatarSize?: number;
   /**
    * Callback function for "Manage Profile" action
    */
@@ -224,16 +219,21 @@ export interface BaseUserDropdownProps {
    */
   onSignOut?: () => void;
   /**
-   * Mapping of component attribute names to identity provider field names.
-   * Allows customizing which user profile fields should be used for each attribute.
+   * The HTML element ID where the portal should be mounted
    */
-  attributeMapping?: {
-    picture?: string | string[];
-    firstName?: string | string[];
-    lastName?: string | string[];
-    username?: string | string[];
-    [key: string]: string | string[] | undefined;
-  };
+  portalId?: string;
+  /**
+   * Show dropdown header with user information
+   */
+  showDropdownHeader?: boolean;
+  /**
+   * Show user's display name next to avatar in the trigger button
+   */
+  showTriggerLabel?: boolean;
+  /**
+   * The user object containing profile information
+   */
+  user: any;
 }
 
 /**
@@ -276,11 +276,11 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
   const {getReferenceProps, getFloatingProps} = useInteractions([click, dismiss, role]);
 
   const defaultAttributeMappings = {
-    picture: ['profile', 'profileUrl'],
-    firstName: 'name.givenName',
-    lastName: 'name.familyName',
-    email: 'emails',
-    username: 'userName',
+    picture: ['profile', 'profileUrl', 'picture', 'URL'],
+    firstName: ['name.givenName', 'given_name'],
+    lastName: ['name.familyName', 'family_name'],
+    email: ['emails'],
+    username: ['userName', 'username', 'user_name'],
   };
 
   const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};

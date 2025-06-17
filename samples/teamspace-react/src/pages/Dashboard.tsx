@@ -98,9 +98,10 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold text-gray-900">
           Welcome back{' '}
           <User>
-            {(user) => (
+            {user => (
               <span>
-                {user?.name?.givenName} {user?.name?.familyName}
+                {user?.givenName || user?.name?.givenName || user?.given_name}{' '}
+                {user?.name?.familyName || user?.familyName || user?.family_name}
               </span>
             )}
           </User>
