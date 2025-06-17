@@ -26,13 +26,13 @@ import {
   UserProfile,
 } from '@asgardeo/browser';
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, use} from 'react';
-import AsgardeoReactClient from '../../AsgardeoReactClient';
 import AsgardeoContext from './AsgardeoContext';
+import AsgardeoReactClient from '../../AsgardeoReactClient';
 import useBrowserUrl from '../../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../../models/config';
-import ThemeProvider from '../Theme/ThemeProvider';
-import I18nProvider from '../I18n/I18nProvider';
 import FlowProvider from '../Flow/FlowProvider';
+import I18nProvider from '../I18n/I18nProvider';
+import ThemeProvider from '../Theme/ThemeProvider';
 import UserProvider from '../User/UserProvider';
 
 /**
@@ -42,11 +42,13 @@ export type AsgardeoProviderProps = AsgardeoReactConfig;
 
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   afterSignInUrl = window.location.origin,
+  afterSignOutUrl = window.location.origin,
   baseUrl,
   clientId,
   children,
   scopes,
   preferences,
+  ...rest
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const asgardeo: AsgardeoReactClient = useMemo(() => new AsgardeoReactClient(), []);
@@ -61,9 +63,11 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     (async (): Promise<void> => {
       await asgardeo.initialize({
         afterSignInUrl,
+        afterSignOutUrl,
         baseUrl,
         clientId,
         scopes,
+        ...rest,
       });
     })();
   }, []);

@@ -32,9 +32,9 @@ import {
   executeEmbeddedSignUpFlow,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
-import {AsgardeoReactConfig} from './models/config';
 import getMeProfile from './api/scim2/getMeProfile';
 import getSchemas from './api/scim2/getSchemas';
+import {AsgardeoReactConfig} from './models/config';
 
 /**
  * Client for mplementing Asgardeo in React applications.
@@ -56,10 +56,12 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     const scopes: string[] = Array.isArray(config.scopes) ? config.scopes : config.scopes.split(' ');
 
     return this.asgardeo.init({
+      afterSignInUrl: config.afterSignInUrl,
+      afterSignOutUrl: config.afterSignOutUrl,
       baseUrl: config.baseUrl,
       clientId: config.clientId,
-      afterSignInUrl: config.afterSignInUrl,
       scopes: [...scopes, 'internal_login'],
+      ...config,
     });
   }
 
@@ -72,7 +74,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
   }
 
   async getUserProfile(): Promise<UserProfile> {
-    const baseUrl: string = (await this.asgardeo.getConfigData()).baseUrl;
+    const {baseUrl} = await this.asgardeo.getConfigData();
 
     const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
     const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
@@ -139,14 +141,13 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
         baseUrl,
         payload: firstArg as EmbeddedFlowExecuteRequestPayload,
       });
-    } else {
-      throw new AsgardeoRuntimeError(
-        'Not implemented',
-        'react-AsgardeoReactClient-ValidationError-002',
-        'react',
-        'The signUp method with SignUpOptions is not implemented in the React client.',
-      );
     }
+    throw new AsgardeoRuntimeError(
+      'Not implemented',
+      'react-AsgardeoReactClient-ValidationError-002',
+      'react',
+      'The signUp method with SignUpOptions is not implemented in the React client.',
+    );
   }
 }
 

@@ -17,49 +17,49 @@
  */
 
 import {FC, ReactElement, ReactNode, useState} from 'react';
-import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import BaseUserDropdown, {BaseUserDropdownProps} from './BaseUserDropdown';
-import UserProfile from '../UserProfile/UserProfile';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
+import UserProfile from '../UserProfile/UserProfile';
 
 /**
  * Render props data passed to the children function
  */
 export interface UserDropdownRenderProps {
-  /** The authenticated user object */
-  user: any;
+  /** Function to close the profile dialog */
+  closeProfile: () => void;
   /** Whether user data is currently loading */
   isLoading: boolean;
+  /** Whether the profile dialog is currently open */
+  isProfileOpen: boolean;
   /** Function to open the user profile dialog */
   openProfile: () => void;
   /** Function to sign out the user */
   signOut: () => void;
-  /** Whether the profile dialog is currently open */
-  isProfileOpen: boolean;
-  /** Function to close the profile dialog */
-  closeProfile: () => void;
+  /** The authenticated user object */
+  user: any;
 }
 
 /**
  * Props for the UserDropdown component.
  * Extends BaseUserDropdownProps but excludes user, onManageProfile, and onSignOut since they're handled internally
  */
-export type UserDropdownProps = Omit<BaseUserDropdownProps, 'user' | 'onManageProfile' | 'onSignOut'> & {
+export type UserDropdownProps = Omit<BaseUserDropdownProps, 'user' | 'onManageProfile'> & {
   /**
    * Render prop function that receives user state and actions.
    * When provided, this completely replaces the default dropdown rendering.
    */
   children?: (props: UserDropdownRenderProps) => ReactNode;
   /**
-   * Custom render function for the trigger button.
-   * When provided, this replaces just the trigger button while keeping the dropdown.
-   */
-  renderTrigger?: (props: UserDropdownRenderProps) => ReactNode;
-  /**
    * Custom render function for the dropdown content.
    * When provided, this replaces just the dropdown content while keeping the trigger.
    */
   renderDropdown?: (props: UserDropdownRenderProps) => ReactNode;
+  /**
+   * Custom render function for the trigger button.
+   * When provided, this replaces just the trigger button while keeping the dropdown.
+   */
+  renderTrigger?: (props: UserDropdownRenderProps) => ReactNode;
 };
 
 /**
@@ -112,6 +112,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
   children,
   renderTrigger,
   renderDropdown,
+  onSignOut,
   ...rest
 }: UserDropdownProps): ReactElement => {
   const {user, isLoading, signOut} = useAsgardeo();
@@ -123,6 +124,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
 
   const handleSignOut = () => {
     signOut();
+    onSignOut();
   };
 
   const closeProfile = () => {
