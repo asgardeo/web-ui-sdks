@@ -213,7 +213,7 @@ A render prop component that provides access to the current user's information.
 |------|------|----------|-------------|
 | `children` | `({ user, isLoading, error }) => React.ReactNode` | Yes | Render function that receives user data |
 
-**Render Props:**
+#### Render Props
 
 | Prop | Type | Description |
 |------|------|-------------|
@@ -221,7 +221,7 @@ A render prop component that provides access to the current user's information.
 | `isLoading` | `boolean` | Whether user data is being loaded |
 | `error` | `Error \| null` | Any error that occurred while fetching user data |
 
-**User Object Properties:**
+#### User Object Properties
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -232,7 +232,7 @@ A render prop component that provides access to the current user's information.
 | `familyname` | `string` | Last name |
 | `photourl` | `string` | Profile picture URL |
 
-**Example:**
+#### Example
 
 ```tsx
 <User>
@@ -263,7 +263,7 @@ This component doesn't render any HTML elements with CSS classes. It uses render
 
 A pre-built component that displays a formatted user profile card.
 
-**Props:**
+#### Props
 
 | Prop | Type | Required | Description |
 |------|------|----------|-------------|
@@ -272,7 +272,7 @@ A pre-built component that displays a formatted user profile card.
 | `showAvatar` | `boolean` | No | Whether to display profile picture (defaults to `true`) |
 | `avatarSize` | `'sm' \| 'md' \| 'lg'` | No | Size of the avatar (defaults to `'md'`) |
 
-**Example:**
+#### Example
 
 ```tsx
 <UserProfile 
@@ -295,7 +295,7 @@ A pre-built component that displays a formatted user profile card.
 
 The main hook that provides access to all authentication functionality and state.
 
-**Returns:**
+#### Returns
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -309,7 +309,7 @@ The main hook that provides access to all authentication functionality and state
 | `getIdToken` | `() => Promise<string \| null>` | Get current ID token |
 | `refreshTokens` | `() => Promise<void>` | Refresh authentication tokens |
 
-**Example:**
+#### Example
 
 ```tsx
 import { useAsgardeo } from '@asgardeo/react'
@@ -414,7 +414,7 @@ Replace default button text with custom content:
 
 For applications using popular UI libraries, you can easily integrate Asgardeo components:
 
-**Material-UI Integration:**
+#### Material-UI Integration
 ```tsx
 import { Button } from '@mui/material'
 import { useAsgardeo } from '@asgardeo/react'
@@ -434,7 +434,7 @@ function CustomSignInButton() {
 }
 ```
 
-**Tailwind CSS Integration:**
+#### Tailwind CSS Integration
 ```tsx
 <SignInButton className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
   Sign In
