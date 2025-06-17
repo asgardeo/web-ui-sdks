@@ -46,7 +46,7 @@ export {
   ApplicationNativeAuthenticationHandleResponse,
   ApplicationNativeAuthenticationAuthenticatorParamType,
   ApplicationNativeAuthenticationAuthenticatorPromptType,
-  ApplicationNativeAuthenticationAuthenticatorKnownIdPType
+  ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
 } from './models/application-native-authentication';
 export {
   EmbeddedFlowType,
@@ -55,8 +55,9 @@ export {
   EmbeddedSignUpFlowData,
   EmbeddedFlowComponent,
   EmbeddedFlowComponentType,
+  EmbeddedFlowExecuteRequestPayload,
 } from './models/embedded-flow';
-export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
+export {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './models/client';
 export {BaseConfig, Config, Preferences, ThemePreferences, I18nPreferences, WithPreferences} from './models/config';
 export {TokenResponse, IdTokenPayload, TokenExchangeRequestConfig} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';

@@ -20,6 +20,12 @@ export enum EmbeddedFlowType {
   Registration = 'REGISTRATION',
 }
 
+export interface EmbeddedFlowExecuteRequestPayload {
+  actionId?: string;
+  flowType: EmbeddedFlowType;
+  inputs?: Record<string, any>;
+}
+
 export interface EmbeddedFlowExecuteResponse {
   flowId: string;
   flowStatus: EmbeddedFlowStatus;

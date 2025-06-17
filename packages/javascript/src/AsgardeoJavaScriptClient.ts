@@ -16,9 +16,10 @@
  * under the License.
  */
 
-import {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
+import {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './models/client';
 import {User, UserProfile} from './models/user';
 import {Config} from './models/config';
+import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './models/embedded-flow';
 
 /**
  * Base class for implementing Asgardeo clients.
@@ -27,70 +28,27 @@ import {Config} from './models/config';
  * @typeParam T - Configuration type that extends Config.
  */
 abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T> {
-  /**
-   * Initializes the authentication client with provided configuration.
-   *
-   * @param config - SDK Client instance configuration options.
-   * @returns Promise resolving to boolean indicating success.
-   */
   abstract initialize(config: T): Promise<boolean>;
 
-  /**
-   * Gets user information from the session.
-   *
-   * @returns User object containing user details.
-   */
   abstract getUser(): Promise<User>;
 
   abstract getUserProfile(): Promise<UserProfile>;
 
-  /**
-   * Checks if the client is currently loading.
-   * This can be used to determine if the client is in the process of initializing or fetching user data.
-   *
-   * @returns Boolean indicating if the client is loading.
-   */
   abstract isLoading(): boolean;
 
-  /**
-   * Checks if a user is signed in.
-   * FIXME: Check if this should return a boolean or a Promise<boolean>.
-   *
-   * @returns Promise resolving to boolean indicating sign-in status.
-   */
   abstract isSignedIn(): Promise<boolean>;
 
-  /**
-   * Initiates the sign-in process for the user.
-   *
-   * @param options - Optional sign-in options like additional parameters to be sent in the authorize request, etc.
-   * @returns Promise resolving the user upon successful sign in.
-   */
   abstract signIn(options?: SignInOptions): Promise<User>;
-
-  /**
-   * Signs out the currently signed-in user.
-   *
-   * @param options - Optional sign-out options like additional parameters to be sent in the sign-out request, etc.
-   * @param afterSignOut - Callback function to be executed after sign-out is complete.
-   * @returns A promise that resolves to true if sign-out is successful
-   */
   abstract signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
-
-  /**
-   * Signs out the currently signed-in user with an optional session ID.
-   *
-   * @param options - Optional sign-out options like additional parameters to be sent in the sign-out request, etc.
-   * @param sessionId - Optional session ID to be used for sign-out.
-   *                    This can be useful in scenarios where multiple sessions are managed.
-   * @param afterSignOut - Callback function to be executed after sign-out is complete.
-   * @returns A promise that resolves to true if sign-out is successful
-   */
   abstract signOut(
     options?: SignOutOptions,
     sessionId?: string,
     afterSignOut?: (redirectUrl: string) => void,
   ): Promise<string>;
+
+  abstract signUp(options?: SignUpOptions): Promise<void>;
+  abstract signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
+  abstract signUp(payload?: unknown): Promise<void> | Promise<EmbeddedFlowExecuteResponse>;
 }
 
 export default AsgardeoJavaScriptClient;

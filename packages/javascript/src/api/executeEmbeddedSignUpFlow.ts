@@ -17,17 +17,11 @@
  */
 
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
-import {EmbeddedFlowType, EmbeddedFlowExecuteResponse} from '../models/embedded-flow';
-
-/**
- * Represents the embedded signup flow execution request payload.
- */
-export interface EmbeddedSignUpFlowExecuteRequestPayload {
-  /**
-   * The type of flow to execute.
-   */
-  flowType: EmbeddedFlowType;
-}
+import {
+  EmbeddedFlowType,
+  EmbeddedFlowExecuteResponse,
+  EmbeddedFlowExecuteRequestPayload,
+} from '../models/embedded-flow';
 
 /**
  * Request configuration for the embedded signup flow execution function.
@@ -41,7 +35,7 @@ export interface EmbeddedSignUpFlowExecuteRequestConfig extends Partial<Request>
   /**
    * The embedded signup flow execution request payload.
    */
-  payload: EmbeddedSignUpFlowExecuteRequestPayload;
+  payload?: EmbeddedFlowExecuteRequestPayload;
 }
 
 /**
@@ -74,23 +68,13 @@ const executeEmbeddedSignUpFlow = async ({
   payload,
   ...requestConfig
 }: EmbeddedSignUpFlowExecuteRequestConfig): Promise<EmbeddedFlowExecuteResponse> => {
-  if (!payload) {
+  if (!baseUrl || !url) {
     throw new AsgardeoAPIError(
-      'Embedded SignUp flow payload is required',
+      'Embedded SignUp flow execution failed: Base URL or URL is not provided.',
       'javascript-executeEmbeddedSignUpFlow-ValidationError-001',
       'javascript',
       400,
-      'If an embedded signup flow payload is not provided, the request cannot be constructed correctly.',
-    );
-  }
-
-  if (!payload.flowType || payload.flowType !== 'REGISTRATION') {
-    throw new AsgardeoAPIError(
-      'Invalid flowType. Must be "REGISTRATION"',
-      'javascript-executeEmbeddedSignUpFlow-ValidationError-002',
-      'javascript',
-      400,
-      'The flowType must be set to "REGISTRATION" for embedded signup flows.',
+      'At least one of the baseUrl or url must be provided to execute the embedded sign up flow.',
     );
   }
 
@@ -102,7 +86,10 @@ const executeEmbeddedSignUpFlow = async ({
       Accept: 'application/json',
       ...customHeaders,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      ...(payload ?? {}),
+      flowType: EmbeddedFlowType.Registration,
+    }),
     ...otherConfig,
   });
 

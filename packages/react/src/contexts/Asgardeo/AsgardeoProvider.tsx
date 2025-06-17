@@ -16,7 +16,14 @@
  * under the License.
  */
 
-import {SignInOptions, SignOutOptions, User, UserProfile} from '@asgardeo/browser';
+import {
+  AsgardeoRuntimeError,
+  EmbeddedFlowExecuteRequestPayload,
+  SignInOptions,
+  SignOutOptions,
+  User,
+  UserProfile,
+} from '@asgardeo/browser';
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, use} from 'react';
 import AsgardeoReactClient from '../../AsgardeoReactClient';
 import AsgardeoContext from './AsgardeoContext';
@@ -154,8 +161,17 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     }
   };
 
-  const signUp = (): void => {
-    throw new Error('Not implemented');
+  const signUp = async (payload?: EmbeddedFlowExecuteRequestPayload): Promise<void> => {
+    try {
+      await asgardeo.signUp(payload);
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Error while signing up: ${error.message || error}`,
+        'asgardeo-signUp-Error',
+        'react',
+        'An error occurred while trying to sign up.',
+      );
+    }
   };
 
   const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<string> =>
@@ -175,10 +191,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         isSignedIn: isSignedInSync,
         signIn,
         signOut,
-        signUp: () => {
-          // TODO: Implement signUp functionality
-          throw new Error('Sign up functionality not implemented yet');
-        },
+        signUp,
         user,
         baseUrl,
         afterSignInUrl,

@@ -16,10 +16,12 @@
  * under the License.
  */
 
+import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './embedded-flow';
 import {User, UserProfile} from './user';
 
 export type SignInOptions = Record<string, unknown>;
 export type SignOutOptions = Record<string, unknown>;
+export type SignUpOptions = Record<string, unknown>;
 
 /**
  * Interface defining the core functionality for Asgardeo authentication clients.
@@ -77,6 +79,22 @@ export interface AsgardeoClient<T> {
    * @returns Promise resolving the user upon successful sign in.
    */
   signIn(options?: SignInOptions): Promise<User>;
+
+  /**
+   * Initiates a redirection-based sign-up process for the user.
+   *
+   * @param options - Optional sign-up options like additional parameters to be sent in the sign-up request, etc.
+   * @returns Promise resolving to the user upon successful sign up.
+   */
+  signUp(options?: SignUpOptions): Promise<void>;
+
+  /**
+   * Initiates an embedded (App-Native) sign-up flow for the user.
+   *
+   * @param payload - The payload containing the necessary information to execute the embedded sign-up flow.
+   * @returns A promise that resolves to an EmbeddedFlowExecuteResponse containing the flow execution details.
+   */
+  signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
 
   /**
    * Signs out the currently signed-in user.

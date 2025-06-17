@@ -25,6 +25,11 @@ import {
   SignOutOptions,
   User,
   generateUserProfile,
+  EmbeddedFlowExecuteResponse,
+  SignUpOptions,
+  EmbeddedFlowExecuteRequestPayload,
+  AsgardeoRuntimeError,
+  executeEmbeddedSignUpFlow,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import {AsgardeoReactConfig} from './models/config';
@@ -71,11 +76,11 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
 
     const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
     const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
-    
+
     console.log('Raw Schemas:', JSON.stringify(schemas, null, 2));
 
     const processedSchemas = flattenUserSchema(schemas);
-    
+
     console.log('Processed Schemas:', JSON.stringify(processedSchemas, null, 2));
 
     return {
@@ -111,6 +116,37 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     const response: boolean = await this.asgardeo.signOut(args[1]);
 
     return Promise.resolve(String(response));
+  }
+
+  override async signUp(options?: SignUpOptions): Promise<void>;
+  override async signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
+  override async signUp(...args: any[]): Promise<void | EmbeddedFlowExecuteResponse> {
+    if (args.length === 0) {
+      throw new AsgardeoRuntimeError(
+        'No arguments provided for signUp method.',
+        'react-AsgardeoReactClient-ValidationError-001',
+        'react',
+        'The signUp method requires at least one argument, either a SignUpOptions object or an EmbeddedFlowExecuteRequestPayload.',
+      );
+    }
+
+    const firstArg = args[0];
+
+    if (typeof firstArg === 'object' && 'flowType' in firstArg) {
+      const baseUrl = await (await this.asgardeo.getConfigData()).baseUrl;
+
+      return executeEmbeddedSignUpFlow({
+        baseUrl,
+        payload: firstArg as EmbeddedFlowExecuteRequestPayload,
+      });
+    } else {
+      throw new AsgardeoRuntimeError(
+        'Not implemented',
+        'react-AsgardeoReactClient-ValidationError-002',
+        'react',
+        'The signUp method with SignUpOptions is not implemented in the React client.',
+      );
+    }
   }
 }
 
