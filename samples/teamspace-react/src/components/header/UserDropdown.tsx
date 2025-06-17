@@ -10,7 +10,7 @@ export type UserDropdownProps = {
   mode?: 'custom' | 'default';
 };
 
-export default function UserDropdown({mode = 'custom'}: UserDropdownProps) {
+export default function UserDropdown({mode = 'default'}: UserDropdownProps) {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showUserProfile, setShowUserProfile] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);

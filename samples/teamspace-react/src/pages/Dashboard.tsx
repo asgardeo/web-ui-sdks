@@ -1,8 +1,9 @@
+import {User} from '@asgardeo/react';
 import {useApp} from '../App';
 import {Users, MessageSquare, Calendar, FileText, TrendingUp, Clock, CheckCircle2, AlertCircle} from 'lucide-react';
 
 export default function Dashboard() {
-  const {user, currentOrg} = useApp();
+  const {currentOrg} = useApp();
 
   const stats = [
     {
@@ -94,7 +95,18 @@ export default function Dashboard() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user?.name}!</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Welcome back{' '}
+          <User>
+            {(user) => (
+              <span>
+                {user?.name?.givenName} {user?.name?.familyName}
+              </span>
+            )}
+          </User>
+          !
+        </h1>
+
         <p className="text-gray-600 mt-2">Here's what's happening with {currentOrg?.name} today.</p>
       </div>
 
