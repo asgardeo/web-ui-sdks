@@ -7,9 +7,9 @@
     "express.js",
     "server"
   ],
-  "homepage": "https://github.com/asgardeo/javascript/tree/main/packages/express#readme",
+  "homepage": "https://github.com/asgardeo/web-ui-sdks/tree/main/packages/express#readme",
   "bugs": {
-    "url": "https://github.com/asgardeo/javascript/issues"
+    "url": "https://github.com/asgardeo/web-ui-sdks/issues"
   },
   "author": "WSO2",
   "license": "Apache-2.0",
@@ -29,7 +29,7 @@
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/asgardeo/javascript",
+    "url": "https://github.com/asgardeo/web-ui-sdks",
     "directory": "packages/express"
   },
   "scripts": {
