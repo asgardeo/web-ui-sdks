@@ -9,6 +9,7 @@ createRoot(document.getElementById('root')!).render(
     <AsgardeoProvider
       baseUrl={import.meta.env.VITE_ASGARDEO_BASE_URL}
       afterSignInUrl={import.meta.env.VITE_ASGARDEO_AFTER_SIGN_IN_URL}
+      afterSignOutUrl={import.meta.env.VITE_ASGARDEO_AFTER_SIGN_OUT_URL}
       clientId={import.meta.env.VITE_ASGARDEO_CLIENT_ID}
       scopes={['openid', 'address', 'email', 'profile']}
       preferences={{
