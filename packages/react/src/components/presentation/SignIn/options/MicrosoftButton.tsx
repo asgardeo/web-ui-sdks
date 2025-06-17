@@ -47,7 +47,6 @@ const MicrosoftButton: FC<BaseSignInOptionProps> = ({
       color="primary"
       fullWidth
       disabled={isLoading}
-      loading={isLoading}
       onClick={handleClick}
       className={buttonClassName}
       startIcon={

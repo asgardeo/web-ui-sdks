@@ -43,11 +43,6 @@ export interface SignInProps {
    * Theme variant for the component.
    */
   variant?: 'default' | 'outlined' | 'filled';
-
-  /**
-   * Custom loading text.
-   */
-  loadingText?: string;
 }
 
 /**

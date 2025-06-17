@@ -56,7 +56,6 @@ const SocialLogin: FC<BaseSignInOptionProps> = ({
       color="secondary"
       fullWidth
       disabled={isLoading}
-      loading={isLoading}
       onClick={handleClick}
       className={buttonClassName}
       startIcon={

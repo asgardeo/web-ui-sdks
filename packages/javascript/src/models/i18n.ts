@@ -68,6 +68,23 @@ export interface I18nTranslations {
   'username.password.submit.button': string;
   'username.password.title': string;
   'username.password.subtitle': string;
+
+  /* |---------------------------------------------------------------| */
+  /* |                        Messages                               | */
+  /* |---------------------------------------------------------------| */
+
+  'messages.loading': string;
+
+  /* |---------------------------------------------------------------| */
+  /* |                        Errors                                 | */
+  /* |---------------------------------------------------------------| */
+
+  'errors.title': string;
+  'errors.sign.in.initialization': string;
+  'errors.sign.in.flow.failure': string;
+  'errors.sign.in.flow.completion.failure': string;
+  'errors.sign.in.flow.passkeys.failure': string;
+  'errors.sign.in.flow.passkeys.completion.failure': string;
 }
 
 export type I18nTextDirection = 'ltr' | 'rtl';

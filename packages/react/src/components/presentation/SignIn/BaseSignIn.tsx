@@ -33,6 +33,7 @@ import Card from '../../primitives/Card/Card';
 import Alert from '../../primitives/Alert/Alert';
 import Divider from '../../primitives/Divider/Divider';
 import Typography from '../../primitives/Typography/Typography';
+import Spinner from '../../primitives/Spinner/Spinner';
 import useTranslation from '../../../hooks/useTranslation';
 import {useForm, FormField} from '../../../hooks/useForm';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
@@ -284,11 +285,6 @@ export interface BaseSignInProps {
   messageClassName?: string;
 
   /**
-   * Custom loading text.
-   */
-  loadingText?: string;
-
-  /**
    * Size variant for the component.
    */
   size?: 'small' | 'medium' | 'large';
@@ -355,7 +351,6 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   buttonClassName = '',
   errorClassName = '',
   messageClassName = '',
-  loadingText,
   size = 'medium',
   variant = 'default',
 }) => {
@@ -659,7 +654,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
         response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
       ) {
-        setError(t('errors.authenticationFailedDetail'));
+        setError(t('errors.sign.in.flow.completion.failure'));
         return;
       }
 
@@ -695,7 +690,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         }
       }
     } catch (err) {
-      const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.authenticationFailed');
+      const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.sign.in.flow.failure');
       setError(errorMessage);
       onError?.(err as Error);
     } finally {
@@ -762,7 +757,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
             response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
           ) {
-            setError(t('errors.passkeyAuthenticationFailed'));
+            setError(t('errors.sign.in.flow.passkeys.completion.failure'));
             return;
           }
 
@@ -806,7 +801,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
           // Provide more context for common errors
           let errorMessage =
-            passkeyError instanceof Error ? passkeyError.message : t('errors.passkeyAuthenticationFailed');
+            passkeyError instanceof Error ? passkeyError.message : t('errors.sign.in.flow.passkeys.failure');
 
           // Add additional context for security errors
           if (passkeyError instanceof Error && passkeyError.message.includes('security')) {
@@ -1095,12 +1090,12 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           setIsInitialized(true);
           onFlowChange?.(response);
 
-          if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+          if (response?.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
             onSuccess?.((response as any).authData || {});
             return;
           }
 
-          if (response.nextStep?.authenticators?.length > 0) {
+          if (response?.nextStep?.authenticators?.length > 0) {
             if (response.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' && response.nextStep.authenticators.length > 1) {
               setCurrentAuthenticator(null);
             } else {
@@ -1110,7 +1105,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             }
           }
 
-          if ('nextStep' in response && response.nextStep && 'messages' in response.nextStep) {
+          if (response && 'nextStep' in response && response.nextStep && 'messages' in response.nextStep) {
             const stepMessages = (response.nextStep as any).messages || [];
             setMessages(
               stepMessages.map((msg: any) => ({
@@ -1120,7 +1115,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             );
           }
         } catch (err) {
-          const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.initializationFailed');
+          const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.sign.in.initialization');
           setError(errorMessage);
           onError?.(err as Error);
         } finally {
@@ -1141,7 +1136,12 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     return (
       <Card className={containerClasses}>
         <Card.Content>
-          <Typography variant="body1">{loadingText ?? t('messages.loading')}</Typography>
+          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem'}}>
+            <Spinner size="medium" />
+            <Typography variant="body1" style={{marginTop: '1rem'}}>
+              {t('messages.loading')}
+            </Typography>
+          </div>
         </Card.Content>
       </Card>
     );
@@ -1305,12 +1305,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         <Card.Content>
           <div style={{textAlign: 'center', padding: '2rem'}}>
             <div style={{marginBottom: '1rem'}}>
-              <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  fill="currentColor"
-                  d="M7 14c1.66 0 3-1.34 3-3S8.66 8 7 8s-3 1.34-3 3s1.34 3 3 3m0-4c.55 0 1 .45 1 1s-.45 1-1 1s-1-.45-1-1s.45-1 1-1m12-3h-8l1.5 1.5L9 12l1.5 1.5L8 16h8c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2m-1 5h-1v-1h1v1m0-2h-1V9h1v1"
-                />
-              </svg>
+              <Spinner size="large" />
             </div>
             <Typography variant="body1">{t('passkey.authenticating') || 'Authenticating with passkey...'}</Typography>
             <Typography variant="body2" style={{marginTop: '0.5rem', color: '#666'}}>

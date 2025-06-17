@@ -35,7 +35,7 @@ const translations: I18nTranslations = {
   'elements.buttons.ethereum': 'Continue with Sign In Ethereum',
   'elements.buttons.multi.option': 'Continue with {connection}',
   'elements.buttons.social': 'Continue with {connection}',
-  
+
   /* Fields */
   'elements.fields.placeholder': 'Enter your {field}',
 
@@ -70,6 +70,23 @@ const translations: I18nTranslations = {
   'username.password.submit.button': 'Continue',
   'username.password.title': 'Sign In',
   'username.password.subtitle': 'Enter your username and password to continue.',
+
+  /* |---------------------------------------------------------------| */
+  /* |                        Messages                               | */
+  /* |---------------------------------------------------------------| */
+
+  'messages.loading': 'Loading...',
+
+  /* |---------------------------------------------------------------| */
+  /* |                        Errors                                 | */
+  /* |---------------------------------------------------------------| */
+
+  'errors.title': 'Error',
+  'errors.sign.in.initialization': 'An error occurred while initializing. Please try again later.',
+  'errors.sign.in.flow.failure': 'An error occurred during the sign-in flow. Please try again later.',
+  'errors.sign.in.flow.completion.failure': 'An error occurred while completing the sign-in flow. Please try again later.',
+  'errors.sign.in.flow.passkeys.failure': 'An error occurred while signing in with passkeys. Please try again later.',
+  'errors.sign.in.flow.passkeys.completion.failure': 'An error occurred while completing the passkeys sign-in flow. Please try again later.',
 };
 
 const metadata: I18nMetadata = {

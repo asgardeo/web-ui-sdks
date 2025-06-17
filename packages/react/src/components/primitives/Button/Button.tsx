@@ -20,6 +20,7 @@ import {CSSProperties, FC, ButtonHTMLAttributes, forwardRef, useMemo} from 'reac
 import useTheme from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
+import Spinner, {SpinnerSize} from '../Spinner/Spinner';
 
 export type ButtonColor = 'primary' | 'secondary' | 'tertiary' | string;
 export type ButtonVariant = 'solid' | 'outline' | 'text';
@@ -257,39 +258,6 @@ const useButtonStyles = (
   }, [theme, color, variant, size, fullWidth, disabled, loading]);
 };
 
-const LoadingSpinner: FC<{size: ButtonSize}> = ({size}) => {
-  const {theme} = useTheme();
-
-  const spinnerSize = {
-    small: '12px',
-    medium: '16px',
-    large: '20px',
-  }[size];
-
-  const spinnerStyle: CSSProperties = {
-    width: spinnerSize,
-    height: spinnerSize,
-    border: '2px solid transparent',
-    borderTop: '2px solid currentColor',
-    borderRadius: '50%',
-    animation: 'asgardeo-button-spin 1s linear infinite',
-  };
-
-  return (
-    <>
-      <style>
-        {`
-          @keyframes asgardeo-button-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}
-      </style>
-      <span style={spinnerStyle} />
-    </>
-  );
-};
-
 /**
  * Button component with multiple variants and types.
  *
@@ -358,7 +326,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || loading}
         {...rest}
       >
-        {loading && <LoadingSpinner size={size} />}
+        {loading && (
+          <Spinner 
+            size={size as SpinnerSize} 
+            color="currentColor" 
+            style={{
+              width: size === 'small' ? '12px' : size === 'medium' ? '16px' : '20px',
+              height: size === 'small' ? '12px' : size === 'medium' ? '16px' : '20px'
+            }}
+          />
+        )}
         {!loading && startIcon && <span>{startIcon}</span>}
         {children && <span>{children}</span>}
         {!loading && endIcon && <span>{endIcon}</span>}
