@@ -16,15 +16,17 @@
  * under the License.
  */
 
-import {FC, ReactElement} from 'react';
+import {FC, ReactElement, useState} from 'react';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import BaseUserDropdown, {BaseUserDropdownProps} from './BaseUserDropdown';
+import UserProfile from '../UserProfile/UserProfile';
+import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 
 /**
  * Props for the UserDropdown component.
- * Extends BaseUserDropdownProps but makes the user prop optional since it will be obtained from useAsgardeo
+ * Extends BaseUserDropdownProps but excludes user, onManageProfile, and onSignOut since they're handled internally
  */
-export type UserDropdownProps = Omit<BaseUserDropdownProps, 'user'>;
+export type UserDropdownProps = Omit<BaseUserDropdownProps, 'user' | 'onManageProfile' | 'onSignOut'>;
 
 /**
  * UserDropdown component displays a user avatar with a dropdown menu.
@@ -50,9 +52,28 @@ export type UserDropdownProps = Omit<BaseUserDropdownProps, 'user'>;
  * ```
  */
 const UserDropdown: FC<UserDropdownProps> = ({...rest}: UserDropdownProps): ReactElement => {
-  const {user, isLoading} = useAsgardeo();
+  const {user, isLoading, signOut} = useAsgardeo();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  return <BaseUserDropdown user={user} isLoading={isLoading} {...rest} />;
+  const handleManageProfile = () => {
+    setIsProfileOpen(true);
+  };
+
+  const handleSignOut = () => {
+    signOut();
+  };
+
+  return (
+    <>
+      <BaseUserDropdown
+        user={user}
+        isLoading={isLoading}
+        onManageProfile={handleManageProfile}
+        onSignOut={handleSignOut}
+        {...rest}
+      />
+    </>
+  );
 };
 
 export default UserDropdown;

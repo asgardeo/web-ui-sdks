@@ -182,6 +182,8 @@ export {default as CircleCheck} from './components/primitives/Icons/CircleCheck'
 export {default as CircleAlert} from './components/primitives/Icons/CircleAlert';
 export {default as TriangleAlert} from './components/primitives/Icons/TriangleAlert';
 export {default as Info} from './components/primitives/Icons/Info';
+export {default as UserIcon} from './components/primitives/Icons/User';
+export {default as LogOut} from './components/primitives/Icons/LogOut';
 
 export {
   createField,

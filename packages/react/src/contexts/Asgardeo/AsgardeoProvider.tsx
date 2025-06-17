@@ -142,7 +142,11 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const signIn = async (options?: SignInOptions): Promise<User> => {
     try {
       const response = await asgardeo.signIn(options);
-      // setUser(await asgardeo.getUser());
+
+      if (await asgardeo.isSignedIn()) {
+        setUser(await asgardeo.getUser());
+        setUserProfile(await asgardeo.getUserProfile());
+      }
 
       return response;
     } catch (error) {
@@ -177,7 +181,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         },
         user,
         baseUrl,
-        afterSignInUrl
+        afterSignInUrl,
       }}
     >
       <I18nProvider preferences={preferences?.i18n}>

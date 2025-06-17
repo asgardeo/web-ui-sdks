@@ -36,6 +36,8 @@ import useTheme from '../../../contexts/Theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
 import Typography from '../../primitives/Typography/Typography';
+import User from '../../primitives/Icons/User';
+import LogOut from '../../primitives/Icons/LogOut';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 
 const useStyles = () => {
@@ -58,8 +60,11 @@ const useStyles = () => {
       } as CSSProperties,
       userName: {
         color: theme.colors.text.primary,
-        fontSize: '1rem',
         fontWeight: 500,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        maxWidth: '120px',
       } as CSSProperties,
       dropdownContent: {
         minWidth: '200px',
@@ -81,6 +86,7 @@ const useStyles = () => {
       menuItem: {
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'flex-start',
         gap: theme.spacing.unit + 'px',
         padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
         width: '100%',
@@ -90,6 +96,7 @@ const useStyles = () => {
         background: 'none',
         cursor: 'pointer',
         fontSize: '0.875rem',
+        textAlign: 'left',
         '&:hover': {
           backgroundColor: theme.colors.background,
         },
@@ -109,17 +116,28 @@ const useStyles = () => {
         display: 'flex',
         flexDirection: 'column',
         gap: theme.spacing.unit / 4 + 'px',
+        flex: 1,
+        minWidth: 0,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
       } as CSSProperties,
       headerName: {
         color: theme.colors.text.primary,
         fontSize: '1rem',
         fontWeight: 500,
         margin: 0,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
       } as CSSProperties,
       headerEmail: {
         color: theme.colors.text.secondary,
         fontSize: '0.875rem',
         margin: 0,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
       } as CSSProperties,
       loadingContainer: {
         display: 'flex',
@@ -182,6 +200,14 @@ export interface BaseUserDropdownProps {
    */
   avatarSize?: number;
   /**
+   * Callback function for "Manage Profile" action
+   */
+  onManageProfile?: () => void;
+  /**
+   * Callback function for "Sign Out" action
+   */
+  onSignOut?: () => void;
+  /**
    * Mapping of component attribute names to identity provider field names.
    * Allows customizing which user profile fields should be used for each attribute.
    */
@@ -206,8 +232,10 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
   isLoading = false,
   portalId = 'asgardeo-user-dropdown',
   menuItems = [],
-  showTriggerLabel = false,
+  showTriggerLabel = true,
   avatarSize = 32,
+  onManageProfile,
+  onSignOut,
   attributeMapping = {},
 }): ReactElement => {
   const styles = useStyles();
@@ -259,6 +287,35 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
     setIsOpen(false);
   };
 
+  // Create default menu items
+  const defaultMenuItems: MenuItem[] = [];
+
+  if (onManageProfile) {
+    defaultMenuItems.push({
+      label: 'Manage Profile',
+      onClick: onManageProfile,
+      icon: <User width="16" height="16" />,
+    });
+  }
+
+  if (onSignOut) {
+    defaultMenuItems.push({
+      label: 'Sign Out',
+      onClick: onSignOut,
+      icon: <LogOut width="16" height="16" />,
+    });
+  }
+
+  // Merge custom menu items with default ones
+  const allMenuItems = [...menuItems];
+  if (defaultMenuItems.length > 0) {
+    // Add divider before default items if there are custom items
+    if (menuItems.length > 0) {
+      allMenuItems.push({label: '', onClick: undefined}); // Divider placeholder
+    }
+    allMenuItems.push(...defaultMenuItems);
+  }
+
   return (
     <div className={clsx(withVendorCSSClassPrefix('user-dropdown'), className)}>
       <Button
@@ -277,9 +334,13 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
           alt={`${getDisplayName()}'s avatar`}
         />
         {showTriggerLabel && (
-          <span className={withVendorCSSClassPrefix('user-dropdown__trigger-label')} style={styles.userName}>
+          <Typography
+            variant="body2"
+            className={withVendorCSSClassPrefix('user-dropdown__trigger-label')}
+            style={styles.userName}
+          >
             {getDisplayName()}
-          </span>
+          </Typography>
         )}
       </Button>
 
@@ -301,6 +362,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                 />
                 <div className={withVendorCSSClassPrefix('user-dropdown__header-info')} style={styles.headerInfo}>
                   <Typography
+                    noWrap
                     className={withVendorCSSClassPrefix('user-dropdown__header-name')}
                     variant="body1"
                     fontWeight="medium"
@@ -308,6 +370,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                     {getDisplayName()}
                   </Typography>
                   <Typography
+                    noWrap
                     className={withVendorCSSClassPrefix('user-dropdown__header-email')}
                     variant="caption"
                     color="secondary"
@@ -318,9 +381,12 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                 </div>
               </div>
               <div className={withVendorCSSClassPrefix('user-dropdown__menu')} style={styles.dropdownMenu}>
-                {menuItems.map((item, index) => (
+                {allMenuItems.map((item, index) => (
                   <div key={index}>
-                    {item.href ? (
+                    {item.label === '' ? (
+                      // Render divider for empty label placeholder
+                      <div className={withVendorCSSClassPrefix('user-dropdown__menu-divider')} style={styles.divider} />
+                    ) : item.href ? (
                       <a
                         href={item.href}
                         style={styles.menuItem}
@@ -341,9 +407,6 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                       >
                         {item.label}
                       </Button>
-                    )}
-                    {index < menuItems.length - 1 && (
-                      <div className={withVendorCSSClassPrefix('user-dropdown__menu-divider')} style={styles.divider} />
                     )}
                   </div>
                 ))}
