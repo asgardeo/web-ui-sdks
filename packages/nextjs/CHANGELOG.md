@@ -1,5 +1,14 @@
 # @asgardeo/nextjs
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`efe951f`](https://github.com/asgardeo/web-ui-sdks/commit/efe951f3dd45a477360b5a3a16990a78dc26982f)]:
+  - @asgardeo/react@0.4.0
+  - @asgardeo/node@0.0.2
+
 ## 0.0.1
 
 ### Patch Changes
