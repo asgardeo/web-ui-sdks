@@ -35,7 +35,7 @@ import {
 import useTheme from '../../../contexts/Theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
-import Spinner from '../../primitives/Spinner/Spinner';
+import Typography from '../../primitives/Typography/Typography';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 
 const useStyles = () => {
@@ -108,7 +108,7 @@ const useStyles = () => {
       headerInfo: {
         display: 'flex',
         flexDirection: 'column',
-        gap: theme.spacing.unit / 2 + 'px',
+        gap: theme.spacing.unit / 4 + 'px',
       } as CSSProperties,
       headerName: {
         color: theme.colors.text.primary,
@@ -232,6 +232,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
     firstName: 'name.givenName',
     lastName: 'name.familyName',
     email: 'emails',
+    username: 'userName',
   };
 
   const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};
@@ -291,73 +292,62 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
               style={{...floatingStyles, ...styles.dropdownContent}}
               {...getFloatingProps()}
             >
-              {isLoading ? (
-                <div className={withVendorCSSClassPrefix('user-dropdown__loading')} style={styles.loadingContainer}>
-                  <Spinner size="small" />
+              <div className={withVendorCSSClassPrefix('user-dropdown__header')} style={styles.dropdownHeader}>
+                <Avatar
+                  imageUrl={getMappedUserProfileValue('picture', mergedMappings, user)}
+                  name={getDisplayName()}
+                  size={avatarSize * 1.25}
+                  alt={`${getDisplayName()}'s avatar`}
+                />
+                <div className={withVendorCSSClassPrefix('user-dropdown__header-info')} style={styles.headerInfo}>
+                  <Typography
+                    className={withVendorCSSClassPrefix('user-dropdown__header-name')}
+                    variant="body1"
+                    fontWeight="medium"
+                  >
+                    {getDisplayName()}
+                  </Typography>
+                  <Typography
+                    className={withVendorCSSClassPrefix('user-dropdown__header-email')}
+                    variant="caption"
+                    color="secondary"
+                  >
+                    {getMappedUserProfileValue('username', mergedMappings, user) ||
+                      getMappedUserProfileValue('email', mergedMappings, user)}
+                  </Typography>
                 </div>
-              ) : (
-                <>
-                  <div className={withVendorCSSClassPrefix('user-dropdown__header')} style={styles.dropdownHeader}>
-                    <Avatar
-                      imageUrl={getMappedUserProfileValue('picture', mergedMappings, user)}
-                      name={getDisplayName()}
-                      size={avatarSize * 1.25}
-                      alt={`${getDisplayName()}'s avatar`}
-                    />
-                    <div className={withVendorCSSClassPrefix('user-dropdown__header-info')} style={styles.headerInfo}>
-                      <span
-                        className={withVendorCSSClassPrefix('user-dropdown__header-name')}
-                        style={styles.headerName}
+              </div>
+              <div className={withVendorCSSClassPrefix('user-dropdown__menu')} style={styles.dropdownMenu}>
+                {menuItems.map((item, index) => (
+                  <div key={index}>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        style={styles.menuItem}
+                        className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
                       >
-                        {getDisplayName()}
-                      </span>
-                      {getMappedUserProfileValue('email', mergedMappings, user) !== getDisplayName() &&
-                        getMappedUserProfileValue('email', mergedMappings, user) && (
-                          <span
-                            className={withVendorCSSClassPrefix('user-dropdown__header-email')}
-                            style={styles.headerEmail}
-                          >
-                            {getMappedUserProfileValue('email', mergedMappings, user)}
-                          </span>
-                        )}
-                    </div>
+                        {item.icon}
+                        {item.label}
+                      </a>
+                    ) : (
+                      <Button
+                        onClick={() => handleMenuItemClick(item)}
+                        style={styles.menuItem}
+                        className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
+                        color="tertiary"
+                        variant="text"
+                        size="small"
+                        startIcon={item.icon}
+                      >
+                        {item.label}
+                      </Button>
+                    )}
+                    {index < menuItems.length - 1 && (
+                      <div className={withVendorCSSClassPrefix('user-dropdown__menu-divider')} style={styles.divider} />
+                    )}
                   </div>
-                  <div className={withVendorCSSClassPrefix('user-dropdown__menu')} style={styles.dropdownMenu}>
-                    {menuItems.map((item, index) => (
-                      <div key={index}>
-                        {item.href ? (
-                          <a
-                            href={item.href}
-                            style={styles.menuItem}
-                            className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
-                          >
-                            {item.icon}
-                            {item.label}
-                          </a>
-                        ) : (
-                          <Button
-                            onClick={() => handleMenuItemClick(item)}
-                            style={styles.menuItem}
-                            className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
-                            color="tertiary"
-                            variant="text"
-                            size="small"
-                            startIcon={item.icon}
-                          >
-                            {item.label}
-                          </Button>
-                        )}
-                        {index < menuItems.length - 1 && (
-                          <div
-                            className={withVendorCSSClassPrefix('user-dropdown__menu-divider')}
-                            style={styles.divider}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
+                ))}
+              </div>
             </div>
           </FloatingFocusManager>
         </FloatingPortal>
