@@ -100,6 +100,12 @@ export * from './components/presentation/SignIn/BaseSignIn';
 export {default as SignIn} from './components/presentation/SignIn/SignIn';
 export * from './components/presentation/SignIn/SignIn';
 
+export {default as BaseSignUp} from './components/presentation/SignUp/BaseSignUp';
+export * from './components/presentation/SignUp/BaseSignUp';
+
+export {default as SignUp} from './components/presentation/SignUp/SignUp';
+export * from './components/presentation/SignUp/SignUp';
+
 // Sign-In Options
 export {default as IdentifierFirst} from './components/presentation/SignIn/options/IdentifierFirst';
 export {default as UsernamePassword} from './components/presentation/SignIn/options/UsernamePassword';

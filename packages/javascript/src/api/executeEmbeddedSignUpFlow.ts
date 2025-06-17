@@ -68,7 +68,7 @@ const executeEmbeddedSignUpFlow = async ({
   payload,
   ...requestConfig
 }: EmbeddedSignUpFlowExecuteRequestConfig): Promise<EmbeddedFlowExecuteResponse> => {
-  if (!baseUrl || !url) {
+  if (!baseUrl && !url) {
     throw new AsgardeoAPIError(
       'Embedded SignUp flow execution failed: Base URL or URL is not provided.',
       'javascript-executeEmbeddedSignUpFlow-ValidationError-001',

@@ -1,0 +1,144 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse, EmbeddedFlowType} from '@asgardeo/browser';
+import {FC} from 'react';
+import BaseSignUp from './BaseSignUp';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
+
+/**
+ * Props for the SignUp component.
+ */
+export interface SignUpProps {
+  /**
+   * Additional CSS class names for customization.
+   */
+  className?: string;
+
+  /**
+   * Size variant for the component.
+   */
+  size?: 'small' | 'medium' | 'large';
+
+  /**
+   * Theme variant for the component.
+   */
+  variant?: 'default' | 'outlined' | 'filled';
+
+  /**
+   * URL to redirect after successful sign-up.
+   */
+  afterSignUpUrl?: string;
+
+  /**
+   * Callback function called when sign-up is successful.
+   * @param response - The sign-up response data returned upon successful completion.
+   */
+  onSuccess?: (response: EmbeddedFlowExecuteResponse) => void;
+
+  /**
+   * Callback function called when sign-up fails.
+   * @param error - The error that occurred during sign-up.
+   */
+  onError?: (error: Error) => void;
+}
+
+/**
+ * A styled SignUp component that provides embedded sign-up flow with pre-built styling.
+ * This component handles the API calls for sign-up and delegates UI logic to BaseSignUp.
+ *
+ * @example
+ * ```tsx
+ * import { SignUp } from '@asgardeo/react';
+ *
+ * const App = () => {
+ *   return (
+ *     <SignUp
+ *       onSuccess={(response) => {
+ *         console.log('Sign-up successful:', response);
+ *         // Handle successful sign-up (e.g., redirect, show confirmation)
+ *       }}
+ *       onError={(error) => {
+ *         console.error('Sign-up failed:', error);
+ *       }}
+ *       size="medium"
+ *       variant="outlined"
+ *       afterSignUpUrl="/welcome"
+ *     />
+ *   );
+ * };
+ * ```
+ */
+const SignUp: FC<SignUpProps> = ({
+  className,
+  size = 'medium',
+  variant = 'default',
+  afterSignUpUrl,
+  onSuccess,
+  onError,
+}) => {
+  const {signUp} = useAsgardeo();
+
+  /**
+   * Initialize the sign-up flow.
+   */
+  const handleInitialize = async (
+    payload?: EmbeddedFlowExecuteRequestPayload,
+  ): Promise<EmbeddedFlowExecuteResponse> => {
+    return await signUp(
+      payload || {
+        flowType: EmbeddedFlowType.Registration,
+      },
+    );
+  };
+
+  /**
+   * Handle sign-up steps.
+   */
+  const handleOnSubmit = async (payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse> => {
+    return await signUp(payload);
+  };
+
+  /**
+   * Handle successful sign-up and redirect.
+   */
+  const handleSuccess = (response: EmbeddedFlowExecuteResponse) => {
+    // Call the provided onSuccess callback first
+    onSuccess?.(response);
+
+    // Handle redirect if afterSignUpUrl is provided
+    if (afterSignUpUrl) {
+      window.location.href = afterSignUpUrl;
+    }
+  };
+
+  return (
+    <BaseSignUp
+      afterSignUpUrl={afterSignUpUrl}
+      onInitialize={handleInitialize}
+      onSubmit={handleOnSubmit}
+      onSuccess={handleSuccess}
+      onError={onError}
+      className={className}
+      size={size}
+      variant={variant}
+    />
+  );
+};
+
+export default SignUp;

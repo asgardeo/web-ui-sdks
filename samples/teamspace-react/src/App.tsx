@@ -11,6 +11,7 @@ import LandingPage from './pages/LandingPage';
 import LandingLayout from './layouts/LandingLayout';
 import DashboardLayout from './layouts/DashboardLayout';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
+import SignUpPage from './pages/SignUpPage';
 
 // Types
 export interface User {
@@ -112,6 +113,14 @@ function App() {
             element={
               <AuthenticatedLayout>
                 <SignInPage />
+              </AuthenticatedLayout>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <AuthenticatedLayout>
+                <SignUpPage />
               </AuthenticatedLayout>
             }
           />

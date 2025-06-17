@@ -19,6 +19,7 @@
 import {
   AsgardeoRuntimeError,
   EmbeddedFlowExecuteRequestPayload,
+  EmbeddedFlowExecuteResponse,
   SignInOptions,
   SignOutOptions,
   User,
@@ -161,9 +162,9 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     }
   };
 
-  const signUp = async (payload?: EmbeddedFlowExecuteRequestPayload): Promise<void> => {
+  const signUp = async (payload?: EmbeddedFlowExecuteRequestPayload): Promise<void | EmbeddedFlowExecuteResponse> => {
     try {
-      await asgardeo.signUp(payload);
+      return await asgardeo.signUp(payload);
     } catch (error) {
       throw new AsgardeoRuntimeError(
         `Error while signing up: ${error.message || error}`,
@@ -187,7 +188,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   return (
     <AsgardeoContext.Provider
       value={{
-        isLoading: false,
+        isLoading: asgardeo.isLoading(),
         isSignedIn: isSignedInSync,
         signIn,
         signOut,

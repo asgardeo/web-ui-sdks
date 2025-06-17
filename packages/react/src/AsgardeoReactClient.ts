@@ -133,7 +133,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     const firstArg = args[0];
 
     if (typeof firstArg === 'object' && 'flowType' in firstArg) {
-      const baseUrl = await (await this.asgardeo.getConfigData()).baseUrl;
+      const baseUrl: string = (await this.asgardeo.getConfigData())?.baseUrl;
 
       return executeEmbeddedSignUpFlow({
         baseUrl,

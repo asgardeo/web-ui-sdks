@@ -50,6 +50,7 @@ export {
 } from './models/application-native-authentication';
 export {
   EmbeddedFlowType,
+  EmbeddedFlowStatus,
   EmbeddedFlowExecuteResponse,
   EmbeddedFlowResponseType,
   EmbeddedSignUpFlowData,
