@@ -20,7 +20,6 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   AuthSPAClientConfig,
-  User,
   Config,
   TokenExchangeRequestConfig,
   IdTokenPayload,
@@ -30,6 +29,7 @@ import {
   HttpResponse,
   OIDCEndpoints,
   SignInConfig,
+  User,
 } from '@asgardeo/browser';
 
 export interface ReactConfig {

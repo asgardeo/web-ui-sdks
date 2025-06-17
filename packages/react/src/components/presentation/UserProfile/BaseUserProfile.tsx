@@ -53,9 +53,9 @@ export interface BaseUserProfileProps {
   fallback?: ReactElement;
   className?: string;
   cardLayout?: boolean;
-  profile: User;
+  profile?: User;
   flattenedProfile?: User;
-  schemas: Schema[];
+  schemas?: Schema[];
   mode?: 'inline' | 'popup';
   title?: string;
   attributeMapping?: {
