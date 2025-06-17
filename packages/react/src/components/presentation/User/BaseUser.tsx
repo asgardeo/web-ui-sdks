@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {User} from '@asgardeo/browser';
+import {User as IUser} from '@asgardeo/browser';
 import {FC, ReactElement, ReactNode} from 'react';
 
 /**
@@ -26,14 +26,14 @@ export interface BaseUserProps {
   /**
    * The user object to display. If not provided, the component will render the fallback.
    */
-  user: User | null;
+  user: IUser | null;
 
   /**
    * Render prop that takes the user object and returns a ReactNode.
    * @param user - The authenticated user object from Asgardeo.
    * @returns A ReactNode to render.
    */
-  children: (user: User | null) => ReactNode;
+  children: (user: IUser | null) => ReactNode;
 
   /**
    * Optional element to render when no user is provided.

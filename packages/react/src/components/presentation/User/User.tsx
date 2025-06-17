@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {User} from '@asgardeo/browser';
+import {User as IUser} from '@asgardeo/browser';
 import {FC, ReactElement, ReactNode} from 'react';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import BaseUser, {BaseUserProps} from './BaseUser';
@@ -31,7 +31,7 @@ export interface UserProps extends Omit<BaseUserProps, 'user'> {
    * @param user - The authenticated user object from Asgardeo.
    * @returns A ReactNode to render.
    */
-  children: (user: User | null) => ReactNode;
+  children: (user: IUser | null) => ReactNode;
 
   /**
    * Optional element to render when no user is signed in.
@@ -47,7 +47,7 @@ export interface UserProps extends Omit<BaseUserProps, 'user'> {
  *
  * @example
  * ```tsx
- * import { User } from '@asgardeo/auth-react';
+ * import { IUser } from '@asgardeo/auth-react';
  *
  * const App = () => {
  *   return (
