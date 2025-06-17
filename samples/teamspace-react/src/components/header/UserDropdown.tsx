@@ -1,109 +1,119 @@
 'use client';
 
-import {useState, useRef, useEffect} from 'react';
-import {Link} from 'react-router-dom';
-import {ChevronDown, Settings, User as UserIcon, LogOut, CogIcon} from 'lucide-react';
-import {SignOutButton, User, UserProfile, UserDropdown as ReactUserDropdown} from '@asgardeo/react';
+import {ChevronDown, CogIcon, LogOut, Settings} from 'lucide-react';
+import {UserDropdown as _UserDropdown, SignOutButton, UserIcon, UserProfile} from '@asgardeo/react';
 import {PoundSterling} from 'lucide-react';
-import {useApp} from '../../App';
+import {useState, useRef} from 'react';
+import {Link} from 'react-router-dom';
 
-export default function UserDropdown() {
-  const {user} = useApp();
+export type UserDropdownProps = {
+  mode?: 'custom' | 'default';
+};
+
+export default function UserDropdown({mode = 'custom'}: UserDropdownProps) {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showUserProfile, setShowUserProfile] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
-        setShowUserDropdown(false);
-      }
-    };
+  if (mode === 'custom') {
+    return (
+      <_UserDropdown>
+        {({user, isLoading}) => (
+          <>
+            <div className="relative" ref={userDropdownRef}>
+              <button
+                onClick={() => setShowUserDropdown(!showUserDropdown)}
+                className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50"
+              >
+                {isLoading ? (
+                  <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
+                ) : user?.profileUrl ? (
+                  <img src={user.profileUrl} alt={user.userName} className="w-8 h-8 rounded-full" />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <span className="text-white text-sm font-medium">{user?.userName?.charAt(0)?.toUpperCase()}</span>
+                  </div>
+                )}
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </button>
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+              {showUserDropdown && (
+                <div className="absolute right-0 mt-2 w-75 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <div className="text-sm font-medium text-gray-900">
+                      {user?.name?.givenName} {user?.name?.familyName}
+                    </div>
+                    <div className="text-sm text-gray-500">@{user?.userName}</div>
+                  </div>
+
+                  <button
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    onClick={() => {
+                      setShowUserProfile(true);
+                      setShowUserDropdown(false);
+                    }}
+                  >
+                    <UserIcon className="h-4 w-4 mr-3" />
+                    Your profile
+                  </button>
+
+                  <Link
+                    to="/settings"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    onClick={() => setShowUserDropdown(false)}
+                  >
+                    <Settings className="h-4 w-4 mr-3" />
+                    Settings
+                  </Link>
+
+                  <div className="border-t border-gray-100 mt-1">
+                    <SignOutButton>
+                      {({signOut}) => (
+                        <button
+                          onClick={() => {
+                            signOut();
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          <LogOut className="h-4 w-4 mr-3" />
+                          Sign out
+                        </button>
+                      )}
+                    </SignOutButton>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {showUserProfile && <UserProfile mode="popup" />}
+          </>
+        )}
+      </_UserDropdown>
+    );
+  }
 
   return (
-    <>
-      <div className="relative" ref={userDropdownRef}>
-        {/* <button
-          onClick={() => setShowUserDropdown(!showUserDropdown)}
-          className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50"
-        >
-          <User>{user => <img src={user?.profileUrl} alt={user?.userName} className="w-8 h-8 rounded-full" />}</User>
-          <ChevronDown className="h-4 w-4 text-gray-500" />
-        </button> */}
-        <ReactUserDropdown
-          menuItems={[
-            {
-              label: (
-                <span className="flex items-center">
-                  <PoundSterling className="h-4 w-4 mr-3" />
-                  Your profile
-                </span>
-              ),
-              onClick: () => null,
-            },
-            {
-              label: (
-                <span className="flex items-center">
-                  <CogIcon className="h-4 w-4 mr-3" />
-                  Settings
-                </span>
-              ),
-              href: '/settings',
-            },
-          ]}
-        />
-
-        {showUserDropdown && (
-          <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
-            <div className="px-4 py-3 border-b border-gray-100">
-              <div className="text-sm font-medium text-gray-900">{user?.name}</div>
-              <div className="text-sm text-gray-500">@{user?.username}</div>
-            </div>
-
-            <button
-              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-              onClick={() => {
-                setShowUserProfile(true);
-                setShowUserDropdown(false);
-              }}
-            >
-              <UserIcon className="h-4 w-4 mr-3" />
-              Your profile
-            </button>
-
-            <Link
-              to="/settings"
-              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-              onClick={() => setShowUserDropdown(false)}
-            >
-              <Settings className="h-4 w-4 mr-3" />
+    <_UserDropdown
+      menuItems={[
+        {
+          label: (
+            <span className="flex items-center">
+              <PoundSterling className="h-4 w-4 mr-3" />
+              Billing
+            </span>
+          ),
+          onClick: () => null,
+        },
+        {
+          label: (
+            <span className="flex items-center">
+              <CogIcon className="h-4 w-4 mr-3" />
               Settings
-            </Link>
-
-            <div className="border-t border-gray-100 mt-1">
-              <SignOutButton>
-                {({signOut}) => (
-                  <button
-                    onClick={() => {
-                      signOut();
-                    }}
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  >
-                    <LogOut className="h-4 w-4 mr-3" />
-                    Sign out
-                  </button>
-                )}
-              </SignOutButton>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {showUserProfile && <UserProfile mode="popup" />}
-    </>
+            </span>
+          ),
+          href: '/settings',
+        },
+      ]}
+    />
   );
 }
