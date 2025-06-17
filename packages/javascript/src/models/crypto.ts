@@ -32,14 +32,14 @@ export interface JWKInterface {
  * Cryptographic utility interface for OIDC operations.
  * Provides methods for encoding, decoding, hashing, and JWT verification
  * used in OAuth2/OIDC flows.
- * 
+ *
  * @remarks
  * This interface abstracts cryptographic operations needed for:
  * - PKCE challenge/verifier generation
  * - JWT token validation
  * - Base64URL encoding/decoding
  * - Secure random number generation
- * 
+ *
  * @example
  * ```typescript
  * class MyCrypto implements Crypto<Uint8Array> {
@@ -93,7 +93,7 @@ export interface Crypto<T = any> {
    * @param idToken - ID Token to be verified.
    * @param jwk - JWK to be used for verification.
    * @param algorithms - Algorithms to be used for verification.
-   * @param clientID - Client ID to be used for verification.
+   * @param clientId - Client ID to be used for verification.
    * @param issuer - Issuer to be used for verification.
    * @param subject - Subject to be used for verification.
    * @param clockTolerance - Clock tolerance to be used for verification.
@@ -106,7 +106,7 @@ export interface Crypto<T = any> {
     idToken: string,
     jwk: JWKInterface,
     algorithms: string[],
-    clientID: string,
+    clientId: string,
     issuer: string,
     subject: string,
     clockTolerance?: number,

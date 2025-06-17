@@ -32,7 +32,9 @@ const authorize = async (): Promise<AuthApiResponse> => {
 
   try {
     const authInstace: UIAuthClient = AuthClient.getInstance();
-    const params: Map<string, string> = await authInstace.getAuthorizationURLParams();
+    // FIXME: We should be able to get the URL itself.
+    // const params: Map<string, string> = await authInstace.getAuthorizationURLParams();
+    const params: Map<string, string> = new Map();
 
     const formBody: URLSearchParams = new URLSearchParams();
 
@@ -41,7 +43,7 @@ const authorize = async (): Promise<AuthApiResponse> => {
     });
 
     /* Save the state temporarily in the data layer, this needs to be passed when token is requested */
-    await authInstace.getDataLayer().setTemporaryDataParameter('state', params.get('state'));
+    await authInstace.getStorageManager().setTemporaryDataParameter('state', params.get('state'));
 
     const headers: Headers = new Headers();
     headers.append('Accept', 'application/json');
@@ -53,7 +55,7 @@ const authorize = async (): Promise<AuthApiResponse> => {
       method: 'POST',
     };
 
-    authzURL = (await authInstace.getOIDCServiceEndpoints()).authorizationEndpoint;
+    authzURL = (await authInstace.getOpenIDProviderEndpoints()).authorizationEndpoint;
   } catch (error) {
     throw new AsgardeoUIException('JS_UI_CORE-AUTHZ-A-NF', 'Authorization request building failed', error.stack);
   }

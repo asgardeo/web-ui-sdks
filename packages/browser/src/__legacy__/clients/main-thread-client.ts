@@ -19,36 +19,37 @@
 import {
   AsgardeoAuthClient,
   AuthClientConfig,
-  BasicUserInfo,
+  User,
   IsomorphicCrypto,
-  DataLayer,
+  StorageManager,
   IdTokenPayload,
-  FetchResponse,
-  GetAuthURLConfig,
+  ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
-  ResponseMode,
   OIDCRequestConstants,
   SessionData,
-  Store,
+  Storage,
   extractPkceStorageKeyFromState,
+  initializeApplicationNativeAuthentication,
+  handleApplicationNativeAuthentication,
+  TemporaryStore,
 } from '@asgardeo/javascript';
 import {SILENT_SIGN_IN_STATE, TOKEN_REQUEST_CONFIG_KEY} from '../constants';
 import {AuthenticationHelper, SPAHelper, SessionManagementHelper} from '../helpers';
 import {HttpClient, HttpClientInstance} from '../http-client';
 import {HttpError, HttpRequestConfig, HttpResponse, MainThreadClientConfig, MainThreadClientInterface} from '../models';
 import {SPACustomGrantConfig} from '../models/request-custom-grant';
-import {Storage} from '../models/storage';
+import {BrowserStorage} from '../models/storage';
 import {LocalStore, MemoryStore, SessionStore} from '../stores';
 import {SPAUtils} from '../utils';
 import {SPACryptoUtils} from '../utils/crypto-utils';
 
-const initiateStore = (store: Storage | undefined): Store => {
+const initiateStore = (store: BrowserStorage | undefined): Storage => {
   switch (store) {
-    case Storage.LocalStorage:
+    case BrowserStorage.LocalStorage:
       return new LocalStore();
-    case Storage.SessionStorage:
+    case BrowserStorage.SessionStorage:
       return new SessionStore();
-    case Storage.BrowserMemory:
+    case BrowserStorage.BrowserMemory:
       return new MemoryStore();
     default:
       return new SessionStore();
@@ -63,18 +64,18 @@ export const MainThreadClient = async (
     spaHelper: SPAHelper<MainThreadClientConfig>,
   ) => AuthenticationHelper<MainThreadClientConfig>,
 ): Promise<MainThreadClientInterface> => {
-  const _store: Store = initiateStore(config.storage as Storage);
+  const _store: Storage = initiateStore(config.storage as BrowserStorage);
   const _cryptoUtils: SPACryptoUtils = new SPACryptoUtils();
   const _authenticationClient = new AsgardeoAuthClient<MainThreadClientConfig>();
   await _authenticationClient.initialize(config, _store, _cryptoUtils, instanceID);
 
   const _spaHelper = new SPAHelper<MainThreadClientConfig>(_authenticationClient);
-  const _dataLayer = _authenticationClient.getDataLayer();
+  const _dataLayer = _authenticationClient.getStorageManager();
   const _sessionManagementHelper = await SessionManagementHelper(
     async () => {
-      return _authenticationClient.getSignOutURL();
+      return _authenticationClient.getSignOutUrl();
     },
-    (config.storage as Storage) ?? Storage.SessionStorage,
+    (config.storage as BrowserStorage) ?? BrowserStorage.SessionStorage,
     (sessionState: string) =>
       _dataLayer.setSessionDataParameter(
         OIDCRequestConstants.Params.SESSION_STATE as keyof SessionData,
@@ -152,14 +153,14 @@ export const MainThreadClient = async (
   };
 
   const checkSession = async (): Promise<void> => {
-    const oidcEndpoints: OIDCEndpoints = await _authenticationClient.getOIDCServiceEndpoints() as OIDCEndpoints;
+    const oidcEndpoints: OIDCEndpoints = (await _authenticationClient.getOpenIDProviderEndpoints()) as OIDCEndpoints;
     const config = await _dataLayer.getConfigData();
 
     _authenticationHelper.initializeSessionManger(
       config,
       oidcEndpoints,
-      async () => (await _authenticationClient.getBasicUserInfo()).sessionState,
-      async (params?: GetAuthURLConfig): Promise<string> => _authenticationClient.getAuthorizationURL(params),
+      async () => (await _authenticationClient.getUserSession()).sessionState,
+      async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> => _authenticationClient.getSignInUrl(params),
       _sessionManagementHelper,
     );
   };
@@ -179,14 +180,21 @@ export const MainThreadClient = async (
   };
 
   const signIn = async (
-    signInConfig?: GetAuthURLConfig,
+    signInConfig?: ExtendedAuthorizeRequestUrlParams,
     authorizationCode?: string,
     sessionState?: string,
     state?: string,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> => {
+  ): Promise<User> => {
+    if (signInConfig['flow']) {
+      return handleApplicationNativeAuthentication({
+        url: signInConfig['flow']['requestConfig']['url'],
+        payload: signInConfig['flow']['payload'],
+      });
+    }
+
     const basicUserInfo = await _authenticationHelper.handleSignIn(shouldStopAuthn, checkSession, undefined);
 
     if (basicUserInfo) {
@@ -199,7 +207,7 @@ export const MainThreadClient = async (
         params: Record<string, unknown>;
       } = {params: {}};
 
-      if (config?.responseMode === ResponseMode.FormPost && authorizationCode) {
+      if (config?.responseMode === 'form_post' && authorizationCode) {
         resolvedAuthorizationCode = authorizationCode;
         resolvedSessionState = sessionState ?? '';
         resolvedState = state ?? '';
@@ -227,8 +235,8 @@ export const MainThreadClient = async (
         );
       }
 
-      return _authenticationClient.getAuthorizationURL(signInConfig).then(async (url: string) => {
-        if (config.storage === Storage.BrowserMemory && config.enablePKCE) {
+      return _authenticationClient.getSignInUrl(signInConfig).then(async (url: string) => {
+        if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE) {
           const pkceKey: string = extractPkceStorageKeyFromState(resolvedState);
 
           SPAUtils.setPKCE(pkceKey, (await _authenticationClient.getPKCECode(resolvedState)) as string);
@@ -238,7 +246,16 @@ export const MainThreadClient = async (
           _dataLayer.setTemporaryDataParameter(TOKEN_REQUEST_CONFIG_KEY, JSON.stringify(tokenRequestConfig));
         }
 
-        location.href = url;
+        if (signInConfig['response_mode'] === 'direct') {
+          const authorizeUrl: URL = new URL(url);
+
+          return initializeApplicationNativeAuthentication({
+            url: `${authorizeUrl.origin}${authorizeUrl.pathname}`,
+            payload: Object.fromEntries(authorizeUrl.searchParams.entries()),
+          });
+        } else {
+          location.href = url;
+        }
 
         await SPAUtils.waitTillPageRedirect();
 
@@ -256,10 +273,10 @@ export const MainThreadClient = async (
   };
 
   const signOut = async (): Promise<boolean> => {
-    if ((await _authenticationClient.isAuthenticated()) && !_getSignOutURLFromSessionStorage) {
-      location.href = await _authenticationClient.getSignOutURL();
+    if ((await _authenticationClient.isSignedIn()) && !_getSignOutURLFromSessionStorage) {
+      location.href = await _authenticationClient.getSignOutUrl();
     } else {
-      location.href = SPAUtils.getSignOutURL(config.clientID, instanceID);
+      location.href = SPAUtils.getSignOutUrl(config.clientId, instanceID);
     }
 
     _spaHelper.clearRefreshTokenTimeout();
@@ -280,11 +297,11 @@ export const MainThreadClient = async (
     }
   };
 
-  const requestCustomGrant = async (config: SPACustomGrantConfig): Promise<BasicUserInfo | FetchResponse> => {
-    return await _authenticationHelper.requestCustomGrant(config, enableRetrievingSignOutURLFromSession);
+  const exchangeToken = async (config: SPACustomGrantConfig): Promise<User | Response> => {
+    return await _authenticationHelper.exchangeToken(config, enableRetrievingSignOutURLFromSession);
   };
 
-  const refreshAccessToken = async (): Promise<BasicUserInfo> => {
+  const refreshAccessToken = async (): Promise<User> => {
     try {
       return await _authenticationHelper.refreshAccessToken(enableRetrievingSignOutURLFromSession);
     } catch (error) {
@@ -313,7 +330,7 @@ export const MainThreadClient = async (
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> => {
+  ): Promise<User> => {
     return await _authenticationHelper.requestAccessToken(
       resolvedAuthorizationCode,
       resolvedSessionState,
@@ -326,7 +343,7 @@ export const MainThreadClient = async (
 
   const constructSilentSignInUrl = async (additionalParams: Record<string, string | boolean> = {}): Promise<string> => {
     const config = await _dataLayer.getConfigData();
-    const urlString: string = await _authenticationClient.getAuthorizationURL({
+    const urlString: string = await _authenticationClient.getSignInUrl({
       prompt: 'none',
       state: SILENT_SIGN_IN_STATE,
       ...additionalParams,
@@ -337,7 +354,7 @@ export const MainThreadClient = async (
     urlObject.searchParams.set('response_mode', 'query');
     const url: string = urlObject.toString();
 
-    if (config.storage === Storage.BrowserMemory && config.enablePKCE) {
+    if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE) {
       const state = urlObject.searchParams.get(OIDCRequestConstants.Params.STATE);
 
       SPAUtils.setPKCE(
@@ -353,13 +370,13 @@ export const MainThreadClient = async (
    * This method checks if there is an active user session in the server by sending a prompt none request.
    * If the user is signed in, this method sends a token request. Returns false otherwise.
    *
-   * @return {Promise<BasicUserInfo|boolean} Returns a Promise that resolves with the BasicUserInfo
+   * @return {Promise<User|boolean} Returns a Promise that resolves with the User
    * if the user is signed in or with `false` if there is no active user session in the server.
    */
   const trySignInSilently = async (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean> => {
+  ): Promise<User | boolean> => {
     return await _authenticationHelper.trySignInSilently(
       constructSilentSignInUrl,
       requestAccessToken,
@@ -369,47 +386,47 @@ export const MainThreadClient = async (
     );
   };
 
-  const getBasicUserInfo = async (): Promise<BasicUserInfo> => {
-    return _authenticationHelper.getBasicUserInfo();
+  const getUser = async (): Promise<User> => {
+    return _authenticationHelper.getUser();
   };
 
-  const getDecodedIDToken = async (): Promise<IdTokenPayload> => {
-    return _authenticationHelper.getDecodedIDToken();
+  const getDecodedIdToken = async (): Promise<IdTokenPayload> => {
+    return _authenticationHelper.getDecodedIdToken();
   };
 
-  const getCryptoHelper = async (): Promise<IsomorphicCrypto> => {
-    return _authenticationHelper.getCryptoHelper();
+  const getCrypto = async (): Promise<IsomorphicCrypto> => {
+    return _authenticationHelper.getCrypto();
   };
 
-  const getIDToken = async (): Promise<string> => {
-    return _authenticationHelper.getIDToken();
+  const getIdToken = async (): Promise<string> => {
+    return _authenticationHelper.getIdToken();
   };
 
-  const getOIDCServiceEndpoints = async (): Promise<OIDCEndpoints> => {
-    return _authenticationHelper.getOIDCServiceEndpoints();
+  const getOpenIDProviderEndpoints = async (): Promise<OIDCEndpoints> => {
+    return _authenticationHelper.getOpenIDProviderEndpoints();
   };
 
   const getAccessToken = async (): Promise<string> => {
     return _authenticationHelper.getAccessToken();
   };
 
-  const getDataLayer = async (): Promise<DataLayer<MainThreadClientConfig>> => {
-    return _authenticationHelper.getDataLayer();
+  const getStorageManager = async (): Promise<StorageManager<MainThreadClientConfig>> => {
+    return _authenticationHelper.getStorageManager();
   };
 
   const getConfigData = async (): Promise<AuthClientConfig<MainThreadClientConfig>> => {
     return await _dataLayer.getConfigData();
   };
 
-  const isAuthenticated = async (): Promise<boolean> => {
-    return _authenticationHelper.isAuthenticated();
+  const isSignedIn = async (): Promise<boolean> => {
+    return _authenticationHelper.isSignedIn();
   };
 
   const isSessionActive = async (): Promise<boolean> => {
     return (await _dataLayer.getSessionStatus()) === 'true';
   };
 
-  const updateConfig = async (newConfig: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void> => {
+  const reInitialize = async (newConfig: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void> => {
     const existingConfig = await _dataLayer.getConfigData();
     const isCheckSessionIframeDifferent: boolean = !(
       existingConfig &&
@@ -421,7 +438,7 @@ export const MainThreadClient = async (
       existingConfig.endpoints.checkSessionIframe === newConfig.endpoints.checkSessionIframe
     );
     const config = {...existingConfig, ...newConfig};
-    await _authenticationClient.updateConfig(config);
+    await _authenticationClient.reInitialize(config);
 
     // Re-initiates check session if the check session endpoint is updated.
     if (config.enableOIDCSessionManagement && isCheckSessionIframeDifferent) {
@@ -435,20 +452,20 @@ export const MainThreadClient = async (
     disableHttpHandler,
     enableHttpHandler,
     getAccessToken,
-    getBasicUserInfo,
+    getUser,
     getConfigData,
-    getCryptoHelper,
-    getDataLayer,
-    getDecodedIDToken,
+    getCrypto,
+    getStorageManager,
+    getDecodedIdToken,
     getHttpClient,
-    getIDToken,
-    getOIDCServiceEndpoints,
+    getIdToken,
+    getOpenIDProviderEndpoints,
     httpRequest,
     httpRequestAll,
-    isAuthenticated,
+    isSignedIn,
     isSessionActive,
     refreshAccessToken,
-    requestCustomGrant,
+    exchangeToken,
     revokeAccessToken,
     setHttpRequestErrorCallback,
     setHttpRequestFinishCallback,
@@ -457,6 +474,6 @@ export const MainThreadClient = async (
     signIn,
     signOut,
     trySignInSilently,
-    updateConfig,
+    reInitialize,
   };
 };

@@ -18,12 +18,11 @@
 
 import {
   AuthClientConfig,
-  BasicUserInfo,
+  User,
   IsomorphicCrypto,
-  CustomGrantConfig,
-  DataLayer,
+  TokenExchangeRequestConfig,
+  StorageManager,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
 } from '@asgardeo/javascript';
 import {
@@ -50,34 +49,34 @@ export interface MainThreadClientInterface {
     config?: SignInConfig,
     authorizationCode?: string,
     sessionState?: string,
-    signInRedirectURL?: string,
+    afterSignInUrl?: string,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo>;
-  signOut(signOutRedirectURL?: string): Promise<boolean>;
-  requestCustomGrant(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
-  refreshAccessToken(): Promise<BasicUserInfo>;
+  ): Promise<User>;
+  signOut(afterSignOutUrl?: string): Promise<boolean>;
+  exchangeToken(config: TokenExchangeRequestConfig): Promise<User | Response>;
+  refreshAccessToken(): Promise<User>;
   revokeAccessToken(): Promise<boolean>;
-  getBasicUserInfo(): Promise<BasicUserInfo>;
-  getDecodedIDToken(): Promise<IdTokenPayload>;
-  getCryptoHelper(): Promise<IsomorphicCrypto>;
+  getUser(): Promise<User>;
+  getDecodedIdToken(): Promise<IdTokenPayload>;
+  getCrypto(): Promise<IsomorphicCrypto>;
   getConfigData(): Promise<AuthClientConfig<MainThreadClientConfig>>;
-  getIDToken(): Promise<string>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
+  getIdToken(): Promise<string>;
+  getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getAccessToken(): Promise<string>;
-  getDataLayer(): Promise<DataLayer<MainThreadClientConfig>>;
-  isAuthenticated(): Promise<boolean>;
-  updateConfig(config: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void>;
+  getStorageManager(): Promise<StorageManager<MainThreadClientConfig>>;
+  isSignedIn(): Promise<boolean>;
+  reInitialize(config: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void>;
   trySignInSilently(
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean>;
+  ): Promise<User | boolean>;
   isSessionActive(): Promise<boolean>;
 }
 
 export interface WebWorkerClientInterface {
-  requestCustomGrant(requestParams: CustomGrantConfig): Promise<FetchResponse | BasicUserInfo>;
+  exchangeToken(requestParams: TokenExchangeRequestConfig): Promise<Response | User>;
   httpRequest<T = any>(config: HttpRequestConfig): Promise<HttpResponse<T>>;
   httpRequestAll<T = any>(configs: HttpRequestConfig[]): Promise<HttpResponse<T>[]>;
   enableHttpHandler(): Promise<boolean>;
@@ -87,29 +86,29 @@ export interface WebWorkerClientInterface {
     params?: SignInConfig,
     authorizationCode?: string,
     sessionState?: string,
-    signInRedirectURL?: string,
+    afterSignInUrl?: string,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo>;
-  signOut(signOutRedirectURL?: string): Promise<boolean>;
+  ): Promise<User>;
+  signOut(afterSignOutUrl?: string): Promise<boolean>;
   revokeAccessToken(): Promise<boolean>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
-  getBasicUserInfo(): Promise<BasicUserInfo>;
+  getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
+  getUser(): Promise<User>;
   getConfigData(): Promise<AuthClientConfig<WebWorkerClientConfig>>;
-  getDecodedIDToken(): Promise<IdTokenPayload>;
+  getDecodedIdToken(): Promise<IdTokenPayload>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
-  getCryptoHelper(): Promise<IsomorphicCrypto>;
-  getIDToken(): Promise<string>;
-  isAuthenticated(): Promise<boolean>;
+  getCrypto(): Promise<IsomorphicCrypto>;
+  getIdToken(): Promise<string>;
+  isSignedIn(): Promise<boolean>;
   setHttpRequestSuccessCallback(callback: (response: HttpResponse) => void): void;
   setHttpRequestErrorCallback(callback: (response: HttpError) => void | Promise<void>): void;
   setHttpRequestStartCallback(callback: () => void): void;
   setHttpRequestFinishCallback(callback: () => void): void;
-  refreshAccessToken(): Promise<BasicUserInfo>;
-  updateConfig(config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void>;
+  refreshAccessToken(): Promise<User>;
+  reInitialize(config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void>;
   trySignInSilently(
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean>;
+  ): Promise<User | boolean>;
 }

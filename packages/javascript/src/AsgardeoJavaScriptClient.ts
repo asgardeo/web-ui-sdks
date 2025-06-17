@@ -17,7 +17,7 @@
  */
 
 import {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
-import {User} from './models/user';
+import {User, UserProfile} from './models/user';
 import {Config} from './models/config';
 
 /**
@@ -41,6 +41,8 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
    * @returns User object containing user details.
    */
   abstract getUser(): Promise<User>;
+
+  abstract getUserProfile(): Promise<UserProfile>;
 
   /**
    * Checks if the client is currently loading.

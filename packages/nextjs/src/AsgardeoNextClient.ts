@@ -22,12 +22,13 @@ import {
   SignInOptions,
   SignOutOptions,
   User,
-  // removeTrailingSlash,
+  UserProfile,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
 import deleteSessionId from './server/actions/deleteSessionId';
 import getSessionId from './server/actions/getSessionId';
+import getIsSignedIn from './server/actions/isSignedIn';
 import setSessionId from './server/actions/setSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
 import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
@@ -49,22 +50,24 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
   }
 
   override initialize(config: T): Promise<boolean> {
-    const {baseUrl, clientId, clientSecret, afterSignInUrl} = decorateConfigWithNextEnv({
-      afterSignInUrl: config.afterSignInUrl,
-      baseUrl: config.baseUrl,
-      clientId: config.clientId,
-      clientSecret: config.clientSecret,
-    });
+    const {baseUrl, clientId, clientSecret, afterSignInUrl, ...rest} = decorateConfigWithNextEnv(config);
 
     return this.asgardeo.initialize({
       baseUrl,
-      clientID: clientId,
+      clientId: clientId,
       clientSecret,
-      signInRedirectURL: afterSignInUrl,
+      afterSignInUrl: afterSignInUrl,
+      ...rest,
     } as any);
   }
 
-  override getUser(): Promise<User> {
+  override async getUser(userId?: string): Promise<User> {
+    let resolvedSessionId: string = userId || ((await getSessionId()) as string);
+
+    return this.asgardeo.getUser(resolvedSessionId);
+  }
+
+  override getUserProfile(): Promise<UserProfile> {
     throw new Error('Method not implemented.');
   }
 
@@ -73,7 +76,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
   }
 
   override isSignedIn(sessionId?: string): Promise<boolean> {
-    return this.asgardeo.isAuthenticated(sessionId as string);
+    return this.asgardeo.isSignedIn(sessionId as string);
   }
 
   override async signIn(
@@ -127,11 +130,11 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
         {},
         undefined,
         (redirectUrl: string) => {
-          return response = NextResponse.redirect(redirectUrl, 302);
+          return (response = NextResponse.redirect(redirectUrl, 302));
         },
         searchParams.get('code') as string,
-        searchParams.get('session_state')as string,
-        searchParams.get('state')as string,
+        searchParams.get('session_state') as string,
+        searchParams.get('state') as string,
       );
 
       // If we already redirected via the callback, return that
@@ -153,11 +156,24 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
     if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.session) {
       try {
-        const isAuthenticated: boolean = await this.isSignedIn();
+        const isSignedIn: boolean = await getIsSignedIn();
 
-        return NextResponse.json({isSignedIn: isAuthenticated});
+        return NextResponse.json({isSignedIn: isSignedIn});
       } catch (error) {
         return NextResponse.json({error: 'Failed to check session'}, {status: 500});
+      }
+    }
+
+    if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.user) {
+      try {
+        const user: User = await this.getUser();
+
+        console.log('[AsgardeoNextClient] User fetched successfully:', user);
+
+        return NextResponse.json({user});
+      } catch (error) {
+        console.error('[AsgardeoNextClient] Failed to get user:', error);
+        return NextResponse.json({error: 'Failed to get user'}, {status: 500});
       }
     }
 

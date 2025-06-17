@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, Store, Crypto, ResponseMode} from '@asgardeo/auth-js';
+import {AsgardeoAuthClient, Store, Crypto} from '@asgardeo/auth-js';
 import {UIAuthClient, UIAuthConfig} from './models/auth-config';
 import {BrandingPreferenceTypes} from './models/branding-api-response';
 
@@ -50,7 +50,7 @@ export class AuthClient {
         enableConsoleBranding: authClientConfig?.enableConsoleBranding ?? true,
         enableConsoleTextBranding: authClientConfig?.enableConsoleTextBranding ?? true,
         name: authClientConfig?.name ?? DEFAULT_NAME,
-        responseMode: ResponseMode.Direct,
+        responseMode: 'direct',
         type: authClientConfig?.type ?? BrandingPreferenceTypes.Org,
       };
 
@@ -63,4 +63,4 @@ export class AuthClient {
 }
 
 /* Interfaces, classes and enums required from the auth-js package */
-export {Crypto, JWKInterface, Store, AsgardeoAuthClient, TokenResponse, ResponseMode} from '@asgardeo/auth-js';
+export {Crypto, JWKInterface, Store, AsgardeoAuthClient, TokenResponse} from '@asgardeo/auth-js';

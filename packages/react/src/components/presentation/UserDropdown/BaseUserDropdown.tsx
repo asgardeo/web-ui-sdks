@@ -16,16 +16,29 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useState} from 'react';
+import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useRef, useState} from 'react';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
-import {useTheme} from '../../../theme/useTheme';
+import {
+  useFloating,
+  autoUpdate,
+  offset,
+  flip,
+  shift,
+  useClick,
+  useDismiss,
+  useRole,
+  useInteractions,
+  FloatingFocusManager,
+  FloatingPortal,
+} from '@floating-ui/react';
+import useTheme from '../../../contexts/Theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
-import {Popover} from '../../primitives/Popover/Popover';
+import Button from '../../primitives/Button/Button';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 
 const useStyles = () => {
-  const {theme} = useTheme();
+  const {theme, colorScheme} = useTheme();
 
   return useMemo(
     () => ({
@@ -50,6 +63,14 @@ const useStyles = () => {
       dropdownContent: {
         minWidth: '200px',
         maxWidth: '300px',
+        backgroundColor: theme.colors.background.surface,
+        borderRadius: theme.borderRadius.medium,
+        boxShadow: `0 4px 6px -1px ${
+          colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.1)'
+        }, 0 2px 4px -1px ${colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.06)'}`,
+        border: `1px solid ${theme.colors.border}`,
+        outline: 'none',
+        zIndex: 1000,
       } as CSSProperties,
       dropdownMenu: {
         display: 'flex',
@@ -100,7 +121,7 @@ const useStyles = () => {
         margin: 0,
       } as CSSProperties,
     }),
-    [theme],
+    [theme, colorScheme],
   );
 };
 
@@ -135,7 +156,7 @@ export interface BaseUserDropdownProps {
   /**
    * Show user's display name next to avatar in the trigger button
    */
-  showTriggerLable?: boolean;
+  showTriggerLabel?: boolean;
   /**
    * Show dropdown header with user information
    */
@@ -163,12 +184,12 @@ export interface BaseUserDropdownProps {
  * This component serves as the base for framework-specific implementations.
  */
 export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
-  fallback = <div>Please sign in</div>,
+  fallback = null,
   className = '',
   user,
   portalId = 'asgardeo-user-dropdown',
   menuItems = [],
-  showTriggerLable = false,
+  showTriggerLabel = false,
   showDropdownHeader = true,
   avatarSize = 32,
   attributeMapping = {},
@@ -176,10 +197,24 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
   const styles = useStyles();
   const [isOpen, setIsOpen] = useState(false);
 
+  const {refs, floatingStyles, context} = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    placement: 'bottom-start',
+    middleware: [offset(5), flip({fallbackAxisSideDirection: 'end'}), shift({padding: 5})],
+    whileElementsMounted: autoUpdate,
+  });
+
+  const click = useClick(context);
+  const dismiss = useDismiss(context);
+  const role = useRole(context);
+
+  const {getReferenceProps, getFloatingProps} = useInteractions([click, dismiss, role]);
+
   const defaultAttributeMappings = {
     picture: ['profile', 'profileUrl'],
-    firstName: 'givenName',
-    lastName: 'familyName',
+    firstName: 'name.givenName',
+    lastName: 'name.familyName',
     email: 'emails',
   };
 
@@ -209,10 +244,14 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
 
   return (
     <div className={clsx(withVendorCSSClassPrefix('user-dropdown'), className)}>
-      <button
+      <Button
+        ref={refs.setReference}
         className={withVendorCSSClassPrefix('user-dropdown-trigger')}
         style={styles.trigger}
-        onClick={() => setIsOpen(!isOpen)}
+        color="tertiary"
+        variant="text"
+        size="medium"
+        {...getReferenceProps()}
       >
         <Avatar
           imageUrl={getMappedUserProfileValue('picture', mergedMappings, user)}
@@ -220,65 +259,75 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
           size={avatarSize}
           alt={`${getDisplayName()}'s avatar`}
         />
-        {showTriggerLable && <span style={styles.userName}>{getDisplayName()}</span>}
-      </button>
+        {showTriggerLabel && <span style={styles.userName}>{getDisplayName()}</span>}
+      </Button>
 
-      <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} portalId={portalId} mode="dropdown">
-        <Popover.Content>
-          <div style={styles.dropdownContent}>
-            {showDropdownHeader && (
-              <div className={withVendorCSSClassPrefix('user-dropdown-header')} style={styles.dropdownHeader}>
-                <Avatar
-                  imageUrl={getMappedUserProfileValue('picture', mergedMappings, user)}
-                  name={getDisplayName()}
-                  size={avatarSize * 1.25}
-                  alt={`${getDisplayName()}'s avatar`}
-                />
-                <div className={withVendorCSSClassPrefix('user-dropdown-header-info')} style={styles.headerInfo}>
-                  <span className={withVendorCSSClassPrefix('user-dropdown-header-name')} style={styles.headerName}>
-                    {getDisplayName()}
-                  </span>
-                  {getMappedUserProfileValue('email', mergedMappings, user) !== getDisplayName() &&
-                    getMappedUserProfileValue('email', mergedMappings, user) && (
-                      <span
-                        className={withVendorCSSClassPrefix('user-dropdown-header-email')}
-                        style={styles.headerEmail}
+      {isOpen && (
+        <FloatingPortal id={portalId}>
+          <FloatingFocusManager context={context} modal={false}>
+            <div
+              ref={refs.setFloating}
+              className={withVendorCSSClassPrefix('user-dropdown-content')}
+              style={{...floatingStyles, ...styles.dropdownContent}}
+              {...getFloatingProps()}
+            >
+              {showDropdownHeader && (
+                <div className={withVendorCSSClassPrefix('user-dropdown-header')} style={styles.dropdownHeader}>
+                  <Avatar
+                    imageUrl={getMappedUserProfileValue('picture', mergedMappings, user)}
+                    name={getDisplayName()}
+                    size={avatarSize * 1.25}
+                    alt={`${getDisplayName()}'s avatar`}
+                  />
+                  <div className={withVendorCSSClassPrefix('user-dropdown-header-info')} style={styles.headerInfo}>
+                    <span className={withVendorCSSClassPrefix('user-dropdown-header-name')} style={styles.headerName}>
+                      {getDisplayName()}
+                    </span>
+                    {getMappedUserProfileValue('email', mergedMappings, user) !== getDisplayName() &&
+                      getMappedUserProfileValue('email', mergedMappings, user) && (
+                        <span
+                          className={withVendorCSSClassPrefix('user-dropdown-header-email')}
+                          style={styles.headerEmail}
+                        >
+                          {getMappedUserProfileValue('email', mergedMappings, user)}
+                        </span>
+                      )}
+                  </div>
+                </div>
+              )}
+              <div className={withVendorCSSClassPrefix('user-dropdown-menu')} style={styles.dropdownMenu}>
+                {menuItems.map((item, index) => (
+                  <div key={index}>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        style={styles.menuItem}
+                        className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
                       >
-                        {getMappedUserProfileValue('email', mergedMappings, user)}
-                      </span>
+                        {item.icon}
+                        {item.label}
+                      </a>
+                    ) : (
+                      <Button
+                        onClick={() => handleMenuItemClick(item)}
+                        style={styles.menuItem}
+                        className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
+                        color="tertiary"
+                        variant="text"
+                        size="small"
+                        startIcon={item.icon}
+                      >
+                        {item.label}
+                      </Button>
                     )}
-                </div>
+                    {index < menuItems.length - 1 && <div style={styles.divider} />}
+                  </div>
+                ))}
               </div>
-            )}
-            <div className={withVendorCSSClassPrefix('user-dropdown-menu')} style={styles.dropdownMenu}>
-              {menuItems.map((item, index) => (
-                <div key={index}>
-                  {item.href ? (
-                    <a
-                      href={item.href}
-                      style={styles.menuItem}
-                      className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
-                    >
-                      {item.icon}
-                      {item.label}
-                    </a>
-                  ) : (
-                    <button
-                      onClick={() => handleMenuItemClick(item)}
-                      style={styles.menuItem}
-                      className={withVendorCSSClassPrefix('user-dropdown-menu-item')}
-                    >
-                      {item.icon}
-                      {item.label}
-                    </button>
-                  )}
-                  {index < menuItems.length - 1 && <div style={styles.divider} />}
-                </div>
-              ))}
             </div>
-          </div>
-        </Popover.Content>
-      </Popover>
+          </FloatingFocusManager>
+        </FloatingPortal>
+      )}
     </div>
   );
 };

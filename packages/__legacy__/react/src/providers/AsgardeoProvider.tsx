@@ -53,7 +53,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
   const {children, config, store, branding} = props;
 
   const [accessToken, setAccessToken] = useState<string>('');
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
+  const [isSignedIn, setIsAuthenticated] = useState<boolean>();
   const [user, setUser] = useState<MeAPIResponse>();
   const [isBrandingLoading, setIsBrandingLoading] = useState<boolean>(true);
   const [isTextLoading, setIsTextLoading] = useState<boolean>(true);
@@ -89,7 +89,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
    * Sets the authentication status and access token.
    */
   const setAuthentication: () => void = useCallback((): void => {
-    authClient.isAuthenticated().then((isAuth: boolean) => {
+    authClient.isSignedIn().then((isAuth: boolean) => {
       setIsAuthenticated(isAuth);
 
       if (isAuth) {
@@ -124,10 +124,10 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
       /**
        * Send the 'code' and 'state' to the parent window and close the current window (popup)
        */
-      window.opener.postMessage({code, state}, config.signInRedirectURL);
+      window.opener.postMessage({code, state}, config.afterSignInUrl);
       window.close();
     }
-  }, [config.signInRedirectURL, setAuthentication]);
+  }, [config.afterSignInUrl, setAuthentication]);
 
   const value: AuthContext = useMemo(
     () => ({
@@ -135,7 +135,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
       authResponse,
       config,
       isAuthLoading,
-      isAuthenticated,
+      isSignedIn,
       isBrandingLoading,
       isComponentLoading,
       isGlobalLoading: isAuthLoading || isBrandingLoading || isComponentLoading || isTextLoading,
@@ -158,7 +158,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = (
       authResponse,
       config,
       isAuthLoading,
-      isAuthenticated,
+      isSignedIn,
       isBrandingLoading,
       isComponentLoading,
       isTextLoading,

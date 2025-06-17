@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {BasicUserInfo, DataLayer, IdTokenPayload, OIDCEndpoints} from '@asgardeo/auth-node';
+import type {User, StorageManager, IdTokenPayload, OIDCEndpoints} from '@asgardeo/node';
 
 export interface ModuleOptions {
   /**
@@ -30,7 +30,7 @@ export interface ModuleOptions {
    * Asgardeo Application Client ID.
    * @default process.env.ASGARDEO_CLIENT_ID
    */
-  clientID: string;
+  clientId: string;
 
   /**
    * Asgardeo Application Client Secret. (Server-side only)
@@ -49,22 +49,22 @@ export interface ModuleOptions {
    * Must match the URI configured in your Asgardeo app.
    * @default process.env.ASGARDEO_SIGN_IN_REDIRECT_URL
    */
-  signInRedirectURL: string;
+  afterSignInUrl: string;
   /**
    * The absolute URI to redirect to after sign-out completes.
    * @default process.env.ASGARDEO_SIGN_OUT_REDIRECT_URL
    */
-  signOutRedirectURL: string;
+  afterSignOutUrl: string;
 }
 
 export interface AuthInterface {
   getAccessToken: () => Promise<string | null>;
-  getBasicUserInfo: () => Promise<BasicUserInfo | null>;
-  getDataLayer: () => Promise<DataLayer<any> | null>;
-  getDecodedIDToken: () => Promise<IdTokenPayload | null>;
+  getUser: () => Promise<User | null>;
+  getStorageManager: () => Promise<StorageManager<any> | null>;
+  getDecodedIdToken: () => Promise<IdTokenPayload | null>;
   getIdToken: () => Promise<string | null>;
-  getOIDCServiceEndpoints: () => Promise<OIDCEndpoints | null>;
-  isAuthenticated: () => Promise<boolean>;
+  getOpenIDProviderEndpoints: () => Promise<OIDCEndpoints | null>;
+  isSignedIn: () => Promise<boolean>;
   revokeAccessToken: () => Promise<void>;
   signIn: (callbackUrl?: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -74,4 +74,4 @@ export type SessionLastRefreshedAt = Date | undefined;
 
 export type SessionStatus = 'authenticated' | 'unauthenticated' | 'loading';
 
-export type {BasicUserInfo};
+export type {User};

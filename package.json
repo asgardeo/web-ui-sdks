@@ -5,13 +5,13 @@
   "description": "Workspace to hold the Asgardeo JavaScript SDKs.",
   "author": "WSO2",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/asgardeo/javascript#readme",
+  "homepage": "https://github.com/asgardeo/web-ui-sdks#readme",
   "bugs": {
-    "url": "https://github.com/asgardeo/javascript/issues"
+    "url": "https://github.com/asgardeo/web-ui-sdks/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/asgardeo/javascript"
+    "url": "https://github.com/asgardeo/web-ui-sdks"
   },
   "keywords": [
     "asgardeo",
@@ -24,6 +24,7 @@
     "lint": "nx run-many --target=lint --all --parallel",
     "publish:packages": "changeset publish",
     "test": "nx run-many --target=test --all --parallel",
+    "typecheck": "nx run-many --target=typecheck --all --parallel",
     "version:packages": "changeset version && pnpm install --lockfile-only"
   },
   "devDependencies": {

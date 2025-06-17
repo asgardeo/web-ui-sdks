@@ -16,6 +16,8 @@
  * under the License.
  */
 
+import ScopeConstants from "./ScopeConstants";
+
 /**
  * Constants representing standard OpenID Connect (OIDC) request and response parameters.
  * These parameters are commonly used during authorization, token exchange, and logout flows.
@@ -45,7 +47,22 @@ const OIDCRequestConstants = {
      */
     SIGN_OUT_SUCCESS: 'sign_out_success',
   },
-  
+
+  /**
+   * Constants related to the OpenID Connect (OIDC) sign-in flow.
+   */
+  SignIn: {
+    /**
+     * Constants related to the payload of the OIDC sign-in request.
+     */
+    Payload: {
+      /**
+       * The default scopes used in OIDC sign-in requests.
+       */
+      DEFAULT_SCOPES: [ScopeConstants.OPENID],
+    },
+  },
+
   /**
    * Sign-out related constants for managing the end-session flow in OIDC.
    */

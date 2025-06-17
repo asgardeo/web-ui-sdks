@@ -25,8 +25,9 @@ import {
   Ref,
   RefAttributes,
 } from 'react';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
+import Button from '../../primitives/Button/Button';
 
 /**
  * Common props shared by all {@link BaseSignOutButton} components.
@@ -35,7 +36,7 @@ export interface CommonBaseSignOutButtonProps {
   /**
    * Function to initiate the sign-out process
    */
-  signOut?: () => Promise<void>;
+  signOut: () => Promise<void>;
   /**
    * Loading state during sign-out process
    */
@@ -51,8 +52,9 @@ export type BaseSignOutButtonRenderProps = CommonBaseSignOutButtonProps;
  * Props interface of {@link BaseSignOutButton}
  */
 export interface BaseSignOutButtonProps
-  extends CommonBaseSignOutButtonProps,
-    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+  extends Partial<CommonBaseSignOutButtonProps>,
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>,
+    WithPreferences {
   /**
    * Render prop function that receives sign-out props, or traditional ReactNode children
    */
@@ -65,7 +67,7 @@ export interface BaseSignOutButtonProps
  * @example Using render props
  * ```tsx
  * <BaseSignOutButton>
- *   {({ signOut, isLoading }) => (
+ *   {({signOut, isLoading}) => (
  *     <button onClick={signOut} disabled={isLoading}>
  *       {isLoading ? 'Signing out...' : 'Sign Out'}
  *     </button>
@@ -81,7 +83,7 @@ export interface BaseSignOutButtonProps
 const BaseSignOutButton: ForwardRefExoticComponent<BaseSignOutButtonProps & RefAttributes<HTMLButtonElement>> =
   forwardRef<HTMLButtonElement, BaseSignOutButtonProps>(
     (
-      {children, className, style, signOut, isLoading, ...rest}: BaseSignOutButtonProps,
+      {children, className, style, signOut, isLoading, preferences, ...rest}: BaseSignOutButtonProps,
       ref: Ref<HTMLButtonElement>,
     ): ReactElement => {
       if (typeof children === 'function') {
@@ -89,16 +91,19 @@ const BaseSignOutButton: ForwardRefExoticComponent<BaseSignOutButtonProps & RefA
       }
 
       return (
-        <button
+        <Button
           ref={ref}
           className={clsx(withVendorCSSClassPrefix('sign-out-button'), className)}
           style={style}
           disabled={isLoading}
+          loading={isLoading}
           type="button"
+          color="secondary"
+          variant="outline"
           {...rest}
         >
           {children}
-        </button>
+        </Button>
       );
     },
   );

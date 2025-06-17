@@ -17,7 +17,8 @@
  */
 
 import {FC, ReactElement} from 'react';
-import useAsgardeo from '../../../hooks/useAsgardeo';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
+import useUser from '../../../contexts/User/useUser';
 import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
 import updateMeProfile from 'packages/react/src/api/scim2/updateMeProfile';
 import getMeProfile from 'packages/react/src/api/scim2/getMeProfile';
@@ -52,14 +53,23 @@ export type UserProfileProps = Omit<BaseUserProfileProps, 'user'>;
  * ```
  */
 const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactElement => {
-  const {user, baseUrl} = useAsgardeo();
+  const {baseUrl} = useAsgardeo();
+  const {profile, flattenedProfile, schemas} = useUser();
 
   const handleProfileUpdate = async (payload: any): Promise<void> => {
     await updateMeProfile({url: `${baseUrl}/scim2/Me`, payload});
-    await getMeProfile({url: `${baseUrl}/scim2/Me` });
+    await getMeProfile({url: `${baseUrl}/scim2/Me`});
   };
 
-  return <BaseUserProfile user={user} onUpdate={handleProfileUpdate} {...rest} />;
+  return (
+    <BaseUserProfile
+      profile={profile}
+      flattenedProfile={flattenedProfile}
+      schemas={schemas}
+      onUpdate={handleProfileUpdate}
+      {...rest}
+    />
+  );
 };
 
 export default UserProfile;

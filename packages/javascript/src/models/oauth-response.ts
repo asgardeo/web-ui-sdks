@@ -16,22 +16,4 @@
  * under the License.
  */
 
-/**
- * Enum representing different OAuth response modes.
- */
-export enum ResponseMode {
-  /**
-   * Response is returned as POST parameters in an HTML form.
-   */
-  FormPost = 'form_post',
-
-  /**
-   * Response is returned as query parameters in the URL.
-   */
-  Query = 'query',
-
-  /**
-   * Response is returned directly to the client.
-   */
-  Direct = 'direct',
-}
+export type OAuthResponseMode = 'form_post' | 'query' | 'direct';

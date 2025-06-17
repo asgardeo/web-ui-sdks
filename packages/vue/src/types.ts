@@ -22,9 +22,8 @@ import {
   AuthSPAClientConfig,
   BasicUserInfo,
   Config,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -75,7 +74,7 @@ export interface AuthStateInterface {
   /**
    * Specifies if the user is authenticated or not.
    */
-  isAuthenticated: boolean;
+  isSignedIn: boolean;
   /**
    * Are the Auth requests loading.
    */
@@ -95,21 +94,21 @@ export interface AuthContextInterface {
   enableHttpHandler(): Promise<boolean>;
   error: AsgardeoAuthException;
   getAccessToken(): Promise<string>;
-  getBasicUserInfo(): Promise<BasicUserInfo>;
-  getDecodedIDToken(): Promise<IdTokenPayload>;
+  getUser(): Promise<BasicUserInfo>;
+  getDecodedIdToken(): Promise<IdTokenPayload>;
   getHttpClient(): Promise<HttpClientInstance>;
-  getIDToken(): Promise<string>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
+  getIdToken(): Promise<string>;
+  getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
-  isAuthenticated(): Promise<boolean>;
+  isSignedIn(): Promise<boolean>;
   on(hook: Hooks.CustomGrant, callback: (response?: any) => void, id: string): void;
   on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): void;
   on(hook: Hooks, callback: (response?: any) => void, id?: string): void;
   refreshAccessToken(): Promise<BasicUserInfo>;
-  requestCustomGrant(
-    config: CustomGrantConfig,
-    callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
+  exchangeToken(
+    config: TokenExchangeRequestConfig,
+    callback?: (response: BasicUserInfo | Response) => void,
   ): void;
   revokeAccessToken(): Promise<boolean>;
   signIn: (
@@ -128,7 +127,7 @@ export interface AuthContextInterface {
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ) => Promise<boolean | BasicUserInfo>;
-  updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void>;
+  reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void>;
 }
 
 /**

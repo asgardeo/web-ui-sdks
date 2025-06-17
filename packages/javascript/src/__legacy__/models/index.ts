@@ -17,8 +17,3 @@
  */
 
 export * from './client-config';
-export * from './data';
-export * from './custom-grant';
-export * from './authorization-url';
-export * from './user';
-export * from './fetch';

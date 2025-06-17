@@ -23,7 +23,6 @@ import {
   BasicUserInfo,
   Config,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -87,12 +86,12 @@ class AuthAPI {
         if (!response) {
           return response;
         }
-        if (await this._client.isAuthenticated()) {
+        if (await this._client.isSignedIn()) {
           Object.assign(this._authState, {
             allowedScopes: response.allowedScopes,
             displayName: response.displayName,
             email: response.email,
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
             isSigningOut: false,
             sub: response.sub,
@@ -152,7 +151,7 @@ class AuthAPI {
    *
    * @param {HttpRequestConfig} config - The config object containing attributes necessary to send a request.
    *
-   * @return {Promise<FetchResponse>} - Returns a Promise that resolves with the response to the request.
+   * @return {Promise<Response>} - Returns a Promise that resolves with the response to the request.
    */
   public async httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>> {
     return this._client.httpRequest(config);
@@ -166,7 +165,7 @@ class AuthAPI {
    *
    * @param {HttpRequestConfig[]} configs - The config object containing attributes necessary to send a request.
    *
-   * @return {Promise<FetchResponse[]>} a Promise that resolves with the responses to the requests.
+   * @return {Promise<Response>} a Promise that resolves with the responses to the requests.
    */
   public async httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> {
     return this._client.httpRequestAll(configs);
@@ -176,18 +175,18 @@ class AuthAPI {
    * This method allows you to send a request with a custom grant.
    *
    * @param {CustomGrantRequestParams} config - The request parameters.
-   * @param {(response: BasicUserInfo | FetchResponse<any>) => void} [callback] - An optional callback function.
+   * @param {(response: BasicUserInfo | Response) => void} [callback] - An optional callback function.
    *
-   * @return {Promise<FetchResponse<any> | SignInResponse>} a promise that resolves with
+   * @return {Promise<Response | SignInResponse>} a promise that resolves with
    * the value returned by the custom grant request.
    */
-  public requestCustomGrant(
+  public exchangeToken(
     config: SPACustomGrantConfig,
-    callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
-  ): Promise<BasicUserInfo | FetchResponse<any>> {
+    callback?: (response: BasicUserInfo | Response) => void,
+  ): Promise<BasicUserInfo | Response> {
     return this._client
-      .requestCustomGrant(config)
-      .then((response: BasicUserInfo | FetchResponse<any>) => {
+      .exchangeToken(config)
+      .then((response: BasicUserInfo | Response) => {
         if (!response) {
           return response;
         }
@@ -196,7 +195,7 @@ class AuthAPI {
           Object.assign(this._authState, {
             ...this._authState,
             ...(response as BasicUserInfo),
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
           });
         }
@@ -228,8 +227,8 @@ class AuthAPI {
    *
    * @return {Promise<ServiceResourcesType>} - A Promise that resolves with an object containing the service endpoints.
    */
-  public async getOIDCServiceEndpoints(): Promise<OIDCEndpoints> {
-    return this._client.getOIDCServiceEndpoints();
+  public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints> {
+    return this._client.getOpenIDProviderEndpoints();
   }
 
   /**
@@ -247,8 +246,8 @@ class AuthAPI {
    * @return {Promise<DecodedIDTokenPayloadInterface>} - A Promise that resolves with
    * the decoded payload of the id token.
    */
-  public async getDecodedIDToken(): Promise<IdTokenPayload> {
-    return this._client.getDecodedIDToken();
+  public async getDecodedIdToken(): Promise<IdTokenPayload> {
+    return this._client.getDecodedIdToken();
   }
 
   /**
@@ -260,7 +259,7 @@ class AuthAPI {
    * the decoded payload of the idp id token.
    */
   public async getDecodedIDPIDToken(): Promise<IdTokenPayload> {
-    return this._client.getDecodedIDToken();
+    return this._client.getDecodedIdToken();
   }
 
   /**
@@ -268,8 +267,8 @@ class AuthAPI {
    *
    * @return {Promise<string>} - A Promise that resolves with the id token.
    */
-  public async getIDToken(): Promise<string> {
-    return this._client.getIDToken();
+  public async getIdToken(): Promise<string> {
+    return this._client.getIdToken();
   }
 
   /**
@@ -310,8 +309,8 @@ class AuthAPI {
    *
    * @return {Promise<boolean>} - A Promise that resolves with `true` if the user is authenticated.
    */
-  public async isAuthenticated(): Promise<boolean> {
-    return this._client.isAuthenticated();
+  public async isSignedIn(): Promise<boolean> {
+    return this._client.isSignedIn();
   }
 
   /**
@@ -346,8 +345,8 @@ class AuthAPI {
    *
    * @param {Partial<AuthClientConfig<T>>} config - A config object to update the SDK configurations with.
    */
-  public async updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void> {
-    return this._client.updateConfig(config);
+  public async reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void> {
+    return this._client.reInitialize(config);
   }
 
   /**
@@ -396,13 +395,13 @@ class AuthAPI {
           return false;
         }
 
-        if (await this._client.isAuthenticated()) {
+        if (await this._client.isSignedIn()) {
           const basicUserInfo: BasicUserInfo = response as BasicUserInfo;
           Object.assign(this._authState, {
             allowedScopes: basicUserInfo.allowedScopes,
             displayName: basicUserInfo.displayName,
             email: basicUserInfo.email,
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
             sub: basicUserInfo.sub,
             username: basicUserInfo.username,
@@ -418,7 +417,7 @@ AuthAPI.DEFAULT_STATE = {
   allowedScopes: '',
   displayName: '',
   email: '',
-  isAuthenticated: false,
+  isSignedIn: false,
   isLoading: true,
   sub: '',
   username: '',

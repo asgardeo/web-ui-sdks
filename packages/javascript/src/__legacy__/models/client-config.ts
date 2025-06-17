@@ -16,19 +16,19 @@
  * under the License.
  */
 
-import {ResponseMode} from '../../models/oauth-response';
+import {OAuthResponseMode} from '../../models/oauth-response';
 import {OIDCEndpoints} from '../../models/oidc-endpoints';
 
 export interface DefaultAuthClientConfig {
-  signInRedirectURL: string;
-  signOutRedirectURL?: string;
+  afterSignInUrl: string;
+  afterSignOutUrl?: string;
   clientHost?: string;
-  clientID: string;
+  clientId: string;
   clientSecret?: string;
   enablePKCE?: boolean;
   prompt?: string;
-  responseMode?: ResponseMode;
-  scope?: string[];
+  responseMode?: OAuthResponseMode;
+  scopes?: string | string[] | undefined;
   validateIDToken?: boolean;
   validateIDTokenIssuer?: boolean;
   /**

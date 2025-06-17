@@ -20,9 +20,8 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   Config,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -81,23 +80,23 @@ export const asgardeoPlugin: Plugin = {
 
     const checkIsAuthenticated = async (): Promise<void> =>
       withStateSync(async () => {
-        const isAuthenticatedState: boolean = await AuthClient.isAuthenticated();
+        const isAuthenticatedState: boolean = await AuthClient.isSignedIn();
         if (!isAuthenticatedState) {
-          AuthClient.updateState({...state, isAuthenticated: false, isLoading: false});
+          AuthClient.updateState({...state, isSignedIn: false, isLoading: false});
           return;
         }
-        const response: BasicUserInfo = await AuthClient.getBasicUserInfo();
+        const response: BasicUserInfo = await AuthClient.getUser();
         const stateToUpdate: AuthStateInterface = response
           ? {
               allowedScopes: response.allowedScopes,
               displayName: response.displayName,
               email: response.email,
-              isAuthenticated: true,
+              isSignedIn: true,
               isLoading: false,
               sub: response.sub,
               username: response.username,
             }
-          : {...state, isAuthenticated: isAuthenticatedState, isLoading: false};
+          : {...state, isSignedIn: isAuthenticatedState, isLoading: false};
         AuthClient.updateState(stateToUpdate);
       });
 
@@ -116,7 +115,7 @@ export const asgardeoPlugin: Plugin = {
 
             if (
               (SPAUtils.hasAuthSearchParamsInURL() &&
-                new URL(url.origin + url.pathname).toString() === new URL(config?.signInRedirectURL).toString()) ||
+                new URL(url.origin + url.pathname).toString() === new URL(config?.afterSignInUrl).toString()) ||
               authParams?.authorizationCode ||
               url.searchParams.get('error')
             ) {
@@ -137,7 +136,7 @@ export const asgardeoPlugin: Plugin = {
 
           await checkIsAuthenticated();
 
-          if (state.isAuthenticated) {
+          if (state.isSignedIn) {
             return;
           }
 
@@ -158,15 +157,15 @@ export const asgardeoPlugin: Plugin = {
       enableHttpHandler: (): Promise<boolean> => AuthClient.enableHttpHandler(),
       error: error.value,
       getAccessToken: (): Promise<string> => AuthClient.getAccessToken(),
-      getBasicUserInfo: (): Promise<BasicUserInfo> => AuthClient.getBasicUserInfo(),
-      getDecodedIDToken: (): Promise<IdTokenPayload> => AuthClient.getDecodedIDToken(),
+      getUser: (): Promise<BasicUserInfo> => AuthClient.getUser(),
+      getDecodedIdToken: (): Promise<IdTokenPayload> => AuthClient.getDecodedIdToken(),
       getHttpClient: (): Promise<HttpClientInstance> => AuthClient.getHttpClient(),
-      getIDToken: (): Promise<string> => AuthClient.getIDToken(),
-      getOIDCServiceEndpoints: (): Promise<OIDCEndpoints> => AuthClient.getOIDCServiceEndpoints(),
+      getIdToken: (): Promise<string> => AuthClient.getIdToken(),
+      getOpenIDProviderEndpoints: (): Promise<OIDCEndpoints> => AuthClient.getOpenIDProviderEndpoints(),
       httpRequest: (config: HttpRequestConfig): Promise<HttpResponse<any>> => AuthClient.httpRequest(config),
       httpRequestAll: (configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> =>
         AuthClient.httpRequestAll(configs),
-      isAuthenticated: (): Promise<boolean> => AuthClient.isAuthenticated(),
+      isSignedIn: (): Promise<boolean> => AuthClient.isSignedIn(),
       on: (hook: Hooks, callback: (response?: any) => void, id?: string): void => {
         if (hook === Hooks.CustomGrant && id) {
           AuthClient.on(hook, callback, id);
@@ -175,12 +174,12 @@ export const asgardeoPlugin: Plugin = {
         }
       },
       refreshAccessToken: (): Promise<BasicUserInfo> => AuthClient.refreshAccessToken(),
-      requestCustomGrant: async (
-        config: CustomGrantConfig,
-        callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
-      ): Promise<BasicUserInfo | FetchResponse<any>> => {
+      exchangeToken: async (
+        config: TokenExchangeRequestConfig,
+        callback?: (response: BasicUserInfo | Response) => void,
+      ): Promise<BasicUserInfo | Response> => {
         try {
-          const response: BasicUserInfo | FetchResponse<any> = await AuthClient.requestCustomGrant(config);
+          const response: BasicUserInfo | Response = await AuthClient.exchangeToken(config);
           callback?.(response);
           return response;
         } catch (err) {
@@ -221,9 +220,9 @@ export const asgardeoPlugin: Plugin = {
         }),
       state,
       trySignInSilently,
-      updateConfig: async (config: Partial<AuthClientConfig<Config>>): Promise<void> =>
+      reInitialize: async (config: Partial<AuthClientConfig<Config>>): Promise<void> =>
         withStateSync(async () => {
-          await AuthClient.updateConfig(config);
+          await AuthClient.reInitialize(config);
         }),
     };
 

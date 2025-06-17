@@ -18,36 +18,72 @@
 
 export * from './__legacy__/client';
 export * from './__legacy__/models';
-export * from './models/oauth-response';
+
 export * from './IsomorphicCrypto';
-export * from './__legacy__/exception';
-export * from './__legacy__/data';
 
-export {default as getUserInfo} from './api/oidc/getUserInfo';
+export {default as initializeApplicationNativeAuthentication} from './api/initializeApplicationNativeAuthentication';
+export {default as handleApplicationNativeAuthentication} from './api/handleApplicationNativeAuthentication';
+export {default as getUserInfo} from './api/getUserInfo';
 
+export {default as ApplicationNativeAuthenticationConstants} from './constants/ApplicationNativeAuthenticationConstants';
 export {default as TokenConstants} from './constants/TokenConstants';
 export {default as OIDCRequestConstants} from './constants/OIDCRequestConstants';
 
 export {default as AsgardeoError} from './errors/AsgardeoError';
 export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';
 export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
+export {AsgardeoAuthException} from './errors/exception';
 
+export {
+  ApplicationNativeAuthenticationInitiateResponse,
+  ApplicationNativeAuthenticationFlowStatus,
+  ApplicationNativeAuthenticationFlowType,
+  ApplicationNativeAuthenticationStepType,
+  ApplicationNativeAuthenticationAuthenticator,
+  ApplicationNativeAuthenticationLink,
+  ApplicationNativeAuthenticationHandleRequestPayload,
+  ApplicationNativeAuthenticationHandleResponse,
+  ApplicationNativeAuthenticationAuthenticatorParamType,
+  ApplicationNativeAuthenticationAuthenticatorPromptType,
+  ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
+} from './models/application-native-authentication';
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
-export {BaseConfig, Config, Preferences, ThemePreferences} from './models/config';
-export {TokenResponse} from './models/token';
+export {BaseConfig, Config, Preferences, ThemePreferences, I18nPreferences, WithPreferences} from './models/config';
+export {TokenResponse, IdTokenPayload, TokenExchangeRequestConfig} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';
-export {IdTokenPayload} from './models/id-token';
+export {OAuthResponseMode} from './models/oauth-response';
+export {
+  AuthorizeRequestUrlParams,
+  KnownExtendedAuthorizeRequestUrlParams,
+  ExtendedAuthorizeRequestUrlParams,
+} from './models/oauth-request';
 export {OIDCEndpoints} from './models/oidc-endpoints';
-export {Store} from './models/store';
-export {User} from './models/user';
-export {Schema, SchemaAttribute, WellKnownSchemaIds} from './models/scim2-schema';
+export {Storage, TemporaryStore} from './models/store';
+export {User, UserProfile} from './models/user';
+export {SessionData} from './models/session';
+export {Schema, SchemaAttribute, WellKnownSchemaIds, FlattenedSchema} from './models/scim2-schema';
 export {RecursivePartial} from './models/utility-types';
+export {FieldType} from './models/field';
+export {I18nBundle, I18nTranslations, I18nMetadata} from './models/i18n';
 
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 
 export {default as createTheme} from './theme/createTheme';
 export {ThemeColors, ThemeConfig, Theme, ThemeMode} from './theme/types';
 
+export {default as deepMerge} from './utils/deepMerge';
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
 export {default as extractPkceStorageKeyFromState} from './utils/extractPkceStorageKeyFromState';
+export {default as flattenUserSchema} from './utils/flattenUserSchema';
+export {default as generateUserProfile} from './utils/generateUserProfile';
+export {default as getLatestStateParam} from './utils/getLatestStateParam';
+export {default as generateFlattenedUserProfile} from './utils/generateFlattenedUserProfile';
+export {default as getI18nBundles} from './utils/getI18nBundles';
+export {default as set} from './utils/set';
+export {default as get} from './utils/get';
 export {default as removeTrailingSlash} from './utils/removeTrailingSlash';
+export {default as resolveFieldType} from './utils/resolveFieldType';
+export {default as resolveFieldName} from './utils/resolveFieldName';
+export {default as processOpenIDScopes} from './utils/processOpenIDScopes';
+
+export {default as StorageManager} from './StorageManager';

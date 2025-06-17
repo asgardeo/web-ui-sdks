@@ -28,8 +28,8 @@ import { AsgardeoAuthClient } from "@asgardeo/browser";
 
 // Initialize the auth client
 const authClient = new AsgardeoAuthClient({
-    signInRedirectURL: "https://localhost:3000",
-    clientID: "<your_client_id>",
+    afterSignInUrl: "https://localhost:3000",
+    clientId: "<your_client_id>",
     baseUrl: "https://api.asgardeo.io/t/<org_name>"
 });
 
@@ -37,7 +37,7 @@ const authClient = new AsgardeoAuthClient({
 authClient.signIn();
 
 // Get user info after authentication
-const userInfo = await authClient.getBasicUserInfo();
+const userInfo = await authClient.getUser();
 
 // Sign out
 authClient.signOut();

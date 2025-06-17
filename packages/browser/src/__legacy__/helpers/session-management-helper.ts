@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, GetAuthURLConfig, OIDCRequestConstants} from '@asgardeo/javascript';
+import {AsgardeoAuthClient, ExtendedAuthorizeRequestUrlParams, OIDCRequestConstants} from '@asgardeo/javascript';
 import {
   CHECK_SESSION_SIGNED_IN,
   CHECK_SESSION_SIGNED_OUT,
@@ -30,7 +30,7 @@ import {
   STATE_QUERY,
 } from '../constants';
 import {AuthorizationInfo, Message, SessionManagementHelperInterface} from '../models';
-import {Storage} from '../models/storage';
+import {BrowserStorage} from '../models/storage';
 import {SPAUtils} from '../utils';
 
 export const SessionManagementHelper = (() => {
@@ -43,26 +43,26 @@ export const SessionManagementHelper = (() => {
   let _signOut: () => Promise<string>;
   let _sessionRefreshIntervalTimeout: number;
   let _checkSessionIntervalTimeout: number;
-  let _storage: Storage;
+  let _storage: BrowserStorage;
   let _setSessionState: (sessionState: string) => void;
-  let _getAuthorizationURL: (params?: GetAuthURLConfig) => Promise<string>;
+  let _getSignInUrl: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>;
 
   const initialize = (
-    clientID: string,
+    clientId: string,
     checkSessionEndpoint: string,
     getSessionState: () => Promise<string>,
     interval: number,
     sessionRefreshInterval: number,
     redirectURL: string,
-    getAuthorizationURL: (params?: GetAuthURLConfig) => Promise<string>,
+    getSignInUrl: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>,
   ): void => {
-    _clientID = clientID;
+    _clientID = clientId;
     _checkSessionEndpoint = checkSessionEndpoint;
     _sessionState = getSessionState;
     _interval = interval;
     _redirectURL = redirectURL;
     _sessionRefreshInterval = sessionRefreshInterval;
-    _getAuthorizationURL = getAuthorizationURL;
+    _getSignInUrl = getSignInUrl;
 
     if (_interval > -1) {
       initiateCheckSession();
@@ -148,11 +148,11 @@ export const SessionManagementHelper = (() => {
         }
       };
 
-      if (_storage === Storage.BrowserMemory || _storage === Storage.WebWorker) {
+      if (_storage === BrowserStorage.BrowserMemory || _storage === BrowserStorage.WebWorker) {
         window?.addEventListener('message', receiveMessageListener);
       }
 
-      const promptNoneURL: string = await _getAuthorizationURL({
+      const promptNoneURL: string = await _getSignInUrl({
         prompt: 'none',
         response_mode: 'query',
         state: STATE,
@@ -203,7 +203,7 @@ export const SessionManagementHelper = (() => {
 
         const newSessionState = new URL(window.location.href).searchParams.get('session_state');
 
-        if (_storage === Storage.LocalStorage || _storage === Storage.SessionStorage) {
+        if (_storage === BrowserStorage.LocalStorage || _storage === BrowserStorage.SessionStorage) {
           setSessionState && (await setSessionState(newSessionState));
         } else {
           const message: Message<string> = {
@@ -242,7 +242,7 @@ export const SessionManagementHelper = (() => {
         const signOutURL = await _signOut();
         // Clearing user session data before redirecting to the signOutURL because user has been already logged
         // out by the initial logout request in the single logout flow.
-        await AsgardeoAuthClient.clearUserSessionData();
+        await AsgardeoAuthClient.clearSession();
         parent.location.href = signOutURL;
         window.location.href = 'about:blank';
 
@@ -257,7 +257,7 @@ export const SessionManagementHelper = (() => {
 
   return async (
     signOut: () => Promise<string>,
-    storage: Storage,
+    storage: BrowserStorage,
     setSessionState: (sessionState: string) => void,
   ): Promise<SessionManagementHelperInterface> => {
     let rpIFrame = document.createElement('iframe');

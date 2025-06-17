@@ -17,8 +17,10 @@
  */
 
 import {FC, forwardRef, ForwardRefExoticComponent, MouseEvent, ReactElement, Ref, RefAttributes, useState} from 'react';
-import useAsgardeo from '../../../hooks/useAsgardeo';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
+import useTranslation from '../../../hooks/useTranslation';
 import BaseSignOutButton, {BaseSignOutButtonProps} from './BaseSignOutButton';
+import {AsgardeoRuntimeError} from '@asgardeo/browser';
 
 /**
  * Props interface of {@link SignOutButton}
@@ -28,10 +30,12 @@ export type SignOutButtonProps = BaseSignOutButtonProps;
 /**
  * SignOutButton component that supports both render props and traditional props patterns.
  *
+ * @remarks This component is only supported in browser based React applications (CSR).
+ *
  * @example Using render props pattern
  * ```tsx
  * <SignOutButton>
- *   {({ signOut, isLoading }) => (
+ *   {({signOut, isLoading}) => (
  *     <button onClick={signOut} disabled={isLoading}>
  *       {isLoading ? 'Signing out...' : 'Sign Out'}
  *     </button>
@@ -43,12 +47,33 @@ export type SignOutButtonProps = BaseSignOutButtonProps;
  * ```tsx
  * <SignOutButton className="custom-button">Sign Out</SignOutButton>
  * ```
+ *
+ * @example Using component-level preferences
+ * ```tsx
+ * <SignOutButton
+ *   preferences={{
+ *     i18n: {
+ *       bundles: {
+ *         'en-US': {
+ *           translations: {
+ *             'buttons.signOut': 'Custom Sign Out Text'
+ *           }
+ *         }
+ *       }
+ *     }
+ *   }}
+ * >
+ *   Custom Sign Out
+ * </SignOutButton>
+ * ```
  */
 const SignOutButton: ForwardRefExoticComponent<SignOutButtonProps & RefAttributes<HTMLButtonElement>> = forwardRef<
   HTMLButtonElement,
   SignOutButtonProps
->(({children = 'Sign Out', onClick, ...rest}: SignOutButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+>(({children, onClick, preferences, ...rest}: SignOutButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
   const {signOut} = useAsgardeo();
+  const {t} = useTranslation(preferences?.i18n);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignOut = async (e?: MouseEvent<HTMLButtonElement>): Promise<void> => {
@@ -60,15 +85,27 @@ const SignOutButton: ForwardRefExoticComponent<SignOutButtonProps & RefAttribute
         onClick(e);
       }
     } catch (error) {
-      throw new Error(`Sign out failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw new AsgardeoRuntimeError(
+        `Sign out failed: ${error instanceof Error ? error.message : String(error)}`,
+        'handleSignOut-RuntimeError-001',
+        'react',
+        'Something went wrong while trying to sign out. Please try again later.',
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <BaseSignOutButton ref={ref} onClick={handleSignOut} isLoading={isLoading} signOut={handleSignOut} {...rest}>
-      {children}
+    <BaseSignOutButton
+      ref={ref}
+      onClick={handleSignOut}
+      isLoading={isLoading}
+      signOut={handleSignOut}
+      preferences={preferences}
+      {...rest}
+    >
+      {children ?? t('elements.buttons.signOut')}
     </BaseSignOutButton>
   );
 });

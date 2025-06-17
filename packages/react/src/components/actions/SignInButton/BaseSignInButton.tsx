@@ -25,8 +25,9 @@ import {
   Ref,
   RefAttributes,
 } from 'react';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
+import Button from '../../primitives/Button/Button';
 
 /**
  * Common props shared by all {@link BaseSignInButton} components.
@@ -35,7 +36,7 @@ export interface CommonBaseSignInButtonProps {
   /**
    * Function to initiate the sign-in process
    */
-  signIn?: () => Promise<void>;
+  signIn: () => Promise<void>;
   /**
    * Loading state during sign-in process
    */
@@ -51,8 +52,9 @@ export type BaseSignInButtonRenderProps = CommonBaseSignInButtonProps;
  * Props interface of {@link BaseSignInButton}
  */
 export interface BaseSignInButtonProps
-  extends CommonBaseSignInButtonProps,
-    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+  extends Partial<CommonBaseSignInButtonProps>,
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>,
+    WithPreferences {
   /**
    * Render prop function that receives sign-in props, or traditional ReactNode children
    */
@@ -65,7 +67,7 @@ export interface BaseSignInButtonProps
  * @example Using render props
  * ```tsx
  * <BaseSignInButton>
- *   {({ signIn, isLoading }) => (
+ *   {({signIn, isLoading}) => (
  *     <button onClick={signIn} disabled={isLoading}>
  *       {isLoading ? 'Signing in...' : 'Sign In'}
  *     </button>
@@ -81,7 +83,7 @@ export interface BaseSignInButtonProps
 const BaseSignInButton: ForwardRefExoticComponent<BaseSignInButtonProps & RefAttributes<HTMLButtonElement>> =
   forwardRef<HTMLButtonElement, BaseSignInButtonProps>(
     (
-      {children, className, style, signIn, isLoading, ...rest}: BaseSignInButtonProps,
+      {children, className, style, signIn, isLoading, preferences, ...rest}: BaseSignInButtonProps,
       ref: Ref<HTMLButtonElement>,
     ): ReactElement => {
       if (typeof children === 'function') {
@@ -89,16 +91,17 @@ const BaseSignInButton: ForwardRefExoticComponent<BaseSignInButtonProps & RefAtt
       }
 
       return (
-        <button
+        <Button
           ref={ref}
           className={clsx(withVendorCSSClassPrefix('sign-in-button'), className)}
           style={style}
           disabled={isLoading}
+          loading={isLoading}
           type="button"
           {...rest}
         >
           {children}
-        </button>
+        </Button>
       );
     },
   );

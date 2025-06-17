@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import {AsgardeoAuthException} from './__legacy__/exception';
+import {AsgardeoAuthException} from './errors/exception';
 import {Crypto, JWKInterface} from './models/crypto';
-import {IdTokenPayload} from './models/id-token';
+import {IdTokenPayload} from './models/token';
 import TokenConstants from './constants/TokenConstants';
 
 export class IsomorphicCrypto<T = any> {
@@ -83,7 +83,7 @@ export class IsomorphicCrypto<T = any> {
    *
    * @param idToken - id_token received from the IdP.
    * @param jwk - public key used for signing.
-   * @param clientID - app identification.
+   * @param clientId - app identification.
    * @param issuer - id_token issuer.
    * @param username - Username.
    * @param clockTolerance - Allowed leeway for id_tokens (in seconds).
@@ -95,7 +95,7 @@ export class IsomorphicCrypto<T = any> {
   public isValidIdToken(
     idToken: string,
     jwk: JWKInterface,
-    clientID: string,
+    clientId: string,
     issuer: string,
     username: string,
     clockTolerance: number | undefined,
@@ -106,7 +106,7 @@ export class IsomorphicCrypto<T = any> {
         idToken,
         jwk,
         TokenConstants.SignatureValidation.SUPPORTED_ALGORITHMS as unknown as string[],
-        clientID,
+        clientId,
         issuer,
         username,
         clockTolerance,
@@ -136,9 +136,9 @@ export class IsomorphicCrypto<T = any> {
    *
    * @throws
    */
-  public decodeIDToken(idToken: string): IdTokenPayload {
+  public decodeIdToken(idToken: string): IdTokenPayload {
     try {
-      const utf8String: string = this._cryptoUtils.base64URLDecode(idToken.split('.')[1]);
+      const utf8String: string = this._cryptoUtils.base64URLDecode(idToken?.split('.')[1]);
       const payload: IdTokenPayload = JSON.parse(utf8String);
 
       return payload;

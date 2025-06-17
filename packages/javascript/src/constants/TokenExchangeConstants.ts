@@ -61,7 +61,7 @@ const TokenExchangeConstants = {
      * Placeholder for client ID in token exchange operations.
      * Required for client authentication.
      */
-    CLIENT_ID: '{{clientID}}',
+    CLIENT_ID: '{{clientId}}',
 
     /**
      * Placeholder for client secret in token exchange operations.

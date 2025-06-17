@@ -21,7 +21,6 @@ import {
   BasicUserInfo,
   Config,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   SPACustomGrantConfig,
@@ -49,7 +48,7 @@ describe('asgardeoPlugin', () => {
       allowedScopes: '',
       displayName: '',
       email: '',
-      isAuthenticated: false,
+      isSignedIn: false,
       isLoading: true,
       sub: '',
       username: '',
@@ -63,18 +62,18 @@ describe('asgardeoPlugin', () => {
   it('should provide the authentication context', () => {
     const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
     expect(authContext).toBeDefined();
-    expect(authContext.state.isAuthenticated).toBe(false);
+    expect(authContext.state.isSignedIn).toBe(false);
   });
 
   it('should call AuthAPI init on install', async () => {
     expect(mockAuthAPI.init).toHaveBeenCalledWith(
       expect.objectContaining({
         baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
-        clientID: 'mock-client-id',
+        clientId: 'mock-client-id',
         disableAutoSignIn: true,
         disableTrySignInSilently: true,
-        signInRedirectURL: 'http://localhost:5173/',
-        signOutRedirectURL: 'http://localhost:5173/',
+        afterSignInUrl: 'http://localhost:5173/',
+        afterSignOutUrl: 'http://localhost:5173/',
       }),
     );
   });
@@ -85,7 +84,7 @@ describe('asgardeoPlugin', () => {
       allowedScopes: 'openid profile',
       displayName: 'Test User',
       email: 'test@example.com',
-      isAuthenticated: true,
+      isSignedIn: true,
       isLoading: false,
       sub: 'user-id-123',
       username: 'testUser',
@@ -107,7 +106,7 @@ describe('asgardeoPlugin', () => {
       allowedScopes: '',
       displayName: '',
       email: '',
-      isAuthenticated: false,
+      isSignedIn: false,
       isLoading: false,
       sub: '',
       username: '',
@@ -147,9 +146,9 @@ describe('asgardeoPlugin', () => {
 
     mockAuthAPI.getState.mockReturnValueOnce(userInfoState);
 
-    await authContext.getBasicUserInfo();
+    await authContext.getUser();
 
-    expect(mockAuthAPI.getBasicUserInfo).toHaveBeenCalled();
+    expect(mockAuthAPI.getUser).toHaveBeenCalled();
     expect(authContext.state).toMatchObject(userInfoState);
   });
 
@@ -161,7 +160,7 @@ describe('asgardeoPlugin', () => {
 
     const silentSignInState: AuthStateInterface = {
       ...mockState,
-      isAuthenticated: true,
+      isSignedIn: true,
       username: 'testUser',
     };
 
@@ -176,7 +175,7 @@ describe('asgardeoPlugin', () => {
   it('should update config and sync state', async () => {
     const authContext: AuthContextInterface = app._context.provides[ASGARDEO_INJECTION_KEY];
 
-    const newConfig: Partial<AuthClientConfig<Config>> = {clientID: 'new-client-id'};
+    const newConfig: Partial<AuthClientConfig<Config>> = {clientId: 'new-client-id'};
 
     const updatedState: AuthStateInterface = {
       ...mockState,
@@ -185,9 +184,9 @@ describe('asgardeoPlugin', () => {
 
     mockAuthAPI.getState.mockReturnValueOnce(updatedState);
 
-    await authContext.updateConfig(newConfig);
+    await authContext.reInitialize(newConfig);
 
-    expect(mockAuthAPI.updateConfig).toHaveBeenCalledWith(newConfig);
+    expect(mockAuthAPI.reInitialize).toHaveBeenCalledWith(newConfig);
 
     expect(mockAuthAPI.getState).toHaveBeenCalled();
 
@@ -199,7 +198,7 @@ describe('asgardeoPlugin', () => {
 
     const refreshedState: AuthStateInterface = {
       ...mockState,
-      isAuthenticated: true,
+      isSignedIn: true,
       username: 'testUser',
     };
     mockAuthAPI.getState.mockReturnValueOnce(refreshedState);
@@ -214,9 +213,9 @@ describe('asgardeoPlugin', () => {
     expect(accessTokenValue).toBe(accessToken);
 
     const decodedIDToken: IdTokenPayload = {aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'};
-    mockAuthAPI.getDecodedIDToken.mockResolvedValueOnce(decodedIDToken);
-    const idToken: IdTokenPayload = await authContext.getDecodedIDToken();
-    expect(mockAuthAPI.getDecodedIDToken).toHaveBeenCalled();
+    mockAuthAPI.getDecodedIdToken.mockResolvedValueOnce(decodedIDToken);
+    const idToken: IdTokenPayload = await authContext.getDecodedIdToken();
+    expect(mockAuthAPI.getDecodedIdToken).toHaveBeenCalled();
     expect(idToken).toMatchObject(decodedIDToken);
   });
 
@@ -248,16 +247,16 @@ describe('asgardeoPlugin', () => {
       signInRequired: true,
     };
 
-    const customGrantResponse: BasicUserInfo | FetchResponse<any> = {
+    const customGrantResponse: BasicUserInfo | Response = {
       allowedScopes: 'openid',
       sessionState: 'test',
     };
 
-    mockAuthAPI.requestCustomGrant.mockResolvedValueOnce(customGrantResponse);
+    mockAuthAPI.exchangeToken.mockResolvedValueOnce(customGrantResponse);
 
-    authContext.requestCustomGrant(customGrantConfig);
+    authContext.exchangeToken(customGrantConfig);
 
-    expect(mockAuthAPI.requestCustomGrant).toHaveBeenCalledWith(customGrantConfig);
+    expect(mockAuthAPI.exchangeToken).toHaveBeenCalledWith(customGrantConfig);
   });
 
   it('should properly register event handlers with the on method', async () => {

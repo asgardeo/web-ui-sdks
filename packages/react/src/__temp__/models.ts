@@ -20,17 +20,16 @@ import {
   AsgardeoAuthException,
   AuthClientConfig,
   AuthSPAClientConfig,
-  BasicUserInfo,
   Config,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
   HttpResponse,
   OIDCEndpoints,
   SignInConfig,
+  User,
 } from '@asgardeo/browser';
 
 export interface ReactConfig {
@@ -56,10 +55,6 @@ export type AuthReactConfig = AuthSPAClientConfig & ReactConfig;
  */
 export interface AuthStateInterface {
   /**
-   * The scopes that are allowed for the user.
-   */
-  allowedScopes: string;
-  /**
    * The display name of the user.
    */
   displayName?: string;
@@ -70,15 +65,11 @@ export interface AuthStateInterface {
   /**
    * Specifies if the user is authenticated or not.
    */
-  isAuthenticated: boolean;
+  isSignedIn: boolean;
   /**
    * Are the Auth requests loading.
    */
   isLoading: boolean;
-  /**
-   * The uid corresponding to the user who the ID token belonged to.
-   */
-  sub?: string;
   /**
    * The username of the user.
    */
@@ -91,35 +82,32 @@ export interface AuthContextInterface {
     authorizationCode?: string,
     sessionState?: string,
     state?: string,
-    callback?: (response: BasicUserInfo) => void,
+    callback?: (response: User) => void,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ) => Promise<BasicUserInfo>;
+  ) => Promise<User>;
   signOut: (callback?: (response: boolean) => void) => Promise<boolean>;
-  getBasicUserInfo(): Promise<BasicUserInfo>;
+  getUser(): Promise<User>;
   httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>>;
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]>;
-  requestCustomGrant(
-    config: CustomGrantConfig,
-    callback?: (response: BasicUserInfo | FetchResponse<any>) => void,
-  ): void;
+  exchangeToken(config: TokenExchangeRequestConfig, callback?: (response: User | Response) => void): void;
   revokeAccessToken(): Promise<boolean>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
+  getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getHttpClient(): Promise<HttpClientInstance>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
-  getDecodedIDToken(): Promise<IdTokenPayload>;
-  getIDToken(): Promise<string>;
+  getDecodedIdToken(): Promise<IdTokenPayload>;
+  getIdToken(): Promise<string>;
   getAccessToken(): Promise<string>;
-  refreshAccessToken(): Promise<BasicUserInfo>;
-  isAuthenticated(): Promise<boolean>;
+  refreshAccessToken(): Promise<User>;
+  isSignedIn(): Promise<boolean>;
   enableHttpHandler(): Promise<boolean>;
   disableHttpHandler(): Promise<boolean>;
-  updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void>;
+  reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void>;
   trySignInSilently: (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ) => Promise<boolean | BasicUserInfo>;
+  ) => Promise<boolean | User>;
   on(hook: Hooks.CustomGrant, callback: (response?: any) => void, id: string): void;
   on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): void;
   on(hook: Hooks, callback: (response?: any) => void, id?: string): void;

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoNodeClient, type AuthClientConfig} from '@asgardeo/auth-node';
+import {AsgardeoNodeClient, type AuthClientConfig} from '@asgardeo/node';
 
 let authClientInstance: AsgardeoNodeClient<any> | null = null;
 

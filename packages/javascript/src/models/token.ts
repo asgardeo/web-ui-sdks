@@ -133,3 +133,58 @@ export interface AccessTokenApiResponse {
    */
   token_type: string;
 }
+
+/**
+ * Interface for the standard (required) claims of an ID Token payload.
+ */
+export interface IdTokenPayloadStandardClaims {
+  /**
+   * The audience for which this token is intended.
+   */
+  aud: string | string[];
+
+  /**
+   * The unique identifier of the user to whom the ID token belongs.
+   */
+  sub: string;
+
+  /**
+   * The issuer identifier for the issuer of the response.
+   */
+  iss: string;
+
+  /**
+   * The email of the user.
+   */
+  email?: string;
+
+  /**
+   * The username the user prefers to be called.
+   */
+  preferred_username?: string;
+
+  /**
+   * The tenant domain of the user.
+   */
+  tenant_domain?: string;
+}
+
+/**
+ * Interface for ID Token payload including custom claims.
+ */
+export interface IdTokenPayload extends IdTokenPayloadStandardClaims {
+  /**
+   * Other custom claims.
+   */
+  [claim: string]: any;
+}
+
+export interface TokenExchangeRequestConfig {
+  id: string;
+  data: any;
+  signInRequired: boolean;
+  attachToken: boolean;
+  returnsSession: boolean;
+  tokenEndpoint?: string;
+  shouldReplayAfterRefresh?: boolean;
+}

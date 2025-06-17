@@ -26,13 +26,13 @@ import UseAuthentication from '../models/use-authentication';
  * `useAuthentication` is a custom hook that provides access to the authentication context.
  * It returns an object containing the current user, the authentication status, the access token, and a sign out function.
  *
- * @returns {UseAuthentication} An object containing the current user (`user`), the authentication status (`isAuthenticated`),
+ * @returns {UseAuthentication} An object containing the current user (`user`), the authentication status (`isSignedIn`),
  * the access token (`accessToken`), and a sign out function (`signOut`).
  */
 const useAuthentication = (): UseAuthentication => {
   const contextValue: AuthContext = useContext(AsgardeoContext);
 
-  const {accessToken, authResponse, isAuthenticated, isGlobalLoading, setUsername, user, username} = contextValue;
+  const {accessToken, authResponse, isSignedIn, isGlobalLoading, setUsername, user, username} = contextValue;
 
   const signOut: () => void = () => {
     signOutApiCall().then(() => {
@@ -46,7 +46,7 @@ const useAuthentication = (): UseAuthentication => {
   return {
     accessToken,
     authResponse,
-    isAuthenticated,
+    isSignedIn,
     isGlobalLoading,
     setUsername,
     signOut,

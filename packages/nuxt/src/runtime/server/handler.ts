@@ -17,7 +17,7 @@
  */
 
 import {randomUUID} from 'node:crypto';
-import {AsgardeoNodeClient, type AuthClientConfig, type DataLayer, type TokenResponse} from '@asgardeo/auth-node';
+import {AsgardeoNodeClient, type AuthClientConfig, type StorageManager, type TokenResponse} from '@asgardeo/node';
 import type {CookieSerializeOptions} from 'cookie-es';
 import {defineEventHandler, sendRedirect, setCookie, deleteCookie, getQuery, getCookie, createError, H3Event} from 'h3';
 import {getAsgardeoSdkInstance} from './services/asgardeo/index';
@@ -150,19 +150,19 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
 
       try {
-        return await authClient.getBasicUserInfo(sessionId);
+        return await authClient.getUser(sessionId);
       } catch {
         throw createError({
           statusCode: 500,
           statusMessage: 'Failed to retrieve user information.',
         });
       }
-    } else if (action === 'isAuthenticated' && method === 'GET') {
+    } else if (action === 'isSignedIn' && method === 'GET') {
       const sessionId: string | undefined = getCookie(event, sessionIdCookieName);
       if (!sessionId) return false;
 
       try {
-        return await authClient.isAuthenticated(sessionId);
+        return await authClient.isSignedIn(sessionId);
       } catch {
         return false;
       }
@@ -176,7 +176,7 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
 
       try {
-        const idToken: string = await authClient.getIDToken(sessionId);
+        const idToken: string = await authClient.getIdToken(sessionId);
         return {idToken};
       } catch {
         throw createError({
@@ -212,7 +212,7 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
 
       try {
-        return await authClient.getDecodedIDToken(sessionId);
+        return await authClient.getDecodedIdToken(sessionId);
       } catch {
         throw createError({
           statusCode: 500,
@@ -238,7 +238,7 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
     } else if (action === 'get-oidc-endpoints' && method === 'GET') {
       try {
-        return await authClient.getOIDCServiceEndpoints();
+        return await authClient.getOpenIDProviderEndpoints();
       } catch {
         throw createError({
           statusCode: 500,
@@ -273,7 +273,7 @@ export const AsgardeoAuthHandler = (config: AuthClientConfig, options?: Asgardeo
       }
     } else if (action === 'get-data-layer' && method === 'GET') {
       try {
-        const dataLayer: DataLayer<any> = await authClient.getDataLayer();
+        const dataLayer: StorageManager<any> = await authClient.getStorageManager();
         return dataLayer;
       } catch (error: any) {
         throw createError({

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AsgardeoAuthClient, AsgardeoAuthException, AuthClientConfig, BasicUserInfo} from '@asgardeo/javascript';
+import {AsgardeoAuthClient, AsgardeoAuthException, AuthClientConfig, User} from '@asgardeo/javascript';
 import {WebWorkerCore} from './worker-core';
 import {
   DISABLE_HTTP_HANDLER,
@@ -97,7 +97,7 @@ export const workerReceiver = (
         break;
       case GET_AUTH_URL:
         webWorker
-          .getAuthorizationURL(data?.data)
+          .getSignInUrl(data?.data)
           .then((response: AuthorizationResponse) => {
             port.postMessage(MessageUtils.generateSuccessMessage(response));
           })
@@ -109,7 +109,7 @@ export const workerReceiver = (
       case REQUEST_ACCESS_TOKEN:
         webWorker
           .requestAccessToken(data?.data?.code, data?.data?.sessionState, data?.data?.pkce, data?.data?.state)
-          .then((response: BasicUserInfo) => {
+          .then((response: User) => {
             port.postMessage(MessageUtils.generateSuccessMessage(response));
           })
           .catch(error => {
@@ -162,7 +162,7 @@ export const workerReceiver = (
         break;
       case REQUEST_CUSTOM_GRANT:
         webWorker
-          .requestCustomGrant(data.data)
+          .exchangeToken(data.data)
           .then(response => {
             port.postMessage(MessageUtils.generateSuccessMessage(response));
           })
@@ -183,7 +183,7 @@ export const workerReceiver = (
         break;
       case GET_OIDC_SERVICE_ENDPOINTS:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getOIDCServiceEndpoints()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getOpenIDProviderEndpoints()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }
@@ -191,7 +191,7 @@ export const workerReceiver = (
         break;
       case GET_BASIC_USER_INFO:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getBasicUserInfo()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getUser()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }
@@ -199,7 +199,7 @@ export const workerReceiver = (
         break;
       case GET_DECODED_ID_TOKEN:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getDecodedIDToken()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getDecodedIdToken()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }
@@ -207,7 +207,7 @@ export const workerReceiver = (
         break;
       case GET_CRYPTO_HELPER:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getCryptoHelper()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getCrypto()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }
@@ -215,7 +215,7 @@ export const workerReceiver = (
         break;
       case GET_ID_TOKEN:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getIDToken()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getIdToken()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }
@@ -233,7 +233,7 @@ export const workerReceiver = (
         break;
       case IS_AUTHENTICATED:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.isAuthenticated()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.isSignedIn()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }
@@ -241,7 +241,7 @@ export const workerReceiver = (
         break;
       case GET_SIGN_OUT_URL:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getSignOutURL()));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.getSignOutUrl()));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }
@@ -273,7 +273,7 @@ export const workerReceiver = (
         break;
       case UPDATE_CONFIG:
         try {
-          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.updateConfig(data?.data)));
+          port.postMessage(MessageUtils.generateSuccessMessage(await webWorker.reInitialize(data?.data)));
         } catch (error) {
           port.postMessage(MessageUtils.generateFailureMessage(error));
         }

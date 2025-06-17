@@ -22,7 +22,6 @@ import {
   type BasicUserInfo,
   type Config,
   type IdTokenPayload,
-  type FetchResponse,
   Hooks,
   type HttpRequestConfig,
   type HttpResponse,
@@ -52,7 +51,7 @@ describe('AuthAPI', () => {
         allowedScopes: '',
         displayName: '',
         email: '',
-        isAuthenticated: false,
+        isSignedIn: false,
         isLoading: true,
         sub: '',
         username: '',
@@ -70,9 +69,9 @@ describe('AuthAPI', () => {
     it('should call initialize on the client with the provided config', async () => {
       const config: AuthVueConfig = {
         baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
-        clientID: 'mock-client-id',
-        signInRedirectURL: 'http://localhost:5173/',
-        signOutRedirectURL: 'http://localhost:5173/',
+        clientId: 'mock-client-id',
+        afterSignInUrl: 'http://localhost:5173/',
+        afterSignOutUrl: 'http://localhost:5173/',
       };
 
       await authApi.init(config);
@@ -101,14 +100,14 @@ describe('AuthAPI', () => {
 
       expect(mockClient.signIn).toHaveBeenCalledWith(config, authCode, sessionState, authState, tokenConfig);
 
-      expect(mockClient.isAuthenticated).toHaveBeenCalled();
+      expect(mockClient.isSignedIn).toHaveBeenCalled();
       expect(callback).toHaveBeenCalledWith(response);
 
       expect(authApi.getState()).toMatchObject({
         allowedScopes: 'openid profile',
         displayName: 'Test User',
         email: 'test@example.com',
-        isAuthenticated: true,
+        isSignedIn: true,
         isLoading: false,
         isSigningOut: false,
         sub: 'user-id-123',
@@ -128,16 +127,16 @@ describe('AuthAPI', () => {
       const result: BasicUserInfo = await authApi.signIn();
       expect(result).toBeNull();
 
-      expect(authApi.getState().isAuthenticated).toBe(false);
+      expect(authApi.getState().isSignedIn).toBe(false);
     });
 
     it('should handle unauthenticated scenarios', async () => {
-      mockClient.isAuthenticated.mockResolvedValueOnce(false);
+      mockClient.isSignedIn.mockResolvedValueOnce(false);
       const response: boolean | BasicUserInfo = await authApi.signIn();
 
       // Response should be returned, but state shouldn't be updated
       expect(response).toBeDefined();
-      expect(authApi.getState().isAuthenticated).toBe(false);
+      expect(authApi.getState().isSignedIn).toBe(false);
     });
   });
 
@@ -168,7 +167,7 @@ describe('AuthAPI', () => {
     it('should update the auth state', () => {
       const newState: AuthStateInterface = {
         allowedScopes: 'read write',
-        isAuthenticated: true,
+        isSignedIn: true,
         isLoading: false,
         username: 'newUser',
       };
@@ -182,11 +181,11 @@ describe('AuthAPI', () => {
     });
   });
 
-  describe('getBasicUserInfo', () => {
-    it('should call getBasicUserInfo on the client', async () => {
-      const result: BasicUserInfo = await authApi.getBasicUserInfo();
+  describe('getUser', () => {
+    it('should call getUser on the client', async () => {
+      const result: BasicUserInfo = await authApi.getUser();
 
-      expect(mockClient.getBasicUserInfo).toHaveBeenCalled();
+      expect(mockClient.getUser).toHaveBeenCalled();
       expect(result).toEqual({
         allowedScopes: 'openid profile',
         displayName: 'Test User',
@@ -221,8 +220,8 @@ describe('AuthAPI', () => {
     });
   });
 
-  describe('requestCustomGrant', () => {
-    it('should call requestCustomGrant on the client', async () => {
+  describe('exchangeToken', () => {
+    it('should call exchangeToken on the client', async () => {
       const config: SPACustomGrantConfig = {
         attachToken: false,
         data: {key: 'value'},
@@ -232,16 +231,16 @@ describe('AuthAPI', () => {
       };
       const callback: Mock = vi.fn();
 
-      const result: BasicUserInfo | FetchResponse<any> = await authApi.requestCustomGrant(config, callback);
+      const result: BasicUserInfo | Response = await authApi.exchangeToken(config, callback);
 
-      expect(mockClient.requestCustomGrant).toHaveBeenCalledWith(config);
+      expect(mockClient.exchangeToken).toHaveBeenCalledWith(config);
       expect(callback).toHaveBeenCalledWith(result);
 
       // Check state updates for returnsSession = true
       expect(authApi.getState()).toMatchObject({
         displayName: 'Test User',
         email: 'test@example.com',
-        isAuthenticated: true,
+        isSignedIn: true,
         isLoading: false,
         username: 'testUser',
       });
@@ -256,15 +255,15 @@ describe('AuthAPI', () => {
         signInRequired: true,
       };
 
-      await authApi.requestCustomGrant(config);
+      await authApi.exchangeToken(config);
 
       // State should not be updated for session properties
       expect(authApi.getState().username).toBe('');
-      expect(authApi.getState().isAuthenticated).toBe(false);
+      expect(authApi.getState().isSignedIn).toBe(false);
     });
 
     it('should handle null response', async () => {
-      mockClient.requestCustomGrant.mockResolvedValueOnce(null);
+      mockClient.exchangeToken.mockResolvedValueOnce(null);
       const config: SPACustomGrantConfig = {
         attachToken: false,
         data: {key: 'value'},
@@ -273,7 +272,7 @@ describe('AuthAPI', () => {
         signInRequired: true,
       };
 
-      const result: BasicUserInfo | FetchResponse<any> = await authApi.requestCustomGrant(config);
+      const result: BasicUserInfo | Response = await authApi.exchangeToken(config);
       expect(result).toBeNull();
     });
 
@@ -284,7 +283,7 @@ describe('AuthAPI', () => {
         'Custom grant failed',
       );
 
-      mockClient.requestCustomGrant.mockRejectedValueOnce(error);
+      mockClient.exchangeToken.mockRejectedValueOnce(error);
 
       const config: SPACustomGrantConfig = {
         attachToken: false,
@@ -294,7 +293,7 @@ describe('AuthAPI', () => {
         signInRequired: true,
       };
 
-      await expect(authApi.requestCustomGrant(config)).rejects.toThrow('Custom grant failed');
+      await expect(authApi.exchangeToken(config)).rejects.toThrow('Custom grant failed');
     });
   });
 
@@ -303,7 +302,7 @@ describe('AuthAPI', () => {
       authApi.updateState({
         allowedScopes: 'read write',
         email: 'test@example.com',
-        isAuthenticated: true,
+        isSignedIn: true,
         isLoading: false,
         username: 'testUser',
       });
@@ -333,10 +332,10 @@ describe('AuthAPI', () => {
     });
   });
 
-  describe('getOIDCServiceEndpoints', () => {
-    it('should call getOIDCServiceEndpoints on the client', async () => {
-      await authApi.getOIDCServiceEndpoints();
-      expect(mockClient.getOIDCServiceEndpoints).toHaveBeenCalled();
+  describe('getOpenIDProviderEndpoints', () => {
+    it('should call getOpenIDProviderEndpoints on the client', async () => {
+      await authApi.getOpenIDProviderEndpoints();
+      expect(mockClient.getOpenIDProviderEndpoints).toHaveBeenCalled();
     });
   });
 
@@ -348,21 +347,21 @@ describe('AuthAPI', () => {
   });
 
   describe('token related methods', () => {
-    it('should call getDecodedIDToken on the client', async () => {
-      const result: IdTokenPayload = await authApi.getDecodedIDToken();
-      expect(mockClient.getDecodedIDToken).toHaveBeenCalled();
+    it('should call getDecodedIdToken on the client', async () => {
+      const result: IdTokenPayload = await authApi.getDecodedIdToken();
+      expect(mockClient.getDecodedIdToken).toHaveBeenCalled();
       expect(result).toEqual({sub: 'user-id-123'});
     });
 
     it('should call getDecodedIDPIDToken on the client', async () => {
       const result: IdTokenPayload = await authApi.getDecodedIDPIDToken();
-      expect(mockClient.getDecodedIDToken).toHaveBeenCalled();
+      expect(mockClient.getDecodedIdToken).toHaveBeenCalled();
       expect(result).toEqual({sub: 'user-id-123'});
     });
 
-    it('should call getIDToken on the client', async () => {
-      const result: string = await authApi.getIDToken();
-      expect(mockClient.getIDToken).toHaveBeenCalled();
+    it('should call getIdToken on the client', async () => {
+      const result: string = await authApi.getIdToken();
+      expect(mockClient.getIdToken).toHaveBeenCalled();
       expect(result).toBe('mock-id-token');
     });
 
@@ -390,9 +389,9 @@ describe('AuthAPI', () => {
   });
 
   describe('authentication status methods', () => {
-    it('should call isAuthenticated on the client', async () => {
-      const result: boolean = await authApi.isAuthenticated();
-      expect(mockClient.isAuthenticated).toHaveBeenCalled();
+    it('should call isSignedIn on the client', async () => {
+      const result: boolean = await authApi.isSignedIn();
+      expect(mockClient.isSignedIn).toHaveBeenCalled();
       expect(result).toBe(true);
     });
 
@@ -417,11 +416,11 @@ describe('AuthAPI', () => {
     });
   });
 
-  describe('updateConfig', () => {
-    it('should call updateConfig on the client', async () => {
-      const config: Partial<AuthClientConfig<Config>> = {clientID: 'new-client-id'};
-      await authApi.updateConfig(config);
-      expect(mockClient.updateConfig).toHaveBeenCalledWith(config);
+  describe('reInitialize', () => {
+    it('should call reInitialize on the client', async () => {
+      const config: Partial<AuthClientConfig<Config>> = {clientId: 'new-client-id'};
+      await authApi.reInitialize(config);
+      expect(mockClient.reInitialize).toHaveBeenCalledWith(config);
     });
   });
 
@@ -458,7 +457,7 @@ describe('AuthAPI', () => {
         allowedScopes: 'openid profile',
         displayName: 'Test User',
         email: 'test@example.com',
-        isAuthenticated: true,
+        isSignedIn: true,
         isLoading: false,
         sub: 'user-id-123',
         username: 'testUser',
@@ -474,13 +473,13 @@ describe('AuthAPI', () => {
 
     it('should handle false response from trySignInSilently', async () => {
       mockClient.trySignInSilently.mockResolvedValueOnce(false);
-      mockClient.isAuthenticated.mockResolvedValueOnce(false);
+      mockClient.isSignedIn.mockResolvedValueOnce(false);
 
       const result: boolean | BasicUserInfo = await authApi.trySignInSilently();
 
       expect(result).toBe(false);
       expect(authApi.getState().isLoading).toBe(false);
-      expect(authApi.getState().isAuthenticated).toBe(false);
+      expect(authApi.getState().isSignedIn).toBe(false);
     });
 
     it('should handle errors', async () => {
@@ -490,7 +489,7 @@ describe('AuthAPI', () => {
         'Custom grant failed',
       );
 
-      mockClient.requestCustomGrant.mockRejectedValueOnce(error);
+      mockClient.exchangeToken.mockRejectedValueOnce(error);
 
       const config: SPACustomGrantConfig = {
         attachToken: false,
@@ -500,7 +499,7 @@ describe('AuthAPI', () => {
         signInRequired: true,
       };
 
-      await expect(authApi.requestCustomGrant(config)).rejects.toThrow('Custom grant failed');
+      await expect(authApi.exchangeToken(config)).rejects.toThrow('Custom grant failed');
     });
   });
 });

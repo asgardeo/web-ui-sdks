@@ -17,8 +17,10 @@
  */
 
 import {FC, forwardRef, ForwardRefExoticComponent, MouseEvent, ReactElement, Ref, RefAttributes, useState} from 'react';
-import useAsgardeo from '../../../hooks/useAsgardeo';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
+import useTranslation from '../../../hooks/useTranslation';
 import BaseSignUpButton, {BaseSignUpButtonProps} from './BaseSignUpButton';
+import {AsgardeoRuntimeError} from '@asgardeo/browser';
 
 /**
  * Props interface of {@link SignUpButton}
@@ -28,6 +30,8 @@ export type SignUpButtonProps = BaseSignUpButtonProps;
 /**
  * SignUpButton component that supports both render props and traditional props patterns.
  * It redirects the user to the Asgardeo sign-up page configured for the application.
+ *
+ * @remarks This component is only supported in browser based React applications (CSR).
  *
  * @example Using render props pattern
  * ```tsx
@@ -44,12 +48,33 @@ export type SignUpButtonProps = BaseSignUpButtonProps;
  * ```tsx
  * <SignUpButton className="custom-button">Create Account</SignUpButton>
  * ```
+ *
+ * @example Using component-level preferences
+ * ```tsx
+ * <SignUpButton
+ *   preferences={{
+ *     i18n: {
+ *       bundles: {
+ *         'en-US': {
+ *           translations: {
+ *             'buttons.signUp': 'Custom Sign Up Text'
+ *           }
+ *         }
+ *       }
+ *     }
+ *   }}
+ * >
+ *   Custom Sign Up
+ * </SignUpButton>
+ * ```
  */
 const SignUpButton: ForwardRefExoticComponent<SignUpButtonProps & RefAttributes<HTMLButtonElement>> = forwardRef<
   HTMLButtonElement,
   SignUpButtonProps
->(({children = 'Sign Up', onClick, ...rest}: SignUpButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+>(({children, onClick, preferences, ...rest}: SignUpButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
   const {signUp} = useAsgardeo();
+  const {t} = useTranslation(preferences?.i18n);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignUp = async (e?: MouseEvent<HTMLButtonElement>): Promise<void> => {
@@ -61,15 +86,27 @@ const SignUpButton: ForwardRefExoticComponent<SignUpButtonProps & RefAttributes<
         onClick(e);
       }
     } catch (error) {
-      throw new Error(`Sign up failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw new AsgardeoRuntimeError(
+        `Sign up failed: ${error instanceof Error ? error.message : String(error)}`,
+        'handleSignUp-RuntimeError-001',
+        'react',
+        'Something went wrong while trying to sign up. Please try again later.',
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <BaseSignUpButton ref={ref} onClick={handleSignUp} isLoading={isLoading} signUp={handleSignUp} {...rest}>
-      {children}
+    <BaseSignUpButton
+      ref={ref}
+      onClick={handleSignUp}
+      isLoading={isLoading}
+      signUp={handleSignUp}
+      preferences={preferences}
+      {...rest}
+    >
+      {children ?? t('elements.buttons.signUp')}
     </BaseSignUpButton>
   );
 });

@@ -78,7 +78,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
   const [showSelfSignUp, setShowSelfSignUp] = useState<boolean>(showSignUp);
   const [componentBranding, setComponentBranding] = useState<Branding>();
 
-  const {isAuthenticated} = useAuthentication();
+  const {isSignedIn} = useAuthentication();
   const {config} = useConfig();
 
   const authContext: AuthContext | undefined = useContext(AsgardeoContext);
@@ -159,7 +159,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
           /**
            * Check the origin of the message to ensure it's from the popup window
            */
-          if (event.origin !== config.signInRedirectURL) return;
+          if (event.origin !== config.afterSignInUrl) return;
 
           const {code, state} = event.data;
 
@@ -182,7 +182,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
       authContext?.setAuthResponse(resp);
 
       const authInstance: UIAuthClient = AuthClient.getInstance();
-      const state: string = (await authInstance.getDataLayer().getTemporaryDataParameter('state')).toString();
+      const state: string = (await authInstance.getStorageManager().getTemporaryDataParameter('state')).toString();
 
       await authInstance.requestAccessToken(resp.authData.code, resp.authData.session_state, state);
 
@@ -368,7 +368,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
         {showLogo && !(isLoading || authContext?.isComponentLoading) && (
           <UISignIn.Image className="asgardeo-sign-in-logo" src={imgUrl} />
         )}
-        {authContext?.authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isAuthenticated && (
+        {authContext?.authResponse?.flowStatus !== FlowStatus.SuccessCompleted && !isSignedIn && (
           <>
             {renderSignIn()}
 
@@ -397,7 +397,7 @@ const SignIn: FC<SignInProps> = (props: SignInProps): ReactElement => {
             )}
           </>
         )}
-        {(authContext?.authResponse?.flowStatus === FlowStatus.SuccessCompleted || isAuthenticated) && (
+        {(authContext?.authResponse?.flowStatus === FlowStatus.SuccessCompleted || isSignedIn) && (
           <div style={{backgroundColor: 'white', padding: '1rem'}}>Successfully Authenticated</div>
         )}
       </UISignIn>

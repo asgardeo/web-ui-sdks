@@ -49,7 +49,7 @@ export class SPACryptoUtils implements Crypto<Buffer | string> {
     idToken: string,
     jwk: Partial<JWKInterface>,
     algorithms: string[],
-    clientID: string,
+    clientId: string,
     issuer: string,
     subject: string,
     clockTolerance?: number,
@@ -57,7 +57,7 @@ export class SPACryptoUtils implements Crypto<Buffer | string> {
   ): Promise<boolean> {
     const jwtVerifyOptions = {
       algorithms: algorithms,
-      audience: clientID,
+      audience: clientId,
       clockTolerance: clockTolerance,
       subject: subject,
     };

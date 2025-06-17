@@ -50,7 +50,7 @@ const getBrandingPreferenceText = async (
   params.append('screen', screen);
   params.append('type', type);
 
-  const {baseUrl} = await AuthClient.getInstance().getDataLayer().getConfigData();
+  const {baseUrl} = await AuthClient.getInstance().getStorageManager().getConfigData();
   const textUrl: string = `${baseUrl}/api/server/v1/branding-preference/text/resolve`;
   const urlWithParams: string = `${textUrl}?${params.toString()}`;
   let response: Response;

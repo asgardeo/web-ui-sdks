@@ -18,12 +18,11 @@
 
 import {
   AuthClientConfig,
-  AuthorizationURLParams,
-  BasicUserInfo,
+  AuthorizeRequestUrlParams,
+  User,
   IsomorphicCrypto,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
 } from '@asgardeo/javascript';
 import {HttpRequestConfig, HttpResponse, Message} from '.';
@@ -33,8 +32,9 @@ interface WebWorkerEvent<T> extends MessageEvent {
   data: Message<T>;
 }
 
-export class WebWorkerClass<T> extends Worker {
-  public override onmessage: (this: Worker, event: WebWorkerEvent<T>) => any = () => null;
+export class WebWorkerClass<T> {
+  onmessage: (this: Worker, event: WebWorkerEvent<T>) => any = () => null;
+  postMessage: (message: Message<T>) => void = () => null;
 }
 
 export interface WebWorkerCoreInterface {
@@ -45,28 +45,23 @@ export interface WebWorkerCoreInterface {
   httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse[] | undefined>;
   enableHttpHandler(): void;
   disableHttpHandler(): void;
-  getAuthorizationURL(params?: AuthorizationURLParams, signInRedirectURL?: string): Promise<AuthorizationResponse>;
-  requestAccessToken(
-    authorizationCode?: string,
-    sessionState?: string,
-    pkce?: string,
-    state?: string,
-  ): Promise<BasicUserInfo>;
-  signOut(signOutRedirectURL?: string): Promise<string>;
-  getSignOutURL(signOutRedirectURL?: string): Promise<string>;
-  requestCustomGrant(config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse>;
-  refreshAccessToken(): Promise<BasicUserInfo>;
+  getSignInUrl(params?: AuthorizeRequestUrlParams, afterSignInUrl?: string): Promise<AuthorizationResponse>;
+  requestAccessToken(authorizationCode?: string, sessionState?: string, pkce?: string, state?: string): Promise<User>;
+  signOut(afterSignOutUrl?: string): Promise<string>;
+  getSignOutUrl(afterSignOutUrl?: string): Promise<string>;
+  exchangeToken(config: TokenExchangeRequestConfig): Promise<User | Response>;
+  refreshAccessToken(): Promise<User>;
   revokeAccessToken(): Promise<boolean>;
-  getBasicUserInfo(): Promise<BasicUserInfo>;
-  getDecodedIDToken(): Promise<IdTokenPayload>;
+  getUser(): Promise<User>;
+  getDecodedIdToken(): Promise<IdTokenPayload>;
   getDecodedIDPIDToken(): Promise<IdTokenPayload>;
-  getCryptoHelper(): Promise<IsomorphicCrypto>;
-  getIDToken(): Promise<string>;
-  getOIDCServiceEndpoints(): Promise<OIDCEndpoints>;
+  getCrypto(): Promise<IsomorphicCrypto>;
+  getIdToken(): Promise<string>;
+  getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getAccessToken(): Promise<string>;
-  isAuthenticated(): Promise<boolean>;
+  isSignedIn(): Promise<boolean>;
   startAutoRefreshToken(): Promise<void>;
   setSessionState(sessionState: string): Promise<void>;
-  updateConfig(config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void>;
+  reInitialize(config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void>;
   getConfigData(): Promise<AuthClientConfig<WebWorkerClientConfig>>;
 }

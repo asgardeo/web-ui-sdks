@@ -35,7 +35,7 @@ const getProfileInformation = async (): Promise<MeAPIResponse> => {
   let response: Response;
 
   try {
-    baseUrl = (await AuthClient.getInstance().getDataLayer().getConfigData()).baseUrl;
+    baseUrl = (await AuthClient.getInstance().getStorageManager().getConfigData()).baseUrl;
     accessToken = await AuthClient.getInstance().getAccessToken();
   } catch (error) {
     throw new AsgardeoUIException(

@@ -16,9 +16,12 @@
  * under the License.
  */
 
-import {CSSProperties, FC, InputHTMLAttributes} from 'react';
-import {useTheme} from '../../../theme/useTheme';
+import {CSSProperties, FC, InputHTMLAttributes, ReactNode} from 'react';
+import useTheme from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
+import FormControl from '../FormControl/FormControl';
+import InputLabel from '../InputLabel/InputLabel';
+import {withVendorCSSClassPrefix} from 'packages/browser/dist';
 
 export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className'> {
   /**
@@ -45,27 +48,50 @@ export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
    * Helper text to display below the input
    */
   helperText?: string;
+  /**
+   * Icon to display at the start (left) of the input
+   */
+  startIcon?: ReactNode;
+  /**
+   * Icon to display at the end (right) of the input
+   */
+  endIcon?: ReactNode;
+  /**
+   * Click handler for the start icon
+   */
+  onStartIconClick?: () => void;
+  /**
+   * Click handler for the end icon
+   */
+  onEndIconClick?: () => void;
 }
 
-export const TextField: FC<TextFieldProps> = ({label, error, required, className, disabled, helperText, style = {}, ...rest}) => {
+const TextField: FC<TextFieldProps> = ({
+  label,
+  error,
+  required,
+  className,
+  disabled,
+  helperText,
+  startIcon,
+  endIcon,
+  onStartIconClick,
+  onEndIconClick,
+  type = 'text',
+  style = {},
+  ...rest
+}) => {
   const {theme} = useTheme();
 
-  const containerStyle: CSSProperties = {
-    marginBottom: theme.spacing.unit * 2 + 'px',
-    ...style
-  };
-
-  const labelStyle: CSSProperties = {
-    display: 'block',
-    marginBottom: theme.spacing.unit + 'px',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    fontSize: '0.875rem',
-    fontWeight: 500,
-  };
+  // Calculate padding based on icons
+  const hasStartIcon = !!startIcon;
+  const hasEndIcon = !!endIcon;
+  const leftPadding = hasStartIcon ? theme.spacing.unit * 5 : theme.spacing.unit * 1.5;
+  const rightPadding = hasEndIcon ? theme.spacing.unit * 5 : theme.spacing.unit * 1.5;
 
   const inputStyle: CSSProperties = {
     width: '100%',
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
+    padding: `${theme.spacing.unit}px ${rightPadding}px ${theme.spacing.unit}px ${leftPadding}px`,
     border: `1px solid ${error ? theme.colors.error.main : theme.colors.border}`,
     borderRadius: theme.borderRadius.small,
     fontSize: '1rem',
@@ -75,23 +101,82 @@ export const TextField: FC<TextFieldProps> = ({label, error, required, className
     transition: 'border-color 0.2s ease',
   };
 
-  const helperTextStyle: CSSProperties = {
-    fontSize: '0.75rem',
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    marginTop: theme.spacing.unit / 2 + 'px',
+  const inputContainerStyle: CSSProperties = {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+  };
+
+  const iconButtonStyle: CSSProperties = {
+    position: 'absolute',
+    background: 'none',
+    border: 'none',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    padding: theme.spacing.unit / 2,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: theme.colors.text.secondary,
+    opacity: disabled ? 0.5 : 1,
+    top: '50%',
+    transform: 'translateY(-50%)',
+  };
+
+  const startIconStyle: CSSProperties = {
+    ...iconButtonStyle,
+    left: theme.spacing.unit,
+  };
+
+  const endIconStyle: CSSProperties = {
+    ...iconButtonStyle,
+    right: theme.spacing.unit,
   };
 
   return (
-    <div style={containerStyle} className={clsx('asgardeo-text-field', className)}>
+    <FormControl
+      error={error}
+      helperText={helperText}
+      className={clsx(withVendorCSSClassPrefix('text-field'), className)}
+      style={style}
+    >
       {label && (
-        <label style={labelStyle}>
+        <InputLabel required={required} error={!!error}>
           {label}
-          {required && <span style={{color: theme.colors.error.main}}> *</span>}
-        </label>
+        </InputLabel>
       )}
-      <input style={inputStyle} disabled={disabled} aria-invalid={!!error} aria-required={required} {...rest} />
-      {(error || helperText) && <div style={helperTextStyle}>{error || helperText}</div>}
-    </div>
+      <div style={inputContainerStyle}>
+        {startIcon && (
+          <div
+            style={startIconStyle}
+            onClick={onStartIconClick}
+            role={onStartIconClick ? 'button' : undefined}
+            tabIndex={onStartIconClick && !disabled ? 0 : undefined}
+            aria-label="Start icon"
+          >
+            {startIcon}
+          </div>
+        )}
+        <input
+          style={inputStyle}
+          type={type}
+          disabled={disabled}
+          aria-invalid={!!error}
+          aria-required={required}
+          {...rest}
+        />
+        {endIcon && (
+          <div
+            style={endIconStyle}
+            onClick={onEndIconClick}
+            role={onEndIconClick ? 'button' : undefined}
+            tabIndex={onEndIconClick && !disabled ? 0 : undefined}
+            aria-label="End icon"
+          >
+            {endIcon}
+          </div>
+        )}
+      </div>
+    </FormControl>
   );
 };
 

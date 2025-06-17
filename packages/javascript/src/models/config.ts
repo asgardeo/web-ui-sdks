@@ -17,9 +17,10 @@
  */
 
 import {ThemeConfig, ThemeMode} from '../theme/types';
-import { RecursivePartial } from './utility-types';
+import {I18nBundle} from './i18n';
+import {RecursivePartial} from './utility-types';
 
-export interface BaseConfig<T = unknown> {
+export interface BaseConfig<T = unknown> extends WithPreferences {
   /**
    * Optional URL where the authorization server should redirect after authentication.
    * This must match one of the allowed redirect URIs configured in your IdP.
@@ -63,7 +64,9 @@ export interface BaseConfig<T = unknown> {
    * scopes: ["openid", "profile", "email"]
    */
   scopes?: string | string[] | undefined;
+}
 
+export interface WithPreferences {
   /**
    * Preferences for customizing the Asgardeo UI components
    */
@@ -83,9 +86,32 @@ export interface ThemePreferences {
   overrides?: RecursivePartial<ThemeConfig>;
 }
 
+export interface I18nPreferences {
+  /**
+   * The language to use for translations.
+   * Defaults to the browser's default language.
+   */
+  language?: string;
+  /**
+   * The fallback language to use if translations are not available in the specified language.
+   * Defaults to 'en-US'.
+   */
+  fallbackLanguage?: string;
+  /**
+   * Custom translations to override default ones.
+   */
+  bundles?: {
+    [key: string]: I18nBundle;
+  };
+}
+
 export interface Preferences {
   /**
    * Theme preferences for the Asgardeo UI components
    */
   theme?: ThemePreferences;
+  /**
+   * Internationalization preferences for the Asgardeo UI components
+   */
+  i18n?: I18nPreferences;
 }

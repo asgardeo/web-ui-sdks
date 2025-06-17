@@ -44,7 +44,7 @@ const authenticate = async (props: AuthenticateProps): Promise<AuthApiResponse> 
     };
 
     /* Getting baseURL from authClient's data layer */
-    const {baseUrl} = await AuthClient.getInstance().getDataLayer().getConfigData();
+    const {baseUrl} = await AuthClient.getInstance().getStorageManager().getConfigData();
 
     authnRequest = new Request(`${baseUrl}/oauth2/authn`, requestOptions);
   } catch (error) {

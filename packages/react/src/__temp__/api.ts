@@ -19,10 +19,9 @@
 import {
   AsgardeoSPAClient,
   AuthClientConfig,
-  BasicUserInfo,
+  User,
   LegacyConfig as Config,
   IdTokenPayload,
-  FetchResponse,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -30,6 +29,8 @@ import {
   OIDCEndpoints,
   SignInConfig,
   SPACustomGrantConfig,
+  initializeApplicationNativeAuthentication,
+  processOpenIDScopes,
 } from '@asgardeo/browser';
 import {AuthStateInterface} from './models';
 
@@ -57,10 +58,6 @@ class AuthAPI {
 
   public _getIsLoading(): boolean {
     return this._isLoading;
-  }
-
-  public isSignedIn(): Promise<boolean> {
-    return this.isAuthenticated();
   }
 
   public isLoading(): boolean {
@@ -108,27 +105,25 @@ class AuthAPI {
     authorizationCode?: string,
     sessionState?: string,
     authState?: string,
-    callback?: (response: BasicUserInfo) => void,
+    callback?: (response: User) => void,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> {
+  ): Promise<any> {
     return this._client
       .signIn(config, authorizationCode, sessionState, authState, tokenRequestConfig)
-      .then(async (response: BasicUserInfo) => {
+      .then(async (response: User) => {
         if (!response) {
           return null; // FIXME: Validate this. Temp fix for: error TS7030: Not all code paths return a value.
         }
 
-        if (await this._client.isAuthenticated()) {
+        if (await this._client.isSignedIn()) {
           const stateToUpdate = {
-            allowedScopes: response.allowedScopes,
             displayName: response.displayName,
             email: response.email,
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
             isSigningOut: false,
-            sub: response.sub,
             username: response.username,
           };
 
@@ -183,10 +178,10 @@ class AuthAPI {
   /**
    * This method returns a Promise that resolves with the basic user information obtained from the ID token.
    *
-   * @return {Promise<BasicUserInfo>} - A promise that resolves with the user information.
+   * @return {Promise<User>} - A promise that resolves with the user information.
    */
-  public async getBasicUserInfo(): Promise<BasicUserInfo> {
-    return this._client.getBasicUserInfo();
+  public async getUser(): Promise<User> {
+    return this._client.getUser();
   }
 
   /**
@@ -197,7 +192,7 @@ class AuthAPI {
    *
    * @param {HttpRequestConfig} config -  The config object containing attributes necessary to send a request.
    *
-   * @return {Promise<FetchResponse>} - Returns a Promise that resolves with the response to the request.
+   * @return {Promise<Response>} - Returns a Promise that resolves with the response to the request.
    */
   public async httpRequest(config: HttpRequestConfig): Promise<HttpResponse<any>> {
     return this._client.httpRequest(config);
@@ -211,7 +206,7 @@ class AuthAPI {
    *
    * @param {HttpRequestConfig[]} config -  The config object containing attributes necessary to send a request.
    *
-   * @return {Promise<FetchResponse[]>} - Returns a Promise that resolves with the responses to the requests.
+   * @return {Promise<Response>} - Returns a Promise that resolves with the responses to the requests.
    */
   public async httpRequestAll(configs: HttpRequestConfig[]): Promise<HttpResponse<any>[]> {
     return this._client.httpRequestAll(configs);
@@ -222,17 +217,17 @@ class AuthAPI {
    *
    * @param {CustomGrantRequestParams} config - The request parameters.
    *
-   * @return {Promise<FetchResponse<any> | SignInResponse>} - A Promise that resolves with
+   * @return {Promise<Response | SignInResponse>} - A Promise that resolves with
    * the value returned by the custom grant request.
    */
-  public requestCustomGrant(
+  public exchangeToken(
     config: SPACustomGrantConfig,
-    callback: (response: BasicUserInfo | FetchResponse<any>) => void,
+    callback: (response: User | Response) => void,
     dispatch: (state: AuthStateInterface) => void,
-  ): Promise<BasicUserInfo | FetchResponse<any>> {
+  ): Promise<User | Response> {
     return this._client
-      .requestCustomGrant(config)
-      .then((response: BasicUserInfo | FetchResponse<any>) => {
+      .exchangeToken(config)
+      .then((response: User | Response) => {
         if (!response) {
           return null; // FIXME: Validate this. Temp fix for: error TS7030: Not all code paths return a value.
         }
@@ -240,12 +235,12 @@ class AuthAPI {
         if (config.returnsSession) {
           this.updateState({
             ...this.getState(),
-            ...(response as BasicUserInfo),
-            isAuthenticated: true,
+            ...(response as User),
+            isSignedIn: true,
             isLoading: false,
           });
 
-          dispatch({...(response as BasicUserInfo), isAuthenticated: true, isLoading: false});
+          dispatch({...(response as User), isSignedIn: true, isLoading: false});
         }
 
         callback && callback(response);
@@ -280,8 +275,8 @@ class AuthAPI {
    *
    * @return {Promise<ServiceResourcesType} - A Promise that resolves with an object containing the service endpoints.
    */
-  public async getOIDCServiceEndpoints(): Promise<OIDCEndpoints> {
-    return this._client.getOIDCServiceEndpoints();
+  public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints> {
+    return this._client.getOpenIDProviderEndpoints();
   }
 
   /**
@@ -299,8 +294,8 @@ class AuthAPI {
    * @return {Promise<DecodedIDTokenPayloadInterface>} - A Promise that resolves with
    * the decoded payload of the id token.
    */
-  public async getDecodedIDToken(): Promise<IdTokenPayload> {
-    return this._client.getDecodedIDToken();
+  public async getDecodedIdToken(): Promise<IdTokenPayload> {
+    return this._client.getDecodedIdToken();
   }
 
   /**
@@ -310,7 +305,7 @@ class AuthAPI {
    * the decoded payload of the idp id token.
    */
   public async getDecodedIDPIDToken(): Promise<IdTokenPayload> {
-    return this._client.getDecodedIDToken();
+    return this._client.getDecodedIdToken();
   }
 
   /**
@@ -318,8 +313,8 @@ class AuthAPI {
    *
    * @return {Promise<string>} - A Promise that resolves with the id token.
    */
-  public async getIDToken(): Promise<string> {
-    return this._client.getIDToken();
+  public async getIdToken(): Promise<string> {
+    return this._client.getIdToken();
   }
 
   /**
@@ -351,7 +346,7 @@ class AuthAPI {
    * @return {TokenResponseInterface} - A Promise that resolves with an object containing
    * information about the refreshed access token.
    */
-  public async refreshAccessToken(): Promise<BasicUserInfo> {
+  public async refreshAccessToken(): Promise<User> {
     return this._client.refreshAccessToken();
   }
 
@@ -360,8 +355,8 @@ class AuthAPI {
    *
    * @return {Promise<boolean>} - A Promise that resolves with `true` if teh user is authenticated.
    */
-  public async isAuthenticated(): Promise<boolean> {
-    return this._client.isAuthenticated();
+  public async isSignedIn(): Promise<boolean> {
+    return this._client.isSignedIn();
   }
 
   /**
@@ -397,8 +392,8 @@ class AuthAPI {
    *
    * @param {Partial<AuthClientConfig<T>>} config - A config object to update the SDK configurations with.
    */
-  public async updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void> {
-    return this._client.updateConfig(config);
+  public async reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void> {
+    return this._client.reInitialize(config);
   }
 
   /**
@@ -424,7 +419,7 @@ class AuthAPI {
    * First, this method sends a prompt none request to see if there is an active user session in the identity server.
    * If there is one, then it requests the access token and stores it. Else, it returns false.
    *
-   * @return {Promise<BasicUserInfo | boolean>} - A Promise that resolves with the user information after signing in
+   * @return {Promise<User | boolean>} - A Promise that resolves with the user information after signing in
    * or with `false` if the user is not signed in.
    *
    * @example
@@ -437,10 +432,10 @@ class AuthAPI {
     dispatch: (state: AuthStateInterface) => void,
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean | undefined> {
+  ): Promise<User | boolean | undefined> {
     return this._client
       .trySignInSilently(additionalParams, tokenRequestConfig)
-      .then(async (response: BasicUserInfo | boolean) => {
+      .then(async (response: User | boolean) => {
         if (!response) {
           this.updateState({...this.getState(), isLoading: false});
           dispatch({...state, isLoading: false});
@@ -448,16 +443,14 @@ class AuthAPI {
           return false;
         }
 
-        if (await this._client.isAuthenticated()) {
-          const basicUserInfo = response as BasicUserInfo;
+        if (await this._client.isSignedIn()) {
+          const basicUserInfo = response as User;
           const stateToUpdate = {
-            allowedScopes: basicUserInfo.allowedScopes,
             displayName: basicUserInfo.displayName,
             email: basicUserInfo.email,
-            isAuthenticated: true,
+            isSignedIn: true,
             isLoading: false,
             isSigningOut: false,
-            sub: basicUserInfo.sub,
             username: basicUserInfo.username,
           };
 
@@ -475,12 +468,10 @@ class AuthAPI {
 }
 
 AuthAPI.DEFAULT_STATE = {
-  allowedScopes: '',
   displayName: '',
   email: '',
-  isAuthenticated: false,
+  isSignedIn: false,
   isLoading: true,
-  sub: '',
   username: '',
 };
 

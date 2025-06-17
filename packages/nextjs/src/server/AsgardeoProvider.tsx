@@ -17,7 +17,7 @@
  */
 
 import {FC, PropsWithChildren, ReactElement} from 'react';
-import AsgardeoClientProvider, {AsgardeoClientProviderProps} from '../client/providers/AsgardeoProvider';
+import AsgardeoClientProvider, {AsgardeoClientProviderProps} from '../client/contexts/Asgardeo/AsgardeoProvider';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}

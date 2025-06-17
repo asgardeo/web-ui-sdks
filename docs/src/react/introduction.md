@@ -71,9 +71,9 @@ Then, wrap your application with the `AsgardeoProvider` and pass the basic confi
 <AsgardeoProvider
     config={{
       baseUrl: "https://api.asgardeo.io/t/org_name",
-      clientID: "gqtroUbA1Qsulqr*****",
+      clientId: "gqtroUbA1Qsulqr*****",
       scope: ["openid", "internal_login", "profile"],
-      signInRedirectURL: "https://domain_name:8080",
+      afterSignInUrl: "https://domain_name:8080",
     }}>
     <App />
 </AsgardeoProvider>

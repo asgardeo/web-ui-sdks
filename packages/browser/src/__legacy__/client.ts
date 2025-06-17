@@ -20,15 +20,14 @@ import {
   AsgardeoAuthClient,
   AsgardeoAuthException,
   AuthClientConfig,
-  BasicUserInfo,
   IsomorphicCrypto,
-  CustomGrantConfig,
-  DataLayer,
+  TokenExchangeRequestConfig,
+  StorageManager,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
+  User,
 } from '@asgardeo/javascript';
-import WorkerFile from '../worker';
+// import WorkerFile from '../worker';
 import {MainThreadClient, WebWorkerClient} from './clients';
 import {Hooks, REFRESH_ACCESS_TOKEN_ERR0R} from './constants';
 import {AuthenticationHelper, SPAHelper} from './helpers';
@@ -45,7 +44,7 @@ import {
   WebWorkerClientConfig,
   WebWorkerClientInterface,
 } from './models';
-import {Storage} from './models/storage';
+import {BrowserStorage} from './models/storage';
 import {SPAUtils} from './utils';
 
 /**
@@ -54,11 +53,10 @@ import {SPAUtils} from './utils';
 const DefaultConfig: Partial<AuthClientConfig<Config>> = {
   autoLogoutOnTokenRefreshError: true,
   checkSessionInterval: 3,
-  clientHost: origin,
   enableOIDCSessionManagement: false,
   periodicTokenRefresh: false,
   sessionRefreshInterval: 300,
-  storage: Storage.SessionStorage,
+  storage: BrowserStorage.SessionStorage,
 };
 
 /**
@@ -70,12 +68,13 @@ const DefaultConfig: Partial<AuthClientConfig<Config>> = {
 export class AsgardeoSPAClient {
   protected static _instances: Map<number, AsgardeoSPAClient> = new Map<number, AsgardeoSPAClient>();
   protected _client: WebWorkerClientInterface | MainThreadClientInterface | undefined;
-  protected _storage: Storage | undefined;
+  protected _storage: BrowserStorage | undefined;
   protected _authHelper: typeof AuthenticationHelper = AuthenticationHelper;
-  protected _worker: new () => Worker = WorkerFile;
+  // protected _worker: new () => Worker = WorkerFile;
+  protected _worker = null;
   protected _initialized: boolean = false;
   protected _startedInitialize: boolean = false;
-  protected _onSignInCallback: (response: BasicUserInfo) => void = () => null;
+  protected _onSignInCallback: (response: User) => void = () => null;
   protected _onSignOutCallback: () => void = () => null;
   protected _onSignOutFailedCallback: (error: SignOutError) => void = () => null;
   protected _onEndUserSession: (response: any) => void = () => null;
@@ -95,13 +94,13 @@ export class AsgardeoSPAClient {
     }
   }
 
-  public instantiateWorker(worker: new () => Worker) {
-    if (worker) {
-      this._worker = worker;
-    } else {
-      this._worker = WorkerFile;
-    }
-  }
+  // public instantiateWorker(worker: new () => Worker) {
+  //   if (worker) {
+  //     this._worker = worker;
+  //   } else {
+  //     this._worker = WorkerFile;
+  //   }
+  // }
 
   /**
    * This method specifies if the `AsgardeoSPAClient` has been initialized or not.
@@ -112,7 +111,7 @@ export class AsgardeoSPAClient {
    *
    * @private
    */
-  private async _isInitialized(): Promise<boolean> {
+  public async isInitialized(): Promise<boolean> {
     if (!this._startedInitialize) {
       return false;
     }
@@ -148,7 +147,7 @@ export class AsgardeoSPAClient {
    * @private
    */
   private async _validateMethod(validateAuthentication: boolean = true): Promise<boolean> {
-    if (!(await this._isInitialized())) {
+    if (!(await this.isInitialized())) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-VM-NF01',
@@ -158,7 +157,7 @@ export class AsgardeoSPAClient {
       );
     }
 
-    if (validateAuthentication && !(await this.isAuthenticated())) {
+    if (validateAuthentication && !(await this.isSignedIn())) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-VM-IV02',
@@ -217,8 +216,8 @@ export class AsgardeoSPAClient {
    * @example
    * ```
    * auth.initialize({
-   *     signInRedirectURL: "http://localhost:3000/sign-in",
-   *     clientID: "client ID",
+   *     afterSignInUrl: "http://localhost:3000/sign-in",
+   *     clientId: "client ID",
    *     baseUrl: "https://api.asgardeo.io"
    * });
    * ```
@@ -235,16 +234,16 @@ export class AsgardeoSPAClient {
     authHelper?: typeof AuthenticationHelper,
     workerFile?: new () => Worker,
   ): Promise<boolean> {
-    this._storage = (config.storage as Storage) ?? Storage.SessionStorage;
+    this._storage = (config.storage as BrowserStorage) ?? BrowserStorage.SessionStorage;
     this._initialized = false;
     this._startedInitialize = true;
 
     authHelper && this.instantiateAuthHelper(authHelper);
-    workerFile && this.instantiateWorker(workerFile);
+    // workerFile && this.instantiateWorker(workerFile);
 
     const _config = await this._client?.getConfigData();
 
-    if (!(this._storage === Storage.WebWorker)) {
+    if (!(this._storage === BrowserStorage.WebWorker)) {
       const mainThreadClientConfig = config as AuthClientConfig<MainThreadClientConfig>;
       const defaultConfig = {...DefaultConfig} as Partial<AuthClientConfig<MainThreadClientConfig>>;
       const mergedConfig: AuthClientConfig<MainThreadClientConfig> = {
@@ -327,11 +326,11 @@ export class AsgardeoSPAClient {
   /**
    * This method returns a Promise that resolves with the basic user information obtained from the ID token.
    *
-   * @return {Promise<BasicUserInfo>} - A promise that resolves with the user information.
+   * @return {Promise<User>} - A promise that resolves with the user information.
    *
    * @example
    * ```
-   * auth.getBasicUserInfo().then((response) => {
+   * auth.getUser().then((response) => {
    *    // console.log(response);
    * }).catch((error) => {
    *    // console.error(error);
@@ -344,10 +343,10 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getBasicUserInfo(): Promise<BasicUserInfo | undefined> {
+  public async getUser(): Promise<User | undefined> {
     await this._validateMethod();
 
-    return this._client?.getBasicUserInfo();
+    return this._client?.getUser();
   }
 
   /**
@@ -373,7 +372,7 @@ export class AsgardeoSPAClient {
    * @param {string} sessionState - The session state. (Optional)
    * @param {string} state - The state. (Optional)
    *
-   * @return {Promise<BasicUserInfo>} - A promise that resolves with the user information.
+   * @return {Promise<User>} - A promise that resolves with the user information.
    *
    * @example
    * ```
@@ -394,8 +393,8 @@ export class AsgardeoSPAClient {
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo | undefined> {
-    await this._isInitialized();
+  ): Promise<User | undefined> {
+    await this.isInitialized();
 
     // Discontinues the execution of this method if `config.callOnlyOnRedirect` is true and the `signIn` method
     // is not being called on redirect.
@@ -407,11 +406,9 @@ export class AsgardeoSPAClient {
 
     return this._client
       ?.signIn(config, authorizationCode, sessionState, state, tokenRequestConfig)
-      .then((response: BasicUserInfo) => {
+      .then((response: User) => {
         if (this._onSignInCallback) {
-          if (response.allowedScopes || response.displayName || response.email || response.username) {
-            this._onSignInCallback(response);
-          }
+          this._onSignInCallback(response);
         }
 
         return response;
@@ -426,7 +423,7 @@ export class AsgardeoSPAClient {
    * If this method is to be called on page load and the `signIn` method is also to be called on page load,
    * then it is advisable to call this method after the `signIn` call.
    *
-   * @return {Promise<BasicUserInfo | boolean>} - A Promise that resolves with the user information after signing in
+   * @return {Promise<User | boolean>} - A Promise that resolves with the user information after signing in
    * or with `false` if the user is not signed in.
    *
    * @example
@@ -437,31 +434,21 @@ export class AsgardeoSPAClient {
   public async trySignInSilently(
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean | undefined> {
-    await this._isInitialized();
+  ): Promise<User | boolean | undefined> {
+    await this.isInitialized();
 
     // checks if the `signIn` method has been called.
     if (SPAUtils.wasSignInCalled()) {
       return undefined;
     }
 
-    return this._client
-      ?.trySignInSilently(additionalParams, tokenRequestConfig)
-      .then((response: BasicUserInfo | boolean) => {
-        if (this._onSignInCallback && response) {
-          const basicUserInfo = response as BasicUserInfo;
-          if (
-            basicUserInfo.allowedScopes ||
-            basicUserInfo.displayName ||
-            basicUserInfo.email ||
-            basicUserInfo.username
-          ) {
-            this._onSignInCallback(basicUserInfo);
-          }
-        }
+    return this._client?.trySignInSilently(additionalParams, tokenRequestConfig).then((response: User | boolean) => {
+      if (this._onSignInCallback && response) {
+        this._onSignInCallback(response as User);
+      }
 
-        return response;
-      });
+      return response;
+    });
   }
 
   /**
@@ -619,7 +606,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async requestCustomGrant(config: CustomGrantConfig): Promise<FetchResponse<any> | BasicUserInfo | undefined> {
+  public async exchangeToken(config: TokenExchangeRequestConfig): Promise<Response | User | undefined> {
     if (config.signInRequired) {
       await this._validateMethod();
     } else {
@@ -636,7 +623,7 @@ export class AsgardeoSPAClient {
       );
     }
 
-    const customGrantResponse = await this._client?.requestCustomGrant(config);
+    const customGrantResponse = await this._client?.exchangeToken(config);
 
     const customGrantCallback = this._onCustomGrant.get(config.id);
     customGrantCallback && customGrantCallback(this._onCustomGrant?.get(config.id));
@@ -693,10 +680,10 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getOIDCServiceEndpoints(): Promise<OIDCEndpoints | undefined> {
-    await this._isInitialized();
+  public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints | undefined> {
+    await this.isInitialized();
 
-    return this._client?.getOIDCServiceEndpoints();
+    return this._client?.getOpenIDProviderEndpoints();
   }
 
   /**
@@ -710,7 +697,7 @@ export class AsgardeoSPAClient {
    */
   public getHttpClient(): HttpClientInstance {
     if (this._client) {
-      if (this._storage !== Storage.WebWorker) {
+      if (this._storage !== BrowserStorage.WebWorker) {
         const mainThreadClient = this._client as MainThreadClientInterface;
         return mainThreadClient.getHttpClient();
       }
@@ -738,7 +725,7 @@ export class AsgardeoSPAClient {
    *
    * @example
    * ```
-   * auth.getDecodedIDToken().then((response)=>{
+   * auth.getDecodedIdToken().then((response)=>{
    *     // console.log(response);
    * }).catch((error)=>{
    *     // console.error(error);
@@ -750,10 +737,10 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getDecodedIDToken(): Promise<IdTokenPayload | undefined> {
+  public async getDecodedIdToken(): Promise<IdTokenPayload | undefined> {
     await this._validateMethod();
 
-    return this._client?.getDecodedIDToken();
+    return this._client?.getDecodedIdToken();
   }
 
   /**
@@ -764,22 +751,22 @@ export class AsgardeoSPAClient {
    *
    * @example
    * ```
-   * auth.getCryptoHelper().then((response)=>{
+   * auth.getCrypto().then((response)=>{
    *     // console.log(response);
    * }).catch((error)=>{
    *     // console.error(error);
    * });
    * ```
-   * @link https://github.com/asgardeo/asgardeo-auth-spa-sdk/tree/master#getCryptoHelper
+   * @link https://github.com/asgardeo/asgardeo-auth-spa-sdk/tree/master#getCrypto
    *
    * @memberof AsgardeoSPAClient
    *
    * @preserve
    */
-  public async getCryptoHelper(): Promise<IsomorphicCrypto | undefined> {
+  public async getCrypto(): Promise<IsomorphicCrypto | undefined> {
     await this._validateMethod();
 
-    return this._client?.getCryptoHelper();
+    return this._client?.getCrypto();
   }
 
   /**
@@ -789,19 +776,19 @@ export class AsgardeoSPAClient {
    *
    * @example
    * ```
-   * const idToken = await auth.getIDToken();
+   * const idToken = await auth.getIdToken();
    * ```
    *
-   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getIDToken
+   * @link https://github.com/asgardeo/asgardeo-auth-js-sdk/tree/master#getIdToken
    *
    * @memberof AsgardeoAuthClient
    *
    * @preserve
    */
-  public async getIDToken(): Promise<string | undefined> {
+  public async getIdToken(): Promise<string | undefined> {
     await this._validateMethod();
 
-    return this._client?.getIDToken();
+    return this._client?.getIdToken();
   }
 
   /**
@@ -829,7 +816,7 @@ export class AsgardeoSPAClient {
   public async getAccessToken(): Promise<string> {
     await this._validateMethod();
 
-    if (this._storage && [(Storage.WebWorker, Storage.BrowserMemory)].includes(this._storage)) {
+    if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-GAT-IV01',
@@ -868,7 +855,7 @@ export class AsgardeoSPAClient {
   public async getIDPAccessToken(): Promise<string> {
     await this._validateMethod();
 
-    if (this._storage && [(Storage.WebWorker, Storage.BrowserMemory)].includes(this._storage)) {
+    if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-GIAT-IV01',
@@ -891,7 +878,7 @@ export class AsgardeoSPAClient {
    *
    * @example
    * ```
-   *   auth.getDataLayer().then((dataLayer) => {
+   *   auth.getStorageManager().then((dataLayer) => {
    *       // console.log(dataLayer);
    *   }).catch((error) => {
    *       // console.error(error);
@@ -904,10 +891,10 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getDataLayer(): Promise<DataLayer<MainThreadClientConfig>> {
+  public async getStorageManager(): Promise<StorageManager<MainThreadClientConfig>> {
     await this._validateMethod();
 
-    if (this._storage && [(Storage.WebWorker, Storage.BrowserMemory)].includes(this._storage)) {
+    if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-GDL-IV01',
@@ -918,7 +905,7 @@ export class AsgardeoSPAClient {
     }
     const mainThreadClient = this._client as MainThreadClientInterface;
 
-    return mainThreadClient.getDataLayer();
+    return mainThreadClient.getStorageManager();
   }
 
   /**
@@ -968,7 +955,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async refreshAccessToken(): Promise<BasicUserInfo | undefined> {
+  public async refreshAccessToken(): Promise<User | undefined> {
     await this._validateMethod(false);
 
     return this._client?.refreshAccessToken();
@@ -983,10 +970,10 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async isAuthenticated(): Promise<boolean | undefined> {
-    await this._isInitialized();
+  public async isSignedIn(): Promise<boolean | undefined> {
+    await this.isInitialized();
 
-    return this._client?.isAuthenticated();
+    return this._client?.isSignedIn();
   }
 
   /**
@@ -999,9 +986,9 @@ export class AsgardeoSPAClient {
    * @preserve
    */
   public async isSessionActive(): Promise<boolean | undefined> {
-    await this._isInitialized();
+    await this.isInitialized();
 
-    if (this._storage && [(Storage.WebWorker, Storage.BrowserMemory)].includes(this._storage)) {
+    if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
       return Promise.reject(
         new AsgardeoAuthException(
           'SPA-AUTH_CLIENT-ISA-IV01',
@@ -1038,7 +1025,7 @@ export class AsgardeoSPAClient {
   public async on(hook: Hooks.CustomGrant, callback: (response?: any) => void, id: string): Promise<void>;
   public async on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): Promise<void>;
   public async on(hook: Hooks, callback: (response?: any) => void | Promise<void>, id?: string): Promise<void> {
-    await this._isInitialized();
+    await this.isInitialized();
     if (callback && typeof callback === 'function') {
       switch (hook) {
         case Hooks.SignIn:
@@ -1109,7 +1096,7 @@ export class AsgardeoSPAClient {
    * @preserve
    */
   public async enableHttpHandler(): Promise<boolean | undefined> {
-    await this._isInitialized();
+    await this.isInitialized();
 
     return this._client?.enableHttpHandler();
   }
@@ -1131,7 +1118,7 @@ export class AsgardeoSPAClient {
    * @preserve
    */
   public async disableHttpHandler(): Promise<boolean | undefined> {
-    await this._isInitialized();
+    await this.isInitialized();
 
     return this._client?.disableHttpHandler();
   }
@@ -1144,26 +1131,26 @@ export class AsgardeoSPAClient {
    * @example
    * ```
    * const config = {
-   *     signInRedirectURL: "http://localhost:3000/sign-in",
-   *     clientID: "client ID",
+   *     afterSignInUrl: "http://localhost:3000/sign-in",
+   *     clientId: "client ID",
    *     baseUrl: "https://api.asgardeo.io"
    * }
-   * const auth.updateConfig(config);
+   * const auth.reInitialize(config);
    * ```
-   * @link https://github.com/asgardeo/asgardeo-auth-spa-sdk/tree/master/lib#updateConfig
+   * @link https://github.com/asgardeo/asgardeo-auth-spa-sdk/tree/master/lib#reInitialize
    *
    * @memberof AsgardeoAuthClient
    *
    * @preserve
    */
-  public async updateConfig(config: Partial<AuthClientConfig<Config>>): Promise<void> {
-    await this._isInitialized();
-    if (this._storage === Storage.WebWorker) {
+  public async reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void> {
+    await this.isInitialized();
+    if (this._storage === BrowserStorage.WebWorker) {
       const client = this._client as WebWorkerClientInterface;
-      await client.updateConfig(config as Partial<AuthClientConfig<WebWorkerClientConfig>>);
+      await client.reInitialize(config as Partial<AuthClientConfig<WebWorkerClientConfig>>);
     } else {
       const client = this._client as WebWorkerClientInterface;
-      await client.updateConfig(config as Partial<AuthClientConfig<WebWorkerClientConfig>>);
+      await client.reInitialize(config as Partial<AuthClientConfig<WebWorkerClientConfig>>);
     }
 
     return;

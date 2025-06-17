@@ -20,16 +20,15 @@ import {
   AsgardeoAuthClient,
   AsgardeoAuthException,
   AuthClientConfig,
-  BasicUserInfo,
   Crypto,
-  CustomGrantConfig,
-  DataLayer,
+  TokenExchangeRequestConfig,
+  StorageManager,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
   SessionData,
-  Store,
+  Storage,
   TokenResponse,
+  User,
 } from '@asgardeo/javascript';
 import {AuthURLCallback} from '../models';
 import {MemoryCacheStore} from '../stores';
@@ -39,10 +38,10 @@ import {NodeCryptoUtils} from '../utils/crypto-utils';
 export class AsgardeoNodeCore<T> {
   private _auth: AsgardeoAuthClient<T>;
   private _cryptoUtils: Crypto;
-  private _store: Store;
-  private _dataLayer: DataLayer<T>;
+  private _store: Storage;
+  private _storageManager: StorageManager<T>;
 
-  constructor(config: AuthClientConfig<T>, store?: Store) {
+  constructor(config: AuthClientConfig<T>, store?: Storage) {
     //Initialize the default memory cache store if an external store is not passed.
     if (!store) {
       this._store = new MemoryCacheStore();
@@ -52,19 +51,19 @@ export class AsgardeoNodeCore<T> {
     this._cryptoUtils = new NodeCryptoUtils();
     this._auth = new AsgardeoAuthClient();
     this._auth.initialize(config, this._store, this._cryptoUtils);
-    this._dataLayer = this._auth.getDataLayer();
+    this._storageManager = this._auth.getStorageManager();
     Logger.debug('Initialized AsgardeoAuthClient successfully');
   }
 
   public async signIn(
     authURLCallback: AuthURLCallback,
-    userID: string,
+    userId: string,
     authorizationCode?: string,
     sessionState?: string,
     state?: string,
     signInConfig?: Record<string, string | boolean>,
   ): Promise<TokenResponse> {
-    if (!userID) {
+    if (!userId) {
       return Promise.reject(
         new AsgardeoAuthException(
           'NODE-AUTH_CORE-SI-NF01',
@@ -74,8 +73,8 @@ export class AsgardeoNodeCore<T> {
       );
     }
 
-    if (await this.isAuthenticated(userID)) {
-      const sessionData: SessionData = await this._dataLayer.getSessionData(userID);
+    if (await this.isSignedIn(userId)) {
+      const sessionData: SessionData = await this._storageManager.getSessionData(userId);
 
       return Promise.resolve({
         accessToken: sessionData.access_token,
@@ -100,7 +99,7 @@ export class AsgardeoNodeCore<T> {
           ),
         );
       }
-      const authURL = await this.getAuthURL(userID, signInConfig);
+      const authURL = await this.getAuthURL(userId, signInConfig);
       authURLCallback(authURL);
 
       return Promise.resolve({
@@ -115,11 +114,11 @@ export class AsgardeoNodeCore<T> {
       });
     }
 
-    return this.requestAccessToken(authorizationCode, sessionState ?? '', userID, state);
+    return this.requestAccessToken(authorizationCode, sessionState ?? '', userId, state);
   }
 
   public async getAuthURL(userId: string, signInConfig?: Record<string, string | boolean>): Promise<string> {
-    const authURL = await this._auth.getAuthorizationURL(signInConfig, userId);
+    const authURL = await this._auth.getSignInUrl(signInConfig, userId);
 
     if (authURL) {
       return Promise.resolve(authURL.toString());
@@ -143,8 +142,8 @@ export class AsgardeoNodeCore<T> {
     return this._auth.requestAccessToken(authorizationCode, sessionState, state, userId);
   }
 
-  public async getIDToken(userId: string): Promise<string> {
-    const is_logged_in = await this.isAuthenticated(userId);
+  public async getIdToken(userId: string): Promise<string> {
+    const is_logged_in = await this.isSignedIn(userId);
     if (!is_logged_in) {
       return Promise.reject(
         new AsgardeoAuthException(
@@ -154,7 +153,7 @@ export class AsgardeoNodeCore<T> {
         ),
       );
     }
-    const idToken = await this._auth.getIDToken(userId);
+    const idToken = await this._auth.getIdToken(userId);
     if (idToken) {
       return Promise.resolve(idToken);
     } else {
@@ -172,13 +171,13 @@ export class AsgardeoNodeCore<T> {
     return this._auth.refreshAccessToken(userId);
   }
 
-  public async isAuthenticated(userId: string): Promise<boolean> {
+  public async isSignedIn(userId: string): Promise<boolean> {
     try {
-      if (!(await this._auth.isAuthenticated(userId))) {
+      if (!(await this._auth.isSignedIn(userId))) {
         return Promise.resolve(false);
       }
 
-      if (await SessionUtils.validateSession(await this._dataLayer.getSessionData(userId))) {
+      if (await SessionUtils.validateSession(await this._storageManager.getSessionData(userId))) {
         return Promise.resolve(true);
       }
 
@@ -188,8 +187,8 @@ export class AsgardeoNodeCore<T> {
         return Promise.resolve(true);
       }
 
-      this._dataLayer.removeSessionData(userId);
-      this._dataLayer.getTemporaryData(userId);
+      this._storageManager.removeSessionData(userId);
+      this._storageManager.getTemporaryData(userId);
       return Promise.resolve(false);
     } catch (error) {
       return Promise.reject(error);
@@ -197,7 +196,7 @@ export class AsgardeoNodeCore<T> {
   }
 
   public async signOut(userId: string): Promise<string> {
-    const signOutURL = await this._auth.getSignOutURL(userId);
+    const signOutURL = await this._auth.getSignOutUrl(userId);
 
     if (!signOutURL) {
       return Promise.reject(
@@ -212,43 +211,46 @@ export class AsgardeoNodeCore<T> {
     return Promise.resolve(signOutURL);
   }
 
-  public async getBasicUserInfo(userId: string): Promise<BasicUserInfo> {
-    return this._auth.getBasicUserInfo(userId);
+  public async getUser(userId: string): Promise<User> {
+    return this._auth.getUser(userId);
   }
 
-  public async getOIDCServiceEndpoints(): Promise<OIDCEndpoints> {
-    return this._auth.getOIDCServiceEndpoints() as Promise<OIDCEndpoints>;
+  public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints> {
+    return this._auth.getOpenIDProviderEndpoints() as Promise<OIDCEndpoints>;
   }
 
-  public async getDecodedIDToken(userId?: string): Promise<IdTokenPayload> {
-    return this._auth.getDecodedIDToken(userId);
+  public async getDecodedIdToken(userId?: string): Promise<IdTokenPayload> {
+    return this._auth.getDecodedIdToken(userId);
   }
 
   public async getAccessToken(userId?: string): Promise<string> {
     return this._auth.getAccessToken(userId);
   }
 
-  public async requestCustomGrant(config: CustomGrantConfig, userId?: string): Promise<TokenResponse | FetchResponse> {
-    return this._auth.requestCustomGrant(config, userId);
+  public async exchangeToken(
+    config: TokenExchangeRequestConfig,
+    userId?: string,
+  ): Promise<TokenResponse | Response> {
+    return this._auth.exchangeToken(config, userId);
   }
 
-  public async updateConfig(config: Partial<AuthClientConfig<T>>): Promise<void> {
-    return this._auth.updateConfig(config);
+  public async reInitialize(config: Partial<AuthClientConfig<T>>): Promise<void> {
+    return this._auth.reInitialize(config);
   }
 
-  public async revokeAccessToken(userId?: string): Promise<FetchResponse> {
+  public async revokeAccessToken(userId?: string): Promise<Response> {
     return this._auth.revokeAccessToken(userId);
   }
 
-  public static didSignOutFail(signOutRedirectURL: string): boolean {
-    return AsgardeoNodeCore.didSignOutFail(signOutRedirectURL);
+  public static didSignOutFail(afterSignOutUrl: string): boolean {
+    return AsgardeoNodeCore.didSignOutFail(afterSignOutUrl);
   }
 
-  public static isSignOutSuccessful(signOutRedirectURL: string): boolean {
-    return AsgardeoNodeCore.isSignOutSuccessful(signOutRedirectURL);
+  public static isSignOutSuccessful(afterSignOutUrl: string): boolean {
+    return AsgardeoNodeCore.isSignOutSuccessful(afterSignOutUrl);
   }
 
-  public getDataLayer(): DataLayer<T> {
-    return this._dataLayer;
+  public getStorageManager(): StorageManager<T> {
+    return this._storageManager;
   }
 }

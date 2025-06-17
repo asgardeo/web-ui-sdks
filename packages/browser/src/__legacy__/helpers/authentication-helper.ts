@@ -20,13 +20,12 @@ import {
   AsgardeoAuthClient,
   AsgardeoAuthException,
   AuthClientConfig,
-  BasicUserInfo,
+  User,
   IsomorphicCrypto,
-  CustomGrantConfig,
-  DataLayer,
+  TokenExchangeRequestConfig,
+  StorageManager,
   IdTokenPayload,
-  FetchResponse,
-  GetAuthURLConfig,
+  ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   TokenResponse,
   extractPkceStorageKeyFromState,
@@ -56,21 +55,21 @@ import {
   WebWorkerClientConfig,
 } from '../models';
 import {SPACustomGrantConfig} from '../models/request-custom-grant';
-import {Storage} from '../models/storage';
+import {BrowserStorage} from '../models/storage';
 import {SPAUtils} from '../utils';
 
 export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerClientConfig> {
   protected _authenticationClient: AsgardeoAuthClient<T>;
-  protected _dataLayer: DataLayer<T>;
+  protected _storageManager: StorageManager<T>;
   protected _spaHelper: SPAHelper<T>;
   protected _instanceID: number;
   protected _isTokenRefreshing: boolean;
 
   public constructor(authClient: AsgardeoAuthClient<T>, spaHelper: SPAHelper<T>) {
     this._authenticationClient = authClient;
-    this._dataLayer = this._authenticationClient.getDataLayer();
+    this._storageManager = this._authenticationClient.getStorageManager();
     this._spaHelper = spaHelper;
-    this._instanceID = this._authenticationClient.getInstanceID();
+    this._instanceID = this._authenticationClient.getInstanceId();
     this._isTokenRefreshing = false;
   }
 
@@ -86,24 +85,24 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     config: AuthClientConfig<T>,
     oidcEndpoints: OIDCEndpoints,
     getSessionState: () => Promise<string>,
-    getAuthzURL: (params?: GetAuthURLConfig) => Promise<string>,
+    getAuthzURL: (params?: ExtendedAuthorizeRequestUrlParams) => Promise<string>,
     sessionManagementHelper: SessionManagementHelperInterface,
   ): void {
     sessionManagementHelper.initialize(
-      config.clientID,
+      config.clientId,
       oidcEndpoints.checkSessionIframe ?? '',
       getSessionState,
       config.checkSessionInterval ?? 3,
       config.sessionRefreshInterval ?? 300,
-      config.signInRedirectURL,
+      config.afterSignInUrl,
       getAuthzURL,
     );
   }
 
-  public async requestCustomGrant(
+  public async exchangeToken(
     config: SPACustomGrantConfig,
     enableRetrievingSignOutURLFromSession?: (config: SPACustomGrantConfig) => void,
-  ): Promise<BasicUserInfo | FetchResponse> {
+  ): Promise<User | Response> {
     let useDefaultEndpoint = true;
     let matches = false;
 
@@ -112,7 +111,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       useDefaultEndpoint = false;
 
       for (const baseUrl of [
-        ...((await this._dataLayer.getConfigData())?.resourceServerURLs ?? []),
+        ...((await this._storageManager.getConfigData())?.resourceServerURLs ?? []),
         (config as any).baseUrl,
       ]) {
         if (baseUrl && config.tokenEndpoint?.startsWith(baseUrl)) {
@@ -122,12 +121,12 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       }
     }
     if (config.shouldReplayAfterRefresh) {
-      this._dataLayer.setTemporaryDataParameter(CUSTOM_GRANT_CONFIG, JSON.stringify(config));
+      this._storageManager.setTemporaryDataParameter(CUSTOM_GRANT_CONFIG, JSON.stringify(config));
     }
     if (useDefaultEndpoint || matches) {
       return this._authenticationClient
-        .requestCustomGrant(config)
-        .then(async (response: FetchResponse | TokenResponse) => {
+        .exchangeToken(config)
+        .then(async (response: Response | TokenResponse) => {
           if (enableRetrievingSignOutURLFromSession && typeof enableRetrievingSignOutURLFromSession === 'function') {
             enableRetrievingSignOutURLFromSession(config);
           }
@@ -135,9 +134,9 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
           if (config.returnsSession) {
             this._spaHelper.refreshAccessTokenAutomatically(this);
 
-            return this._authenticationClient.getBasicUserInfo();
+            return this._authenticationClient.getUser();
           } else {
-            return response as FetchResponse;
+            return response as Response;
           }
         })
         .catch(error => {
@@ -156,8 +155,8 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     }
   }
 
-  public async getCustomGrantConfigData(): Promise<AuthClientConfig<CustomGrantConfig> | null> {
-    const configString = await this._dataLayer.getTemporaryDataParameter(CUSTOM_GRANT_CONFIG);
+  public async getCustomGrantConfigData(): Promise<AuthClientConfig<TokenExchangeRequestConfig> | null> {
+    const configString = await this._storageManager.getTemporaryDataParameter(CUSTOM_GRANT_CONFIG);
 
     if (configString) {
       return JSON.parse(configString as string);
@@ -168,16 +167,16 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
 
   public async refreshAccessToken(
     enableRetrievingSignOutURLFromSession?: (config: SPACustomGrantConfig) => void,
-  ): Promise<BasicUserInfo> {
+  ): Promise<User> {
     try {
       await this._authenticationClient.refreshAccessToken();
       const customGrantConfig = await this.getCustomGrantConfigData();
       if (customGrantConfig) {
-        await this.requestCustomGrant(customGrantConfig, enableRetrievingSignOutURLFromSession);
+        await this.exchangeToken(customGrantConfig, enableRetrievingSignOutURLFromSession);
       }
       this._spaHelper.refreshAccessTokenAutomatically(this);
 
-      return this._authenticationClient.getBasicUserInfo();
+      return this._authenticationClient.getUser();
     } catch (error) {
       const refreshTokenError: Message<string> = {
         type: REFRESH_ACCESS_TOKEN_ERR0R,
@@ -225,7 +224,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     enableRetrievingSignOutURLFromSession?: (config: SPACustomGrantConfig) => void,
   ): Promise<HttpResponse> {
     let matches = false;
-    const config = await this._dataLayer.getConfigData();
+    const config = await this._storageManager.getConfigData();
 
     for (const baseUrl of [...((await config?.resourceServerURLs) ?? []), (config as any).baseUrl]) {
       if (baseUrl && requestConfig?.url?.startsWith(baseUrl)) {
@@ -256,7 +255,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
 
             this._isTokenRefreshing = true;
             // Try to refresh the token
-            let refreshAccessTokenResponse: BasicUserInfo;
+            let refreshAccessTokenResponse: User;
             try {
               refreshAccessTokenResponse = await this.refreshAccessToken(enableRetrievingSignOutURLFromSession);
 
@@ -336,7 +335,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     httpFinishCallback?: () => void,
   ): Promise<HttpResponse[] | undefined> {
     let matches = true;
-    const config = await this._dataLayer.getConfigData();
+    const config = await this._storageManager.getConfigData();
 
     for (const requestConfig of requestConfigs) {
       let urlMatches = false;
@@ -372,7 +371,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
           })
           .catch(async (error: HttpError) => {
             if (error?.response?.status === 401 || !error?.response) {
-              let refreshTokenResponse: TokenResponse | BasicUserInfo;
+              let refreshTokenResponse: TokenResponse | User;
               try {
                 refreshTokenResponse = await this._authenticationClient.refreshAccessToken();
               } catch (refreshError: any) {
@@ -453,14 +452,14 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> {
-    const config = await this._dataLayer.getConfigData();
+  ): Promise<User> {
+    const config = await this._storageManager.getConfigData();
 
-    if (config.storage === Storage.BrowserMemory && config.enablePKCE && sessionState) {
+    if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE && sessionState) {
       const pkce = SPAUtils.getPKCE(extractPkceStorageKeyFromState(sessionState));
 
       await this._authenticationClient.setPKCECode(extractPkceStorageKeyFromState(sessionState), pkce);
-    } else if (config.storage === Storage.WebWorker && pkce) {
+    } else if (config.storage === BrowserStorage.WebWorker && pkce) {
       await this._authenticationClient.setPKCECode(pkce, state ?? '');
     }
 
@@ -470,10 +469,10 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
         .then(async () => {
           // Disable this temporarily
           /* if (config.storage === Storage.BrowserMemory) {
-                        SPAUtils.setSignOutURL(await _authenticationClient.getSignOutURL());
+                        SPAUtils.setSignOutURL(await _authenticationClient.getSignOutUrl());
                     } */
-          if (config.storage !== Storage.WebWorker) {
-            SPAUtils.setSignOutURL(await this._authenticationClient.getSignOutURL(), config.clientID, this._instanceID);
+          if (config.storage !== BrowserStorage.WebWorker) {
+            SPAUtils.setSignOutURL(await this._authenticationClient.getSignOutUrl(), config.clientId, this._instanceID);
 
             if (this._spaHelper) {
               this._spaHelper.clearRefreshTokenTimeout();
@@ -490,7 +489,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
             }
           }
 
-          return this._authenticationClient.getBasicUserInfo();
+          return this._authenticationClient.getUser();
         })
         .catch(error => {
           return Promise.reject(error);
@@ -513,11 +512,11 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       sessionState: string,
       state: string,
       tokenRequestConfig?: {params: Record<string, unknown>},
-    ) => Promise<BasicUserInfo>,
+    ) => Promise<User>,
     sessionManagementHelper: SessionManagementHelperInterface,
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean> {
+  ): Promise<User | boolean> {
     // This block is executed by the iFrame when the server redirects with the authorization code.
     if (SPAUtils.isInitializedSilentSignIn()) {
       await sessionManagementHelper.receivePromptNoneResponse();
@@ -564,7 +563,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
 
         if (data?.type == CHECK_SESSION_SIGNED_IN && data?.data?.code) {
           requestAccessToken(data?.data?.code, data?.data?.sessionState, data?.data?.state, tokenRequestConfig)
-            .then((response: BasicUserInfo) => {
+            .then((response: User) => {
               window.removeEventListener('message', listenToPromptNoneIFrame);
               resolve(response);
             })
@@ -585,9 +584,9 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
   public async handleSignIn(
     shouldStopAuthn: () => Promise<boolean>,
     checkSession: () => Promise<void>,
-    tryRetrievingUserInfo?: () => Promise<BasicUserInfo | undefined>,
-  ): Promise<BasicUserInfo | undefined> {
-    const config = await this._dataLayer.getConfigData();
+    tryRetrievingUserInfo?: () => Promise<User | undefined>,
+  ): Promise<User | undefined> {
+    const config = await this._storageManager.getConfigData();
 
     if (await shouldStopAuthn()) {
       return Promise.resolve({
@@ -601,8 +600,8 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       });
     }
 
-    if (config.storage !== Storage.WebWorker) {
-      if (await this._authenticationClient.isAuthenticated()) {
+    if (config.storage !== BrowserStorage.WebWorker) {
+      if (await this._authenticationClient.isSignedIn()) {
         this._spaHelper.clearRefreshTokenTimeout();
         this._spaHelper.refreshAccessTokenAutomatically(this);
 
@@ -611,7 +610,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
           checkSession();
         }
 
-        return Promise.resolve(await this._authenticationClient.getBasicUserInfo());
+        return Promise.resolve(await this._authenticationClient.getUser());
       }
     }
 
@@ -628,14 +627,14 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
       throw new AsgardeoAuthException('SPA-AUTH_HELPER-SI-SE01', error, errorDescription ?? '');
     }
 
-    if (config.storage === Storage.WebWorker && tryRetrievingUserInfo) {
+    if (config.storage === BrowserStorage.WebWorker && tryRetrievingUserInfo) {
       const basicUserInfo = await tryRetrievingUserInfo();
 
       if (basicUserInfo) {
         return basicUserInfo;
       }
     }
-    
+
     return Promise.resolve(undefined);
   }
 
@@ -656,28 +655,28 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     }
   }
 
-  public async getBasicUserInfo(): Promise<BasicUserInfo> {
-    return this._authenticationClient.getBasicUserInfo();
+  public async getUser(): Promise<User> {
+    return this._authenticationClient.getUser();
   }
 
-  public async getDecodedIDToken(): Promise<IdTokenPayload> {
-    return this._authenticationClient.getDecodedIDToken();
+  public async getDecodedIdToken(): Promise<IdTokenPayload> {
+    return this._authenticationClient.getDecodedIdToken();
   }
 
   public async getDecodedIDPIDToken(): Promise<IdTokenPayload> {
-    return this._authenticationClient.getDecodedIDToken();
+    return this._authenticationClient.getDecodedIdToken();
   }
 
-  public async getCryptoHelper(): Promise<IsomorphicCrypto> {
-    return this._authenticationClient.getCryptoHelper();
+  public async getCrypto(): Promise<IsomorphicCrypto> {
+    return this._authenticationClient.getCrypto();
   }
 
-  public async getIDToken(): Promise<string> {
-    return this._authenticationClient.getIDToken();
+  public async getIdToken(): Promise<string> {
+    return this._authenticationClient.getIdToken();
   }
 
-  public async getOIDCServiceEndpoints(): Promise<OIDCEndpoints> {
-    return this._authenticationClient.getOIDCServiceEndpoints() as any;
+  public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints> {
+    return this._authenticationClient.getOpenIDProviderEndpoints() as any;
   }
 
   public async getAccessToken(): Promise<string> {
@@ -685,14 +684,14 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
   }
 
   public async getIDPAccessToken(): Promise<string> {
-    return (await this._dataLayer.getSessionData())?.access_token;
+    return (await this._storageManager.getSessionData())?.access_token;
   }
 
-  public getDataLayer(): DataLayer<T> {
-    return this._dataLayer;
+  public getStorageManager(): StorageManager<T> {
+    return this._storageManager;
   }
 
-  public async isAuthenticated(): Promise<boolean> {
-    return this._authenticationClient.isAuthenticated();
+  public async isSignedIn(): Promise<boolean> {
+    return this._authenticationClient.isSignedIn();
   }
 }

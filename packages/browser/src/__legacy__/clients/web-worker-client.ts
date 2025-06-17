@@ -20,16 +20,14 @@ import {
   AsgardeoAuthClient,
   AsgardeoAuthException,
   AuthClientConfig,
-  BasicUserInfo,
+  User,
   IsomorphicCrypto,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
-  GetAuthURLConfig,
+  ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
-  ResponseMode,
   OIDCRequestConstants,
-  Store,
+  Storage,
   extractPkceStorageKeyFromState,
 } from '@asgardeo/javascript';
 import {
@@ -75,18 +73,18 @@ import {
   WebWorkerClientInterface,
 } from '../models';
 import {SPACustomGrantConfig} from '../models/request-custom-grant';
-import {Storage} from '../models/storage';
+import {BrowserStorage} from '../models/storage';
 import {LocalStore, MemoryStore, SessionStore} from '../stores';
 import {SPAUtils} from '../utils';
 import {SPACryptoUtils} from '../utils/crypto-utils';
 
-const initiateStore = (store: Storage | undefined): Store => {
+const initiateStore = (store: BrowserStorage | undefined): Storage => {
   switch (store) {
-    case Storage.LocalStorage:
+    case BrowserStorage.LocalStorage:
       return new LocalStore();
-    case Storage.SessionStorage:
+    case BrowserStorage.SessionStorage:
       return new SessionStore();
-    case Storage.BrowserMemory:
+    case BrowserStorage.BrowserMemory:
       return new MemoryStore();
     default:
       return new SessionStore();
@@ -113,7 +111,7 @@ export const WebWorkerClient = async (
   let _isHttpHandlerEnabled: boolean = true;
   let _getSignOutURLFromSessionStorage: boolean = false;
 
-  const _store: Store = initiateStore(config.storage as Storage);
+  const _store: Storage = initiateStore(config.storage as BrowserStorage);
   const _cryptoUtils: SPACryptoUtils = new SPACryptoUtils();
   const _authenticationClient = new AsgardeoAuthClient<WebWorkerClientConfig>();
   await _authenticationClient.initialize(config, _store, _cryptoUtils, instanceID);
@@ -130,10 +128,10 @@ export const WebWorkerClient = async (
 
         return signOutURL;
       } catch {
-        return SPAUtils.getSignOutURL(config.clientID, instanceID);
+        return SPAUtils.getSignOutUrl(config.clientId, instanceID);
       }
     },
-    config.storage as Storage,
+    config.storage as BrowserStorage,
     (sessionState: string) => setSessionState(sessionState),
   );
 
@@ -189,13 +187,13 @@ export const WebWorkerClient = async (
    * @returns {Promise<HttpResponse|boolean>} A promise that resolves with a boolean value or the request
    * response if the the `returnResponse` attribute in the `requestParams` object is set to `true`.
    */
-  const requestCustomGrant = (requestParams: SPACustomGrantConfig): Promise<FetchResponse | BasicUserInfo> => {
-    const message: Message<CustomGrantConfig> = {
+  const exchangeToken = (requestParams: SPACustomGrantConfig): Promise<Response | User> => {
+    const message: Message<TokenExchangeRequestConfig> = {
       data: requestParams,
       type: REQUEST_CUSTOM_GRANT,
     };
 
-    return communicate<CustomGrantConfig, FetchResponse | BasicUserInfo>(message)
+    return communicate<TokenExchangeRequestConfig, Response | User>(message)
       .then(response => {
         if (requestParams.preventSignOutURLUpdate) {
           _getSignOutURLFromSessionStorage = true;
@@ -380,21 +378,22 @@ export const WebWorkerClient = async (
   };
 
   const checkSession = async (): Promise<void> => {
-    const oidcEndpoints: OIDCEndpoints = await getOIDCServiceEndpoints();
+    const oidcEndpoints: OIDCEndpoints = await getOpenIDProviderEndpoints();
     const config: AuthClientConfig<WebWorkerClientConfig> = await getConfigData();
 
     _authenticationHelper.initializeSessionManger(
       config,
       oidcEndpoints,
-      async () => (await getBasicUserInfo()).sessionState,
-      async (params?: GetAuthURLConfig): Promise<string> => (await getAuthorizationURL(params)).authorizationURL,
+      async () => (await _authenticationClient.getUserSession()).sessionState,
+      async (params?: ExtendedAuthorizeRequestUrlParams): Promise<string> =>
+        (await getSignInUrl(params)).authorizationURL,
       _sessionManagementHelper,
     );
   };
 
   const constructSilentSignInUrl = async (additionalParams: Record<string, string | boolean> = {}): Promise<string> => {
     const config: AuthClientConfig<WebWorkerClientConfig> = await getConfigData();
-    const message: Message<GetAuthURLConfig> = {
+    const message: Message<ExtendedAuthorizeRequestUrlParams> = {
       data: {
         prompt: 'none',
         state: SILENT_SIGN_IN_STATE,
@@ -403,7 +402,9 @@ export const WebWorkerClient = async (
       type: GET_AUTH_URL,
     };
 
-    const response: AuthorizationResponse = await communicate<GetAuthURLConfig, AuthorizationResponse>(message);
+    const response: AuthorizationResponse = await communicate<ExtendedAuthorizeRequestUrlParams, AuthorizationResponse>(
+      message,
+    );
 
     const pkceKey: string = extractPkceStorageKeyFromState(
       new URL(response.authorizationURL).searchParams.get(OIDCRequestConstants.Params.STATE) ?? '',
@@ -425,13 +426,13 @@ export const WebWorkerClient = async (
    * This method checks if there is an active user session in the server by sending a prompt none request.
    * If the user is signed in, this method sends a token request. Returns false otherwise.
    *
-   * @return {Promise<BasicUserInfo|boolean} Returns a Promise that resolves with the BasicUserInfo
+   * @return {Promise<User|boolean} Returns a Promise that resolves with the User
    * if the user is signed in or with `false` if there is no active user session in the server.
    */
   const trySignInSilently = async (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<BasicUserInfo | boolean> => {
+  ): Promise<User | boolean> => {
     return await _authenticationHelper.trySignInSilently(
       constructSilentSignInUrl,
       requestAccessToken,
@@ -444,18 +445,18 @@ export const WebWorkerClient = async (
   /**
    * Generates an authorization URL.
    *
-   * @param {GetAuthURLConfig} params Authorization URL params.
+   * @param {ExtendedAuthorizeRequestUrlParams} params Authorization URL params.
    * @returns {Promise<string>} Authorization URL.
    */
-  const getAuthorizationURL = async (params?: GetAuthURLConfig): Promise<AuthorizationResponse> => {
+  const getSignInUrl = async (params?: ExtendedAuthorizeRequestUrlParams): Promise<AuthorizationResponse> => {
     const config: AuthClientConfig<WebWorkerClientConfig> = await getConfigData();
 
-    const message: Message<GetAuthURLConfig> = {
+    const message: Message<ExtendedAuthorizeRequestUrlParams> = {
       data: params,
       type: GET_AUTH_URL,
     };
 
-    return communicate<GetAuthURLConfig, AuthorizationResponse>(message).then(
+    return communicate<ExtendedAuthorizeRequestUrlParams, AuthorizationResponse>(message).then(
       async (response: AuthorizationResponse) => {
         if (response.pkce && config.enablePKCE) {
           const pkceKey: string = extractPkceStorageKeyFromState(
@@ -477,7 +478,7 @@ export const WebWorkerClient = async (
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> => {
+  ): Promise<User> => {
     const config: AuthClientConfig<WebWorkerClientConfig> = await getConfigData();
     const pkceKey: string = extractPkceStorageKeyFromState(resolvedState);
 
@@ -494,7 +495,7 @@ export const WebWorkerClient = async (
 
     config.enablePKCE && SPAUtils.removePKCE(pkceKey);
 
-    return communicate<AuthorizationInfo, BasicUserInfo>(message)
+    return communicate<AuthorizationInfo, User>(message)
       .then(response => {
         const message: Message<null> = {
           type: GET_SIGN_OUT_URL,
@@ -502,7 +503,7 @@ export const WebWorkerClient = async (
 
         return communicate<null, string>(message)
           .then((url: string) => {
-            SPAUtils.setSignOutURL(url, config.clientID, instanceID);
+            SPAUtils.setSignOutURL(url, config.clientId, instanceID);
 
             // Enable OIDC Sessions Management only if it is set to true in the config.
             if (config.enableOIDCSessionManagement) {
@@ -528,8 +529,8 @@ export const WebWorkerClient = async (
     });
   };
 
-  const tryRetrievingUserInfo = async (): Promise<BasicUserInfo | undefined> => {
-    if (await isAuthenticated()) {
+  const tryRetrievingUserInfo = async (): Promise<User | undefined> => {
+    if (await isSignedIn()) {
       await startAutoRefreshToken();
 
       // Enable OIDC Sessions Management only if it is set to true in the config.
@@ -537,9 +538,9 @@ export const WebWorkerClient = async (
         checkSession();
       }
 
-      return getBasicUserInfo();
+      return getUser();
     }
-    
+
     return Promise.resolve(undefined);
   };
 
@@ -549,14 +550,14 @@ export const WebWorkerClient = async (
    * @returns {Promise<UserInfo>} A promise that resolves when authentication is successful.
    */
   const signIn = async (
-    params?: GetAuthURLConfig,
+    params?: ExtendedAuthorizeRequestUrlParams,
     authorizationCode?: string,
     sessionState?: string,
     state?: string,
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<BasicUserInfo> => {
+  ): Promise<User> => {
     const basicUserInfo = await _authenticationHelper.handleSignIn(
       shouldStopAuthn,
       checkSession,
@@ -570,7 +571,7 @@ export const WebWorkerClient = async (
       let resolvedSessionState: string;
       let resolvedState: string;
 
-      if (config?.responseMode === ResponseMode.FormPost && authorizationCode) {
+      if (config?.responseMode === 'form_post' && authorizationCode) {
         resolvedAuthorizationCode = authorizationCode;
         resolvedSessionState = sessionState ?? '';
         resolvedState = state ?? '';
@@ -588,7 +589,7 @@ export const WebWorkerClient = async (
         return requestAccessToken(resolvedAuthorizationCode, resolvedSessionState, resolvedState, tokenRequestConfig);
       }
 
-      return getAuthorizationURL(params)
+      return getSignInUrl(params)
         .then(async (response: AuthorizationResponse) => {
           location.href = response.authorizationURL;
 
@@ -634,7 +635,7 @@ export const WebWorkerClient = async (
             return reject(error);
           });
       } else {
-        window.location.href = SPAUtils.getSignOutURL(config.clientID, instanceID);
+        window.location.href = SPAUtils.getSignOutUrl(config.clientId, instanceID);
 
         return SPAUtils.waitTillPageRedirect().then(() => {
           return Promise.resolve(true);
@@ -663,7 +664,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getOIDCServiceEndpoints = (): Promise<OIDCEndpoints> => {
+  const getOpenIDProviderEndpoints = (): Promise<OIDCEndpoints> => {
     const message: Message<null> = {
       type: GET_OIDC_SERVICE_ENDPOINTS,
     };
@@ -691,12 +692,12 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getBasicUserInfo = (): Promise<BasicUserInfo> => {
+  const getUser = (): Promise<User> => {
     const message: Message<null> = {
       type: GET_BASIC_USER_INFO,
     };
 
-    return communicate<null, BasicUserInfo>(message)
+    return communicate<null, User>(message)
       .then(response => {
         return Promise.resolve(response);
       })
@@ -705,7 +706,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getDecodedIDToken = (): Promise<IdTokenPayload> => {
+  const getDecodedIdToken = (): Promise<IdTokenPayload> => {
     const message: Message<null> = {
       type: GET_DECODED_ID_TOKEN,
     };
@@ -733,7 +734,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getCryptoHelper = (): Promise<IsomorphicCrypto> => {
+  const getCrypto = (): Promise<IsomorphicCrypto> => {
     const message: Message<null> = {
       type: GET_CRYPTO_HELPER,
     };
@@ -747,7 +748,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getIDToken = (): Promise<string> => {
+  const getIdToken = (): Promise<string> => {
     const message: Message<null> = {
       type: GET_ID_TOKEN,
     };
@@ -761,7 +762,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const isAuthenticated = (): Promise<boolean> => {
+  const isSignedIn = (): Promise<boolean> => {
     const message: Message<null> = {
       type: IS_AUTHENTICATED,
     };
@@ -775,12 +776,12 @@ export const WebWorkerClient = async (
       });
   };
 
-  const refreshAccessToken = (): Promise<BasicUserInfo> => {
+  const refreshAccessToken = (): Promise<User> => {
     const message: Message<null> = {
       type: REFRESH_ACCESS_TOKEN,
     };
 
-    return communicate<null, BasicUserInfo>(message);
+    return communicate<null, User>(message);
   };
 
   const setHttpRequestSuccessCallback = (callback: (response: HttpResponse) => void): void => {
@@ -807,7 +808,7 @@ export const WebWorkerClient = async (
     }
   };
 
-  const updateConfig = async (newConfig: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void> => {
+  const reInitialize = async (newConfig: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void> => {
     const existingConfig = await getConfigData();
     const isCheckSessionIframeDifferent: boolean = !(
       existingConfig &&
@@ -838,19 +839,19 @@ export const WebWorkerClient = async (
   return {
     disableHttpHandler,
     enableHttpHandler,
-    getBasicUserInfo,
+    getUser,
     getConfigData,
-    getCryptoHelper,
+    getCrypto,
     getDecodedIDPIDToken,
-    getDecodedIDToken,
-    getIDToken,
-    getOIDCServiceEndpoints,
+    getDecodedIdToken,
+    getIdToken,
+    getOpenIDProviderEndpoints,
     httpRequest,
     httpRequestAll,
     initialize,
-    isAuthenticated,
+    isSignedIn,
     refreshAccessToken,
-    requestCustomGrant,
+    exchangeToken,
     revokeAccessToken,
     setHttpRequestErrorCallback,
     setHttpRequestFinishCallback,
@@ -859,6 +860,6 @@ export const WebWorkerClient = async (
     signIn,
     signOut,
     trySignInSilently,
-    updateConfig,
+    reInitialize,
   };
 };

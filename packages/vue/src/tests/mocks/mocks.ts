@@ -26,7 +26,7 @@ export const mockAuthContext: Partial<AuthContextInterface> = {
   state: {
     allowedScopes: 'openid profile email',
     displayName: 'John Doe',
-    isAuthenticated: true,
+    isSignedIn: true,
     isLoading: false,
   },
 };
@@ -35,7 +35,7 @@ export const mockState: AuthStateInterface = {
   allowedScopes: '',
   displayName: '',
   email: '',
-  isAuthenticated: false,
+  isSignedIn: false,
   isLoading: true,
   sub: '',
   username: '',
@@ -45,25 +45,25 @@ export type MockAuthAPI = {
   disableHttpHandler: Mock;
   enableHttpHandler: Mock;
   getAccessToken: Mock;
-  getBasicUserInfo: Mock;
-  getDecodedIDToken: Mock;
+  getUser: Mock;
+  getDecodedIdToken: Mock;
   getHttpClient: Mock;
-  getIDToken: Mock;
-  getOIDCServiceEndpoints: Mock;
+  getIdToken: Mock;
+  getOpenIDProviderEndpoints: Mock;
   getState: Mock;
   httpRequest: Mock;
   httpRequestAll: Mock;
   init: Mock;
-  isAuthenticated: Mock;
+  isSignedIn: Mock;
   isSessionActive: Mock;
   on: Mock;
   refreshAccessToken: Mock;
-  requestCustomGrant: Mock;
+  exchangeToken: Mock;
   revokeAccessToken: Mock;
   signIn: Mock;
   signOut: Mock;
   trySignInSilently: Mock;
-  updateConfig: Mock;
+  reInitialize: Mock;
   updateState: Mock;
 };
 
@@ -71,22 +71,22 @@ export const mockAuthAPI: MockAuthAPI = {
   disableHttpHandler: vi.fn().mockResolvedValue(true),
   enableHttpHandler: vi.fn().mockResolvedValue(true),
   getAccessToken: vi.fn().mockResolvedValue('mock-access-token'),
-  getBasicUserInfo: vi.fn().mockResolvedValue({
+  getUser: vi.fn().mockResolvedValue({
     allowedScopes: 'openid profile',
     displayName: 'Test User',
     email: 'test@example.com',
     sub: 'user-id-123',
     username: 'testUser',
   }),
-  getDecodedIDToken: vi.fn().mockResolvedValue({aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'}),
+  getDecodedIdToken: vi.fn().mockResolvedValue({aud: 'client-id', iss: 'https://test.com', sub: 'user-id-123'}),
   getHttpClient: vi.fn().mockResolvedValue({}),
-  getIDToken: vi.fn().mockResolvedValue('mock-id-token'),
-  getOIDCServiceEndpoints: vi.fn().mockResolvedValue({}),
+  getIdToken: vi.fn().mockResolvedValue('mock-id-token'),
+  getOpenIDProviderEndpoints: vi.fn().mockResolvedValue({}),
   getState: vi.fn().mockReturnValue(mockState),
   httpRequest: vi.fn().mockResolvedValue({data: {}, status: 200}),
   httpRequestAll: vi.fn().mockResolvedValue([{data: {}, status: 200}]),
   init: vi.fn().mockResolvedValue(true),
-  isAuthenticated: vi.fn().mockResolvedValue(true),
+  isSignedIn: vi.fn().mockResolvedValue(true),
   isSessionActive: vi.fn().mockResolvedValue(true),
   on: vi.fn(),
   refreshAccessToken: vi.fn().mockResolvedValue({
@@ -94,7 +94,7 @@ export const mockAuthAPI: MockAuthAPI = {
     email: 'test@example.com',
     username: 'testUser',
   }),
-  requestCustomGrant: vi.fn().mockResolvedValue({
+  exchangeToken: vi.fn().mockResolvedValue({
     displayName: 'Test User',
     email: 'test@example.com',
     username: 'testUser',
@@ -109,7 +109,7 @@ export const mockAuthAPI: MockAuthAPI = {
   }),
   signOut: vi.fn().mockResolvedValue(true),
   trySignInSilently: vi.fn().mockResolvedValue(false),
-  updateConfig: vi.fn().mockResolvedValue(undefined),
+  reInitialize: vi.fn().mockResolvedValue(undefined),
   updateState: vi.fn().mockImplementation((newState: AuthStateInterface) => {
     Object.assign(mockState, newState);
   }),
@@ -119,22 +119,22 @@ export const mockAsgardeoSPAClient: Partial<AsgardeoSPAClient> = {
   disableHttpHandler: vi.fn().mockResolvedValue(true),
   enableHttpHandler: vi.fn().mockResolvedValue(true),
   getAccessToken: vi.fn().mockResolvedValue('mock-access-token'),
-  getBasicUserInfo: vi.fn().mockResolvedValue({
+  getUser: vi.fn().mockResolvedValue({
     allowedScopes: 'openid profile',
     displayName: 'Test User',
     email: 'test@example.com',
     sub: 'user-id-123',
     username: 'testUser',
   }),
-  getDecodedIDToken: vi.fn().mockResolvedValue({sub: 'user-id-123'}),
+  getDecodedIdToken: vi.fn().mockResolvedValue({sub: 'user-id-123'}),
   getHttpClient: vi.fn().mockResolvedValue({}),
   getIDPAccessToken: vi.fn().mockResolvedValue('mock-idp-access-token'),
-  getIDToken: vi.fn().mockResolvedValue('mock-id-token'),
-  getOIDCServiceEndpoints: vi.fn().mockResolvedValue({}),
+  getIdToken: vi.fn().mockResolvedValue('mock-id-token'),
+  getOpenIDProviderEndpoints: vi.fn().mockResolvedValue({}),
   httpRequest: vi.fn().mockResolvedValue({data: {}, status: 200}),
   httpRequestAll: vi.fn().mockResolvedValue([{data: {}, status: 200}]),
   initialize: vi.fn().mockResolvedValue(true),
-  isAuthenticated: vi.fn().mockResolvedValue(true),
+  isSignedIn: vi.fn().mockResolvedValue(true),
   isSessionActive: vi.fn().mockResolvedValue(true),
   on: vi.fn().mockResolvedValue(undefined),
   refreshAccessToken: vi.fn().mockResolvedValue({
@@ -142,7 +142,7 @@ export const mockAsgardeoSPAClient: Partial<AsgardeoSPAClient> = {
     email: 'test@example.com',
     username: 'testUser',
   }),
-  requestCustomGrant: vi.fn().mockResolvedValue({
+  exchangeToken: vi.fn().mockResolvedValue({
     displayName: 'Test User',
     email: 'test@example.com',
     username: 'testUser',
@@ -163,7 +163,7 @@ export const mockAsgardeoSPAClient: Partial<AsgardeoSPAClient> = {
     sub: 'user-id-123',
     username: 'testUser',
   }),
-  updateConfig: vi.fn().mockResolvedValue(undefined),
+  reInitialize: vi.fn().mockResolvedValue(undefined),
 };
 
 export class MockAsgardeoAuthException extends Error {
@@ -200,7 +200,7 @@ export const asgardeoAuthSPAMock: any = {
 
 export const mockConfig: AuthVueConfig = {
   baseUrl: 'https://api.asgardeo.io/t/mock-tenant',
-  clientID: 'mock-client-id',
-  signInRedirectURL: 'http://localhost:5173/',
-  signOutRedirectURL: 'http://localhost:5173/',
+  clientId: 'mock-client-id',
+  afterSignInUrl: 'http://localhost:5173/',
+  afterSignOutUrl: 'http://localhost:5173/',
 };

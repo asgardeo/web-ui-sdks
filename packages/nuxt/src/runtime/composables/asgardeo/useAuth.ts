@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {BasicUserInfo, DataLayer, IdTokenPayload, OIDCEndpoints} from '@asgardeo/auth-node';
+import type {User, StorageManager, IdTokenPayload, OIDCEndpoints} from '@asgardeo/node';
 import type {AuthInterface} from '../../types';
 import {navigateTo} from '#imports';
 
@@ -100,7 +100,7 @@ export const useAuth = (): AuthInterface => {
    *
    * @returns {Promise<IdTokenPayload | null>} - A promise that resolves to the decoded ID token payload if available, or null if not.
    */
-  const getDecodedIDToken = async (): Promise<IdTokenPayload | null> => {
+  const getDecodedIdToken = async (): Promise<IdTokenPayload | null> => {
     try {
       const response: Response = await fetch(`/api/auth/get-decoded-id-token`, {
         credentials: 'include',
@@ -139,9 +139,9 @@ export const useAuth = (): AuthInterface => {
    *
    * @returns {Promise<boolean>} - A promise that resolves to `true` if authenticated, otherwise `false`.
    */
-  const isAuthenticated = async (): Promise<boolean> => {
+  const isSignedIn = async (): Promise<boolean> => {
     try {
-      const response: Response = await fetch('/api/auth/isAuthenticated', {
+      const response: Response = await fetch('/api/auth/isSignedIn', {
         credentials: 'include',
         method: 'GET',
       });
@@ -172,11 +172,11 @@ export const useAuth = (): AuthInterface => {
    * from the server-side '/api/auth/user' endpoint.
    * Updates the internal state variables with the result.
    *
-   * @returns {Promise<BasicUserInfo | null>} A promise resolving to user info or null.
+   * @returns {Promise<User | null>} A promise resolving to user info or null.
    */
-  const getBasicUserInfo = async (): Promise<BasicUserInfo | null> => {
+  const getUser = async (): Promise<User | null> => {
     try {
-      const userInfo: BasicUserInfo = await $fetch<BasicUserInfo>('/api/auth/user', {
+      const userInfo: User = await $fetch<User>('/api/auth/user', {
         method: 'GET',
       });
 
@@ -197,7 +197,7 @@ export const useAuth = (): AuthInterface => {
    * OIDC endpoints object if available, or null if an error occurs or
    * the data is not found.
    */
-  const getOIDCServiceEndpoints = async (): Promise<OIDCEndpoints | null> => {
+  const getOpenIDProviderEndpoints = async (): Promise<OIDCEndpoints | null> => {
     try {
       const response: Response = await fetch('/api/auth/get-oidc-endpoints', {
         method: 'GET',
@@ -214,7 +214,7 @@ export const useAuth = (): AuthInterface => {
     }
   };
 
-  const getDataLayer = async (): Promise<DataLayer<any> | null> => {
+  const getStorageManager = async (): Promise<StorageManager<any> | null> => {
     try {
       const response: Response = await fetch('/api/auth/get-data-layer', {
         method: 'GET',
@@ -231,12 +231,12 @@ export const useAuth = (): AuthInterface => {
 
   return {
     getAccessToken,
-    getBasicUserInfo,
-    getDataLayer,
-    getDecodedIDToken,
+    getUser,
+    getStorageManager,
+    getDecodedIdToken,
     getIdToken,
-    getOIDCServiceEndpoints,
-    isAuthenticated,
+    getOpenIDProviderEndpoints,
+    isSignedIn,
     revokeAccessToken,
     signIn,
     signOut,

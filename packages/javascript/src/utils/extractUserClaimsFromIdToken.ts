@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {IdTokenPayload} from '../models/id-token';
+import {IdTokenPayload} from '../models/token';
 
 /**
  * Removes standard protocol-specific claims from the ID token payload
@@ -24,7 +24,7 @@ import {IdTokenPayload} from '../models/id-token';
  *
  * @param payload The raw ID token payload.
  * @returns A cleaned-up, camelCased object containing only user-specific claims.
- * 
+ *
  * @example
  * ````typescript
  * const idTokenPayload = {
@@ -34,7 +34,7 @@ import {IdTokenPayload} from '../models/id-token';
  *   iat: 1712345670,
  *   email: 'user@example.com'
  *  };
- * 
+ *
  * const userClaims = extractUserClaimsFromIdToken(idTokenPayload);
  * // // userClaims will be:
  * // {

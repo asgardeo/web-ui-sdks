@@ -32,9 +32,9 @@ import { AsgardeoAuth } from '@asgardeo/vue'
 const app = createApp(App)
 
 app.use(AsgardeoAuth, {
-  signInRedirectURL: "http://localhost:3000",
-  signOutRedirectURL: "http://localhost:3000",
-  clientID: "<your-client-id>",
+  afterSignInUrl: "http://localhost:3000",
+  afterSignOutUrl: "http://localhost:3000",
+  clientId: "<your-client-id>",
   baseUrl: "https://api.asgardeo.io/t/<org-name>",
   scope: ["openid", "profile"]
 })
@@ -47,7 +47,7 @@ app.mount('#app')
 ```vue
 <template>
   <div>
-    <div v-if="auth.isAuthenticated">
+    <div v-if="auth.isSignedIn">
       <p>Welcome, {{ auth.user?.username }}</p>
       <button @click="auth.signOut">Sign Out</button>
     </div>
@@ -65,12 +65,12 @@ const auth = useAsgardeo()
 ## Composables
 
 - `useAsgardeo()`: Main composable that provides:
-  - `isAuthenticated`: Boolean indicating authentication status
+  - `isSignedIn`: Boolean indicating authentication status
   - `user`: Current user information
   - `signIn()`: Function to initiate sign in
   - `signOut()`: Function to sign out
   - `getAccessToken()`: Function to get the current access token
-  - `getBasicUserInfo()`: Function to get basic user information
+  - `getUser()`: Function to get basic user information
   
 - `useAuthContext()`: Composable to access the raw authentication context
 - `useIsAuthenticated()`: Composable to check authentication status

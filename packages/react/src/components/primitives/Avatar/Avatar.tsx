@@ -17,7 +17,7 @@
  */
 
 import {CSSProperties, FC, useMemo} from 'react';
-import {useTheme} from '../../../theme/useTheme';
+import useTheme from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 
@@ -54,7 +54,7 @@ const useStyles = ({size}) => {
         height: `${size}px`,
         borderRadius: '50%',
         overflow: 'hidden',
-        backgroundColor: theme.colors.surface,
+        backgroundColor: theme.colors.background.surface,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

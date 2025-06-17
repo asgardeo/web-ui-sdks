@@ -23,7 +23,7 @@ import {OIDCEndpoints} from './oidc-endpoints';
  * Implementations can include various storage backends like browser storage,
  * memory cache, or distributed caches like Redis or Memcached.
  */
-export interface Store {
+export interface Storage {
   /**
    * Stores a value with the specified key.
    *

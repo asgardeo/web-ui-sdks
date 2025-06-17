@@ -21,7 +21,7 @@ import {AuthApiResponse, MeAPIResponse} from '@asgardeo/js';
 interface UseAuthentication {
   accessToken: string;
   authResponse: AuthApiResponse;
-  isAuthenticated: Promise<boolean> | boolean;
+  isSignedIn: Promise<boolean> | boolean;
   isGlobalLoading: boolean;
   setUsername: (username: string) => void;
   signOut: () => void;

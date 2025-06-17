@@ -19,16 +19,15 @@
 import {
   AsgardeoAuthClient,
   AuthClientConfig,
-  AuthorizationURLParams,
-  BasicUserInfo,
+  AuthorizeRequestUrlParams,
+  User,
   IsomorphicCrypto,
-  CustomGrantConfig,
+  TokenExchangeRequestConfig,
   IdTokenPayload,
-  FetchResponse,
   OIDCEndpoints,
   OIDCRequestConstants,
   SessionData,
-  Store,
+  Storage,
 } from '@asgardeo/javascript';
 import {AuthenticationHelper, SPAHelper} from '../helpers';
 import {HttpClient, HttpClientInstance} from '../http-client';
@@ -49,7 +48,7 @@ export const WebWorkerCore = async (
     spaHelper: SPAHelper<WebWorkerClientConfig>,
   ) => AuthenticationHelper<WebWorkerClientConfig>,
 ): Promise<WebWorkerCoreInterface> => {
-  const _store: Store = new MemoryStore();
+  const _store: Storage = new MemoryStore();
   const _cryptoUtils: SPACryptoUtils = new SPACryptoUtils();
   const _authenticationClient = new AsgardeoAuthClient<WebWorkerClientConfig>();
   await _authenticationClient.initialize(config, _store, _cryptoUtils);
@@ -61,7 +60,7 @@ export const WebWorkerCore = async (
     _spaHelper,
   );
 
-  const _dataLayer = _authenticationClient.getDataLayer();
+  const _dataLayer = _authenticationClient.getStorageManager();
 
   const _httpClient: HttpClientInstance = HttpClient.getInstance();
 
@@ -99,9 +98,9 @@ export const WebWorkerCore = async (
     _authenticationHelper.disableHttpHandler(_httpClient);
   };
 
-  const getAuthorizationURL = async (params?: AuthorizationURLParams): Promise<AuthorizationResponse> => {
+  const getSignInUrl = async (params?: AuthorizeRequestUrlParams): Promise<AuthorizationResponse> => {
     return _authenticationClient
-      .getAuthorizationURL(params)
+      .getSignInUrl(params)
       .then(async (url: string) => {
         const urlObject: URL = new URL(url);
         const state: string = urlObject.searchParams.get(OIDCRequestConstants.Params.STATE) ?? '';
@@ -124,25 +123,25 @@ export const WebWorkerCore = async (
     sessionState?: string,
     pkce?: string,
     state?: string,
-  ): Promise<BasicUserInfo> => {
+  ): Promise<User> => {
     return await _authenticationHelper.requestAccessToken(authorizationCode, sessionState, undefined, pkce, state);
   };
 
   const signOut = async (): Promise<string> => {
     _spaHelper.clearRefreshTokenTimeout();
 
-    return await _authenticationClient.getSignOutURL();
+    return await _authenticationClient.getSignOutUrl();
   };
 
-  const getSignOutURL = async (): Promise<string> => {
-    return await _authenticationClient.getSignOutURL();
+  const getSignOutUrl = async (): Promise<string> => {
+    return await _authenticationClient.getSignOutUrl();
   };
 
-  const requestCustomGrant = async (config: CustomGrantConfig): Promise<BasicUserInfo | FetchResponse> => {
-    return await _authenticationHelper.requestCustomGrant(config);
+  const exchangeToken = async (config: TokenExchangeRequestConfig): Promise<User | Response> => {
+    return await _authenticationHelper.exchangeToken(config);
   };
 
-  const refreshAccessToken = async (): Promise<BasicUserInfo> => {
+  const refreshAccessToken = async (): Promise<User> => {
     try {
       return await _authenticationHelper.refreshAccessToken();
     } catch (error) {
@@ -163,35 +162,35 @@ export const WebWorkerCore = async (
       .catch(error => Promise.reject(error));
   };
 
-  const getBasicUserInfo = async (): Promise<BasicUserInfo> => {
-    return _authenticationHelper.getBasicUserInfo();
+  const getUser = async (): Promise<User> => {
+    return _authenticationHelper.getUser();
   };
 
-  const getDecodedIDToken = async (): Promise<IdTokenPayload> => {
-    return _authenticationHelper.getDecodedIDToken();
+  const getDecodedIdToken = async (): Promise<IdTokenPayload> => {
+    return _authenticationHelper.getDecodedIdToken();
   };
 
-  const getCryptoHelper = async (): Promise<IsomorphicCrypto> => {
-    return _authenticationHelper.getCryptoHelper();
+  const getCrypto = async (): Promise<IsomorphicCrypto> => {
+    return _authenticationHelper.getCrypto();
   };
 
   const getDecodedIDPIDToken = async (): Promise<IdTokenPayload> => {
     return _authenticationHelper.getDecodedIDPIDToken();
   };
 
-  const getIDToken = async (): Promise<string> => {
-    return _authenticationHelper.getIDToken();
+  const getIdToken = async (): Promise<string> => {
+    return _authenticationHelper.getIdToken();
   };
-  const getOIDCServiceEndpoints = async (): Promise<OIDCEndpoints> => {
-    return _authenticationHelper.getOIDCServiceEndpoints();
+  const getOpenIDProviderEndpoints = async (): Promise<OIDCEndpoints> => {
+    return _authenticationHelper.getOpenIDProviderEndpoints();
   };
 
   const getAccessToken = (): Promise<string> => {
     return _authenticationHelper.getAccessToken();
   };
 
-  const isAuthenticated = (): Promise<boolean> => {
-    return _authenticationHelper.isAuthenticated();
+  const isSignedIn = (): Promise<boolean> => {
+    return _authenticationHelper.isSignedIn();
   };
 
   const setSessionState = async (sessionState: string): Promise<void> => {
@@ -203,8 +202,8 @@ export const WebWorkerCore = async (
     return;
   };
 
-  const updateConfig = async (config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void> => {
-    await _authenticationClient.updateConfig(config);
+  const reInitialize = async (config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void> => {
+    await _authenticationClient.reInitialize(config);
 
     return;
   };
@@ -217,21 +216,21 @@ export const WebWorkerCore = async (
     disableHttpHandler,
     enableHttpHandler,
     getAccessToken,
-    getAuthorizationURL,
-    getBasicUserInfo,
+    getSignInUrl,
+    getUser,
     getConfigData,
-    getCryptoHelper,
+    getCrypto,
     getDecodedIDPIDToken,
-    getDecodedIDToken,
-    getIDToken,
-    getOIDCServiceEndpoints,
-    getSignOutURL,
+    getDecodedIdToken,
+    getIdToken,
+    getOpenIDProviderEndpoints,
+    getSignOutUrl,
     httpRequest,
     httpRequestAll,
-    isAuthenticated,
+    isSignedIn,
     refreshAccessToken,
     requestAccessToken,
-    requestCustomGrant,
+    exchangeToken,
     revokeAccessToken,
     setHttpRequestFinishCallback,
     setHttpRequestStartCallback,
@@ -239,6 +238,6 @@ export const WebWorkerCore = async (
     setSessionState,
     signOut,
     startAutoRefreshToken,
-    updateConfig,
+    reInitialize,
   };
 };

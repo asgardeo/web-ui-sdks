@@ -32,7 +32,6 @@ export interface ThemeColors {
       main: string;
     };
   };
-  surface: string;
   text: {
     primary: string;
     secondary: string;
