@@ -11,7 +11,7 @@ createRoot(document.getElementById('root')!).render(
       afterSignInUrl={import.meta.env.VITE_ASGARDEO_AFTER_SIGN_IN_URL}
       afterSignOutUrl={import.meta.env.VITE_ASGARDEO_AFTER_SIGN_OUT_URL}
       clientId={import.meta.env.VITE_ASGARDEO_CLIENT_ID}
-      scopes={['openid', 'address', 'email', 'profile']}
+      scopes={['openid', 'address', 'email', 'profile', 'user:email', 'read:user']}
       preferences={{
         theme: {
           mode: 'light',
