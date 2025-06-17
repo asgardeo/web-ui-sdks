@@ -12,7 +12,6 @@ export default function UserDropdown() {
   const [showUserProfile, setShowUserProfile] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
