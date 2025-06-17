@@ -6,9 +6,9 @@ This document provides complete API documentation for the Asgardeo React SDK, in
 
 - [Components](#components)
   - [AsgardeoProvider](#asgardeyprovider)
+  - [SignIn](#signin)
   - [SignedIn](#signedin)
   - [SignedOut](#signedout)
-  - [SignIn](#signin)
   - [SignInButton](#signinbutton)
   - [SignOutButton](#signoutbutton)
   - [User](#user)
@@ -36,13 +36,27 @@ The root provider component that configures the Asgardeo SDK and provides authen
 
 #### Example
 
-```tsx
-<AsgardeoProvider
-  baseUrl="https://api.asgardeo.io/t/your-org"
-  clientId="your-client-id"
->
-  <App />
-</AsgardeoProvider>
+```diff
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
++ import { AsgardeoProvider } from '@asgardeo/react';
+import App from './App';
+
+const root = createRoot(document.getElementById('root'));
+
+root.render(
+  <StrictMode>
++     <AsgardeoProvider
++       baseUrl="https://api.asgardeo.io/t/your-org"
++       clientId="your-client-id"
++       afterSignInUrl="/dashboard"
++       afterSignOutUrl="/"
++       scopes={['openid', 'profile', 'email']}
++     >
+        <App />
++     </AsgardeoProvider>
+  </StrictMode>
+);
 ```
 
 **Customization:** See [Customization](#customization) section for theming and styling options. The provider doesn't render any visual elements but can be styled through CSS custom properties.
@@ -71,8 +85,35 @@ A comprehensive sign-in component that renders a complete sign-in interface with
 
 #### Example
 
-```tsx
-<SignIn />
+```diff
++ import { SignIn } from '@asgardeo/react';
+
+const SignInPage = () => {
+  const handleSignInSuccess = (user) => {
+    console.log('User signed in:', user.username);
+    // Redirect to dashboard or update UI
+  };
+
+  const handleSignInError = (error) => {
+    console.error('Sign-in failed:', error.message);
+    // Show error message to user
+  };
+
+  return (
+    <div className="signin-container">
+      <h1>Welcome Back</h1>
++       <SignIn 
++         className="custom-signin"
++         redirectUrl="/dashboard"
++         buttonText="Login with Asgardeo"
++         onSignInSuccess={handleSignInSuccess}
++         onSignInError={handleSignInError}
++       />
+    </div>
+  );
+};
+
+export default SignInPage;
 ```
 
 **Customization:** See [Customization](#customization) for comprehensive styling and theming options.
@@ -109,10 +150,27 @@ A conditional rendering component that only displays its children when the user 
 
 #### Example
 
-```tsx
-<SignedIn fallback={<div>Checking authentication...</div>}>
-  <Dashboard />
-</SignedIn>
+```diff
++ import { SignedIn } from '@asgardeo/react';
+import Dashboard from './components/Dashboard';
+import LoadingSpinner from './components/LoadingSpinner';
+
+const App = () => {
+  return (
+    <div className="app">
++       <SignedIn fallback={
++         <div className="loading-container">
++           <LoadingSpinner />
++           <p>Checking authentication...</p>
++         </div>
++       }>
+        <Dashboard />
++       </SignedIn>
+    </div>
+  );
+};
+
+export default App;
 ```
 
 **Customization:** See [Customization](#customization) for styling the fallback loading state.
@@ -134,10 +192,23 @@ A conditional rendering component that only displays its children when the user 
 
 #### Example
 
-```tsx
-<SignedOut>
-  <LandingPage />
-</SignedOut>
+```diff
++ import { SignedOut } from '@asgardeo/react';
+import LandingPage from './components/LandingPage';
+import Hero from './components/Hero';
+
+const App = () => {
+  return (
+    <div className="app">
++       <SignedOut>
+        <Hero />
+        <LandingPage />
++       </SignedOut>
+    </div>
+  );
+};
+
+export default App;
 ```
 
 **Customization:** See [Customization](#customization) for styling options.
@@ -162,10 +233,30 @@ A pre-built button component that triggers the sign-in flow when clicked.
 
 #### Example
 
-```tsx
-<SignInButton className="custom-signin-btn">
-  Log In to Continue
-</SignInButton>
+```diff
++ import { SignInButton } from '@asgardeo/react';
+
+const LoginPage = () => {
+  const handleClick = () => {
+    console.log('Sign-in button clicked');
+  };
+
+  return (
+    <div className="login-page">
+      <h1>Welcome to Our App</h1>
+      <p>Please sign in to continue</p>
+      
++       <SignInButton 
++         className="custom-signin-btn"
++         onClick={handleClick}
++       >
++         🔐 Log In to Continue
++       </SignInButton>
+    </div>
+  );
+};
+
+export default LoginPage;
 ```
 
 **Customization:** See [Customization](#customization) for theming and styling the sign-in button.
@@ -190,10 +281,30 @@ A pre-built button component that triggers the sign-out flow when clicked.
 
 #### Example
 
-```tsx
-<SignOutButton className="custom-signout-btn">
-  Logout
-</SignOutButton>
+```diff
++ import { SignOutButton } from '@asgardeo/react';
+
+const UserMenu = () => {
+  const handleSignOut = () => {
+    console.log('User signed out');
+    // Additional cleanup logic
+  };
+
+  return (
+    <div className="user-menu">
+      <h3>Account Settings</h3>
+      
++       <SignOutButton 
++         className="custom-signout-btn"
++         onClick={handleSignOut}
++       >
++         🚪 Logout
++       </SignOutButton>
+    </div>
+  );
+};
+
+export default UserMenu;
 ```
 
 **Customization:** See [Customization](#customization) for theming and styling the sign-out button.
@@ -234,22 +345,59 @@ A render prop component that provides access to the current user's information.
 
 #### Example
 
-```tsx
-<User>
-  {({ user, isLoading, error }) => {
-    if (isLoading) return <div>Loading user...</div>
-    if (error) return <div>Error: {error.message}</div>
-    if (!user) return <div>No user data</div>
-    
-    return (
-      <div>
-        <img src={user.photourl} alt={user.username} />
-        <h2>{user.givenname} {user.familyname}</h2>
-        <p>{user.email}</p>
-      </div>
-    )
-  }}
-</User>
+```diff
++ import { User } from '@asgardeo/react';
+
+const UserProfile = () => {
+  return (
+    <div className="profile-page">
+      <h1>User Profile</h1>
+      
++       <User>
++         {({ user, isLoading, error }) => {
+          if (isLoading) {
+            return (
+              <div className="loading">
+                <div className="spinner" />
+                <p>Loading user information...</p>
+              </div>
+            );
+          }
+          
+          if (error) {
+            return (
+              <div className="error">
+                <p>Error loading user: {error.message}</p>
+                <button onClick={() => window.location.reload()}>
+                  Try Again
+                </button>
+              </div>
+            );
+          }
+          
+          if (!user) {
+            return <div className="no-user">No user data available</div>;
+          }
+          
+          return (
+            <div className="user-card">
+              <img 
+                src={user.photourl || '/default-avatar.png'} 
+                alt={user.username}
+                className="avatar"
+              />
+              <h2>{user.givenname} {user.familyname}</h2>
+              <p className="username">@{user.username}</p>
+              <p className="email">{user.email}</p>
+            </div>
+          );
++         }}
++       </User>
+    </div>
+  );
+};
+
+export default UserProfile;
 ```
 
 **Customization:** See [Customization](#customization) for styling user information displays.
@@ -274,12 +422,42 @@ A pre-built component that displays a formatted user profile card.
 
 #### Example
 
-```tsx
-<UserProfile 
-  className="custom-profile"
-  showEmail={false}
-  avatarSize="lg"
-/>
+```diff
++ import { UserProfile } from '@asgardeo/react';
+
+const Header = () => {
+  return (
+    <header className="app-header">
+      <div className="header-content">
+        <h1>My Dashboard</h1>
+        
+        <div className="user-section">
++           <UserProfile 
++             className="header-profile"
++             showEmail={false}
++             avatarSize="sm"
++           />
+        </div>
+      </div>
+    </header>
+  );
+};
+
+const ProfileCard = () => {
+  return (
+    <div className="profile-card-container">
+      <h2>Profile Information</h2>
+      
++       <UserProfile 
++         className="detailed-profile"
++         showEmail={true}
++         avatarSize="lg"
++       />
+    </div>
+  );
+};
+
+export { Header, ProfileCard };
 ```
 
 **Customization:** See [Customization](#customization) for comprehensive styling options for the user profile component.
@@ -311,42 +489,113 @@ The main hook that provides access to all authentication functionality and state
 
 #### Example
 
-```tsx
-import { useAsgardeo } from '@asgardeo/react'
+```diff
++ import { useAsgardeo } from '@asgardeo/react';
+import { useState } from 'react';
 
-function MyComponent() {
-  const { 
-    user, 
-    isSignedIn, 
-    isLoading, 
-    error,
-    signIn, 
-    signOut,
-    getAccessToken 
-  } = useAsgardeo()
+const AuthenticatedApp = () => {
++   const { 
++     user, 
++     isSignedIn, 
++     isLoading, 
++     error,
++     signIn, 
++     signOut,
++     getAccessToken 
++   } = useAsgardeo();
+  
+  const [apiData, setApiData] = useState(null);
+  const [apiLoading, setApiLoading] = useState(false);
 
   const handleApiCall = async () => {
-    const token = await getAccessToken()
-    // Use token for API calls
+    try {
+      setApiLoading(true);
+      const token = await getAccessToken();
+      
+      const response = await fetch('/api/protected-data', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      const data = await response.json();
+      setApiData(data);
+    } catch (err) {
+      console.error('API call failed:', err);
+    } finally {
+      setApiLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await signOut('/goodbye');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="loading-screen">
+        <div className="spinner" />
+        <p>Initializing authentication...</p>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="error-screen">
+        <h2>Authentication Error</h2>
+        <p>{error.message}</p>
+        <button onClick={() => window.location.reload()}>
+          Retry
+        </button>
+      </div>
+    );
   }
 
-  if (isLoading) return <div>Loading...</div>
-  if (error) return <div>Error: {error.message}</div>
-
   return (
-    <div>
+    <div className="app">
       {isSignedIn ? (
-        <div>
-          <h1>Welcome, {user?.givenname}!</h1>
-          <button onClick={() => signOut()}>Sign Out</button>
-          <button onClick={handleApiCall}>Call API</button>
+        <div className="authenticated-content">
+          <header className="app-header">
+            <h1>Welcome, {user?.givenname}!</h1>
+            <button className="sign-out-btn" onClick={handleSignOut}>
+              Sign Out
+            </button>
+          </header>
+          
+          <main className="main-content">
+            <div className="api-section">
+              <button 
+                className="api-btn" 
+                onClick={handleApiCall}
+                disabled={apiLoading}
+              >
+                {apiLoading ? 'Loading...' : 'Fetch Protected Data'}
+              </button>
+              
+              {apiData && (
+                <pre className="api-response">
+                  {JSON.stringify(apiData, null, 2)}
+                </pre>
+              )}
+            </div>
+          </main>
         </div>
       ) : (
-        <button onClick={() => signIn()}>Sign In</button>
+        <div className="landing-page">
+          <h1>Welcome to Our App</h1>
+          <p>Please sign in to access your dashboard</p>
+          <button className="sign-in-btn" onClick={() => signIn('/dashboard')}>
+            Sign In
+          </button>
+        </div>
       )}
     </div>
-  )
-}
+  );
+};
+
+export default AuthenticatedApp;
 ```
 
 ---
@@ -410,7 +659,7 @@ Replace default button text with custom content:
 </SignOutButton>
 ```
 
-### Theme Integration
+### Bring your own UI Library
 
 For applications using popular UI libraries, you can easily integrate Asgardeo components:
 
