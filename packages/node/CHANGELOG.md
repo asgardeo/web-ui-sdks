@@ -1,5 +1,13 @@
 # @asgardeo/node
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`efe951f`](https://github.com/asgardeo/web-ui-sdks/commit/efe951f3dd45a477360b5a3a16990a78dc26982f)]:
+  - @asgardeo/javascript@0.1.0
+
 ## 0.0.1
 
 ### Patch Changes
