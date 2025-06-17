@@ -62,7 +62,6 @@ const useStyles = ({size}) => {
         fontWeight: 500,
         color: theme.colors.text.primary,
         border: `1px solid ${theme.colors.border}`,
-        boxShadow: colorScheme === 'dark' ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.1)',
       } as CSSProperties,
       image: {
         width: '100%',

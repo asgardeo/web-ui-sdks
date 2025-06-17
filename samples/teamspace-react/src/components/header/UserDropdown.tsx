@@ -3,7 +3,7 @@
 import {useState, useRef, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {ChevronDown, Settings, User as UserIcon, LogOut} from 'lucide-react';
-import {SignOutButton, User, UserProfile} from '@asgardeo/react';
+import {SignOutButton, User, UserProfile, UserDropdown as ReactUserDropdown} from '@asgardeo/react';
 import {useApp} from '../../App';
 
 export default function UserDropdown() {
@@ -26,13 +26,14 @@ export default function UserDropdown() {
   return (
     <>
       <div className="relative" ref={userDropdownRef}>
-        <button
+        {/* <button
           onClick={() => setShowUserDropdown(!showUserDropdown)}
           className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50"
         >
           <User>{user => <img src={user?.profileUrl} alt={user?.userName} className="w-8 h-8 rounded-full" />}</User>
           <ChevronDown className="h-4 w-4 text-gray-500" />
-        </button>
+        </button> */}
+        <ReactUserDropdown />
 
         {showUserDropdown && (
           <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">

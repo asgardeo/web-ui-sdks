@@ -50,9 +50,9 @@ export type UserDropdownProps = Omit<BaseUserDropdownProps, 'user'>;
  * ```
  */
 const UserDropdown: FC<UserDropdownProps> = ({...rest}: UserDropdownProps): ReactElement => {
-  const {user} = useAsgardeo();
+  const {user, isLoading} = useAsgardeo();
 
-  return <BaseUserDropdown user={user} {...rest} />;
+  return <BaseUserDropdown user={user} isLoading={isLoading} {...rest} />;
 };
 
 export default UserDropdown;

@@ -21,7 +21,7 @@ import useTheme from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
-import {withVendorCSSClassPrefix} from 'packages/browser/dist';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'type'> {
   /**

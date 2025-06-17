@@ -20,8 +20,8 @@ import {FC, ReactElement} from 'react';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useUser from '../../../contexts/User/useUser';
 import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
-import updateMeProfile from 'packages/react/src/api/scim2/updateMeProfile';
-import getMeProfile from 'packages/react/src/api/scim2/getMeProfile';
+import updateMeProfile from '../../../api/scim2/updateMeProfile';
+import getMeProfile from '../../..//api/scim2/getMeProfile';
 
 /**
  * Props for the UserProfile component.

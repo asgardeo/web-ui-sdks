@@ -52,7 +52,7 @@ const mockUser: User = {
   id: '1',
   name: 'John Doe',
   email: 'john@example.com',
-  avatar: '/placeholder.svg?height=32&width=32',
+  avatar: 'https://avatar.vercel.sh/john?size=30',
   username: 'johndoe',
 };
 
@@ -61,7 +61,7 @@ const mockOrganizations: Organization[] = [
     id: '1',
     name: 'Acme Corp',
     slug: 'acme-corp',
-    avatar: '/placeholder.svg?height=32&width=32',
+    avatar: 'https://avatar.vercel.sh/acme-corp?size=32',
     role: 'owner',
     memberCount: 12,
   },
@@ -69,7 +69,7 @@ const mockOrganizations: Organization[] = [
     id: '2',
     name: 'Tech Startup',
     slug: 'tech-startup',
-    avatar: '/placeholder.svg?height=32&width=32',
+    avatar: 'https://avatar.vercel.sh/tech-startup?size=30',
     role: 'admin',
     memberCount: 8,
   },

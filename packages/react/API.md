@@ -5,7 +5,7 @@ This document provides complete API documentation for the Asgardeo React SDK, in
 ## Table of Contents
 
 - [Components](#components)
-  - [AsgardeoProvider](#asgardeyprovider)
+  - [AsgardeoProvider](#asgardeoprovider)
   - [SignIn](#signin)
   - [SignedIn](#signedin)
   - [SignedOut](#signedout)
@@ -36,6 +36,10 @@ The root provider component that configures the Asgardeo SDK and provides authen
 
 #### Example
 
+##### Minimal Setup
+
+Following is a minimal setup with the mandatory configuration for the `AsgardeoProvider` in your main application file (e.g., `index.tsx`):
+
 ```diff
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -49,8 +53,32 @@ root.render(
 +     <AsgardeoProvider
 +       baseUrl="https://api.asgardeo.io/t/your-org"
 +       clientId="your-client-id"
-+       afterSignInUrl="/dashboard"
-+       afterSignOutUrl="/"
++     >
+        <App />
++     </AsgardeoProvider>
+  </StrictMode>
+);
+```
+
+##### Advanced Usage
+
+For more advanced configurations, you can specify additional props like `afterSignInUrl`, `afterSignOutUrl`, and `scopes`:
+
+```diff
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
++ import { AsgardeoProvider } from '@asgardeo/react';
+import App from './App';
+
+const root = createRoot(document.getElementById('root'));
+
+root.render(
+  <StrictMode>
++     <AsgardeoProvider
++       baseUrl="https://api.asgardeo.io/t/your-org"
++       clientId="your-client-id"
++       afterSignInUrl="https://localhost:5173/dashboard"
++       afterSignOutUrl="https://localhost:5173"
 +       scopes={['openid', 'profile', 'email']}
 +     >
         <App />
@@ -58,6 +86,7 @@ root.render(
   </StrictMode>
 );
 ```
+
 
 **Customization:** See [Customization](#customization) section for theming and styling options. The provider doesn't render any visual elements but can be styled through CSS custom properties.
 
