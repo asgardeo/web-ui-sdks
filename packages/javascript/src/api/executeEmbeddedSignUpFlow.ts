@@ -1,4 +1,3 @@
-import {EmbeddedFlowExecuteResponse} from './../models/embedded-flows';
 /**
  * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
@@ -18,7 +17,7 @@ import {EmbeddedFlowExecuteResponse} from './../models/embedded-flows';
  */
 
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
-import {EmbeddedFlowType} from '../models/embedded-flows';
+import {EmbeddedFlowType, EmbeddedFlowExecuteResponse} from '../models/embedded-flow';
 
 /**
  * Represents the embedded signup flow execution request payload.

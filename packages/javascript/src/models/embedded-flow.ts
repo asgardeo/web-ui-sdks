@@ -22,9 +22,14 @@ export enum EmbeddedFlowType {
 
 export interface EmbeddedFlowExecuteResponse {
   flowId: string;
-  flowStatus: ApplicationNativeAuthenticationFlowStatus;
+  flowStatus: EmbeddedFlowStatus;
   type: EmbeddedFlowResponseType;
   data: EmbeddedSignUpFlowData;
+}
+
+export enum EmbeddedFlowStatus {
+  Complete = 'COMPLETE',
+  Incomplete = 'INCOMPLETE',
 }
 
 export enum EmbeddedFlowResponseType {

@@ -24,7 +24,6 @@ export * from './IsomorphicCrypto';
 export {default as initializeApplicationNativeAuthentication} from './api/initializeApplicationNativeAuthentication';
 export {default as handleApplicationNativeAuthentication} from './api/handleApplicationNativeAuthentication';
 export {default as executeEmbeddedSignUpFlow} from './api/executeEmbeddedSignUpFlow';
-export {default as handleEmbeddedSignUpFlow} from './api/handleEmbeddedSignUpFlow';
 export {default as getUserInfo} from './api/getUserInfo';
 
 export {default as ApplicationNativeAuthenticationConstants} from './constants/ApplicationNativeAuthenticationConstants';
@@ -47,16 +46,16 @@ export {
   ApplicationNativeAuthenticationHandleResponse,
   ApplicationNativeAuthenticationAuthenticatorParamType,
   ApplicationNativeAuthenticationAuthenticatorPromptType,
-  ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
-  EmbeddedSignUpFlowInitiateResponse,
-  EmbeddedSignUpFlowResponseType,
-  EmbeddedSignUpFlowViewData,
-  EmbeddedSignUpFlowComponent,
-  EmbeddedSignUpFlowComponentType,
-  EmbeddedSignUpFlowHandleRequest,
-  EmbeddedSignUpFlowHandleResponse,
+  ApplicationNativeAuthenticationAuthenticatorKnownIdPType
 } from './models/application-native-authentication';
-export {EmbeddedFlowType} from './models/embedded-flows';
+export {
+  EmbeddedFlowType,
+  EmbeddedFlowExecuteResponse,
+  EmbeddedFlowResponseType,
+  EmbeddedSignUpFlowData,
+  EmbeddedFlowComponent,
+  EmbeddedFlowComponentType,
+} from './models/embedded-flow';
 export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
 export {BaseConfig, Config, Preferences, ThemePreferences, I18nPreferences, WithPreferences} from './models/config';
 export {TokenResponse, IdTokenPayload, TokenExchangeRequestConfig} from './models/token';
