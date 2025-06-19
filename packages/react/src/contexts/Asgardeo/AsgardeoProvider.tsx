@@ -217,7 +217,12 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       <I18nProvider preferences={preferences?.i18n}>
         <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
-            <UserProvider profile={userProfile}>{children}</UserProvider>
+            <UserProvider
+              profile={userProfile}
+              revalidateProfile={async () => setUserProfile(await asgardeo.getUserProfile())}
+            >
+              {children}
+            </UserProvider>
           </FlowProvider>
         </ThemeProvider>
       </I18nProvider>

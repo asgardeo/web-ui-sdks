@@ -16,16 +16,17 @@
  * under the License.
  */
 
-import {Context, createContext} from 'react';
 import {User, Schema, FlattenedSchema} from '@asgardeo/browser';
+import {Context, createContext} from 'react';
 
 /**
  * Props interface of {@link UserContext}
  */
 export type UserContextProps = {
-  profile: User | null;
-  schemas: Schema[] | null;
   flattenedProfile: User | null;
+  profile: User | null;
+  revalidateProfile: () => Promise<void>;
+  schemas: Schema[] | null;
 };
 
 /**
@@ -35,6 +36,7 @@ const UserContext: Context<UserContextProps | null> = createContext<null | UserC
   profile: null,
   schemas: null,
   flattenedProfile: null,
+  revalidateProfile: () => null,
 });
 
 UserContext.displayName = 'UserContext';

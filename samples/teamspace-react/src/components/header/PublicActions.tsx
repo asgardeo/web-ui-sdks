@@ -1,7 +1,7 @@
 'use client';
 
 import {useNavigate} from 'react-router-dom';
-import {SignInButton} from '@asgardeo/react';
+import {SignInButton, SignUpButton} from '@asgardeo/react';
 import {Button} from '../ui/button';
 
 interface PublicActionsProps {
@@ -54,6 +54,21 @@ export default function PublicActions({className = '', showMobileActions = false
             </Button>
           )}
         </SignInButton>
+        <SignUpButton>
+          {({isLoading}) => (
+            <Button
+              onClick={() => {
+                navigate('/signup');
+              }}
+              disabled={isLoading}
+              size="lg"
+              color="primary"
+              variant="default"
+            >
+              {isLoading ? 'Signing up...' : 'Sign Up'}
+            </Button>
+          )}
+        </SignUpButton>
       </div>
 
       {/* Mobile CTA - shown in mobile menu */}

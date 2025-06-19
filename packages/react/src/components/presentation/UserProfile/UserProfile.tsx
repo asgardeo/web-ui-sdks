@@ -54,11 +54,11 @@ export type UserProfileProps = Omit<BaseUserProfileProps, 'user' | 'profile' | '
  */
 const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactElement => {
   const {baseUrl} = useAsgardeo();
-  const {profile, flattenedProfile, schemas} = useUser();
+  const {profile, flattenedProfile, schemas, revalidateProfile} = useUser();
 
   const handleProfileUpdate = async (payload: any): Promise<void> => {
     await updateMeProfile({url: `${baseUrl}/scim2/Me`, payload});
-    await getMeProfile({url: `${baseUrl}/scim2/Me`});
+    await revalidateProfile();
   };
 
   return (

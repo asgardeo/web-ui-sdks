@@ -85,7 +85,7 @@ export default function UserDropdown({mode = 'default'}: UserDropdownProps) {
               )}
             </div>
 
-            {showUserProfile && <UserProfile mode="popup" />}
+            {showUserProfile && <UserProfile mode="popup" open={showUserProfile} onOpenChange={setShowUserProfile} />}
           </>
         )}
       </_UserDropdown>

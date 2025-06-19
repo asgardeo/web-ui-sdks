@@ -472,11 +472,16 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     return (
       <div style={fieldStyle}>
         <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: `${theme.spacing.unit}px`}}>
-          {renderSchemaField(schema, isFieldEditing, value => {
-            const tempEditedUser = {...editedUser};
-            tempEditedUser[schema.name!] = value;
-            setEditedUser(tempEditedUser);
-          }, () => toggleFieldEdit(schema.name!))}
+          {renderSchemaField(
+            schema,
+            isFieldEditing,
+            value => {
+              const tempEditedUser = {...editedUser};
+              tempEditedUser[schema.name!] = value;
+              setEditedUser(tempEditedUser);
+            },
+            () => toggleFieldEdit(schema.name!),
+          )}
         </div>
         {editable && schema.mutability !== 'READ_ONLY' && (
           <div

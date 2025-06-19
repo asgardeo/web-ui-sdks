@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')!).render(
           overrides: {
             colors: {
               primary: {
-                main: '#6200ea',
+                main: '#1976d2',
                 contrastText: '#ffffff',
               },
             },
