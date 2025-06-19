@@ -6,7 +6,7 @@ import DashboardPage from './pages/Dashboard';
 import ProfilePage from './pages/Profile';
 import OrganizationsPage from './pages/Organizations';
 import CreateOrganizationPage from './pages/CreateOrganization';
-import SignInPage from './pages/SignIn';
+import SignInPage from './pages/SignInPage';
 import LandingPage from './pages/LandingPage';
 import LandingLayout from './layouts/LandingLayout';
 import DashboardLayout from './layouts/DashboardLayout';
