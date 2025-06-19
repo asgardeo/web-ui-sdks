@@ -81,20 +81,13 @@ export interface AsgardeoClient<T> {
   signIn(options?: SignInOptions): Promise<User>;
 
   /**
-   * Initiates a redirection-based sign-up process for the user.
+   * Initiates an embedded (App-Native) sign-in flow for the user.
    *
-   * @param options - Optional sign-up options like additional parameters to be sent in the sign-up request, etc.
-   * @returns Promise resolving to the user upon successful sign up.
-   */
-  signUp(options?: SignUpOptions): Promise<void>;
-
-  /**
-   * Initiates an embedded (App-Native) sign-up flow for the user.
-   *
-   * @param payload - The payload containing the necessary information to execute the embedded sign-up flow.
+   * @param payload - The payload containing the necessary information to execute the embedded sign-in flow.
+   * @param request - The request object containing URL and parameters for the sign-in flow HTTP request.
    * @returns A promise that resolves to an EmbeddedFlowExecuteResponse containing the flow execution details.
    */
-  signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
+  signIn(payload: SignInOptions, request: globalThis.Request): Promise<User>;
 
   /**
    * Signs out the currently signed-in user.
@@ -115,4 +108,20 @@ export interface AsgardeoClient<T> {
    * @returns A promise that resolves to true if sign-out is successful
    */
   signOut(options?: SignOutOptions, sessionId?: string, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
+
+  /**
+   * Initiates a redirection-based sign-up process for the user.
+   *
+   * @param options - Optional sign-up options like additional parameters to be sent in the sign-up request, etc.
+   * @returns Promise resolving to the user upon successful sign up.
+   */
+  signUp(options?: SignUpOptions): Promise<void>;
+
+  /**
+   * Initiates an embedded (App-Native) sign-up flow for the user.
+   *
+   * @param payload - The payload containing the necessary information to execute the embedded sign-up flow.
+   * @returns A promise that resolves to an EmbeddedFlowExecuteResponse containing the flow execution details.
+   */
+  signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
 }

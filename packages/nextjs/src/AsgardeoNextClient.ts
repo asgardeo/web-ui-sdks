@@ -27,7 +27,7 @@ import {
   SignUpOptions,
   User,
   UserProfile,
-  initializeApplicationNativeAuthentication,
+  initializeEmbeddedSignInFlow,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
@@ -148,7 +148,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       const {pathname, origin, searchParams} = signInUrl;
 
       try {
-        response = await initializeApplicationNativeAuthentication({
+        response = await initializeEmbeddedSignInFlow({
           url: `${origin}${pathname}`,
           payload: Object.fromEntries(searchParams.entries()),
         });

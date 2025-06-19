@@ -62,17 +62,17 @@ export interface SignInProps extends BaseSignInProps {
  * @example
  * ```tsx
  * import { SignIn } from '@asgardeo/nextjs';
- * import { handleApplicationNativeAuthentication } from '@asgardeo/browser';
+ * import { executeEmbeddedSignInFlow } from '@asgardeo/browser';
  *
  * const LoginPage = () => {
  *   const handleInitialize = async () => {
- *     return await handleApplicationNativeAuthentication({
+ *     return await executeEmbeddedSignInFlow({
  *       response_mode: 'direct',
  *     });
  *   };
  *
  *   const handleSubmit = async (flow) => {
- *     return await handleApplicationNativeAuthentication({ flow });
+ *     return await executeEmbeddedSignInFlow({ flow });
  *   };
  *
  *   return (

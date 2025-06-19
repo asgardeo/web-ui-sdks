@@ -19,7 +19,7 @@ Error codes follow this format:
 #### 2. Function Name
 - Use the exact function name as defined in the code
 - Use camelCase format matching the function declaration
-- Examples: `getUserInfo`, `executeEmbeddedSignUpFlow`, `initializeApplicationNativeAuthentication`
+- Examples: `getUserInfo`, `executeEmbeddedSignUpFlow`, `initializeEmbeddedSignInFlow`
 
 #### 3. Error Category
 Categories represent the type of error:
@@ -96,8 +96,8 @@ Examples of when to use prefixes:
 
 ### Functions Needing Updates
 - ⏳ `getUserInfo` - Currently uses simple format, needs prefix evaluation
-- ⏳ `initializeApplicationNativeAuthentication` - Currently uses simple format, needs prefix evaluation  
-- ⏳ `handleApplicationNativeAuthentication` - Currently uses simple format, needs prefix evaluation
+- ⏳ `initializeEmbeddedSignInFlow` - Currently uses simple format, needs prefix evaluation  
+- ⏳ `executeEmbeddedSignInFlow` - Currently uses simple format, needs prefix evaluation
 
 ## Migration Notes
 
@@ -138,17 +138,17 @@ When updating existing error codes:
 - `getUserInfo-ValidationError-001` - Invalid endpoint URL
 - `getUserInfo-ResponseError-001` - Failed to fetch user info
 
-### initializeApplicationNativeAuthentication (Legacy Format)
-- `initializeApplicationNativeAuthentication-ValidationError-002` - Missing authorization payload
-- `initializeApplicationNativeAuthentication-ResponseError-001` - Authorization request failed
+### initializeEmbeddedSignInFlow (Legacy Format)
+- `initializeEmbeddedSignInFlow-ValidationError-002` - Missing authorization payload
+- `initializeEmbeddedSignInFlow-ResponseError-001` - Authorization request failed
 
-### handleApplicationNativeAuthentication (Legacy Format)
-- `handleApplicationNativeAuthentication-ValidationError-002` - Missing required parameter
-- `initializeApplicationNativeAuthentication-ResponseError-001` - Response error (Note: incorrect function name reference)
+### executeEmbeddedSignInFlow (Legacy Format)
+- `executeEmbeddedSignInFlow-ValidationError-002` - Missing required parameter
+- `initializeEmbeddedSignInFlow-ResponseError-001` - Response error (Note: incorrect function name reference)
 
 ## Recommended Actions
 
 1. **Standardize numbering**: Update legacy functions to use range-based numbering
-2. **Fix inconsistencies**: Correct the error code in `handleApplicationNativeAuthentication` that references the wrong function
+2. **Fix inconsistencies**: Correct the error code in `executeEmbeddedSignInFlow` that references the wrong function
 3. **Add prefixes**: Evaluate which functions need package prefixes based on their public API status
 4. **Document usage**: Add inline documentation in each file listing the error codes used

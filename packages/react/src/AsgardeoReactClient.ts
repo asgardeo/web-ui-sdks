@@ -30,6 +30,8 @@ import {
   EmbeddedFlowExecuteRequestPayload,
   AsgardeoRuntimeError,
   executeEmbeddedSignUpFlow,
+  EmbeddedSignInFlowHandleRequestPayload,
+  executeEmbeddedSignInFlow,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeProfile from './api/scim2/getMeProfile';
@@ -108,8 +110,20 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     return this.asgardeo.isSignedIn();
   }
 
-  override signIn(options?: SignInOptions): Promise<User> {
-    return this.asgardeo.signIn(options as any) as unknown as Promise<User>;
+  override signIn(options?: SignInOptions): Promise<User>;
+  override signIn(payload: EmbeddedSignInFlowHandleRequestPayload, request: Request): Promise<User>;
+  override async signIn(...args: any[]): Promise<User> {
+    const arg1 = args[0];
+    const arg2 = args[1];
+
+    if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg1 === 'object' && 'url' in arg2) {
+      return executeEmbeddedSignInFlow({
+        payload: arg1,
+        url: (arg2 as Request).url,
+      });
+    }
+
+    return this.asgardeo.signIn(arg1 as any) as unknown as Promise<User>;
   }
 
   override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;

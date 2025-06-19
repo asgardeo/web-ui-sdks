@@ -29,7 +29,7 @@ import {
   OIDCEndpoints,
   SignInConfig,
   SPACustomGrantConfig,
-  initializeApplicationNativeAuthentication,
+  initializeEmbeddedSignInFlow,
   processOpenIDScopes,
 } from '@asgardeo/browser';
 import {AuthStateInterface} from './models';

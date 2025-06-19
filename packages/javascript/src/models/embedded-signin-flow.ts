@@ -68,7 +68,7 @@ export interface EmbeddedSignInFlowLink {
   name: string;
 }
 
-export interface ApplicationNativeAuthenticationHandleRequestPayload {
+export interface EmbeddedSignInFlowHandleRequestPayload {
   flowId: string;
   selectedAuthenticator: {
     authenticatorId: string;
@@ -76,7 +76,7 @@ export interface ApplicationNativeAuthenticationHandleRequestPayload {
   };
 }
 
-export interface ApplicationNativeAuthenticationHandleResponse {
+export interface EmbeddedSignInFlowHandleResponse {
   authData: Record<string, any>;
   flowStatus: string;
 }

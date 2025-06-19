@@ -29,8 +29,7 @@ import {
   SessionData,
   Storage,
   extractPkceStorageKeyFromState,
-  initializeApplicationNativeAuthentication,
-  handleApplicationNativeAuthentication,
+  initializeEmbeddedSignInFlow,
 } from '@asgardeo/javascript';
 import {SILENT_SIGN_IN_STATE, TOKEN_REQUEST_CONFIG_KEY} from '../constants';
 import {AuthenticationHelper} from '../helpers/authentication-helper';
@@ -181,13 +180,6 @@ export const MainThreadClient = async (
       params: Record<string, unknown>;
     },
   ): Promise<User> => {
-    if (signInConfig && signInConfig['flow']) {
-      return handleApplicationNativeAuthentication({
-        payload: signInConfig['flow']['payload'],
-        url: signInConfig['flow']['requestConfig']['url'],
-      });
-    }
-
     const basicUserInfo = await _authenticationHelper.handleSignIn(shouldStopAuthn, checkSession, undefined);
 
     if (basicUserInfo) {
@@ -242,7 +234,7 @@ export const MainThreadClient = async (
       if (signInConfig && signInConfig['response_mode'] === 'direct') {
         const authorizeUrl: URL = new URL(url);
 
-        return initializeApplicationNativeAuthentication({
+        return initializeEmbeddedSignInFlow({
           url: `${authorizeUrl.origin}${authorizeUrl.pathname}`,
           payload: Object.fromEntries(authorizeUrl.searchParams.entries()),
         });

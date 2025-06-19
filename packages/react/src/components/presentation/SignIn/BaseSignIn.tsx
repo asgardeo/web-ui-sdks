@@ -19,13 +19,14 @@
 import {
   EmbeddedSignInFlowAuthenticator,
   EmbeddedSignInFlowInitiateResponse,
-  ApplicationNativeAuthenticationHandleResponse,
+  EmbeddedSignInFlowHandleResponse,
   EmbeddedSignInFlowStepType,
   EmbeddedSignInFlowStatus,
   EmbeddedSignInFlowAuthenticatorPromptType,
   ApplicationNativeAuthenticationConstants,
   AsgardeoAPIError,
   withVendorCSSClassPrefix,
+  EmbeddedSignInFlowHandleRequestPayload,
 } from '@asgardeo/browser';
 import {clsx} from 'clsx';
 import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef} from 'react';
@@ -248,7 +249,7 @@ export interface BaseSignInProps {
    * Callback function called when authentication flow status changes.
    * @param response - The current authentication response.
    */
-  onFlowChange?: (response: EmbeddedSignInFlowInitiateResponse | ApplicationNativeAuthenticationHandleResponse) => void;
+  onFlowChange?: (response: EmbeddedSignInFlowInitiateResponse | EmbeddedSignInFlowHandleResponse) => void;
 
   /**
    * Function to initialize authentication flow.
@@ -261,19 +262,10 @@ export interface BaseSignInProps {
    * @param payload - The authentication payload.
    * @returns Promise resolving to the authentication response.
    */
-  onSubmit?: (flow: {
-    payload: {
-      flowId: string;
-      selectedAuthenticator: {
-        authenticatorId: string;
-        params: Record<string, string>;
-      };
-    };
-    requestConfig?: {
-      method: string;
-      url: string;
-    };
-  }) => Promise<ApplicationNativeAuthenticationHandleResponse>;
+  onSubmit?: (
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: Partial<Request>,
+  ) => Promise<EmbeddedSignInFlowHandleResponse>;
 
   /**
    * Callback function called when authentication is successful.
@@ -346,7 +338,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   messageClassName = '',
   size = 'medium',
   variant = 'default',
-}) => {
+}: BaseSignInProps) => {
   const {t} = useTranslation();
   const {subtitle: flowSubtitle, title: flowTitle, messages: flowMessages} = useFlow();
 
@@ -428,7 +420,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
    * @param response - The authentication response
    * @returns true if a redirect was performed, false otherwise
    */
-  const handleRedirectionIfNeeded = (response: ApplicationNativeAuthenticationHandleResponse): boolean => {
+  const handleRedirectionIfNeeded = (response: EmbeddedSignInFlowHandleResponse): boolean => {
     if (
       'nextStep' in response &&
       response.nextStep &&
@@ -489,12 +481,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
               },
             };
 
-            await onSubmit({
-              requestConfig: {
-                method: currentFlow?.links[0].method,
-                url: currentFlow?.links[0].href,
-              },
-              payload,
+            await onSubmit(payload, {
+              method: currentFlow?.links[0].method,
+              url: currentFlow?.links[0].href,
             });
 
             popup.close();
@@ -563,12 +552,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                     },
                   };
 
-                  const response = await onSubmit({
-                    requestConfig: {
-                      method: currentFlow?.links[0].method,
-                      url: currentFlow?.links[0].href,
-                    },
-                    payload,
+                  const response = await onSubmit(payload, {
+                    method: currentFlow?.links[0].method,
+                    url: currentFlow?.links[0].href,
                   });
 
                   popup.close();
@@ -624,12 +610,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         },
       };
 
-      const response = await onSubmit({
-        requestConfig: {
-          method: currentFlow?.links[0].method,
-          url: currentFlow?.links[0].href,
-        },
-        payload,
+      const response = await onSubmit(payload, {
+        method: currentFlow?.links[0].method,
+        url: currentFlow?.links[0].href,
       });
       onFlowChange?.(response);
 
@@ -727,12 +710,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             },
           };
 
-          const response = await onSubmit({
-            requestConfig: {
-              method: currentFlow?.links[0].method,
-              url: currentFlow?.links[0].href,
-            },
-            payload,
+          const response = await onSubmit(payload, {
+            method: currentFlow?.links[0].method,
+            url: currentFlow?.links[0].href,
           });
           onFlowChange?.(response);
 
@@ -807,12 +787,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           },
         };
 
-        const response = await onSubmit({
-          requestConfig: {
-            method: currentFlow?.links[0].method,
-            url: currentFlow?.links[0].href,
-          },
-          payload,
+        const response = await onSubmit(payload, {
+          method: currentFlow?.links[0].method,
+          url: currentFlow?.links[0].href,
         });
         onFlowChange?.(response);
 
@@ -838,12 +815,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           },
         };
 
-        const response = await onSubmit({
-          requestConfig: {
-            method: currentFlow?.links[0].method,
-            url: currentFlow?.links[0].href,
-          },
-          payload,
+        const response = await onSubmit(payload, {
+          method: currentFlow?.links[0].method,
+          url: currentFlow?.links[0].href,
         });
         onFlowChange?.(response);
 
@@ -912,12 +886,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             },
           };
 
-          const response = await onSubmit({
-            requestConfig: {
-              method: currentFlow?.links[0].method,
-              url: currentFlow?.links[0].href,
-            },
-            payload,
+          const response = await onSubmit(payload, {
+            method: currentFlow?.links[0].method,
+            url: currentFlow?.links[0].href,
           });
           onFlowChange?.(response);
 

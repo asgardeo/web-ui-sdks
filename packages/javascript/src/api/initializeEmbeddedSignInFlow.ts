@@ -98,7 +98,7 @@ export interface AuthorizeRequestConfig extends Partial<Request> {
  * @example
  * ```typescript
  * try {
- *   const authResponse = await initializeApplicationNativeAuthentication({
+ *   const authResponse = await initializeEmbeddedSignInFlow({
  *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/oauth2/authorize",
  *     payload: {
  *       response_type: "code",
@@ -118,7 +118,7 @@ export interface AuthorizeRequestConfig extends Partial<Request> {
  * }
  * ```
  */
-const initializeApplicationNativeAuthentication = async ({
+const initializeEmbeddedSignInFlow = async ({
   url,
   baseUrl,
   payload,
@@ -127,7 +127,7 @@ const initializeApplicationNativeAuthentication = async ({
   if (!payload) {
     throw new AsgardeoAPIError(
       'Authorization payload is required',
-      'initializeApplicationNativeAuthentication-ValidationError-002',
+      'initializeEmbeddedSignInFlow-ValidationError-002',
       'javascript',
       400,
       'If an authorization payload is not provided, the request cannot be constructed correctly.',
@@ -158,7 +158,7 @@ const initializeApplicationNativeAuthentication = async ({
 
     throw new AsgardeoAPIError(
       `Authorization request failed: ${errorText}`,
-      'initializeApplicationNativeAuthentication-ResponseError-001',
+      'initializeEmbeddedSignInFlow-ResponseError-001',
       'javascript',
       response.status,
       response.statusText,
@@ -168,4 +168,4 @@ const initializeApplicationNativeAuthentication = async ({
   return (await response.json()) as EmbeddedSignInFlowInitiateResponse;
 };
 
-export default initializeApplicationNativeAuthentication;
+export default initializeEmbeddedSignInFlow;

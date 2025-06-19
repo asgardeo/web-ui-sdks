@@ -17,10 +17,7 @@
  */
 
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
-import {
-  ApplicationNativeAuthenticationHandleRequestPayload,
-  ApplicationNativeAuthenticationHandleResponse,
-} from '../models/embedded-signin-flow';
+import {EmbeddedSignInFlowHandleRequestPayload, EmbeddedSignInFlowHandleResponse} from '../models/embedded-signin-flow';
 
 /**
  * Request configuration for the authorize function.
@@ -33,19 +30,19 @@ export interface AuthorizeRequestConfig extends Partial<Request> {
   /**
    * The authorization request payload.
    */
-  payload: ApplicationNativeAuthenticationHandleRequestPayload;
+  payload: EmbeddedSignInFlowHandleRequestPayload;
 }
 
-const handleApplicationNativeAuthentication = async ({
+const executeEmbeddedSignInFlow = async ({
   url,
   baseUrl,
   payload,
   ...requestConfig
-}: AuthorizeRequestConfig): Promise<ApplicationNativeAuthenticationHandleResponse> => {
+}: AuthorizeRequestConfig): Promise<EmbeddedSignInFlowHandleResponse> => {
   if (!payload) {
     throw new AsgardeoAPIError(
       'Authorization payload is required',
-      'handleApplicationNativeAuthentication-ValidationError-002',
+      'executeEmbeddedSignInFlow-ValidationError-002',
       'javascript',
       400,
       'If an authorization payload is not provided, the request cannot be constructed correctly.',
@@ -69,14 +66,14 @@ const handleApplicationNativeAuthentication = async ({
 
     throw new AsgardeoAPIError(
       `Authorization request failed: ${errorText}`,
-      'initializeApplicationNativeAuthentication-ResponseError-001',
+      'initializeEmbeddedSignInFlow-ResponseError-001',
       'javascript',
       response.status,
       response.statusText,
     );
   }
 
-  return (await response.json()) as ApplicationNativeAuthenticationHandleResponse;
+  return (await response.json()) as EmbeddedSignInFlowHandleResponse;
 };
 
-export default handleApplicationNativeAuthentication;
+export default executeEmbeddedSignInFlow;

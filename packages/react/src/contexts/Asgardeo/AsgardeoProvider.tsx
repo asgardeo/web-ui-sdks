@@ -165,9 +165,9 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     })();
   }, [asgardeo]);
 
-  const signIn = async (options?: SignInOptions): Promise<User> => {
+  const signIn = async (...args: any): Promise<User> => {
     try {
-      const response: User = await asgardeo.signIn(options);
+      const response: User = await asgardeo.signIn(...args);
 
       if (await asgardeo.isSignedIn()) {
         setUser(await asgardeo.getUser());

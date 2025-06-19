@@ -16,7 +16,11 @@
  * under the License.
  */
 
-import {EmbeddedSignInFlowInitiateResponse, ApplicationNativeAuthenticationHandleResponse} from '@asgardeo/browser';
+import {
+  EmbeddedSignInFlowInitiateResponse,
+  EmbeddedSignInFlowHandleResponse,
+  EmbeddedSignInFlowHandleRequestPayload,
+} from '@asgardeo/browser';
 import {FC} from 'react';
 import BaseSignIn from './BaseSignIn';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
@@ -78,22 +82,10 @@ const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'default
   /**
    * Handle authentication steps.
    */
-  const handleOnSubmit = async (flow: {
-    payload: {
-      flowId: string;
-      selectedAuthenticator: {
-        authenticatorId: string;
-        params: Record<string, string>;
-      };
-    };
-    requestConfig?: {
-      method: string;
-      url: string;
-    };
-  }): Promise<ApplicationNativeAuthenticationHandleResponse> =>
-    await signIn({
-      flow,
-    });
+  const handleOnSubmit = async (
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: Request,
+  ): Promise<EmbeddedSignInFlowHandleResponse> => await signIn(payload, request);
 
   /**
    * Handle successful authentication and redirect with query params.
