@@ -27,7 +27,6 @@ import {
  * Request configuration for the embedded signup flow execution function.
  */
 export interface EmbeddedSignUpFlowExecuteRequestConfig extends Partial<Request> {
-  url?: string;
   /**
    * The base URL of the Asgardeo server.
    */
@@ -36,6 +35,10 @@ export interface EmbeddedSignUpFlowExecuteRequestConfig extends Partial<Request>
    * The embedded signup flow execution request payload.
    */
   payload?: EmbeddedFlowExecuteRequestPayload;
+  /**
+   *  The URL to which the request should be sent.
+   */
+  url?: string;
 }
 
 /**
