@@ -1,7 +1,7 @@
 'use client';
 
-import {ChevronDown, CogIcon, LogOut, Settings} from 'lucide-react';
-import {UserDropdown as _UserDropdown, SignOutButton, UserIcon, UserProfile} from '@asgardeo/react';
+import {ChevronDown, CogIcon, LogOut, Settings, UserIcon} from 'lucide-react';
+import {UserDropdown as _UserDropdown, SignOutButton, UserProfile} from '@asgardeo/react';
 import {PoundSterling} from 'lucide-react';
 import {useState, useRef} from 'react';
 import {Link} from 'react-router-dom';

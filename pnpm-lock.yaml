@@ -390,8 +390,8 @@ importers:
   packages/react-router:
     dependencies:
       '@asgardeo/react':
-        specifier: '>=0.3.0'
-        version: 0.4.0(@types/react@19.1.5)(react@19.1.0)
+        specifier: workspace:^
+        version: link:../react
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
@@ -414,6 +414,9 @@ importers:
       esbuild:
         specifier: ^0.25.4
         version: 0.25.4
+      esbuild-plugin-preserve-directives:
+        specifier: ^0.0.11
+        version: 0.0.11(esbuild@0.25.4)
       eslint:
         specifier: 8.57.0
         version: 8.57.0
@@ -754,20 +757,8 @@ packages:
   '@asgardeo/auth-spa@3.2.0':
     resolution: {integrity: sha512-ptNeWyccApqpMVi9t1RYI95d0/jCS1Zs7qh9uU2c9FbTIquv2xMbJZhUCmU9Ana3IC+ouS53amxcUGZSVrh58g==}
 
-  '@asgardeo/browser@0.1.0':
-    resolution: {integrity: sha512-NnixHJogUn47vw8Csmw5jN79aHJd+JBwG9nmcZaW9tz/FPg0ZBbKCryDagLRqMdFNewNYNBbsZw1KQ87LnNRrg==}
-
-  '@asgardeo/javascript@0.1.0':
-    resolution: {integrity: sha512-FKyK4bdrBbAZLOu+GeWUyrXwHABJq/8RMyZivaf6JEFeMJx2ttDTzGyIGv0FZfIXrEQNkr3PBBRztoiYTYrimA==}
-
   '@asgardeo/js@0.1.3':
     resolution: {integrity: sha512-k7dtodvqqIXOcBUxqTPwm7ChdX5bWl2K70eFQDmnha4bNVcNrsNOzPt4rbIAntOjfUwJpg05YO/ZIV4lZwfB8Q==}
-
-  '@asgardeo/react@0.4.0':
-    resolution: {integrity: sha512-L6OrDo8uH/nAxdlALz0dTzSLudVTSFybSZezBHDi1R9+88g+/aCBEJfq+Z6CsEBd/ACu3HilgwN9QU2ZCCjF6g==}
-    peerDependencies:
-      '@types/react': '>=16.8.0'
-      react: '>=16.8.0'
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -6928,49 +6919,12 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@asgardeo/browser@0.1.0(esbuild@0.25.4)':
-    dependencies:
-      '@asgardeo/javascript': 0.1.0
-      axios: 0.26.1
-      base64url: 3.0.1
-      buffer: 6.0.3
-      core-js: 3.42.0
-      crypto-browserify: 3.12.1
-      esbuild-plugin-polyfill-node: 0.3.0(esbuild@0.25.4)
-      fast-sha256: 1.3.0
-      jose: 6.0.11
-      process: 0.11.10
-      randombytes: 2.1.0
-      stream-browserify: 3.0.0
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - debug
-      - esbuild
-
-  '@asgardeo/javascript@0.1.0':
-    dependencies:
-      tslib: 2.8.1
-
   '@asgardeo/js@0.1.3':
     dependencies:
       '@asgardeo/auth-js': 5.1.2
       csstype: 3.1.3
       lodash.isempty: 4.4.0
       lodash.merge: 4.6.2
-
-  '@asgardeo/react@0.4.0(@types/react@19.1.5)(react@19.1.0)':
-    dependencies:
-      '@asgardeo/browser': 0.1.0(esbuild@0.25.4)
-      '@floating-ui/react': 0.27.12(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@types/react': 19.1.5
-      '@types/react-dom': 19.1.5(@types/react@19.1.5)
-      clsx: 2.1.1
-      esbuild: 0.25.4
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - debug
 
   '@babel/code-frame@7.27.1':
     dependencies:

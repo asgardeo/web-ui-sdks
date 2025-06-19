@@ -2,6 +2,7 @@
 
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import {useState, createContext, useContext} from 'react';
+import {ProtectedRoute} from '@asgardeo/react-router';
 import DashboardPage from './pages/Dashboard';
 import ProfilePage from './pages/Profile';
 import OrganizationsPage from './pages/Organizations';
@@ -129,33 +130,41 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <DashboardLayout>
-                <DashboardPage />
-              </DashboardLayout>
+              <ProtectedRoute redirectTo="/signin">
+                <DashboardLayout>
+                  <DashboardPage />
+                </DashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/profile"
             element={
-              <DashboardLayout>
-                <ProfilePage />
-              </DashboardLayout>
+              <ProtectedRoute redirectTo="/signin">
+                <DashboardLayout>
+                  <ProfilePage />
+                </DashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/organizations"
             element={
-              <DashboardLayout>
-                <OrganizationsPage />
-              </DashboardLayout>
+              <ProtectedRoute redirectTo="/signin">
+                <DashboardLayout>
+                  <OrganizationsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/organizations/new"
             element={
-              <DashboardLayout>
-                <CreateOrganizationPage />
-              </DashboardLayout>
+              <ProtectedRoute redirectTo="/signin">
+                <DashboardLayout>
+                  <CreateOrganizationPage />
+                </DashboardLayout>
+              </ProtectedRoute>
             }
           />
         </Routes>
