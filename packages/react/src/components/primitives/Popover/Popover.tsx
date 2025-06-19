@@ -39,6 +39,7 @@ import useTheme from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import Button from '../Button/Button';
+import {X} from '../Icons';
 
 const useStyles = () => {
   const {theme, colorScheme} = useTheme();
@@ -400,7 +401,7 @@ export const PopoverHeading = React.forwardRef<HTMLHeadingElement, React.HTMLPro
           {children}
         </h2>
         <Button color="tertiary" variant="text" size="small" onClick={() => context.setOpen(false)} aria-label="Close">
-          ×
+          <X width={16} height={16} />
         </Button>
       </div>
     );
@@ -424,7 +425,7 @@ export const DialogHeading = React.forwardRef<HTMLHeadingElement, React.HTMLProp
           {children}
         </h2>
         <Button color="tertiary" variant="text" size="small" onClick={() => context.setOpen(false)} aria-label="Close">
-          ×
+          <X width={16} height={16} />
         </Button>
       </div>
     );
