@@ -40,9 +40,7 @@ const GoogleButton: FC<BaseSignUpOptionProps> = ({
    */
   const handleClick = (): void => {
     if (onSubmit) {
-      onSubmit({
-        actionId: component.id,
-      });
+      onSubmit(component, {});
     }
   };
 

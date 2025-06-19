@@ -25,17 +25,35 @@ import {createSignUpComponent, BaseSignUpOptionProps} from './SignUpOptionFactor
 const FormContainer: FC<BaseSignUpOptionProps> = props => {
   const {component} = props;
 
-  // If the form has child components, render them
+  // If the form has child components, render them wrapped in a form element
   if (component.components && component.components.length > 0) {
+    const handleFormSubmit = (e: React.FormEvent): void => {
+      e.preventDefault();
+
+      // Find submit button in child components and trigger its submission
+      const submitButton = component.components?.find(
+        child => child.type === 'BUTTON' &&
+        (child.variant === 'PRIMARY' || child.config?.['type'] === 'submit')
+      );
+
+      if (submitButton && props.onSubmit) {
+        props.onSubmit(submitButton, props.formValues);
+      }
+    };
+
     return (
-      <div key={component.id} style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+      <form
+        key={component.id}
+        onSubmit={handleFormSubmit}
+        style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}
+      >
         {component.components.map((childComponent, index) =>
           createSignUpComponent({
             ...props,
             component: childComponent,
           }),
         )}
-      </div>
+      </form>
     );
   }
 

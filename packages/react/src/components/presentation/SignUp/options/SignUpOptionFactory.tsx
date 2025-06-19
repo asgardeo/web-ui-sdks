@@ -76,7 +76,7 @@ export interface BaseSignUpOptionProps extends WithPreferences {
    */
   onInputChange: (name: string, value: string) => void;
 
-  onSubmit?: (payload) => void;
+  onSubmit?: (component: EmbeddedFlowComponent, data?: Record<string, any>) => void;
 
   /**
    * Component size variant.
@@ -155,18 +155,19 @@ export const createSignUpOptionFromComponent = (
     error?: string | null;
     inputClassName?: string;
     key?: string | number;
+    onSubmit?: (component: EmbeddedFlowComponent, data?: Record<string, any>) => void;
     size?: 'small' | 'medium' | 'large';
     variant?: 'default' | 'outlined' | 'filled';
   },
 ): ReactElement =>
   createSignUpComponent({
     component,
-    formValues,
-    touchedFields,
     formErrors,
-    isLoading,
+    formValues,
     isFormValid,
+    isLoading,
     onInputChange,
+    touchedFields,
     ...options,
   });
 
@@ -185,6 +186,7 @@ export const renderSignUpComponents = (
     buttonClassName?: string;
     error?: string | null;
     inputClassName?: string;
+    onSubmit?: (component: EmbeddedFlowComponent, data?: Record<string, any>) => void;
     size?: 'small' | 'medium' | 'large';
     variant?: 'default' | 'outlined' | 'filled';
   },

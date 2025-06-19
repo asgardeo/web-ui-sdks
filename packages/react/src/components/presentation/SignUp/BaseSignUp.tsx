@@ -274,20 +274,18 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   );
 
   /**
-   * Handle form submission.
+   * Handle input value changes.
    */
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleInputChange = (name: string, value: string) => {
+    setFormValue(name, value);
+    setFormTouched(name, true);
+  };
 
+  /**
+   * Handle component submission (for buttons outside forms).
+   */
+  const handleSubmit = async (component: any, data?: Record<string, any>) => {
     if (!currentFlow) {
-      return;
-    }
-
-    // Mark all fields as touched before validation
-    touchAllFields();
-
-    const validation = validateForm();
-    if (!validation.isValid) {
       return;
     }
 
@@ -297,8 +295,8 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     try {
       const payload: EmbeddedFlowExecuteRequestPayload = {
         flowType: currentFlow.data ? (currentFlow.data as any) : undefined,
-        inputs: formValues,
-        actionId: 'submit', // This might need to be dynamic based on the flow
+        inputs: data || {},
+        actionId: component.id,
       };
 
       const response = await onSubmit(payload);
@@ -307,7 +305,6 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
       if (response.flowStatus === EmbeddedFlowStatus.Complete) {
         onSuccess?.(response);
 
-        // Handle redirect if afterSignUpUrl is provided
         if (afterSignUpUrl) {
           window.location.href = afterSignUpUrl;
         }
@@ -315,7 +312,6 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
       }
 
       if (response.flowStatus === EmbeddedFlowStatus.Incomplete) {
-        // Continue with the next step
         setCurrentFlow(response);
         setupFormFields(response);
       }
@@ -326,14 +322,6 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
-
-  /**
-   * Handle input value changes.
-   */
-  const handleInputChange = (name: string, value: string) => {
-    setFormValue(name, value);
-    setFormTouched(name, true);
   };
 
   // Generate CSS classes
@@ -387,11 +375,24 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
           buttonClassName: buttonClasses,
           error,
           inputClassName: inputClasses,
+          onSubmit: handleSubmit,
           size,
           variant,
         },
       ),
-    [formValues, touchedFields, formErrors, isFormValid, isLoading, size, variant, error, inputClasses, buttonClasses],
+    [
+      formValues,
+      touchedFields,
+      formErrors,
+      isFormValid,
+      isLoading,
+      size,
+      variant,
+      error,
+      inputClasses,
+      buttonClasses,
+      handleSubmit,
+    ],
   );
 
   // Initialize the flow on component mount
@@ -504,9 +505,9 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
           {currentFlow.data?.components && renderComponents(currentFlow.data.components)}
-        </form>
+        </div>
       </Card.Content>
     </Card>
   );
