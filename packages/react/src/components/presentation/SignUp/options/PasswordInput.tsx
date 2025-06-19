@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import {FC} from 'react';
 import {FieldType} from '@asgardeo/browser';
+import {FC} from 'react';
 import {BaseSignUpOptionProps} from './SignUpOptionFactory';
 import {createField} from '../../../factories/FieldFactory';
 
