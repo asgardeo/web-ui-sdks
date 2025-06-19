@@ -17,9 +17,9 @@
  */
 
 import {FC} from 'react';
-import Button from '../../../primitives/Button/Button';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
+import Button from '../../../primitives/Button/Button';
 
 /**
  * Google Sign-In Button Component.
@@ -43,7 +43,7 @@ const GoogleButton: FC<BaseSignInOptionProps> = ({
   return (
     <Button
       type="button"
-      variant="outline"
+      variant="solid"
       color="secondary"
       fullWidth
       disabled={isLoading}

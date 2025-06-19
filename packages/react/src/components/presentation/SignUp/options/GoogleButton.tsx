@@ -47,7 +47,8 @@ const GoogleButton: FC<BaseSignUpOptionProps> = ({
   return (
     <Button
       type="button"
-      variant="outline"
+      variant="solid"
+      color="secondary"
       size={size}
       disabled={isLoading}
       onClick={handleClick}
