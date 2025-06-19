@@ -52,17 +52,8 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     this.asgardeo = new AuthAPI();
   }
 
-  override initialize(config: T): Promise<boolean> {
-    const scopes: string[] = Array.isArray(config.scopes) ? config.scopes : config.scopes.split(' ');
-
-    return this.asgardeo.init({
-      afterSignInUrl: config.afterSignInUrl,
-      afterSignOutUrl: config.afterSignOutUrl,
-      baseUrl: config.baseUrl,
-      clientId: config.clientId,
-      ...config,
-      scopes: [...scopes, 'internal_login'],
-    });
+  override initialize(config: AsgardeoReactConfig): Promise<boolean> {
+    return this.asgardeo.init(config as any);
   }
 
   override async getUser(): Promise<User> {
@@ -94,7 +85,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
         flattenedProfile: generateFlattenedUserProfile(profile, processedSchemas),
         profile,
       };
-      console.log(JSON.stringify(output, null, 2));
+
       return output;
     } catch (error) {
       return {

@@ -125,14 +125,16 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    (async () => {
+    (async (): Promise<void> => {
       try {
-        const status = await asgardeo.isSignedIn();
+        const status: boolean = await asgardeo.isSignedIn();
+
         setIsSignedInSync(status);
 
         if (!status) {
           interval = setInterval(async () => {
-            const newStatus = await asgardeo.isSignedIn();
+            const newStatus: boolean = await asgardeo.isSignedIn();
+
             if (newStatus) {
               setIsSignedInSync(true);
               clearInterval(interval);
@@ -144,7 +146,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       }
     })();
 
-    return () => {
+    return (): void => {
       if (interval) {
         clearInterval(interval);
       }
@@ -152,9 +154,10 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   }, [asgardeo]);
 
   useEffect(() => {
-    (async () => {
+    (async (): Promise<void> => {
       try {
-        const status = await asgardeo.isInitialized();
+        const status: boolean = await asgardeo.isInitialized();
+
         setIsInitializedSync(status);
       } catch (error) {
         setIsInitializedSync(false);
@@ -164,7 +167,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
   const signIn = async (options?: SignInOptions): Promise<User> => {
     try {
-      const response = await asgardeo.signIn(options);
+      const response: User = await asgardeo.signIn(options);
 
       if (await asgardeo.isSignedIn()) {
         setUser(await asgardeo.getUser());
@@ -193,7 +196,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<string> =>
     asgardeo.signOut(options, afterSignOut);
 
-  const isDarkMode = useMemo(() => {
+  const isDarkMode: boolean = useMemo(() => {
     if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
@@ -203,15 +206,15 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   return (
     <AsgardeoContext.Provider
       value={{
+        afterSignInUrl,
+        baseUrl,
+        isInitialized: isInitializedSync,
         isLoading: asgardeo.isLoading(),
         isSignedIn: isSignedInSync,
         signIn,
         signOut,
         signUp,
         user,
-        baseUrl,
-        afterSignInUrl,
-        isInitialized: isInitializedSync,
       }}
     >
       <I18nProvider preferences={preferences?.i18n}>

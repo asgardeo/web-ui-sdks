@@ -16,6 +16,8 @@
  * under the License.
  */
 
+import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
+import clsx from 'clsx';
 import {
   forwardRef,
   ForwardRefExoticComponent,
@@ -25,8 +27,6 @@ import {
   Ref,
   RefAttributes,
 } from 'react';
-import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
 import Button from '../../primitives/Button/Button';
 
 /**
@@ -34,13 +34,13 @@ import Button from '../../primitives/Button/Button';
  */
 export interface CommonBaseSignOutButtonProps {
   /**
-   * Function to initiate the sign-out process
-   */
-  signOut: () => Promise<void>;
-  /**
    * Loading state during sign-out process
    */
   isLoading?: boolean;
+  /**
+   * Function to initiate the sign-out process
+   */
+  signOut: () => Promise<void>;
 }
 
 /**
@@ -87,7 +87,7 @@ const BaseSignOutButton: ForwardRefExoticComponent<BaseSignOutButtonProps & RefA
       ref: Ref<HTMLButtonElement>,
     ): ReactElement => {
       if (typeof children === 'function') {
-        return <>{children({signOut, isLoading})}</>;
+        return <>{children({isLoading, signOut})}</>;
       }
 
       return (

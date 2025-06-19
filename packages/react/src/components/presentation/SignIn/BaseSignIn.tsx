@@ -27,18 +27,18 @@ import {
   AsgardeoAPIError,
   withVendorCSSClassPrefix,
 } from '@asgardeo/browser';
-import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef} from 'react';
 import {clsx} from 'clsx';
-import Card from '../../primitives/Card/Card';
-import Alert from '../../primitives/Alert/Alert';
-import Divider from '../../primitives/Divider/Divider';
-import Typography from '../../primitives/Typography/Typography';
-import Spinner from '../../primitives/Spinner/Spinner';
-import useTranslation from '../../../hooks/useTranslation';
-import {useForm, FormField} from '../../../hooks/useForm';
+import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef} from 'react';
+import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
 import useFlow from '../../../contexts/Flow/useFlow';
-import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory';
+import {useForm, FormField} from '../../../hooks/useForm';
+import useTranslation from '../../../hooks/useTranslation';
+import Alert from '../../primitives/Alert/Alert';
+import Card from '../../primitives/Card/Card';
+import Divider from '../../primitives/Divider/Divider';
+import Spinner from '../../primitives/Spinner/Spinner';
+import Typography from '../../primitives/Typography/Typography';
 
 /**
  * Utility functions for WebAuthn/Passkey operations
@@ -128,7 +128,7 @@ const handleWebAuthnAuthentication = async (challengeData: string): Promise<stri
     console.log('WebAuthn authentication with options:', {
       originalRpId: challengeRpId,
       adjustedRpId: rpIdToUse,
-      currentDomain: currentDomain,
+      currentDomain,
     });
 
     // Convert challenge from base64url to ArrayBuffer
@@ -202,48 +202,41 @@ const handleWebAuthnAuthentication = async (challengeData: string): Promise<stri
 /**
  * Check if the authenticator is a passkey/FIDO authenticator
  */
-const isPasskeyAuthenticator = (authenticator: ApplicationNativeAuthenticationAuthenticator): boolean => {
-  return (
-    authenticator.authenticatorId === ApplicationNativeAuthenticationConstants.SupportedAuthenticators.Passkey &&
-    authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.InternalPrompt &&
-    (authenticator.metadata as any)?.additionalData?.challengeData
-  );
-};
+const isPasskeyAuthenticator = (authenticator: ApplicationNativeAuthenticationAuthenticator): boolean =>
+  authenticator.authenticatorId === ApplicationNativeAuthenticationConstants.SupportedAuthenticators.Passkey &&
+  authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.InternalPrompt &&
+  (authenticator.metadata as any)?.additionalData?.challengeData;
 
 /**
  * Props for the BaseSignIn component.
  */
 export interface BaseSignInProps {
-  /**
-   * Function to initialize authentication flow.
-   * @returns Promise resolving to the initial authentication response.
-   */
-  onInitialize?: () => Promise<ApplicationNativeAuthenticationInitiateResponse>;
+  afterSignInUrl?: string;
 
   /**
-   * Function to handle authentication steps.
-   * @param payload - The authentication payload.
-   * @returns Promise resolving to the authentication response.
+   * Custom CSS class name for the submit button.
    */
-  onSubmit?: (flow: {
-    requestConfig?: {
-      method: string;
-      url: string;
-    };
-    payload: {
-      flowId: string;
-      selectedAuthenticator: {
-        authenticatorId: string;
-        params: Record<string, string>;
-      };
-    };
-  }) => Promise<ApplicationNativeAuthenticationHandleResponse>;
+  buttonClassName?: string;
 
   /**
-   * Callback function called when authentication is successful.
-   * @param authData - The authentication data returned upon successful completion.
+   * Custom CSS class name for the form container.
    */
-  onSuccess?: (authData: Record<string, any>) => void;
+  className?: string;
+
+  /**
+   * Custom CSS class name for error messages.
+   */
+  errorClassName?: string;
+
+  /**
+   * Custom CSS class name for form inputs.
+   */
+  inputClassName?: string;
+
+  /**
+   * Custom CSS class name for info messages.
+   */
+  messageClassName?: string;
 
   /**
    * Callback function called when authentication fails.
@@ -260,40 +253,44 @@ export interface BaseSignInProps {
   ) => void;
 
   /**
-   * Custom CSS class name for the form container.
+   * Function to initialize authentication flow.
+   * @returns Promise resolving to the initial authentication response.
    */
-  className?: string;
+  onInitialize?: () => Promise<ApplicationNativeAuthenticationInitiateResponse>;
 
   /**
-   * Custom CSS class name for form inputs.
+   * Function to handle authentication steps.
+   * @param payload - The authentication payload.
+   * @returns Promise resolving to the authentication response.
    */
-  inputClassName?: string;
+  onSubmit?: (flow: {
+    payload: {
+      flowId: string;
+      selectedAuthenticator: {
+        authenticatorId: string;
+        params: Record<string, string>;
+      };
+    };
+    requestConfig?: {
+      method: string;
+      url: string;
+    };
+  }) => Promise<ApplicationNativeAuthenticationHandleResponse>;
 
   /**
-   * Custom CSS class name for the submit button.
+   * Callback function called when authentication is successful.
+   * @param authData - The authentication data returned upon successful completion.
    */
-  buttonClassName?: string;
-
-  /**
-   * Custom CSS class name for error messages.
-   */
-  errorClassName?: string;
-
-  /**
-   * Custom CSS class name for info messages.
-   */
-  messageClassName?: string;
+  onSuccess?: (authData: Record<string, any>) => void;
 
   /**
    * Size variant for the component.
    */
   size?: 'small' | 'medium' | 'large';
-
   /**
    * Theme variant for the component.
    */
   variant?: 'default' | 'outlined' | 'filled';
-  afterSignInUrl?: string;
 }
 
 /**
@@ -328,13 +325,11 @@ export interface BaseSignInProps {
  * };
  * ```
  */
-const BaseSignIn: FC<BaseSignInProps> = props => {
-  return (
-    <FlowProvider>
-      <BaseSignInContent {...props} />
-    </FlowProvider>
-  );
-};
+const BaseSignIn: FC<BaseSignInProps> = props => (
+  <FlowProvider>
+    <BaseSignInContent {...props} />
+  </FlowProvider>
+);
 
 /**
  * Internal component that consumes FlowContext and renders the sign-in UI.
@@ -364,7 +359,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     null,
   );
   const [error, setError] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Array<{type: string; message: string}>>([]);
+  const [messages, setMessages] = useState<Array<{message: string; type: string}>>([]);
 
   // Ref to track if initialization has been attempted to prevent multiple calls
   const initializationAttemptedRef = useRef(false);
@@ -587,8 +582,6 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
                   if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
                     onSuccess?.(response.authData);
-
-                    return;
                   }
                 }
               }
@@ -780,10 +773,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                   // Recursively handle the passkey authenticator without showing UI
                   handleAuthenticatorSelection(nextAuthenticator);
                   return;
-                } else {
-                  setCurrentAuthenticator(nextAuthenticator);
-                  setupFormFields(nextAuthenticator);
                 }
+                setCurrentAuthenticator(nextAuthenticator);
+                setupFormFields(nextAuthenticator);
               }
             }
 
@@ -810,7 +802,6 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           }
 
           setError(errorMessage);
-          return;
         }
       } else if (
         authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.RedirectionPrompt
@@ -839,20 +830,92 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
         // Check if the response contains a redirection URL and redirect if needed
         if (handleRedirectionIfNeeded(response)) {
+        }
+      } else if (formData) {
+        const validation = validateForm();
+        if (!validation.isValid) {
           return;
         }
-      } else {
-        if (formData) {
-          const validation = validateForm();
-          if (!validation.isValid) {
-            return;
+
+        const payload = {
+          flowId: currentFlow.flowId,
+          selectedAuthenticator: {
+            authenticatorId: authenticator.authenticatorId,
+            params: formData,
+          },
+        };
+
+        const response = await onSubmit({
+          requestConfig: {
+            method: currentFlow?.links[0].method,
+            url: currentFlow?.links[0].href,
+          },
+          payload,
+        });
+        onFlowChange?.(response);
+
+        if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+          onSuccess?.(response.authData);
+          return;
+        }
+
+        if (
+          response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
+          response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+        ) {
+          setError('Authentication failed. Please check your credentials and try again.');
+          return;
+        }
+
+        // Check if the response contains a redirection URL and redirect if needed
+        if (handleRedirectionIfNeeded(response)) {
+          return;
+        }
+
+        if ('flowId' in response && 'nextStep' in response) {
+          const nextStepResponse = response as any;
+          setCurrentFlow(nextStepResponse);
+
+          if (nextStepResponse.nextStep?.authenticators?.length > 0) {
+            if (
+              nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+              nextStepResponse.nextStep.authenticators.length > 1
+            ) {
+              setCurrentAuthenticator(null);
+            } else {
+              const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
+
+              // Check if the next authenticator is a passkey - if so, auto-trigger it
+              if (isPasskeyAuthenticator(nextAuthenticator)) {
+                // Recursively handle the passkey authenticator without showing UI
+                handleAuthenticatorSelection(nextAuthenticator);
+                return;
+              }
+              setCurrentAuthenticator(nextAuthenticator);
+              setupFormFields(nextAuthenticator);
+            }
           }
 
+          if (nextStepResponse.nextStep?.messages) {
+            setMessages(
+              nextStepResponse.nextStep.messages.map((msg: any) => ({
+                type: msg.type || 'INFO',
+                message: msg.message || '',
+              })),
+            );
+          }
+        }
+      } else {
+        // Check if the authenticator requires user input
+        const hasParams = authenticator.metadata?.params && authenticator.metadata.params.length > 0;
+
+        if (!hasParams) {
+          // If no parameters are required, directly authenticate
           const payload = {
             flowId: currentFlow.flowId,
             selectedAuthenticator: {
               authenticatorId: authenticator.authenticatorId,
-              params: formData,
+              params: {},
             },
           };
 
@@ -874,7 +937,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
             response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
           ) {
-            setError('Authentication failed. Please check your credentials and try again.');
+            setError('Authentication failed. Please try again.');
             return;
           }
 
@@ -901,10 +964,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                   // Recursively handle the passkey authenticator without showing UI
                   handleAuthenticatorSelection(nextAuthenticator);
                   return;
-                } else {
-                  setCurrentAuthenticator(nextAuthenticator);
-                  setupFormFields(nextAuthenticator);
                 }
+                setCurrentAuthenticator(nextAuthenticator);
+                setupFormFields(nextAuthenticator);
               }
             }
 
@@ -918,85 +980,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             }
           }
         } else {
-          // Check if the authenticator requires user input
-          const hasParams = authenticator.metadata?.params && authenticator.metadata.params.length > 0;
-
-          if (!hasParams) {
-            // If no parameters are required, directly authenticate
-            const payload = {
-              flowId: currentFlow.flowId,
-              selectedAuthenticator: {
-                authenticatorId: authenticator.authenticatorId,
-                params: {},
-              },
-            };
-
-            const response = await onSubmit({
-              requestConfig: {
-                method: currentFlow?.links[0].method,
-                url: currentFlow?.links[0].href,
-              },
-              payload,
-            });
-            onFlowChange?.(response);
-
-            if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
-              onSuccess?.(response.authData);
-              return;
-            }
-
-            if (
-              response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
-              response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
-            ) {
-              setError('Authentication failed. Please try again.');
-              return;
-            }
-
-            // Check if the response contains a redirection URL and redirect if needed
-            if (handleRedirectionIfNeeded(response)) {
-              return;
-            }
-
-            if ('flowId' in response && 'nextStep' in response) {
-              const nextStepResponse = response as any;
-              setCurrentFlow(nextStepResponse);
-
-              if (nextStepResponse.nextStep?.authenticators?.length > 0) {
-                if (
-                  nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
-                  nextStepResponse.nextStep.authenticators.length > 1
-                ) {
-                  setCurrentAuthenticator(null);
-                } else {
-                  const nextAuthenticator = nextStepResponse.nextStep.authenticators[0];
-
-                  // Check if the next authenticator is a passkey - if so, auto-trigger it
-                  if (isPasskeyAuthenticator(nextAuthenticator)) {
-                    // Recursively handle the passkey authenticator without showing UI
-                    handleAuthenticatorSelection(nextAuthenticator);
-                    return;
-                  } else {
-                    setCurrentAuthenticator(nextAuthenticator);
-                    setupFormFields(nextAuthenticator);
-                  }
-                }
-              }
-
-              if (nextStepResponse.nextStep?.messages) {
-                setMessages(
-                  nextStepResponse.nextStep.messages.map((msg: any) => ({
-                    type: msg.type || 'INFO',
-                    message: msg.message || '',
-                  })),
-                );
-              }
-            }
-          } else {
-            // If parameters are required, show the form
-            setCurrentAuthenticator(authenticator);
-            setupFormFields(authenticator);
-          }
+          // If parameters are required, show the form
+          setCurrentAuthenticator(authenticator);
+          setupFormFields(authenticator);
         }
       }
     } catch (err) {
@@ -1019,15 +1005,15 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   /**
    * Check if current flow has multiple authenticator options.
    */
-  const hasMultipleOptions = useCallback((): boolean => {
-    return (
+  const hasMultipleOptions = useCallback(
+    (): boolean =>
       currentFlow &&
       'nextStep' in currentFlow &&
       currentFlow.nextStep?.stepType === 'MULTI_OPTIONS_PROMPT' &&
       currentFlow.nextStep?.authenticators &&
-      currentFlow.nextStep.authenticators.length > 1
-    );
-  }, [currentFlow]);
+      currentFlow.nextStep.authenticators.length > 1,
+    [currentFlow],
+  );
 
   /**
    * Get available authenticators for selection.
@@ -1233,9 +1219,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                     touchedFields,
                     isLoading,
                     handleInputChange,
-                    (auth, formData) => {
-                      return handleAuthenticatorSelection(auth, formData);
-                    },
+                    (auth, formData) => handleAuthenticatorSelection(auth, formData),
                     {
                       inputClassName: inputClasses,
                       buttonClassName: buttonClasses,
@@ -1260,9 +1244,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                   touchedFields,
                   isLoading,
                   handleInputChange,
-                  (auth, formData) => {
-                    return handleAuthenticatorSelection(auth, formData);
-                  },
+                  (auth, formData) => handleAuthenticatorSelection(auth, formData),
                   {
                     inputClassName: inputClasses,
                     buttonClassName: buttonClasses,
@@ -1384,9 +1366,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             touchedFields,
             isLoading,
             handleInputChange,
-            (authenticator, formData) => {
-              return handleSubmit(formData || formValues);
-            },
+            (authenticator, formData) => handleSubmit(formData || formValues),
             {
               inputClassName: inputClasses,
               buttonClassName: buttonClasses,

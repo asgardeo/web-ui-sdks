@@ -30,12 +30,22 @@
  * ```typescript
  * // Requesting OpenID Connect authentication
  * const scope = [ScopeConstants.OPENID];
- * 
+ *
  * // Requesting profile information
  * const scopes = [ScopeConstants.OPENID, ScopeConstants.PROFILE];
  * ```
  */
-const ScopeConstants = {
+const ScopeConstants: {
+  INTERNAL_LOGIN: string;
+  OPENID: string;
+} = {
+  /**
+   * The scope for accessing the user's profile information from SCIM.
+   * This scope allows the client to retrieve basic user information such as
+   * name, email, profile picture, etc.
+   */
+  INTERNAL_LOGIN: 'internal_login',
+
   /**
    * The base OpenID Connect scope.
    * Required for all OpenID Connect flows. Indicates that the client

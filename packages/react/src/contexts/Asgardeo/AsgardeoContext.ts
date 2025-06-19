@@ -16,7 +16,6 @@
  * under the License.
  */
 
-import {User} from '@asgardeo/browser';
 import {Context, createContext} from 'react';
 
 /**
@@ -59,15 +58,15 @@ export type AsgardeoContextProps = {
  * Context object for managing the Authentication flow builder core context.
  */
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
+  afterSignInUrl: '',
+  baseUrl: '',
+  isInitialized: false,
   isLoading: true,
   isSignedIn: false,
   signIn: null,
   signOut: null,
   signUp: null,
   user: null,
-  baseUrl: '',
-  afterSignInUrl: '',
-  isInitialized: false,
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';

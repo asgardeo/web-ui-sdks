@@ -17,7 +17,6 @@
  */
 
 import {
-  handleApplicationNativeAuthentication,
   ApplicationNativeAuthenticationInitiateResponse,
   ApplicationNativeAuthenticationHandleResponse,
 } from '@asgardeo/browser';
@@ -70,24 +69,19 @@ export interface SignInProps {
  * };
  * ```
  */
-const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'default'}) => {
-  const {signIn, baseUrl, afterSignInUrl} = useAsgardeo();
+const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'default'}: SignInProps) => {
+  const {signIn, afterSignInUrl} = useAsgardeo();
 
   /**
    * Initialize the authentication flow.
    */
-  const handleInitialize = async (): Promise<ApplicationNativeAuthenticationInitiateResponse> => {
-    return await signIn({response_mode: 'direct'});
-  };
+  const handleInitialize = async (): Promise<ApplicationNativeAuthenticationInitiateResponse> =>
+    await signIn({response_mode: 'direct'});
 
   /**
    * Handle authentication steps.
    */
   const handleOnSubmit = async (flow: {
-    requestConfig?: {
-      method: string;
-      url: string;
-    };
     payload: {
       flowId: string;
       selectedAuthenticator: {
@@ -95,20 +89,23 @@ const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'default
         params: Record<string, string>;
       };
     };
-  }): Promise<ApplicationNativeAuthenticationHandleResponse> => {
-    return await signIn({
+    requestConfig?: {
+      method: string;
+      url: string;
+    };
+  }): Promise<ApplicationNativeAuthenticationHandleResponse> =>
+    await signIn({
       flow,
     });
-  };
 
   /**
    * Handle successful authentication and redirect with query params.
    */
-  const handleSuccess = (authData: Record<string, any>) => {
+  const handleSuccess = (authData: Record<string, any>): void => {
     if (authData && afterSignInUrl) {
-      const url = new URL(afterSignInUrl, window.location.origin);
+      const url: URL = new URL(afterSignInUrl, window.location.origin);
 
-      Object.entries(authData).forEach(([key, value]) => {
+      Object.entries(authData).forEach(([key, value]: [string, any]) => {
         if (value !== undefined && value !== null) {
           url.searchParams.append(key, String(value));
         }
