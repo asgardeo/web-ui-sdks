@@ -89,11 +89,13 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
 
       const processedSchemas = flattenUserSchema(schemas);
 
-      return {
+      const output = {
         schemas: processedSchemas,
         flattenedProfile: generateFlattenedUserProfile(profile, processedSchemas),
         profile,
       };
+      console.log(JSON.stringify(output, null, 2));
+      return output;
     } catch (error) {
       return {
         schemas: [],

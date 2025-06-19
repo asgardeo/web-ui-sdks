@@ -29,7 +29,7 @@ import useAsgardeo from '../Asgardeo/useAsgardeo';
  */
 export interface UserProviderProps {
   profile: UserProfile;
-  revalidateProfile: () => Promise<void>;
+  revalidateProfile?: () => Promise<void>;
 }
 
 /**
