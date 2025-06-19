@@ -218,14 +218,14 @@ export interface BaseSignInProps {
    * Function to initialize authentication flow.
    * @returns Promise resolving to the initial authentication response.
    */
-  onInitialize: () => Promise<ApplicationNativeAuthenticationInitiateResponse>;
+  onInitialize?: () => Promise<ApplicationNativeAuthenticationInitiateResponse>;
 
   /**
    * Function to handle authentication steps.
    * @param payload - The authentication payload.
    * @returns Promise resolving to the authentication response.
    */
-  onSubmit: (flow: {
+  onSubmit?: (flow: {
     requestConfig?: {
       method: string;
       url: string;
