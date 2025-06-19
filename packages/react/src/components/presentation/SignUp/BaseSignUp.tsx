@@ -232,7 +232,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     initialValues: {},
     fields: formFields,
     validateOnBlur: true,
-    validateOnChange: false,
+    validateOnChange: true,
     requiredMessage: t('field.required'),
   });
 
