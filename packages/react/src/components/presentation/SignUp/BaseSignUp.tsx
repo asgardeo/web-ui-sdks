@@ -98,10 +98,11 @@ export interface BaseSignUpProps {
   onSubmit: (payload: EmbeddedFlowExecuteRequestPayload) => Promise<EmbeddedFlowExecuteResponse>;
 
   /**
-   * Callback function called when sign-up is successful.
-   * @param response - The sign-up response data returned upon successful completion.
+   * Callback function called when the sign-up flow completes and requires redirection.
+   * This allows platform-specific handling of redirects (e.g., Next.js router.push).
+   * @param response - The response from the sign-up flow containing the redirect URL, etc.
    */
-  onSuccess?: (response: EmbeddedFlowExecuteResponse) => void;
+  onComplete?: (response: EmbeddedFlowExecuteResponse) => void;
 
   /**
    * Size variant for the component.
@@ -135,9 +136,12 @@ export interface BaseSignUpProps {
  *       }}
  *       onSuccess={(response) => {
  *         console.log('Success:', response);
- *       }}
- *       onError={(error) => {
+ *       }}       *       onError={(error) => {
  *         console.error('Error:', error);
+ *       }}
+ *       onComplete={(redirectUrl) => {
+ *         // Platform-specific redirect handling (e.g., Next.js router.push)
+ *         router.push(redirectUrl); // or window.location.href = redirectUrl
  *       }}
  *       className="max-w-md mx-auto"
  *     />
@@ -158,9 +162,9 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   afterSignUpUrl,
   onInitialize,
   onSubmit,
-  onSuccess,
   onError,
   onFlowChange,
+  onComplete,
   className = '',
   inputClassName = '',
   buttonClassName = '',
@@ -314,11 +318,8 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
       onFlowChange?.(response);
 
       if (response.flowStatus === EmbeddedFlowStatus.Complete) {
-        onSuccess?.(response);
+        onComplete?.(response);
 
-        if (afterSignUpUrl) {
-          window.location.href = afterSignUpUrl;
-        }
         return;
       }
 
@@ -424,11 +425,8 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
           onFlowChange?.(response);
 
           if (response.flowStatus === EmbeddedFlowStatus.Complete) {
-            onSuccess?.(response);
+            onComplete?.(response);
 
-            if (afterSignUpUrl) {
-              window.location.href = afterSignUpUrl;
-            }
             return;
           }
 
@@ -450,7 +448,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     isInitialized,
     isFlowInitialized,
     onInitialize,
-    onSuccess,
+    onComplete,
     onError,
     onFlowChange,
     setupFormFields,

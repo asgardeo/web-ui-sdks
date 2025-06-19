@@ -27,10 +27,10 @@ export interface EmbeddedFlowExecuteRequestPayload {
 }
 
 export interface EmbeddedFlowExecuteResponse {
+  data: EmbeddedSignUpFlowData;
   flowId: string;
   flowStatus: EmbeddedFlowStatus;
   type: EmbeddedFlowResponseType;
-  data: EmbeddedSignUpFlowData;
 }
 
 export enum EmbeddedFlowStatus {
@@ -39,29 +39,31 @@ export enum EmbeddedFlowStatus {
 }
 
 export enum EmbeddedFlowResponseType {
+  Redirection = 'REDIRECTION',
   View = 'VIEW',
 }
 
 export interface EmbeddedSignUpFlowData {
-  components: EmbeddedFlowComponent[];
+  components?: EmbeddedFlowComponent[];
+  redirectURL?: string;
 }
 
 export interface EmbeddedFlowComponent {
+  components: EmbeddedFlowComponent[];
+  config: Record<string, any>;
   id: string;
   type: EmbeddedFlowComponentType;
   variant?: string;
-  components: EmbeddedFlowComponent[];
-  config: Record<string, any>;
 }
 
 export enum EmbeddedFlowComponentType {
-  Typography = 'TYPOGRAPHY',
-  Form = 'FORM',
   Button = 'BUTTON',
-  Input = 'INPUT',
-  Select = 'SELECT',
   Checkbox = 'CHECKBOX',
-  Radio = 'RADIO',
   Divider = 'DIVIDER',
+  Form = 'FORM',
   Image = 'IMAGE',
+  Input = 'INPUT',
+  Radio = 'RADIO',
+  Select = 'SELECT',
+  Typography = 'TYPOGRAPHY',
 }

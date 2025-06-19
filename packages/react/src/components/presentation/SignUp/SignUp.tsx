@@ -16,7 +16,12 @@
  * under the License.
  */
 
-import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse, EmbeddedFlowType} from '@asgardeo/browser';
+import {
+  EmbeddedFlowExecuteRequestPayload,
+  EmbeddedFlowExecuteResponse,
+  EmbeddedFlowResponseType,
+  EmbeddedFlowType,
+} from '@asgardeo/browser';
 import {FC} from 'react';
 import BaseSignUp from './BaseSignUp';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
@@ -42,10 +47,11 @@ export interface SignUpProps {
   onError?: (error: Error) => void;
 
   /**
-   * Callback function called when sign-up is successful.
-   * @param response - The sign-up response data returned upon successful completion.
+   * Callback function called when the sign-up flow completes and requires redirection.
+   * This allows platform-specific handling of redirects (e.g., Next.js router.push).
+   * @param response - The response from the sign-up flow containing the redirect URL, etc.
    */
-  onSuccess?: (response: EmbeddedFlowExecuteResponse) => void;
+  onComplete?: (response: EmbeddedFlowExecuteResponse) => void;
 
   /**
    * Size variant for the component.
@@ -76,6 +82,10 @@ export interface SignUpProps {
  *       onError={(error) => {
  *         console.error('Sign-up failed:', error);
  *       }}
+ *       onComplete={(redirectUrl) => {
+ *         // Platform-specific redirect handling (e.g., Next.js router.push)
+ *         router.push(redirectUrl); // or window.location.href = redirectUrl
+ *       }}
  *       size="medium"
  *       variant="outlined"
  *       afterSignUpUrl="/welcome"
@@ -89,8 +99,8 @@ const SignUp: FC<SignUpProps> = ({
   size = 'medium',
   variant = 'default',
   afterSignUpUrl,
-  onSuccess,
   onError,
+  onComplete,
 }) => {
   const {signUp, isInitialized} = useAsgardeo();
 
@@ -113,13 +123,11 @@ const SignUp: FC<SignUpProps> = ({
   /**
    * Handle successful sign-up and redirect.
    */
-  const handleSuccess = (response: EmbeddedFlowExecuteResponse) => {
-    // Call the provided onSuccess callback first
-    onSuccess?.(response);
+  const handleComplete = (response: EmbeddedFlowExecuteResponse) => {
+    onComplete?.(response);
 
-    // Handle redirect if afterSignUpUrl is provided
-    if (afterSignUpUrl) {
-      window.location.href = afterSignUpUrl;
+    if (response?.type === EmbeddedFlowResponseType.Redirection && response?.data?.redirectURL) {
+      window.location.href = response.data.redirectURL;
     }
   };
 
@@ -128,8 +136,8 @@ const SignUp: FC<SignUpProps> = ({
       afterSignUpUrl={afterSignUpUrl}
       onInitialize={handleInitialize}
       onSubmit={handleOnSubmit}
-      onSuccess={handleSuccess}
       onError={onError}
+      onComplete={handleComplete}
       className={className}
       size={size}
       variant={variant}
