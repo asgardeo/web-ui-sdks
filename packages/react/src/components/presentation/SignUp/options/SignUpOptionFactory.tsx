@@ -20,6 +20,7 @@ import {EmbeddedFlowComponent, EmbeddedFlowComponentType, WithPreferences} from 
 import {ReactElement} from 'react';
 import EmailInput from './EmailInput';
 import FormContainer from './FormContainer';
+import GoogleButton from './GoogleButton';
 import PasswordInput from './PasswordInput';
 import SocialButton from './SocialButton';
 import SubmitButton from './SubmitButton';
@@ -118,8 +119,13 @@ export const createSignUpComponent = (props: BaseSignUpOptionProps): ReactElemen
 
     case EmbeddedFlowComponentType.Button: {
       const buttonVariant: string | undefined = component.variant?.toUpperCase();
+      const buttonText: string = component.config['text'] || component.config['label'] || '';
 
       if (buttonVariant === 'SOCIAL') {
+        // Check if it's a Google button based on text content
+        if (buttonText.toLowerCase().includes('google')) {
+          return <GoogleButton {...props} />;
+        }
         return <SocialButton {...props} />;
       }
       return <SubmitButton {...props} />;
