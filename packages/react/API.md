@@ -13,6 +13,8 @@ This document provides complete API documentation for the Asgardeo React SDK, in
   - [SignOutButton](#signoutbutton)
   - [User](#user)
   - [UserProfile](#userprofile)
+  - [Loaded](#loaded)
+  - [Loading](#loading)
 - [Hooks](#hooks)
   - [useAsgardeo](#useasgardeo)
 - [Customization](#customization)

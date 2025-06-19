@@ -670,6 +670,67 @@ importers:
         specifier: ^6.3.5
         version: 6.3.5(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0)
 
+  samples/vite-react-ts:
+    dependencies:
+      '@asgardeo/react':
+        specifier: workspace:^
+        version: link:../../packages/react
+      '@asgardeo/react-router':
+        specifier: workspace:^
+        version: link:../../packages/react-router
+      '@tailwindcss/vite':
+        specifier: ^4.1.8
+        version: 4.1.8(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0))
+      lucide-react:
+        specifier: ^0.294.0
+        version: 0.294.0(react@19.1.0)
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.1.0(react@19.1.0)
+      react-router-dom:
+        specifier: ^6.20.0
+        version: 6.30.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      tailwindcss:
+        specifier: ^4.1.8
+        version: 4.1.8
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.25.0
+        version: 9.28.0
+      '@types/react':
+        specifier: ^19.1.2
+        version: 19.1.5
+      '@types/react-dom':
+        specifier: ^19.1.2
+        version: 19.1.5(@types/react@19.1.5)
+      '@vitejs/plugin-react':
+        specifier: ^4.4.1
+        version: 4.5.1(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0))
+      eslint:
+        specifier: ^9.25.0
+        version: 9.28.0(jiti@2.4.2)
+      eslint-plugin-react-hooks:
+        specifier: ^5.2.0
+        version: 5.2.0(eslint@9.28.0(jiti@2.4.2))
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.19
+        version: 0.4.20(eslint@9.28.0(jiti@2.4.2))
+      globals:
+        specifier: ^16.0.0
+        version: 16.1.0
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
+      typescript-eslint:
+        specifier: ^8.30.1
+        version: 8.33.1(eslint@9.28.0(jiti@2.4.2))(typescript@5.8.3)
+      vite:
+        specifier: ^6.3.5
+        version: 6.3.5(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0)
+
 packages:
 
   '@algolia/autocomplete-core@1.17.7':
