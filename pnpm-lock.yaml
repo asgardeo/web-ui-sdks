@@ -387,6 +387,55 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1(@types/react-dom@19.1.5(@types/react@19.1.5))(@types/react@19.1.5)(@vitest/browser@3.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vitest@3.1.3)
 
+  packages/react-router:
+    dependencies:
+      '@asgardeo/react':
+        specifier: '>=0.3.0'
+        version: 0.4.0(@types/react@19.1.5)(react@19.1.0)
+      tslib:
+        specifier: ^2.8.1
+        version: 2.8.1
+    devDependencies:
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.30
+      '@types/react':
+        specifier: ^19.1.4
+        version: 19.1.5
+      '@types/react-router-dom':
+        specifier: ^5.3.3
+        version: 5.3.3
+      '@wso2/eslint-plugin':
+        specifier: 'catalog:'
+        version: https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?a1fc6eb570653c999828aea9f5027cba06af4391(eslint@8.57.0)(typescript@5.7.3)
+      '@wso2/prettier-config':
+        specifier: 'catalog:'
+        version: https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/prettier-config?a1fc6eb570653c999828aea9f5027cba06af4391(prettier@2.8.8)(typescript@5.7.3)
+      esbuild:
+        specifier: ^0.25.4
+        version: 0.25.4
+      eslint:
+        specifier: 8.57.0
+        version: 8.57.0
+      prettier:
+        specifier: ^2.6.2
+        version: 2.8.8
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-router-dom:
+        specifier: ^6.30.0
+        version: 6.30.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      vitest:
+        specifier: ^3.1.3
+        version: 3.1.3(@types/node@22.15.30)(@vitest/browser@3.1.3)(jiti@2.4.2)(jsdom@26.1.0)(lightningcss@1.30.1)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0)
+
   packages/vue:
     dependencies:
       '@asgardeo/auth-spa':
@@ -538,6 +587,9 @@ importers:
       '@asgardeo/react':
         specifier: workspace:^
         version: link:../../packages/react
+      '@asgardeo/react-router':
+        specifier: workspace:^
+        version: link:../../packages/react-router
       '@radix-ui/react-label':
         specifier: ^2.1.7
         version: 2.1.7(@types/react-dom@19.1.5(@types/react@19.1.5))(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -702,8 +754,20 @@ packages:
   '@asgardeo/auth-spa@3.2.0':
     resolution: {integrity: sha512-ptNeWyccApqpMVi9t1RYI95d0/jCS1Zs7qh9uU2c9FbTIquv2xMbJZhUCmU9Ana3IC+ouS53amxcUGZSVrh58g==}
 
+  '@asgardeo/browser@0.1.0':
+    resolution: {integrity: sha512-NnixHJogUn47vw8Csmw5jN79aHJd+JBwG9nmcZaW9tz/FPg0ZBbKCryDagLRqMdFNewNYNBbsZw1KQ87LnNRrg==}
+
+  '@asgardeo/javascript@0.1.0':
+    resolution: {integrity: sha512-FKyK4bdrBbAZLOu+GeWUyrXwHABJq/8RMyZivaf6JEFeMJx2ttDTzGyIGv0FZfIXrEQNkr3PBBRztoiYTYrimA==}
+
   '@asgardeo/js@0.1.3':
     resolution: {integrity: sha512-k7dtodvqqIXOcBUxqTPwm7ChdX5bWl2K70eFQDmnha4bNVcNrsNOzPt4rbIAntOjfUwJpg05YO/ZIV4lZwfB8Q==}
+
+  '@asgardeo/react@0.4.0':
+    resolution: {integrity: sha512-L6OrDo8uH/nAxdlALz0dTzSLudVTSFybSZezBHDi1R9+88g+/aCBEJfq+Z6CsEBd/ACu3HilgwN9QU2ZCCjF6g==}
+    peerDependencies:
+      '@types/react': '>=16.8.0'
+      react: '>=16.8.0'
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -2123,6 +2187,9 @@ packages:
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
 
+  '@types/history@4.7.11':
+    resolution: {integrity: sha512-qjDJRrmvBMiTx+jyLxvLfJU7UznFuokDv4f3WRuriHKERccVpFU+8XMQUAbDzoiJCsmexxRExQeMwwCdamSKDA==}
+
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -2169,6 +2236,12 @@ packages:
     resolution: {integrity: sha512-CMCjrWucUBZvohgZxkjd6S9h0nZxXjzus6yDfUb+xLxYM7VvjKNH1tQrE9GWLql1XoOP4/Ds3bwFqShHUYraGg==}
     peerDependencies:
       '@types/react': ^19.0.0
+
+  '@types/react-router-dom@5.3.3':
+    resolution: {integrity: sha512-kpqnYK4wcdm5UaWI3fLcELopqLrHgLqNsdpHauzlQktfkHL3npOSwtj1Uz9oKBAzs7lFtVkV8j83voAz2D8fhw==}
+
+  '@types/react-router@5.1.20':
+    resolution: {integrity: sha512-jGjmu/ZqS7FjSH6owMcD5qpq19+1RS9DeVRqfl1FeBMxTDQAGwlMWOcs52NDoXaNKyG3d1cYQFMs9rCrb88o9Q==}
 
   '@types/react@18.3.23':
     resolution: {integrity: sha512-/LDXMQh55EzZQ0uVAZmKKhfENivEvWz6E+EYzh+/MCjMhNsotd+ZHhBGIjFDTi6+fz0OhQQQLbTgdQIxxCsC0w==}
@@ -6855,12 +6928,49 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  '@asgardeo/browser@0.1.0(esbuild@0.25.4)':
+    dependencies:
+      '@asgardeo/javascript': 0.1.0
+      axios: 0.26.1
+      base64url: 3.0.1
+      buffer: 6.0.3
+      core-js: 3.42.0
+      crypto-browserify: 3.12.1
+      esbuild-plugin-polyfill-node: 0.3.0(esbuild@0.25.4)
+      fast-sha256: 1.3.0
+      jose: 6.0.11
+      process: 0.11.10
+      randombytes: 2.1.0
+      stream-browserify: 3.0.0
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - debug
+      - esbuild
+
+  '@asgardeo/javascript@0.1.0':
+    dependencies:
+      tslib: 2.8.1
+
   '@asgardeo/js@0.1.3':
     dependencies:
       '@asgardeo/auth-js': 5.1.2
       csstype: 3.1.3
       lodash.isempty: 4.4.0
       lodash.merge: 4.6.2
+
+  '@asgardeo/react@0.4.0(@types/react@19.1.5)(react@19.1.0)':
+    dependencies:
+      '@asgardeo/browser': 0.1.0(esbuild@0.25.4)
+      '@floating-ui/react': 0.27.12(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@types/react': 19.1.5
+      '@types/react-dom': 19.1.5(@types/react@19.1.5)
+      clsx: 2.1.1
+      esbuild: 0.25.4
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - debug
 
   '@babel/code-frame@7.27.1':
     dependencies:
@@ -8131,6 +8241,8 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
+  '@types/history@4.7.11': {}
+
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
@@ -8174,6 +8286,17 @@ snapshots:
 
   '@types/react-dom@19.1.5(@types/react@19.1.5)':
     dependencies:
+      '@types/react': 19.1.5
+
+  '@types/react-router-dom@5.3.3':
+    dependencies:
+      '@types/history': 4.7.11
+      '@types/react': 19.1.5
+      '@types/react-router': 5.1.20
+
+  '@types/react-router@5.1.20':
+    dependencies:
+      '@types/history': 4.7.11
       '@types/react': 19.1.5
 
   '@types/react@18.3.23':
