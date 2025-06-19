@@ -552,6 +552,9 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const avatarAttributes = ['picture'];
   const excludedProps = avatarAttributes.map(attr => mergedMappings[attr] || attr);
 
+  // Fields to skip based on schema.name
+  const fieldsToSkip: string[] = ['verifiedMobileNumbers', 'verifiedEmailAddresses'];
+
   const profileContent = (
     <div style={containerStyle} className={clsx(withVendorCSSClassPrefix('user-profile'), className)}>
       <div style={styles.header}>
@@ -567,6 +570,9 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           .filter(schema => {
             // Filter out avatar-related fields and fields we don't want to show
             if (!schema.name || schema.name === 'profileUrl') return false;
+
+            // Skip fields that are in the fieldsToSkip array
+            if (fieldsToSkip.includes(schema.name)) return false;
 
             // For non-editable mode, only show fields with values
             if (!editable) {
