@@ -121,6 +121,47 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     }));
   }, []);
 
+  const getFieldPlaceholder = useCallback((schema: Schema): string => {
+    const {type, displayName, description, name} = schema;
+
+    // Use the best available label for the field
+    const fieldLabel = displayName || description || name || 'value';
+
+    // Generate appropriate placeholder based on field type
+    switch (type) {
+      case 'DATE_TIME':
+        return `Enter your ${fieldLabel.toLowerCase()}`;
+      case 'BOOLEAN':
+        return `Select ${fieldLabel.toLowerCase()}`;
+      case 'COMPLEX':
+        return `Enter ${fieldLabel.toLowerCase()} details`;
+      default:
+        // For STRING and other types, use generic placeholder
+        return `Enter your ${fieldLabel.toLowerCase()}`;
+    }
+  }, []);
+
+  const ObjectDisplay: FC<{data: unknown}> = ({data}) => {
+    if (!data || typeof data !== 'object') return null;
+
+    return (
+      <table style={{width: '100%', borderCollapse: 'collapse'}}>
+        <tbody>
+          {Object.entries(data).map(([key, value]) => (
+            <tr key={key} style={{borderBottom: `1px solid ${theme.colors.border}`}}>
+              <td style={{padding: `${theme.spacing.unit}px`, verticalAlign: 'top'}}>
+                <strong>{formatLabel(key)}:</strong>
+              </td>
+              <td style={{padding: `${theme.spacing.unit}px`, verticalAlign: 'top'}}>
+                {typeof value === 'object' ? <ObjectDisplay data={value} /> : String(value)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
+
   function set(obj: Record<string, any>, path: string, value: any): void {
     const keys = path.split('.');
     let current = obj;
@@ -231,6 +272,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     schema: Schema,
     isEditing: boolean,
     onEditValue?: (value: any) => void,
+    onStartEdit?: () => void,
   ): ReactElement | null => {
     if (!schema) return null;
     const {value, displayName, description, name, type, required, mutability, subAttributes} = schema;
@@ -258,14 +300,44 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       );
     }
     if (Array.isArray(value)) {
-      const displayValue =
-        value.length > 0
-          ? value.map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item))).join(', ')
-          : '-';
+      const hasValues = value.length > 0;
+      const isEditable = editable && mutability !== 'READ_ONLY';
+
+      let displayValue: string;
+      if (hasValues) {
+        displayValue = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item))).join(', ');
+      } else if (isEditable) {
+        displayValue = getFieldPlaceholder(schema);
+      } else {
+        displayValue = '-';
+      }
+
       return (
         <>
           <span style={styles.label}>{label}</span>
-          <div style={styles.value}>{displayValue}</div>
+          <div style={{...styles.value, fontStyle: hasValues ? 'normal' : 'italic', opacity: hasValues ? 1 : 0.7}}>
+            {!hasValues && isEditable && onStartEdit ? (
+              <button
+                onClick={onStartEdit}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'inherit',
+                  cursor: 'pointer',
+                  padding: 0,
+                  font: 'inherit',
+                  fontStyle: 'italic',
+                  textDecoration: 'underline',
+                  opacity: 0.7,
+                }}
+                title="Click to edit"
+              >
+                {displayValue}
+              </button>
+            ) : (
+              displayValue
+            )}
+          </div>
         </>
       );
     }
@@ -332,11 +404,44 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       );
     }
     // Default: view mode
-    const displayValue = value !== undefined && value !== null && value !== '' ? String(value) : '-';
+    const hasValue = value !== undefined && value !== null && value !== '';
+    const isEditable = editable && mutability !== 'READ_ONLY';
+
+    let displayValue: string;
+    if (hasValue) {
+      displayValue = String(value);
+    } else if (isEditable) {
+      displayValue = getFieldPlaceholder(schema);
+    } else {
+      displayValue = '-';
+    }
+
     return (
       <>
         <span style={styles.label}>{label}</span>
-        <div style={styles.value}>{displayValue}</div>
+        <div style={{...styles.value, fontStyle: hasValue ? 'normal' : 'italic', opacity: hasValue ? 1 : 0.7}}>
+          {!hasValue && isEditable && onStartEdit ? (
+            <button
+              onClick={onStartEdit}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'inherit',
+                cursor: 'pointer',
+                padding: 0,
+                font: 'inherit',
+                fontStyle: 'italic',
+                textDecoration: 'underline',
+                opacity: 0.7,
+              }}
+              title="Click to edit"
+            >
+              {displayValue}
+            </button>
+          ) : (
+            displayValue
+          )}
+        </div>
       </>
     );
   };
@@ -369,7 +474,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
             const tempEditedUser = {...editedUser};
             tempEditedUser[schema.name!] = value;
             setEditedUser(tempEditedUser);
-          })}
+          }, () => toggleFieldEdit(schema.name!))}
         </div>
         {editable && schema.mutability !== 'READ_ONLY' && (
           <div
@@ -380,7 +485,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
               marginLeft: `${theme.spacing.unit}px`,
             }}
           >
-            {isFieldEditing ? (
+            {isFieldEditing && (
               <>
                 <Button size="small" color="primary" variant="solid" onClick={() => handleFieldSave(schema)}>
                   Save
@@ -394,7 +499,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                   Cancel
                 </Button>
               </>
-            ) : (
+            )}
+            {!isFieldEditing && hasValue && (
               <Button
                 size="small"
                 color="tertiary"
@@ -411,27 +517,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           </div>
         )}
       </div>
-    );
-  };
-
-  const ObjectDisplay: FC<{data: unknown}> = ({data}) => {
-    if (!data || typeof data !== 'object') return null;
-
-    return (
-      <table style={{width: '100%', borderCollapse: 'collapse'}}>
-        <tbody>
-          {Object.entries(data).map(([key, value]) => (
-            <tr key={key} style={{borderBottom: `1px solid ${theme.colors.border}`}}>
-              <td style={{padding: `${theme.spacing.unit}px`, verticalAlign: 'top'}}>
-                <strong>{formatLabel(key)}:</strong>
-              </td>
-              <td style={{padding: `${theme.spacing.unit}px`, verticalAlign: 'top'}}>
-                {typeof value === 'object' ? <ObjectDisplay data={value} /> : String(value)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     );
   };
 
