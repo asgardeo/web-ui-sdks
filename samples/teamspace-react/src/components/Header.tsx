@@ -1,6 +1,6 @@
 'use client';
 
-import {SignedIn, SignedOut, Loaded} from '@asgardeo/react';
+import {SignedIn, SignedOut} from '@asgardeo/react';
 import Logo from './header/Logo';
 import PublicNavigation from './header/PublicNavigation';
 import AuthenticatedNavigation from './header/AuthenticatedNavigation';
@@ -17,9 +17,7 @@ export default function Header() {
           <div className="flex items-center space-x-8">
             <SignedIn>
               <Logo to="/dashboard" />
-              <Loaded>
-                <AuthenticatedNavigation />
-              </Loaded>
+              <AuthenticatedNavigation />
             </SignedIn>
             <SignedOut>
               <Logo to="/" />
@@ -27,18 +25,16 @@ export default function Header() {
             </SignedOut>
           </div>
 
-          <Loaded>
-            {/* Right side - Actions based on auth state */}
-            <div className="flex items-center space-x-2">
-              <SignedOut>
-                <PublicActions showMobileActions={false} />
-              </SignedOut>
-              <SignedIn>
-                <AuthenticatedActions />
-                <AuthenticatedMobileMenu />
-              </SignedIn>
-            </div>
-          </Loaded>
+          {/* Right side - Actions based on auth state */}
+          <div className="flex items-center space-x-2">
+            <SignedOut>
+              <PublicActions showMobileActions={false} />
+            </SignedOut>
+            <SignedIn>
+              <AuthenticatedActions />
+              <AuthenticatedMobileMenu />
+            </SignedIn>
+          </div>
         </div>
       </div>
     </header>
