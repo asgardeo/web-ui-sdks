@@ -293,11 +293,22 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     setError(null);
 
     try {
+      // Filter out empty or undefined input values
+      const filteredInputs: Record<string, any> = {};
+      if (data) {
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== null && value !== undefined && value !== '') {
+            filteredInputs[key] = value;
+          }
+        });
+      }
+
       const payload: EmbeddedFlowExecuteRequestPayload = {
-        flowType: currentFlow.data ? (currentFlow.data as any) : undefined,
-        inputs: data || {},
+        ...(currentFlow.flowId && {flowId: currentFlow.flowId}),
+        flowType: (currentFlow as any).flowType || 'REGISTRATION',
+        inputs: filteredInputs,
         actionId: component.id,
-      };
+      } as any;
 
       const response = await onSubmit(payload);
       onFlowChange?.(response);
