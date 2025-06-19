@@ -21,6 +21,7 @@ import {ReactElement} from 'react';
 import EmailInput from './EmailInput';
 import FormContainer from './FormContainer';
 import PasswordInput from './PasswordInput';
+import SocialButton from './SocialButton';
 import SubmitButton from './SubmitButton';
 import TextInput from './TextInput';
 import Typography from './Typography';
@@ -74,6 +75,8 @@ export interface BaseSignUpOptionProps extends WithPreferences {
    */
   onInputChange: (name: string, value: string) => void;
 
+  onSubmit?: (payload) => void;
+
   /**
    * Component size variant.
    */
@@ -113,8 +116,14 @@ export const createSignUpComponent = (props: BaseSignUpOptionProps): ReactElemen
       }
       return <TextInput {...props} />;
 
-    case EmbeddedFlowComponentType.Button:
+    case EmbeddedFlowComponentType.Button: {
+      const buttonVariant: string | undefined = component.variant?.toUpperCase();
+
+      if (buttonVariant === 'SOCIAL') {
+        return <SocialButton {...props} />;
+      }
       return <SubmitButton {...props} />;
+    }
 
     case EmbeddedFlowComponentType.Form:
       return <FormContainer {...props} />;

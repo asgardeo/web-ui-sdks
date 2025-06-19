@@ -20,6 +20,7 @@ export {default as TextInput} from './TextInput';
 export {default as EmailInput} from './EmailInput';
 export {default as PasswordInput} from './PasswordInput';
 export {default as SubmitButton} from './SubmitButton';
+export {default as SocialButton} from './SocialButton';
 export {default as Typography} from './Typography';
 export {default as FormContainer} from './FormContainer';
 
