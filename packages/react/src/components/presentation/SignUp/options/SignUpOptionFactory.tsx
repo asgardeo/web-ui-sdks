@@ -28,7 +28,7 @@ import ImageComponent from './ImageComponent';
 import NumberInput from './NumberInput';
 import PasswordInput from './PasswordInput';
 import SocialButton from './SocialButton';
-import SubmitButton from './SubmitButton';
+import ButtonComponent from './SubmitButton';
 import TelephoneInput from './TelephoneInput';
 import TextInput from './TextInput';
 import Typography from './Typography';
@@ -139,14 +139,14 @@ export const createSignUpComponent = (props: BaseSignUpOptionProps): ReactElemen
       const buttonVariant: string | undefined = component.variant?.toUpperCase();
       const buttonText: string = component.config['text'] || component.config['label'] || '';
 
-      if (buttonVariant === 'SOCIAL') {
-        // Check if it's a Google button based on text content
-        if (buttonText.toLowerCase().includes('google')) {
-          return <GoogleButton {...props} />;
-        }
-        return <SocialButton {...props} />;
+      // TODO: The connection type should come as metadata.
+      if (buttonVariant === 'SOCIAL' && buttonText.toLowerCase().includes('google')) {
+        return <GoogleButton {...props} />;
       }
-      return <SubmitButton {...props} />;
+
+      // Use the generic ButtonComponent for all other button variants
+      // It will handle PRIMARY, SECONDARY, TEXT, SOCIAL mappings internally
+      return <ButtonComponent {...props} />;
     }
 
     case EmbeddedFlowComponentType.Form:

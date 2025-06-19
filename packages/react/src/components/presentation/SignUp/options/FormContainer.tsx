@@ -32,7 +32,9 @@ const FormContainer: FC<BaseSignUpOptionProps> = props => {
 
       // Find submit button in child components and trigger its submission
       const submitButton = component.components?.find(
-        child => child.type === 'BUTTON' && (child.variant === 'PRIMARY' || child.config?.['type'] === 'submit'),
+        child =>
+          child.type === 'BUTTON' &&
+          (child.variant === 'PRIMARY' || child.variant === 'SECONDARY' || child.config?.['type'] === 'submit'),
       );
 
       if (submitButton && props.onSubmit) {
@@ -41,11 +43,7 @@ const FormContainer: FC<BaseSignUpOptionProps> = props => {
     };
 
     return (
-      <form
-        key={component.id}
-        onSubmit={handleFormSubmit}
-        style={{display: 'flex', flexDirection: 'column'}}
-      >
+      <form key={component.id} onSubmit={handleFormSubmit} style={{display: 'flex', flexDirection: 'column'}}>
         {component.components.map((childComponent, index) =>
           createSignUpComponent({
             ...props,

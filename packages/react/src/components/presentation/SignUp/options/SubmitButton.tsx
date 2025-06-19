@@ -23,27 +23,54 @@ import Button from '../../../primitives/Button/Button';
 import Spinner from '../../../primitives/Spinner/Spinner';
 
 /**
- * Submit button component for sign-up forms.
+ * Button component for sign-up forms that handles all button variants.
  */
-const SubmitButton: FC<BaseSignUpOptionProps> = ({
+const ButtonComponent: FC<BaseSignUpOptionProps> = ({
   component,
   isLoading,
   isFormValid,
   buttonClassName,
+  onSubmit,
   size = 'medium',
 }) => {
   const config = component.config || {};
   const buttonText = config['text'] || config['label'] || 'Continue';
   const buttonType = config['type'] || 'submit';
-  const buttonVariant = config['variant']?.toLowerCase() === 'primary' ? 'solid' : 'outline';
+  const componentVariant = component.variant?.toUpperCase() || 'PRIMARY';
+
+  // Map component variants to Button primitive props
+  const getButtonProps = () => {
+    switch (componentVariant) {
+      case 'PRIMARY':
+        return {variant: 'solid' as const, color: 'primary' as const};
+      case 'SECONDARY':
+        return {variant: 'solid' as const, color: 'secondary' as const};
+      case 'TEXT':
+        return {variant: 'text' as const, color: 'primary' as const};
+      case 'SOCIAL':
+        return {variant: 'outline' as const, color: 'primary' as const};
+      default:
+        return {variant: 'solid' as const, color: 'primary' as const};
+    }
+  };
+
+  const {variant, color} = getButtonProps();
+
+  const handleClick = () => {
+    if (onSubmit && buttonType !== 'submit') {
+      onSubmit(component);
+    }
+  };
 
   return (
     <Button
       key={component.id}
       type={buttonType === 'submit' ? 'submit' : 'button'}
-      variant={buttonVariant}
+      variant={variant}
+      color={color}
       size={size}
-      disabled={isLoading || !isFormValid}
+      disabled={isLoading || (buttonType === 'submit' && !isFormValid)}
+      onClick={buttonType !== 'submit' ? handleClick : undefined}
       className={buttonClassName}
       style={{width: '100%'}}
     >
@@ -52,4 +79,4 @@ const SubmitButton: FC<BaseSignUpOptionProps> = ({
   );
 };
 
-export default SubmitButton;
+export default ButtonComponent;
