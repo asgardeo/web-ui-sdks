@@ -359,6 +359,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         required,
         value: fieldValue,
         onChange: (e: any) => onEditValue(e.target ? e.target.value : e),
+        placeholder: getFieldPlaceholder(schema),
         style: {
           marginBottom: 0,
         },
@@ -380,6 +381,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
             <textarea
               value={fieldValue}
               onChange={e => onEditValue(e.target.value)}
+              placeholder={getFieldPlaceholder(schema)}
               required={required}
               style={{
                 ...commonProps.style,
