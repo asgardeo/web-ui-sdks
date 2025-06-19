@@ -45,6 +45,11 @@ const translations: I18nTranslations = {
 
   /* Base Sign In */
   'signin.title': 'Sign In',
+  'signin.subtitle': 'Enter your credentials to continue.',
+
+  /* Base Sign Up */
+  'signup.title': 'Sign Up',
+  'signup.subtitle': 'Create a new account to get started.',
 
   /* Email OTP */
   'email.otp.title': 'OTP Verification',
@@ -84,9 +89,11 @@ const translations: I18nTranslations = {
   'errors.title': 'Error',
   'errors.sign.in.initialization': 'An error occurred while initializing. Please try again later.',
   'errors.sign.in.flow.failure': 'An error occurred during the sign-in flow. Please try again later.',
-  'errors.sign.in.flow.completion.failure': 'An error occurred while completing the sign-in flow. Please try again later.',
+  'errors.sign.in.flow.completion.failure':
+    'An error occurred while completing the sign-in flow. Please try again later.',
   'errors.sign.in.flow.passkeys.failure': 'An error occurred while signing in with passkeys. Please try again later.',
-  'errors.sign.in.flow.passkeys.completion.failure': 'An error occurred while completing the passkeys sign-in flow. Please try again later.',
+  'errors.sign.in.flow.passkeys.completion.failure':
+    'An error occurred while completing the passkeys sign-in flow. Please try again later.',
 };
 
 const metadata: I18nMetadata = {

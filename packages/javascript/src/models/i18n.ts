@@ -16,6 +16,8 @@
  * under the License.
  */
 
+/* eslint-disable typescript-sort-keys/interface */
+
 export interface I18nTranslations {
   /* |---------------------------------------------------------------| */
   /* |                        Elements                               | */
@@ -43,6 +45,11 @@ export interface I18nTranslations {
 
   /* Base Sign In */
   'signin.title': string;
+  'signin.subtitle': string;
+
+  /* Base Sign Up */
+  'signup.title': string;
+  'signup.subtitle': string;
 
   /* Email OTP */
   'email.otp.title': string;

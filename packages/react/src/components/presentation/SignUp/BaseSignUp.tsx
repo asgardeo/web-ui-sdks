@@ -26,15 +26,13 @@ import {
 } from '@asgardeo/browser';
 import {clsx} from 'clsx';
 import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef} from 'react';
+import {renderSignUpComponents} from './options/SignUpOptionFactory';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
 import useFlow from '../../../contexts/Flow/useFlow';
 import {useForm, FormField} from '../../../hooks/useForm';
 import useTranslation from '../../../hooks/useTranslation';
-import {createField} from '../../factories/FieldFactory';
 import Alert from '../../primitives/Alert/Alert';
-import Button from '../../primitives/Button/Button';
 import Card from '../../primitives/Card/Card';
-import Divider from '../../primitives/Divider/Divider';
 import Spinner from '../../primitives/Spinner/Spinner';
 import Typography from '../../primitives/Typography/Typography';
 
@@ -338,67 +336,6 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     setFormTouched(name, true);
   };
 
-  /**
-   * Render form components based on flow data
-   */
-  const renderComponents = useCallback(
-    (components: any[]): ReactElement[] =>
-      components
-        .map((component, index) => {
-          const config = component.config || {};
-
-          switch (component.type) {
-            case EmbeddedFlowComponentType.Typography:
-              return (
-                <Typography key={component.id || index} variant={config.variant || 'body1'} className={messageClasses}>
-                  {config.text || config.content}
-                </Typography>
-              );
-
-            case EmbeddedFlowComponentType.Input:
-              const fieldName = config.name || component.id;
-              return createField({
-                type: config.type || 'text',
-                name: fieldName,
-                label: config.label || fieldName,
-                placeholder: config.placeholder,
-                required: config.required || false,
-                value: formValues[fieldName] || '',
-                error: touchedFields[fieldName] ? formErrors[fieldName] : undefined,
-                onChange: (value: string) => handleInputChange(fieldName, value),
-                className: inputClasses,
-              });
-
-            case EmbeddedFlowComponentType.Button:
-              return (
-                <Button
-                  key={component.id || index}
-                  type={config.type === 'submit' ? 'submit' : 'button'}
-                  variant={config.variant || 'contained'}
-                  size={size}
-                  disabled={isLoading || !isFormValid}
-                  className={buttonClasses}
-                >
-                  {isLoading ? <Spinner size="small" /> : config.text || config.label || 'Submit'}
-                </Button>
-              );
-
-            case EmbeddedFlowComponentType.Form:
-              return (
-                <div key={component.id || index}>{component.components && renderComponents(component.components)}</div>
-              );
-
-            default:
-              if (component.components && Array.isArray(component.components)) {
-                return <div key={component.id || index}>{renderComponents(component.components)}</div>;
-              }
-              return null;
-          }
-        })
-        .filter(Boolean) as ReactElement[],
-    [formValues, touchedFields, formErrors, isFormValid, isLoading, size],
-  );
-
   // Generate CSS classes
   const containerClasses = clsx(
     [
@@ -432,6 +369,30 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   const errorClasses = clsx([withVendorCSSClassPrefix('signup__error')], errorClassName);
 
   const messageClasses = clsx([withVendorCSSClassPrefix('signup__messages')], messageClassName);
+
+  /**
+   * Render form components based on flow data using the factory
+   */
+  const renderComponents = useCallback(
+    (components: any[]): ReactElement[] =>
+      renderSignUpComponents(
+        components,
+        formValues,
+        touchedFields,
+        formErrors,
+        isLoading,
+        isFormValid,
+        handleInputChange,
+        {
+          buttonClassName: buttonClasses,
+          error,
+          inputClassName: inputClasses,
+          size,
+          variant,
+        },
+      ),
+    [formValues, touchedFields, formErrors, isFormValid, isLoading, size, variant, error, inputClasses, buttonClasses],
+  );
 
   // Initialize the flow on component mount
   useEffect(() => {
@@ -488,9 +449,11 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   if (!isFlowInitialized && isLoading) {
     return (
       <Card className={containerClasses}>
-        <div style={{display: 'flex', justifyContent: 'center', padding: '2rem'}}>
-          <Spinner size="medium" />
-        </div>
+        <Card.Content>
+          <div style={{display: 'flex', justifyContent: 'center', padding: '2rem'}}>
+            <Spinner size="medium" />
+          </div>
+        </Card.Content>
       </Card>
     );
   }
@@ -498,53 +461,53 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   if (!currentFlow) {
     return (
       <Card className={containerClasses}>
-        <Alert variant="error" className={errorClasses}>
-          <Alert.Description>{error || t('errors.sign.up.flow.initialization.failure')}</Alert.Description>
-        </Alert>
+        <Card.Content>
+          <Alert variant="error" className={errorClasses}>
+            <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
+            <Alert.Description>{error || t('errors.sign.up.flow.initialization.failure')}</Alert.Description>
+          </Alert>
+        </Card.Content>
       </Card>
     );
   }
 
   return (
     <Card className={containerClasses}>
-      {(flowTitle || flowSubtitle) && (
-        <div style={{marginBottom: '1.5rem', textAlign: 'center'}}>
-          {flowTitle && (
-            <Typography variant="h4" component="h1" style={{marginBottom: '0.5rem'}}>
-              {flowTitle}
-            </Typography>
-          )}
-          {flowSubtitle && (
-            <Typography variant="body2" color="textSecondary">
-              {flowSubtitle}
-            </Typography>
-          )}
-        </div>
-      )}
+      <Card.Header>
+        <Card.Title level={2}>{flowTitle || t('signup.title')}</Card.Title>
+        {flowSubtitle && (
+          <Typography variant="body1" style={{marginTop: '0.5rem'}}>
+            {flowSubtitle || t('signup.subtitle')}
+          </Typography>
+        )}
+        {flowMessages && flowMessages.length > 0 && (
+          <div style={{marginTop: '1rem'}}>
+            {flowMessages.map((message: any, index: number) => (
+              <Alert
+                key={message.id || index}
+                variant={message.type?.toLowerCase() === 'error' ? 'error' : 'info'}
+                style={{marginBottom: '0.5rem'}}
+                className={messageClasses}
+              >
+                <Alert.Description>{message.message}</Alert.Description>
+              </Alert>
+            ))}
+          </div>
+        )}
+      </Card.Header>
 
-      {error && (
-        <Alert variant="error" className={errorClasses} style={{marginBottom: '1rem'}}>
-          <Alert.Description>{error}</Alert.Description>
-        </Alert>
-      )}
+      <Card.Content>
+        {error && (
+          <Alert variant="error" className={errorClasses} style={{marginBottom: '1rem'}}>
+            <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
+            <Alert.Description>{error}</Alert.Description>
+          </Alert>
+        )}
 
-      {flowMessages && flowMessages.length > 0 && (
-        <div className={messageClasses} style={{marginBottom: '1rem'}}>
-          {flowMessages.map((message, index) => (
-            <Alert
-              key={index}
-              variant={message.type?.toLowerCase() === 'error' ? 'error' : 'info'}
-              style={{marginBottom: '0.5rem'}}
-            >
-              <Alert.Description>{message.message}</Alert.Description>
-            </Alert>
-          ))}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit}>
-        {currentFlow.data?.components && renderComponents(currentFlow.data.components)}
-      </form>
+        <form onSubmit={handleSubmit}>
+          {currentFlow.data?.components && renderComponents(currentFlow.data.components)}
+        </form>
+      </Card.Content>
     </Card>
   );
 };
