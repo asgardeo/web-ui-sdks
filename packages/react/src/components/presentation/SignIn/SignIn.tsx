@@ -16,10 +16,7 @@
  * under the License.
  */
 
-import {
-  ApplicationNativeAuthenticationInitiateResponse,
-  ApplicationNativeAuthenticationHandleResponse,
-} from '@asgardeo/browser';
+import {EmbeddedSignInFlowInitiateResponse, ApplicationNativeAuthenticationHandleResponse} from '@asgardeo/browser';
 import {FC} from 'react';
 import BaseSignIn from './BaseSignIn';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
@@ -75,7 +72,7 @@ const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'default
   /**
    * Initialize the authentication flow.
    */
-  const handleInitialize = async (): Promise<ApplicationNativeAuthenticationInitiateResponse> =>
+  const handleInitialize = async (): Promise<EmbeddedSignInFlowInitiateResponse> =>
     await signIn({response_mode: 'direct'});
 
   /**

@@ -17,12 +17,12 @@
  */
 
 import {
-  ApplicationNativeAuthenticationAuthenticator,
-  ApplicationNativeAuthenticationInitiateResponse,
+  EmbeddedSignInFlowAuthenticator,
+  EmbeddedSignInFlowInitiateResponse,
   ApplicationNativeAuthenticationHandleResponse,
-  ApplicationNativeAuthenticationStepType,
-  ApplicationNativeAuthenticationFlowStatus,
-  ApplicationNativeAuthenticationAuthenticatorPromptType,
+  EmbeddedSignInFlowStepType,
+  EmbeddedSignInFlowStatus,
+  EmbeddedSignInFlowAuthenticatorPromptType,
   ApplicationNativeAuthenticationConstants,
   AsgardeoAPIError,
   withVendorCSSClassPrefix,
@@ -202,9 +202,9 @@ const handleWebAuthnAuthentication = async (challengeData: string): Promise<stri
 /**
  * Check if the authenticator is a passkey/FIDO authenticator
  */
-const isPasskeyAuthenticator = (authenticator: ApplicationNativeAuthenticationAuthenticator): boolean =>
+const isPasskeyAuthenticator = (authenticator: EmbeddedSignInFlowAuthenticator): boolean =>
   authenticator.authenticatorId === ApplicationNativeAuthenticationConstants.SupportedAuthenticators.Passkey &&
-  authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.InternalPrompt &&
+  authenticator.metadata?.promptType === EmbeddedSignInFlowAuthenticatorPromptType.InternalPrompt &&
   (authenticator.metadata as any)?.additionalData?.challengeData;
 
 /**
@@ -248,15 +248,13 @@ export interface BaseSignInProps {
    * Callback function called when authentication flow status changes.
    * @param response - The current authentication response.
    */
-  onFlowChange?: (
-    response: ApplicationNativeAuthenticationInitiateResponse | ApplicationNativeAuthenticationHandleResponse,
-  ) => void;
+  onFlowChange?: (response: EmbeddedSignInFlowInitiateResponse | ApplicationNativeAuthenticationHandleResponse) => void;
 
   /**
    * Function to initialize authentication flow.
    * @returns Promise resolving to the initial authentication response.
    */
-  onInitialize?: () => Promise<ApplicationNativeAuthenticationInitiateResponse>;
+  onInitialize?: () => Promise<EmbeddedSignInFlowInitiateResponse>;
 
   /**
    * Function to handle authentication steps.
@@ -354,10 +352,8 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [currentFlow, setCurrentFlow] = useState<ApplicationNativeAuthenticationInitiateResponse | null>(null);
-  const [currentAuthenticator, setCurrentAuthenticator] = useState<ApplicationNativeAuthenticationAuthenticator | null>(
-    null,
-  );
+  const [currentFlow, setCurrentFlow] = useState<EmbeddedSignInFlowInitiateResponse | null>(null);
+  const [currentAuthenticator, setCurrentAuthenticator] = useState<EmbeddedSignInFlowAuthenticator | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Array<{message: string; type: string}>>([]);
 
@@ -403,7 +399,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
    * Setup form fields based on the current authenticator.
    */
   const setupFormFields = useCallback(
-    (authenticator: ApplicationNativeAuthenticationAuthenticator) => {
+    (authenticator: EmbeddedSignInFlowAuthenticator) => {
       const initialValues: Record<string, string> = {};
       authenticator.metadata?.params?.forEach(param => {
         initialValues[param.param] = '';
@@ -436,14 +432,13 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     if (
       'nextStep' in response &&
       response.nextStep &&
-      (response.nextStep as any).stepType === ApplicationNativeAuthenticationStepType.AuthenticatorPrompt &&
+      (response.nextStep as any).stepType === EmbeddedSignInFlowStepType.AuthenticatorPrompt &&
       (response.nextStep as any).authenticators &&
       (response.nextStep as any).authenticators.length === 1
     ) {
       const responseAuthenticator = (response.nextStep as any).authenticators[0];
       if (
-        responseAuthenticator.metadata?.promptType ===
-          ApplicationNativeAuthenticationAuthenticatorPromptType.RedirectionPrompt &&
+        responseAuthenticator.metadata?.promptType === EmbeddedSignInFlowAuthenticatorPromptType.RedirectionPrompt &&
         (responseAuthenticator.metadata as any)?.additionalData?.redirectUrl
       ) {
         /**
@@ -580,7 +575,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
                   onFlowChange?.(response);
 
-                  if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+                  if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
                     onSuccess?.(response.authData);
                   }
                 }
@@ -638,14 +633,14 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
       });
       onFlowChange?.(response);
 
-      if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+      if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
         onSuccess?.(response.authData);
         return;
       }
 
       if (
-        response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
-        response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+        response.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
+        response.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
       ) {
         setError(t('errors.sign.in.flow.completion.failure'));
         return;
@@ -662,7 +657,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
         if (nextStepResponse.nextStep?.authenticators?.length > 0) {
           if (
-            nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+            nextStepResponse.nextStep.stepType === EmbeddedSignInFlowStepType.MultiOptionsPrompt &&
             nextStepResponse.nextStep.authenticators.length > 1
           ) {
             setCurrentAuthenticator(null);
@@ -695,7 +690,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
    * Handle authenticator selection for multi-option prompts.
    */
   const handleAuthenticatorSelection = async (
-    authenticator: ApplicationNativeAuthenticationAuthenticator,
+    authenticator: EmbeddedSignInFlowAuthenticator,
     formData?: Record<string, string>,
   ) => {
     if (!currentFlow) {
@@ -741,14 +736,14 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           });
           onFlowChange?.(response);
 
-          if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+          if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
             onSuccess?.(response.authData);
             return;
           }
 
           if (
-            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
-            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+            response.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
+            response.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
           ) {
             setError(t('errors.sign.in.flow.passkeys.completion.failure'));
             return;
@@ -761,7 +756,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
             if (nextStepResponse.nextStep?.authenticators?.length > 0) {
               if (
-                nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+                nextStepResponse.nextStep.stepType === EmbeddedSignInFlowStepType.MultiOptionsPrompt &&
                 nextStepResponse.nextStep.authenticators.length > 1
               ) {
                 setCurrentAuthenticator(null);
@@ -803,9 +798,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
           setError(errorMessage);
         }
-      } else if (
-        authenticator.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.RedirectionPrompt
-      ) {
+      } else if (authenticator.metadata?.promptType === EmbeddedSignInFlowAuthenticatorPromptType.RedirectionPrompt) {
         const payload = {
           flowId: currentFlow.flowId,
           selectedAuthenticator: {
@@ -823,7 +816,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         });
         onFlowChange?.(response);
 
-        if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+        if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
           onSuccess?.(response.authData);
           return;
         }
@@ -854,14 +847,14 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         });
         onFlowChange?.(response);
 
-        if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+        if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
           onSuccess?.(response.authData);
           return;
         }
 
         if (
-          response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
-          response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+          response.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
+          response.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
         ) {
           setError('Authentication failed. Please check your credentials and try again.');
           return;
@@ -878,7 +871,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
           if (nextStepResponse.nextStep?.authenticators?.length > 0) {
             if (
-              nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+              nextStepResponse.nextStep.stepType === EmbeddedSignInFlowStepType.MultiOptionsPrompt &&
               nextStepResponse.nextStep.authenticators.length > 1
             ) {
               setCurrentAuthenticator(null);
@@ -928,14 +921,14 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           });
           onFlowChange?.(response);
 
-          if (response.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+          if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
             onSuccess?.(response.authData);
             return;
           }
 
           if (
-            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailCompleted ||
-            response.flowStatus === ApplicationNativeAuthenticationFlowStatus.FailIncomplete
+            response.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
+            response.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
           ) {
             setError('Authentication failed. Please try again.');
             return;
@@ -952,7 +945,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
             if (nextStepResponse.nextStep?.authenticators?.length > 0) {
               if (
-                nextStepResponse.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' &&
+                nextStepResponse.nextStep.stepType === EmbeddedSignInFlowStepType.MultiOptionsPrompt &&
                 nextStepResponse.nextStep.authenticators.length > 1
               ) {
                 setCurrentAuthenticator(null);
@@ -1009,7 +1002,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     (): boolean =>
       currentFlow &&
       'nextStep' in currentFlow &&
-      currentFlow.nextStep?.stepType === 'MULTI_OPTIONS_PROMPT' &&
+      currentFlow.nextStep?.stepType === EmbeddedSignInFlowStepType.MultiOptionsPrompt &&
       currentFlow.nextStep?.authenticators &&
       currentFlow.nextStep.authenticators.length > 1,
     [currentFlow],
@@ -1018,7 +1011,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   /**
    * Get available authenticators for selection.
    */
-  const getAvailableAuthenticators = useCallback((): ApplicationNativeAuthenticationAuthenticator[] => {
+  const getAvailableAuthenticators = useCallback((): EmbeddedSignInFlowAuthenticator[] => {
     if (!currentFlow || !('nextStep' in currentFlow) || !currentFlow.nextStep?.authenticators) {
       return [];
     }
@@ -1076,13 +1069,16 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           setIsInitialized(true);
           onFlowChange?.(response);
 
-          if (response?.flowStatus === ApplicationNativeAuthenticationFlowStatus.SuccessCompleted) {
+          if (response?.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
             onSuccess?.((response as any).authData || {});
             return;
           }
 
           if (response?.nextStep?.authenticators?.length > 0) {
-            if (response.nextStep.stepType === 'MULTI_OPTIONS_PROMPT' && response.nextStep.authenticators.length > 1) {
+            if (
+              response.nextStep.stepType === EmbeddedSignInFlowStepType.MultiOptionsPrompt &&
+              response.nextStep.authenticators.length > 1
+            ) {
               setCurrentAuthenticator(null);
             } else {
               const authenticator = response.nextStep.authenticators[0];
@@ -1138,7 +1134,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
     const userPromptAuthenticators = availableAuthenticators.filter(
       auth =>
-        auth.metadata?.promptType === ApplicationNativeAuthenticationAuthenticatorPromptType.UserPrompt ||
+        auth.metadata?.promptType === EmbeddedSignInFlowAuthenticatorPromptType.UserPrompt ||
         // Fallback: LOCAL authenticators with params are typically user prompts
         (auth.idp === 'LOCAL' && auth.metadata?.params && auth.metadata.params.length > 0),
     );

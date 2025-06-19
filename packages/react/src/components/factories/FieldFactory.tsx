@@ -32,7 +32,7 @@ import {FieldType} from '@asgardeo/browser';
 export interface FieldConfig {
   name: string;
   /**
-   * The field type based on ApplicationNativeAuthenticationAuthenticatorParamType.
+   * The field type based on EmbeddedSignInFlowAuthenticatorParamType.
    */
   type: FieldType;
   /**
@@ -127,7 +127,7 @@ export const validateFieldValue = (
 };
 
 /**
- * Factory function to create form fields based on the ApplicationNativeAuthenticationAuthenticatorParamType.
+ * Factory function to create form fields based on the EmbeddedSignInFlowAuthenticatorParamType.
  *
  * @param config - The field configuration
  * @returns The appropriate React component for the field type
@@ -136,7 +136,7 @@ export const validateFieldValue = (
  * ```tsx
  * const field = createField({
  *   param: 'username',
- *   type: ApplicationNativeAuthenticationAuthenticatorParamType.String,
+ *   type: EmbeddedSignInFlowAuthenticatorParamType.String,
  *   label: 'Username',
  *   confidential: false,
  *   required: true,

@@ -17,7 +17,7 @@
  */
 
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
-import {ApplicationNativeAuthenticationInitiateResponse} from '../models/application-native-authentication';
+import {EmbeddedSignInFlowInitiateResponse} from '../models/embedded-signin-flow';
 
 /**
  * Represents the authorization request payload that can be sent to the authorization endpoint.
@@ -123,7 +123,7 @@ const initializeApplicationNativeAuthentication = async ({
   baseUrl,
   payload,
   ...requestConfig
-}: AuthorizeRequestConfig): Promise<ApplicationNativeAuthenticationInitiateResponse> => {
+}: AuthorizeRequestConfig): Promise<EmbeddedSignInFlowInitiateResponse> => {
   if (!payload) {
     throw new AsgardeoAPIError(
       'Authorization payload is required',
@@ -165,7 +165,7 @@ const initializeApplicationNativeAuthentication = async ({
     );
   }
 
-  return (await response.json()) as ApplicationNativeAuthenticationInitiateResponse;
+  return (await response.json()) as EmbeddedSignInFlowInitiateResponse;
 };
 
 export default initializeApplicationNativeAuthentication;

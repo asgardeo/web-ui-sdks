@@ -19,10 +19,7 @@
 import {FC, JSX, ReactElement} from 'react';
 import Button from '../../../primitives/Button/Button';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
-import {
-  ApplicationNativeAuthenticationConstants,
-  ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
-} from '@asgardeo/browser';
+import {ApplicationNativeAuthenticationConstants, EmbeddedSignInFlowAuthenticatorKnownIdPType} from '@asgardeo/browser';
 import useTranslation from '../../../../hooks/useTranslation';
 
 /**
@@ -45,7 +42,7 @@ const MultiOptionButton: FC<BaseSignInOptionProps> = ({
   const getDisplayName = (): string => {
     let authenticatorName = authenticator.authenticator;
 
-    if (authenticator.idp !== ApplicationNativeAuthenticationAuthenticatorKnownIdPType.Local) {
+    if (authenticator.idp !== EmbeddedSignInFlowAuthenticatorKnownIdPType.Local) {
       authenticatorName = authenticator.idp;
     }
 

@@ -18,15 +18,15 @@
 
 import AsgardeoRuntimeError from '../errors/AsgardeoRuntimeError';
 import {
-  ApplicationNativeAuthenticationAuthenticatorExtendedParamType,
-  ApplicationNativeAuthenticationAuthenticatorParamType,
-} from '../models/application-native-authentication';
+  EmbeddedSignInFlowAuthenticatorExtendedParamType,
+  EmbeddedSignInFlowAuthenticatorParamType,
+} from '../models/embedded-signin-flow';
 import {FieldType} from '../models/field';
 
 const resolveFieldType = (field: any): FieldType => {
-  if (field.type === ApplicationNativeAuthenticationAuthenticatorParamType.String) {
+  if (field.type === EmbeddedSignInFlowAuthenticatorParamType.String) {
     // Check if there's a `param` property and if it matches a known type.
-    if (field.param === ApplicationNativeAuthenticationAuthenticatorExtendedParamType.Otp) {
+    if (field.param === EmbeddedSignInFlowAuthenticatorExtendedParamType.Otp) {
       return FieldType.Otp;
     } else if (field?.confidential) {
       return FieldType.Password;

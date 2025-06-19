@@ -36,18 +36,18 @@ export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
 export {AsgardeoAuthException} from './errors/exception';
 
 export {
-  ApplicationNativeAuthenticationInitiateResponse,
-  ApplicationNativeAuthenticationFlowStatus,
-  ApplicationNativeAuthenticationFlowType,
-  ApplicationNativeAuthenticationStepType,
-  ApplicationNativeAuthenticationAuthenticator,
-  ApplicationNativeAuthenticationLink,
+  EmbeddedSignInFlowInitiateResponse,
+  EmbeddedSignInFlowStatus,
+  EmbeddedSignInFlowType,
+  EmbeddedSignInFlowStepType,
+  EmbeddedSignInFlowAuthenticator,
+  EmbeddedSignInFlowLink,
   ApplicationNativeAuthenticationHandleRequestPayload,
   ApplicationNativeAuthenticationHandleResponse,
-  ApplicationNativeAuthenticationAuthenticatorParamType,
-  ApplicationNativeAuthenticationAuthenticatorPromptType,
-  ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
-} from './models/application-native-authentication';
+  EmbeddedSignInFlowAuthenticatorParamType,
+  EmbeddedSignInFlowAuthenticatorPromptType,
+  EmbeddedSignInFlowAuthenticatorKnownIdPType,
+} from './models/embedded-signin-flow';
 export {
   EmbeddedFlowType,
   EmbeddedFlowStatus,

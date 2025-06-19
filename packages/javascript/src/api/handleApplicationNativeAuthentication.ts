@@ -20,7 +20,7 @@ import AsgardeoAPIError from '../errors/AsgardeoAPIError';
 import {
   ApplicationNativeAuthenticationHandleRequestPayload,
   ApplicationNativeAuthenticationHandleResponse,
-} from '../models/application-native-authentication';
+} from '../models/embedded-signin-flow';
 
 /**
  * Request configuration for the authorize function.
