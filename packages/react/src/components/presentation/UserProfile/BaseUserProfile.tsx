@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {User, withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {User, withVendorCSSClassPrefix, WellKnownSchemaIds} from '@asgardeo/browser';
 import clsx from 'clsx';
 import {CSSProperties, FC, ReactElement, useMemo, useState, useCallback, useRef} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
@@ -183,22 +183,39 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   }
 
   const handleFieldSave = useCallback(
-    (schema: Schema) => {
+    (schema: Schema): void => {
       if (!onUpdate || !schema.name) return;
 
-      const payload = {};
-      const fieldName = schema.name;
-      const fieldValue =
+      const fieldName: string = schema.name;
+      const fieldValue: any =
         editedUser && fieldName && editedUser[fieldName] !== undefined
           ? editedUser[fieldName]
           : flattenedProfile && flattenedProfile[fieldName] !== undefined
           ? flattenedProfile[fieldName]
           : '';
 
-      set(payload, fieldName, fieldValue);
+      let payload: Record<string, any> = {};
+
+      // SCIM Patch Operation Logic:
+      // - Fields from core schema (urn:ietf:params:scim:schemas:core:2.0:User)
+      //   should be sent directly: {"name":{"givenName":"John"}}
+      // - Fields from extension schemas (like urn:scim:wso2:schema)
+      //   should be nested under the schema namespace: {"urn:scim:wso2:schema":{"country":"Sri Lanka"}}
+      if (schema.schemaId && schema.schemaId !== WellKnownSchemaIds.User) {
+        // For non-core schemas, nest the field under the schema namespace
+        payload = {
+          [schema.schemaId]: {
+            [fieldName]: fieldValue,
+          },
+        };
+      } else {
+        // For core schema or fields without schemaId, use the field path directly
+        // This handles complex paths like "name.givenName" correctly
+        set(payload, fieldName, fieldValue);
+      }
 
       onUpdate(payload);
-      // Optionally, exit edit mode for this field after save
+      // Exit edit mode for this field after save
       toggleFieldEdit(fieldName);
     },
     [editedUser, flattenedProfile, onUpdate, toggleFieldEdit],
