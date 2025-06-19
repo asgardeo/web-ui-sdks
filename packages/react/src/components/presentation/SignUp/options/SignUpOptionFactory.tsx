@@ -18,12 +18,18 @@
 
 import {EmbeddedFlowComponent, EmbeddedFlowComponentType, WithPreferences} from '@asgardeo/browser';
 import {ReactElement} from 'react';
+import CheckboxInput from './CheckboxInput';
+import DateInput from './DateInput';
+import DividerComponent from './DividerComponent';
 import EmailInput from './EmailInput';
 import FormContainer from './FormContainer';
 import GoogleButton from './GoogleButton';
+import ImageComponent from './ImageComponent';
+import NumberInput from './NumberInput';
 import PasswordInput from './PasswordInput';
 import SocialButton from './SocialButton';
 import SubmitButton from './SubmitButton';
+import TelephoneInput from './TelephoneInput';
 import TextInput from './TextInput';
 import Typography from './Typography';
 
@@ -115,6 +121,18 @@ export const createSignUpComponent = (props: BaseSignUpOptionProps): ReactElemen
       if (inputVariant === 'PASSWORD' || inputType === 'password') {
         return <PasswordInput {...props} />;
       }
+      if (inputVariant === 'TELEPHONE' || inputType === 'tel') {
+        return <TelephoneInput {...props} />;
+      }
+      if (inputVariant === 'NUMBER' || inputType === 'number') {
+        return <NumberInput {...props} />;
+      }
+      if (inputVariant === 'DATE' || inputType === 'date') {
+        return <DateInput {...props} />;
+      }
+      if (inputVariant === 'CHECKBOX' || inputType === 'checkbox') {
+        return <CheckboxInput {...props} />;
+      }
       return <TextInput {...props} />;
 
     case EmbeddedFlowComponentType.Button: {
@@ -133,6 +151,12 @@ export const createSignUpComponent = (props: BaseSignUpOptionProps): ReactElemen
 
     case EmbeddedFlowComponentType.Form:
       return <FormContainer {...props} />;
+
+    case EmbeddedFlowComponentType.Divider:
+      return <DividerComponent {...props} />;
+
+    case EmbeddedFlowComponentType.Image:
+      return <ImageComponent {...props} />;
 
     default:
       return <div />;

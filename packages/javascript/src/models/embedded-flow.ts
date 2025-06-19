@@ -62,4 +62,6 @@ export enum EmbeddedFlowComponentType {
   Select = 'SELECT',
   Checkbox = 'CHECKBOX',
   Radio = 'RADIO',
+  Divider = 'DIVIDER',
+  Image = 'IMAGE',
 }

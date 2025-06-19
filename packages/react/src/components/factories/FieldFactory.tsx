@@ -22,6 +22,8 @@ import Select from '../primitives/Select/Select';
 import {SelectOption} from '../primitives/Select/Select';
 import OtpField from '../primitives/OtpField/OtpField';
 import PasswordField from '../primitives/PasswordField/PasswordField';
+import DatePicker from '../primitives/DatePicker/DatePicker';
+import Checkbox from '../primitives/Checkbox/Checkbox';
 import {FieldType} from '@asgardeo/browser';
 
 /**
@@ -178,6 +180,13 @@ export const createField = (config: FieldConfig): ReactElement => {
       return <PasswordField {...commonProps} onChange={onChange} />;
     case FieldType.Text:
       return <TextField {...commonProps} type="text" onChange={e => onChange(e.target.value)} autoComplete="off" />;
+    case FieldType.Email:
+      return <TextField {...commonProps} type="email" onChange={e => onChange(e.target.value)} autoComplete="email" />;
+    case FieldType.Date:
+      return <DatePicker {...commonProps} onChange={e => onChange(e.target.value)} />;
+    case FieldType.Checkbox:
+      const isChecked = value === 'true' || (value as any) === true;
+      return <Checkbox {...commonProps} checked={isChecked} onChange={e => onChange(e.target.checked.toString())} />;
     case FieldType.Otp:
       return <OtpField {...commonProps} onChange={e => onChange(e.target.value)} />;
     case FieldType.Number:
