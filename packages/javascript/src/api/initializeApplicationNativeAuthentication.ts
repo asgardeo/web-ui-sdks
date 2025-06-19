@@ -24,41 +24,13 @@ import {ApplicationNativeAuthenticationInitiateResponse} from '../models/applica
  */
 export interface AuthorizationRequest {
   /**
-   * The response type (e.g., 'code', 'token', 'id_token').
+   * Additional authorization parameters.
    */
-  response_type?: string;
+  [key: string]: any;
   /**
    * The client identifier.
    */
   client_id?: string;
-  /**
-   * The redirection URI after authorization.
-   */
-  redirect_uri?: string;
-  /**
-   * The scope of the access request.
-   */
-  scope?: string;
-  /**
-   * An unguessable random string to prevent CSRF attacks.
-   */
-  state?: string;
-  /**
-   * String value used to associate a Client session with an ID Token.
-   */
-  nonce?: string;
-  /**
-   * How the authorization response should be returned.
-   */
-  response_mode?: string;
-  /**
-   * Space delimited, case sensitive list of ASCII string values.
-   */
-  prompt?: string;
-  /**
-   * The allowable elapsed time in seconds since the last time the End-User was actively authenticated.
-   */
-  max_age?: number;
   /**
    * PKCE code challenge.
    */
@@ -68,16 +40,43 @@ export interface AuthorizationRequest {
    */
   code_challenge_method?: string;
   /**
-   * Additional authorization parameters.
+   * The allowable elapsed time in seconds since the last time the End-User was actively authenticated.
    */
-  [key: string]: any;
+  max_age?: number;
+  /**
+   * String value used to associate a Client session with an ID Token.
+   */
+  nonce?: string;
+  /**
+   * Space delimited, case sensitive list of ASCII string values.
+   */
+  prompt?: string;
+  /**
+   * The redirection URI after authorization.
+   */
+  redirect_uri?: string;
+  /**
+   * How the authorization response should be returned.
+   */
+  response_mode?: string;
+  /**
+   * The response type (e.g., 'code', 'token', 'id_token').
+   */
+  response_type?: string;
+  /**
+   * The scope of the access request.
+   */
+  scope?: string;
+  /**
+   * An unguessable random string to prevent CSRF attacks.
+   */
+  state?: string;
 }
 
 /**
  * Request configuration for the authorize function.
  */
 export interface AuthorizeRequestConfig extends Partial<Request> {
-  url?: string;
   /**
    * The base URL of the Asgardeo server.
    */
@@ -86,6 +85,7 @@ export interface AuthorizeRequestConfig extends Partial<Request> {
    * The authorization request payload.
    */
   payload: AuthorizationRequest;
+  url?: string;
 }
 
 /**

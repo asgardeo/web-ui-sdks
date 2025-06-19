@@ -10,13 +10,7 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.ctas}>
           <SignedOut>
-            <SignInButton>
-              {({signIn, isLoading}) => (
-                <button onClick={signIn} disabled={isLoading}>
-                  {isLoading ? 'Signing in...' : 'Sign In'}
-                </button>
-              )}
-            </SignInButton>
+            <Link href="/signin" className={styles.primary} />
           </SignedOut>
           <SignedOut>
             <SignInButton className={styles.primary}>Sign In with Redirect</SignInButton>

@@ -18,20 +18,25 @@
 
 import {
   AsgardeoNodeClient,
+  AsgardeoRuntimeError,
+  EmbeddedFlowExecuteRequestPayload,
+  EmbeddedFlowExecuteResponse,
   LegacyAsgardeoNodeClient,
   SignInOptions,
   SignOutOptions,
+  SignUpOptions,
   User,
   UserProfile,
+  initializeApplicationNativeAuthentication,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
+import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
 import {AsgardeoNextConfig} from './models/config';
 import deleteSessionId from './server/actions/deleteSessionId';
 import getSessionId from './server/actions/getSessionId';
 import getIsSignedIn from './server/actions/isSignedIn';
 import setSessionId from './server/actions/setSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
-import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
 
 const removeTrailingSlash = (path: string): string => (path.endsWith('/') ? path.slice(0, -1) : path);
 /**
@@ -54,15 +59,15 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
     return this.asgardeo.initialize({
       baseUrl,
-      clientId: clientId,
+      clientId,
       clientSecret,
-      afterSignInUrl: afterSignInUrl,
+      afterSignInUrl,
       ...rest,
     } as any);
   }
 
   override async getUser(userId?: string): Promise<User> {
-    let resolvedSessionId: string = userId || ((await getSessionId()) as string);
+    const resolvedSessionId: string = userId || ((await getSessionId()) as string);
 
     return this.asgardeo.getUser(resolvedSessionId);
   }
@@ -118,10 +123,41 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     return Promise.resolve(await this.asgardeo.signOut(resolvedSessionId));
   }
 
+  override async signUp(options?: SignUpOptions): Promise<void>;
+  override async signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
+  override async signUp(...args: any[]): Promise<void | EmbeddedFlowExecuteResponse> {
+    throw new AsgardeoRuntimeError(
+      'Not implemented',
+      'react-AsgardeoReactClient-ValidationError-002',
+      'react',
+      'The signUp method with SignUpOptions is not implemented in the React client.',
+    );
+  }
+
   async handler(req: NextRequest): Promise<NextResponse> {
     const {pathname, searchParams} = req.nextUrl;
     const sanitizedPathname: string = removeTrailingSlash(pathname);
     const {method} = req;
+
+    if ((method === 'POST' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) || searchParams.get('code')) {
+      let response;
+
+      const userId: string | undefined = await getSessionId();
+
+      const signInUrl: URL = new URL(await this.asgardeo.getSignInUrl({response_mode: 'direct'}, userId));
+      const {pathname, origin, searchParams} = signInUrl;
+
+      try {
+        response = await initializeApplicationNativeAuthentication({
+          url: `${origin}${pathname}`,
+          payload: Object.fromEntries(searchParams.entries()),
+        });
+      } catch (error) {
+        throw new Error(`Failed to initialize application native authentication`);
+      }
+
+      return NextResponse.json(response);
+    }
 
     if ((method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) || searchParams.get('code')) {
       let response: NextResponse | undefined;
@@ -129,9 +165,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       await this.signIn(
         {},
         undefined,
-        (redirectUrl: string) => {
-          return (response = NextResponse.redirect(redirectUrl, 302));
-        },
+        (redirectUrl: string) => (response = NextResponse.redirect(redirectUrl, 302)),
         searchParams.get('code') as string,
         searchParams.get('session_state') as string,
         searchParams.get('state') as string,
@@ -158,7 +192,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       try {
         const isSignedIn: boolean = await getIsSignedIn();
 
-        return NextResponse.json({isSignedIn: isSignedIn});
+        return NextResponse.json({isSignedIn});
       } catch (error) {
         return NextResponse.json({error: 'Failed to check session'}, {status: 500});
       }

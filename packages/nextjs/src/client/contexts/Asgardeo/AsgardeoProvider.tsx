@@ -18,9 +18,9 @@
 
 'use client';
 
-import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
-import {I18nProvider, FlowProvider, UserProvider, ThemeProvider} from '@asgardeo/react';
 import {User} from '@asgardeo/node';
+import {I18nProvider, FlowProvider, UserProvider, ThemeProvider} from '@asgardeo/react';
+import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
 import AsgardeoContext from './AsgardeoContext';
 import InternalAuthAPIRoutesConfig from '../../../configs/InternalAuthAPIRoutesConfig';
 
@@ -81,12 +81,20 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     fetchUserData();
   }, []);
 
+  const signIn = async () => {
+    const response = await fetch(InternalAuthAPIRoutesConfig.signIn, {
+      method: 'POST',
+    });
+
+    return response.json();
+  };
+
   const contextValue = useMemo(
     () => ({
       user,
       isSignedIn,
       isLoading,
-      signIn: () => (window.location.href = InternalAuthAPIRoutesConfig.signIn),
+      signIn,
       signOut: () => (window.location.href = InternalAuthAPIRoutesConfig.signOut),
     }),
     [user, isSignedIn, isLoading],

@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2022, WSO2 Inc. (http://www.wso2.com) All Rights Reserved.
+ * Copyright (c) {{year}}, WSO2 LLC. (https://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,7 @@ import {
   Storage,
   TokenResponse,
   User,
+  ExtendedAuthorizeRequestUrlParams,
 } from '@asgardeo/javascript';
 import {AsgardeoNodeCore} from './core';
 import {AuthURLCallback} from './models';
@@ -298,10 +299,7 @@ export class AsgardeoNodeClient<T> {
      * @memberof AsgardeoNodeClient
      *
      */
-  public async exchangeToken(
-    config: TokenExchangeRequestConfig,
-    userId?: string,
-  ): Promise<TokenResponse | Response> {
+  public async exchangeToken(config: TokenExchangeRequestConfig, userId?: string): Promise<TokenResponse | Response> {
     return this._authCore.exchangeToken(config, userId);
   }
 
@@ -326,6 +324,10 @@ export class AsgardeoNodeClient<T> {
    */
   public async reInitialize(config: Partial<AuthClientConfig<T>>): Promise<void> {
     return this._authCore.reInitialize(config);
+  }
+
+  public async getSignInUrl(requestConfig?: ExtendedAuthorizeRequestUrlParams, userId?: string): Promise<string> {
+    return this._authCore.getAuthURL(userId, requestConfig);
   }
 
   /**
