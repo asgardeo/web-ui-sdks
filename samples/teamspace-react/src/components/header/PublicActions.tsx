@@ -1,7 +1,7 @@
 'use client';
 
-import {Link, useNavigate} from 'react-router-dom';
-import {SignInButton, SignUpButton} from '@asgardeo/react';
+import {useNavigate} from 'react-router-dom';
+import {SignInButton} from '@asgardeo/react';
 import {Button} from '../ui/button';
 
 interface PublicActionsProps {
