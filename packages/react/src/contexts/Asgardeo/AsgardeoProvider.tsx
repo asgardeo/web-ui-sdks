@@ -56,6 +56,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const [user, setUser] = useState<any | null>(null);
 
   const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
+  const [isInitializedSync, setIsInitializedSync] = useState<boolean>(false);
 
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
@@ -108,7 +109,6 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
           // setError(null);
         } catch (error) {
-          debugger;
           if (error && Object.prototype.hasOwnProperty.call(error, 'code')) {
             // setError(error);
           }
@@ -149,6 +149,17 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         clearInterval(interval);
       }
     };
+  }, [asgardeo]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const status = await asgardeo.isInitialized();
+        setIsInitializedSync(status);
+      } catch (error) {
+        setIsInitializedSync(false);
+      }
+    })();
   }, [asgardeo]);
 
   const signIn = async (options?: SignInOptions): Promise<User> => {
@@ -200,6 +211,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         user,
         baseUrl,
         afterSignInUrl,
+        isInitialized: isInitializedSync,
       }}
     >
       <I18nProvider preferences={preferences?.i18n}>

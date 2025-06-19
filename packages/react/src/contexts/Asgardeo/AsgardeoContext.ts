@@ -16,13 +16,16 @@
  * under the License.
  */
 
-import {Context, createContext} from 'react';
 import {User} from '@asgardeo/browser';
+import {Context, createContext} from 'react';
 
 /**
  * Props interface of {@link AsgardeoContext}
  */
 export type AsgardeoContextProps = {
+  afterSignInUrl: string;
+  baseUrl: string;
+  isInitialized: boolean;
   /**
    * Flag indicating whether the SDK is working in the background.
    */
@@ -50,8 +53,6 @@ export type AsgardeoContextProps = {
    */
   signUp: any;
   user: any;
-  baseUrl: string;
-  afterSignInUrl: string;
 };
 
 /**
@@ -66,6 +67,7 @@ const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null
   user: null,
   baseUrl: '',
   afterSignInUrl: '',
+  isInitialized: false,
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';

@@ -67,7 +67,9 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
 
   override async getUser(): Promise<User> {
     try {
-      const baseUrl = await (await this.asgardeo.getConfigData()).baseUrl;
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
       const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
       const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
 
@@ -79,7 +81,8 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
 
   async getUserProfile(): Promise<UserProfile> {
     try {
-      const {baseUrl} = await this.asgardeo.getConfigData();
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
 
       const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
       const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
@@ -102,6 +105,10 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
 
   override isLoading(): boolean {
     return this.asgardeo.isLoading();
+  }
+
+  async isInitialized(): Promise<boolean> {
+    return this.asgardeo.isInitialized();
   }
 
   override isSignedIn(): Promise<boolean> {
@@ -143,7 +150,8 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     const firstArg = args[0];
 
     if (typeof firstArg === 'object' && 'flowType' in firstArg) {
-      const baseUrl: string = (await this.asgardeo.getConfigData())?.baseUrl;
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl: string = configData?.baseUrl;
 
       return executeEmbeddedSignUpFlow({
         baseUrl,

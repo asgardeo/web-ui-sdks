@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2025, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -79,7 +79,7 @@ class AuthAPI {
    * @param {Config} config - `dispatch` function from React Auth Context.
    */
   public async init(config: AuthClientConfig<Config>): Promise<boolean> {
-    return await this._client.initialize(config);
+    return this._client.initialize(config);
   }
 
   /**
@@ -88,7 +88,17 @@ class AuthAPI {
    * @returns {Promise<AuthClientConfig<Config>>} - A promise that resolves with the configuration data.
    */
   public async getConfigData(): Promise<AuthClientConfig<Config>> {
-    return await this._client.getConfigData();
+    return this._client.getConfigData();
+  }
+
+  /**
+   * Method to get the configuration data.
+   *
+   * @returns {Promise<AuthClientConfig<Config>>} - A promise that resolves with the configuration data.
+   */
+  public async isInitialized(): Promise<boolean> {
+    // Wait for initialization to complete
+    return this._client.isInitialized();
   }
 
   /**
@@ -139,9 +149,7 @@ class AuthAPI {
 
         return response;
       })
-      .catch(error => {
-        return Promise.reject(error);
-      });
+      .catch(error => Promise.reject(error));
   }
 
   /**
@@ -161,9 +169,7 @@ class AuthAPI {
 
         return response;
       })
-      .catch(error => {
-        return Promise.reject(error);
-      });
+      .catch(error => Promise.reject(error));
   }
 
   /**
@@ -247,9 +253,7 @@ class AuthAPI {
 
         return response;
       })
-      .catch(error => {
-        return Promise.reject(error);
-      });
+      .catch(error => Promise.reject(error));
   }
 
   /**
@@ -265,9 +269,7 @@ class AuthAPI {
         dispatch(AuthAPI.DEFAULT_STATE);
         return true;
       })
-      .catch(error => {
-        return Promise.reject(error);
-      });
+      .catch(error => Promise.reject(error));
   }
 
   /**
@@ -461,9 +463,7 @@ class AuthAPI {
 
         return response;
       })
-      .catch(error => {
-        return Promise.reject(error);
-      });
+      .catch(error => Promise.reject(error));
   }
 }
 

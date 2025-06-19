@@ -26,9 +26,26 @@ import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
  */
 export interface SignUpProps {
   /**
+   * URL to redirect after successful sign-up.
+   */
+  afterSignUpUrl?: string;
+
+  /**
    * Additional CSS class names for customization.
    */
   className?: string;
+
+  /**
+   * Callback function called when sign-up fails.
+   * @param error - The error that occurred during sign-up.
+   */
+  onError?: (error: Error) => void;
+
+  /**
+   * Callback function called when sign-up is successful.
+   * @param response - The sign-up response data returned upon successful completion.
+   */
+  onSuccess?: (response: EmbeddedFlowExecuteResponse) => void;
 
   /**
    * Size variant for the component.
@@ -39,23 +56,6 @@ export interface SignUpProps {
    * Theme variant for the component.
    */
   variant?: 'default' | 'outlined' | 'filled';
-
-  /**
-   * URL to redirect after successful sign-up.
-   */
-  afterSignUpUrl?: string;
-
-  /**
-   * Callback function called when sign-up is successful.
-   * @param response - The sign-up response data returned upon successful completion.
-   */
-  onSuccess?: (response: EmbeddedFlowExecuteResponse) => void;
-
-  /**
-   * Callback function called when sign-up fails.
-   * @param error - The error that occurred during sign-up.
-   */
-  onError?: (error: Error) => void;
 }
 
 /**
@@ -92,27 +92,23 @@ const SignUp: FC<SignUpProps> = ({
   onSuccess,
   onError,
 }) => {
-  const {signUp} = useAsgardeo();
+  const {signUp, isInitialized} = useAsgardeo();
 
   /**
    * Initialize the sign-up flow.
    */
-  const handleInitialize = async (
-    payload?: EmbeddedFlowExecuteRequestPayload,
-  ): Promise<EmbeddedFlowExecuteResponse> => {
-    return await signUp(
+  const handleInitialize = async (payload?: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse> =>
+    await signUp(
       payload || {
         flowType: EmbeddedFlowType.Registration,
       },
     );
-  };
 
   /**
    * Handle sign-up steps.
    */
-  const handleOnSubmit = async (payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse> => {
-    return await signUp(payload);
-  };
+  const handleOnSubmit = async (payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse> =>
+    await signUp(payload);
 
   /**
    * Handle successful sign-up and redirect.
@@ -137,6 +133,7 @@ const SignUp: FC<SignUpProps> = ({
       className={className}
       size={size}
       variant={variant}
+      isInitialized={isInitialized}
     />
   );
 };

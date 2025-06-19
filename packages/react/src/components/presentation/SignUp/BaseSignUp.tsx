@@ -24,24 +24,68 @@ import {
   withVendorCSSClassPrefix,
   AsgardeoAPIError,
 } from '@asgardeo/browser';
-import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef} from 'react';
 import {clsx} from 'clsx';
-import Card from '../../primitives/Card/Card';
-import Alert from '../../primitives/Alert/Alert';
-import Divider from '../../primitives/Divider/Divider';
-import Typography from '../../primitives/Typography/Typography';
-import Spinner from '../../primitives/Spinner/Spinner';
-import useTranslation from '../../../hooks/useTranslation';
-import {useForm, FormField} from '../../../hooks/useForm';
+import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef} from 'react';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
 import useFlow from '../../../contexts/Flow/useFlow';
+import {useForm, FormField} from '../../../hooks/useForm';
+import useTranslation from '../../../hooks/useTranslation';
 import {createField} from '../../factories/FieldFactory';
+import Alert from '../../primitives/Alert/Alert';
 import Button from '../../primitives/Button/Button';
+import Card from '../../primitives/Card/Card';
+import Divider from '../../primitives/Divider/Divider';
+import Spinner from '../../primitives/Spinner/Spinner';
+import Typography from '../../primitives/Typography/Typography';
 
 /**
  * Props for the BaseSignUp component.
  */
 export interface BaseSignUpProps {
+  /**
+   * URL to redirect after successful sign-up.
+   */
+  afterSignUpUrl?: string;
+
+  /**
+   * Custom CSS class name for the submit button.
+   */
+  buttonClassName?: string;
+
+  /**
+   * Custom CSS class name for the form container.
+   */
+  className?: string;
+
+  /**
+   * Custom CSS class name for error messages.
+   */
+  errorClassName?: string;
+
+  /**
+   * Custom CSS class name for form inputs.
+   */
+  inputClassName?: string;
+
+  isInitialized?: boolean;
+
+  /**
+   * Custom CSS class name for info messages.
+   */
+  messageClassName?: string;
+
+  /**
+   * Callback function called when sign-up fails.
+   * @param error - The error that occurred during sign-up.
+   */
+  onError?: (error: Error) => void;
+
+  /**
+   * Callback function called when sign-up flow status changes.
+   * @param response - The current sign-up response.
+   */
+  onFlowChange?: (response: EmbeddedFlowExecuteResponse) => void;
+
   /**
    * Function to initialize sign-up flow.
    * @returns Promise resolving to the initial sign-up response.
@@ -62,56 +106,13 @@ export interface BaseSignUpProps {
   onSuccess?: (response: EmbeddedFlowExecuteResponse) => void;
 
   /**
-   * Callback function called when sign-up fails.
-   * @param error - The error that occurred during sign-up.
-   */
-  onError?: (error: Error) => void;
-
-  /**
-   * Callback function called when sign-up flow status changes.
-   * @param response - The current sign-up response.
-   */
-  onFlowChange?: (response: EmbeddedFlowExecuteResponse) => void;
-
-  /**
-   * Custom CSS class name for the form container.
-   */
-  className?: string;
-
-  /**
-   * Custom CSS class name for form inputs.
-   */
-  inputClassName?: string;
-
-  /**
-   * Custom CSS class name for the submit button.
-   */
-  buttonClassName?: string;
-
-  /**
-   * Custom CSS class name for error messages.
-   */
-  errorClassName?: string;
-
-  /**
-   * Custom CSS class name for info messages.
-   */
-  messageClassName?: string;
-
-  /**
    * Size variant for the component.
    */
   size?: 'small' | 'medium' | 'large';
-
   /**
    * Theme variant for the component.
    */
   variant?: 'default' | 'outlined' | 'filled';
-
-  /**
-   * URL to redirect after successful sign-up.
-   */
-  afterSignUpUrl?: string;
 }
 
 /**
@@ -146,13 +147,11 @@ export interface BaseSignUpProps {
  * };
  * ```
  */
-const BaseSignUp: FC<BaseSignUpProps> = props => {
-  return (
-    <FlowProvider>
-      <BaseSignUpContent {...props} />
-    </FlowProvider>
-  );
-};
+const BaseSignUp: FC<BaseSignUpProps> = props => (
+  <FlowProvider>
+    <BaseSignUpContent {...props} />
+  </FlowProvider>
+);
 
 /**
  * Internal component that consumes FlowContext and renders the sign-up UI.
@@ -171,12 +170,13 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   messageClassName = '',
   size = 'medium',
   variant = 'default',
+  isInitialized,
 }) => {
   const {t} = useTranslation();
   const {subtitle: flowSubtitle, title: flowTitle, messages: flowMessages} = useFlow();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isFlowInitialized, setIsFlowInitialized] = useState(false);
   const [currentFlow, setCurrentFlow] = useState<EmbeddedFlowExecuteResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<Record<string, any>>({});
@@ -342,8 +342,8 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
    * Render form components based on flow data
    */
   const renderComponents = useCallback(
-    (components: any[]): ReactElement[] => {
-      return components
+    (components: any[]): ReactElement[] =>
+      components
         .map((component, index) => {
           const config = component.config || {};
 
@@ -395,8 +395,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
               return null;
           }
         })
-        .filter(Boolean) as ReactElement[];
-    },
+        .filter(Boolean) as ReactElement[],
     [formValues, touchedFields, formErrors, isFormValid, isLoading, size],
   );
 
@@ -436,7 +435,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
 
   // Initialize the flow on component mount
   useEffect(() => {
-    if (!isInitialized && !initializationAttemptedRef.current) {
+    if (isInitialized && !isFlowInitialized && !initializationAttemptedRef.current) {
       initializationAttemptedRef.current = true;
 
       // Inline initialization to avoid dependency issues
@@ -448,10 +447,8 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
           const response = await onInitialize();
 
           setCurrentFlow(response);
-          setIsInitialized(true);
+          setIsFlowInitialized(true);
           onFlowChange?.(response);
-
-          debugger;
 
           if (response.flowStatus === EmbeddedFlowStatus.Complete) {
             onSuccess?.(response);
@@ -476,9 +473,19 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
 
       performInitialization();
     }
-  }, [isInitialized, onInitialize, onSuccess, onError, onFlowChange, setupFormFields, afterSignUpUrl, t]);
+  }, [
+    isInitialized,
+    isFlowInitialized,
+    onInitialize,
+    onSuccess,
+    onError,
+    onFlowChange,
+    setupFormFields,
+    afterSignUpUrl,
+    t,
+  ]);
 
-  if (!isInitialized && isLoading) {
+  if (!isFlowInitialized && isLoading) {
     return (
       <Card className={containerClasses}>
         <div style={{display: 'flex', justifyContent: 'center', padding: '2rem'}}>
