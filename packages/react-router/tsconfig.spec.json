@@ -5,5 +5,13 @@
     "module": "commonjs",
     "types": ["vitest", "node"]
   },
-  "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.test.js", "**/*.spec.js", "**/*.d.ts"]
+  "include": [
+    "test-configs",
+    "jest.config.js",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.js",
+    "**/*.spec.js",
+    "**/*.d.ts"
+  ]
 }

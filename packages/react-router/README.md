@@ -47,6 +47,7 @@ import { AsgardeoProvider } from '@asgardeo/react';
 import { ProtectedRoute } from '@asgardeo/react-router';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile';
+import SignIn from './components/SignIn';
 
 function App() {
   return (
@@ -57,13 +58,22 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<div>Public Home Page</div>} />
-          <ProtectedRoute 
+          <Route path="/signin" element={<SignIn />} />
+          <Route 
             path="/dashboard" 
-            element={<Dashboard />} 
+            element={
+              <ProtectedRoute redirectTo="/signin">
+                <Dashboard />
+              </ProtectedRoute>
+            } 
           />
-          <ProtectedRoute 
+          <Route 
             path="/profile" 
-            element={<Profile />} 
+            element={
+              <ProtectedRoute redirectTo="/signin">
+                <Profile />
+              </ProtectedRoute>
+            } 
           />
         </Routes>
       </BrowserRouter>
@@ -80,29 +90,41 @@ export default App;
 import { ProtectedRoute } from '@asgardeo/react-router';
 
 // Redirect to custom login page
-<ProtectedRoute 
+<Route 
   path="/dashboard" 
-  element={<Dashboard />}
-  redirectTo="/login"
+  element={
+    <ProtectedRoute redirectTo="/login">
+      <Dashboard />
+    </ProtectedRoute>
+  }
 />
 
 // Custom fallback component
-<ProtectedRoute 
+<Route 
   path="/dashboard" 
-  element={<Dashboard />}
-  fallback={
-    <div className="auth-required">
-      <h2>Please sign in</h2>
-      <p>You need to be signed in to access this page.</p>
-    </div>
+  element={
+    <ProtectedRoute fallback={
+      <div className="auth-required">
+        <h2>Please sign in</h2>
+        <p>You need to be signed in to access this page.</p>
+      </div>
+    }>
+      <Dashboard />
+    </ProtectedRoute>
   }
 />
 
 // Custom loading state
-<ProtectedRoute 
+<Route 
   path="/dashboard" 
-  element={<Dashboard />}
-  loadingElement={<div className="spinner">Loading...</div>}
+  element={
+    <ProtectedRoute 
+      redirectTo="/signin"
+      loadingElement={<div className="spinner">Loading...</div>}
+    >
+      <Dashboard />
+    </ProtectedRoute>
+  }
 />
 ```
 
@@ -112,11 +134,11 @@ import { ProtectedRoute } from '@asgardeo/react-router';
 
 #### ProtectedRoute
 
-A wrapper around React Router's `Route` component that protects routes based on authentication status.
+A component that protects routes based on authentication status. Should be used as the element prop of a Route component.
 
 ```tsx
-interface ProtectedRouteProps extends Omit<RouteProps, 'element'> {
-  element: React.ReactElement;
+interface ProtectedRouteProps {
+  children: React.ReactElement;
   fallback?: React.ReactElement;
   redirectTo?: string;
   showLoading?: boolean;
@@ -126,11 +148,13 @@ interface ProtectedRouteProps extends Omit<RouteProps, 'element'> {
 
 **Props:**
 
-- `element` - The component to render when authenticated
-- `fallback` - Custom component to render when not authenticated
-- `redirectTo` - URL to redirect to when not authenticated
+- `children` - The component to render when authenticated
+- `fallback` - Custom component to render when not authenticated (takes precedence over redirectTo)
+- `redirectTo` - URL to redirect to when not authenticated (required unless fallback is provided)
 - `showLoading` - Whether to show loading state (default: `true`)
 - `loadingElement` - Custom loading component
+
+**Note:** Either `fallback` or `redirectTo` must be provided to handle unauthenticated users.
 
 #### withAuthentication
 
@@ -291,20 +315,33 @@ function App() {
         {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/signin" element={<SignIn />} />
         
         {/* Protected routes with layout */}
         <Route path="/app" element={<AppLayout />}>
-          <ProtectedRoute 
+          <Route 
             path="dashboard" 
-            element={<Dashboard />} 
+            element={
+              <ProtectedRoute redirectTo="/signin">
+                <Dashboard />
+              </ProtectedRoute>
+            } 
           />
-          <ProtectedRoute 
+          <Route 
             path="profile" 
-            element={<Profile />} 
+            element={
+              <ProtectedRoute redirectTo="/signin">
+                <Profile />
+              </ProtectedRoute>
+            } 
           />
-          <ProtectedRoute 
+          <Route 
             path="settings" 
-            element={<Settings />} 
+            element={
+              <ProtectedRoute redirectTo="/signin">
+                <Settings />
+              </ProtectedRoute>
+            } 
           />
         </Route>
       </Routes>

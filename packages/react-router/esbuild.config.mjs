@@ -18,6 +18,7 @@
 
 import {readFileSync} from 'fs';
 import {build} from 'esbuild';
+import {preserveDirectivesPlugin} from 'esbuild-plugin-preserve-directives';
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 
@@ -27,6 +28,13 @@ const commonOptions = {
   external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
   metafile: true,
   platform: 'browser',
+  plugins: [
+    preserveDirectivesPlugin({
+      directives: ['use client', 'use strict'],
+      include: /\.(js|ts|jsx|tsx)$/,
+      exclude: /node_modules/,
+    }),
+  ],
   target: ['es2020'],
 };
 

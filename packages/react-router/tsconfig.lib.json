@@ -4,7 +4,9 @@
     "declaration": true,
     "outDir": "dist",
     "declarationDir": "dist",
-    "types": ["node"]
+    "types": ["node"],
+    "skipLibCheck": true,
+    "declarationMap": true
   },
   "exclude": [
     "**/*.spec.ts",
@@ -14,7 +16,9 @@
     "**/*.spec.js",
     "**/*.test.js",
     "**/*.spec.jsx",
-    "**/*.test.jsx"
+    "**/*.test.jsx",
+    "node_modules",
+    "dist"
   ],
-  "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.jsx", "src/**/*.tsx", "types/**/*.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

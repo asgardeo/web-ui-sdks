@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import {Navigate, Route, RouteProps} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {useAsgardeo} from '@asgardeo/react';
 
 /**
@@ -27,15 +27,15 @@ export interface ProtectedRouteProps {
   /**
    * The element to render when the user is authenticated.
    */
-  element: React.ReactElement;
+  children: React.ReactElement;
   /**
    * Custom fallback element to render when the user is not authenticated.
-   * If not provided, will redirect to the sign-in URL or a default fallback.
+   * If provided, this takes precedence over redirectTo.
    */
   fallback?: React.ReactElement;
   /**
    * URL to redirect to when the user is not authenticated.
-   * If not provided and no fallback is specified, will use a default sign-in flow.
+   * Required unless a fallback element is provided.
    */
   redirectTo?: string;
   /**
@@ -47,137 +47,81 @@ export interface ProtectedRouteProps {
    * Custom loading element to render while authentication status is being determined.
    */
   loadingElement?: React.ReactElement;
-  /**
-   * The path prop for the route.
-   */
-  path?: string;
-  /**
-   * Additional route props that are safe to pass through.
-   */
-  caseSensitive?: boolean;
-  children?: React.ReactNode;
-  id?: string;
 }
 
 /**
- * A wrapper around React Router's Route component that protects routes based on authentication status.
+ * A protected route component that requires authentication to access.
  *
- * This component integrates with the Asgardeo React SDK to automatically redirect
- * unauthenticated users and render protected content only for authenticated users.
+ * This component should be used as the element prop of a Route component.
+ * It checks authentication status and either renders the protected content,
+ * shows a loading state, redirects, or shows a fallback.
  *
- * @example
+ * Either a `redirectTo` prop or a `fallback` prop must be provided to handle
+ * unauthenticated users.
+ *
+ * @example Basic usage with redirect
  * ```tsx
- * import { ProtectedRoute } from '@asgardeo/react-router';
- * import { BrowserRouter, Routes } from 'react-router-dom';
- * import Dashboard from './Dashboard';
- *
- * function App() {
- *   return (
- *     <BrowserRouter>
- *       <Routes>
- *         <ProtectedRoute
- *           path="/dashboard"
- *           element={<Dashboard />}
- *         />
- *       </Routes>
- *     </BrowserRouter>
- *   );
- * }
+ * <Route
+ *   path="/dashboard"
+ *   element={
+ *     <ProtectedRoute redirectTo="/signin">
+ *       <Dashboard />
+ *     </ProtectedRoute>
+ *   }
+ * />
  * ```
  *
  * @example With custom fallback
  * ```tsx
- * <ProtectedRoute
- *   path="/dashboard"
- *   element={<Dashboard />}
- *   fallback={<div>Please sign in to access this page</div>}
- * />
- * ```
- *
- * @example With redirect
- * ```tsx
- * <ProtectedRoute
- *   path="/dashboard"
- *   element={<Dashboard />}
- *   redirectTo="/login"
+ * <Route
+ *   path="/admin"
+ *   element={
+ *     <ProtectedRoute fallback={<div>Access denied</div>}>
+ *       <AdminPanel />
+ *     </ProtectedRoute>
+ *   }
  * />
  * ```
  */
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  element,
+  children,
   fallback,
   redirectTo,
   showLoading = true,
   loadingElement,
-  path,
-  caseSensitive,
-  children,
-  id,
 }) => {
-  // Create a wrapper component to use the hook within React Router context
-  const ProtectedElement: React.FC = () => {
-    const {isSignedIn, isLoading, signIn} = useAsgardeo();
+  const {isSignedIn, isLoading, signIn} = useAsgardeo();
 
-    // Show loading state while authentication status is being determined
-    if (isLoading && showLoading) {
-      if (loadingElement) {
-        return loadingElement;
-      }
-      return (
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
-          <div>Loading...</div>
-        </div>
-      );
+  // Show loading state while authentication status is being determined
+  if (isLoading && showLoading) {
+    if (loadingElement) {
+      return loadingElement;
     }
-
-    // If user is authenticated, render the protected element
-    if (isSignedIn) {
-      return element;
-    }
-
-    // If user is not authenticated, handle fallback/redirect
-    if (fallback) {
-      return fallback;
-    }
-
-    if (redirectTo) {
-      return <Navigate to={redirectTo} replace />;
-    }
-
-    // Default behavior: trigger sign-in flow
     return (
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
-        <div>
-          <h2>Authentication Required</h2>
-          <p>You need to sign in to access this page.</p>
-          <button
-            onClick={() => signIn()}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            }}
-          >
-            Sign In
-          </button>
-        </div>
+        <div>Loading...</div>
       </div>
     );
-  };
+  }
 
-  // Pass only the safe props to Route
-  const routeProps: RouteProps = {
-    path,
-    element: <ProtectedElement />,
-    ...(caseSensitive !== undefined && {caseSensitive}),
-    ...(children && {children}),
-    ...(id && {id}),
-  };
+  // If user is authenticated, render the protected content
+  if (isSignedIn) {
+    return children;
+  }
 
-  return <Route {...routeProps} />;
+  // If user is not authenticated, handle fallback/redirect
+  if (fallback) {
+    return fallback;
+  }
+
+  if (redirectTo) {
+    return <Navigate to={redirectTo} replace />;
+  }
+
+  // If neither fallback nor redirectTo is provided, throw an error
+  throw new Error(
+    'ProtectedRoute: Either "fallback" or "redirectTo" prop must be provided to handle unauthenticated users.',
+  );
 };
 
 export default ProtectedRoute;
