@@ -65,8 +65,10 @@ export interface BaseUserProfileProps {
   flattenedProfile?: User;
   mode?: 'inline' | 'popup';
   onChange?: (field: string, value: any) => void;
+  onOpenChange?: (open: boolean) => void;
   onSubmit?: (data: any) => void;
   onUpdate?: (payload: any) => Promise<void>;
+  open?: boolean;
   profile?: User;
   saveButtonText?: string;
   schemas?: Schema[];
@@ -85,13 +87,14 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   attributeMapping = {},
   editable = true,
   onChange,
+  onOpenChange,
   onSubmit,
   onUpdate,
+  open = false,
   saveButtonText = 'Save Changes',
   cancelButtonText = 'Cancel',
 }): ReactElement => {
   const {theme} = useTheme();
-  const [isOpen, setIsOpen] = useState(mode === 'popup');
   const [editedUser, setEditedUser] = useState(flattenedProfile || profile);
   const [editingFields, setEditingFields] = useState<Record<string, boolean>>({});
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -501,7 +504,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
   if (mode === 'popup') {
     return (
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeading>{title}</DialogHeading>
           <div style={{padding: '1rem'}}>{profileContent}</div>

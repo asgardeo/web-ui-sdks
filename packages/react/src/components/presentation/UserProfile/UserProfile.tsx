@@ -17,17 +17,17 @@
  */
 
 import {FC, ReactElement} from 'react';
+import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
+import getMeProfile from '../../../api/scim2/getMeProfile';
+import updateMeProfile from '../../../api/scim2/updateMeProfile';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useUser from '../../../contexts/User/useUser';
-import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
-import updateMeProfile from '../../../api/scim2/updateMeProfile';
-import getMeProfile from '../../..//api/scim2/getMeProfile';
 
 /**
  * Props for the UserProfile component.
  * Extends BaseUserProfileProps but makes the user prop optional since it will be obtained from useAsgardeo
  */
-export type UserProfileProps = Omit<BaseUserProfileProps, 'user'>;
+export type UserProfileProps = Omit<BaseUserProfileProps, 'user' | 'profile' | 'flattenedProfile' | 'schemas'>;
 
 /**
  * UserProfile component displays the authenticated user's profile information in a

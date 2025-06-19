@@ -19,7 +19,6 @@
 import {FC, ReactElement, ReactNode, useState} from 'react';
 import BaseUserDropdown, {BaseUserDropdownProps} from './BaseUserDropdown';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
-import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 import UserProfile from '../UserProfile/UserProfile';
 
 /**
@@ -146,14 +145,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
     return (
       <>
         {children(renderProps)}
-        {isProfileOpen && (
-          <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-            <DialogContent>
-              <DialogHeading>User Profile</DialogHeading>
-              <UserProfile />
-            </DialogContent>
-          </Dialog>
-        )}
+        <UserProfile mode="popup" open={isProfileOpen} onOpenChange={setIsProfileOpen} />
       </>
     );
   }
@@ -176,14 +168,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
           />
         )}
         {/* Note: renderDropdown would need BaseUserDropdown modifications to implement properly */}
-        {isProfileOpen && (
-          <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-            <DialogContent>
-              <DialogHeading>User Profile</DialogHeading>
-              <UserProfile />
-            </DialogContent>
-          </Dialog>
-        )}
+        <UserProfile mode="popup" open={isProfileOpen} onOpenChange={setIsProfileOpen} />
       </>
     );
   }
@@ -198,7 +183,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
         onSignOut={handleSignOut}
         {...rest}
       />
-      {isProfileOpen && <UserProfile mode="popup" />}
+      {isProfileOpen && <UserProfile mode="popup" open={isProfileOpen} onOpenChange={setIsProfileOpen} />}
     </>
   );
 };
