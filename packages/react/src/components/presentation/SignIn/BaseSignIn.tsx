@@ -1162,7 +1162,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     return (
       <Card className={containerClasses}>
         <Card.Header>
-          <Card.Title level={2}>{flowTitle || t('signin.title')}</Card.Title>
+          <Card.Title level={3}>{flowTitle || t('signin.title')}</Card.Title>
           {flowSubtitle && (
             <Typography variant="body1" style={{marginTop: '0.5rem'}}>
               {flowSubtitle || t('signin.subtitle')}

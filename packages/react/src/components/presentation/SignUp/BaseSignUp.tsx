@@ -475,12 +475,6 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   return (
     <Card className={containerClasses}>
       <Card.Header>
-        <Card.Title level={2}>{flowTitle || t('signup.title')}</Card.Title>
-        {flowSubtitle && (
-          <Typography variant="body1" style={{marginTop: '0.5rem'}}>
-            {flowSubtitle || t('signup.subtitle')}
-          </Typography>
-        )}
         {flowMessages && flowMessages.length > 0 && (
           <div style={{marginTop: '1rem'}}>
             {flowMessages.map((message: any, index: number) => (

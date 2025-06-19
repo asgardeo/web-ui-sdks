@@ -44,7 +44,7 @@ const FormContainer: FC<BaseSignUpOptionProps> = props => {
       <form
         key={component.id}
         onSubmit={handleFormSubmit}
-        style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}
+        style={{display: 'flex', flexDirection: 'column'}}
       >
         {component.components.map((childComponent, index) =>
           createSignUpComponent({
