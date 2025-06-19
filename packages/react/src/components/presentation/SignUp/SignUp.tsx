@@ -41,17 +41,22 @@ export interface SignUpProps {
   className?: string;
 
   /**
+   * Callback function called when the sign-up flow completes and requires redirection.
+   * This allows platform-specific handling of redirects (e.g., Next.js router.push).
+   * @param response - The response from the sign-up flow containing the redirect URL, etc.
+   */
+  onComplete?: (response: EmbeddedFlowExecuteResponse) => void;
+
+  /**
    * Callback function called when sign-up fails.
    * @param error - The error that occurred during sign-up.
    */
   onError?: (error: Error) => void;
 
   /**
-   * Callback function called when the sign-up flow completes and requires redirection.
-   * This allows platform-specific handling of redirects (e.g., Next.js router.push).
-   * @param response - The response from the sign-up flow containing the redirect URL, etc.
+   *  Whether to redirect after sign-up.
    */
-  onComplete?: (response: EmbeddedFlowExecuteResponse) => void;
+  shouldRedirectAfterSignUp?: boolean;
 
   /**
    * Size variant for the component.
@@ -101,6 +106,7 @@ const SignUp: FC<SignUpProps> = ({
   afterSignUpUrl,
   onError,
   onComplete,
+  shouldRedirectAfterSignUp = true,
 }) => {
   const {signUp, isInitialized} = useAsgardeo();
 
@@ -126,7 +132,11 @@ const SignUp: FC<SignUpProps> = ({
   const handleComplete = (response: EmbeddedFlowExecuteResponse) => {
     onComplete?.(response);
 
-    if (response?.type === EmbeddedFlowResponseType.Redirection && response?.data?.redirectURL) {
+    if (
+      shouldRedirectAfterSignUp &&
+      response?.type === EmbeddedFlowResponseType.Redirection &&
+      response?.data?.redirectURL
+    ) {
       window.location.href = response.data.redirectURL;
     }
   };
