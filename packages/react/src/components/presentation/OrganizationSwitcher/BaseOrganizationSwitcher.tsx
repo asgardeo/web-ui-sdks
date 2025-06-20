@@ -53,7 +53,7 @@ const useStyles = () => {
         border: `1px solid ${theme.colors.border}`,
         background: theme.colors.background.surface,
         cursor: 'pointer',
-        borderRadius: theme.borderRadius.small,
+        borderRadius: theme.borderRadius.medium,
         minWidth: '160px',
         '&:hover': {
           backgroundColor: theme.colors.background,
@@ -98,7 +98,7 @@ const useStyles = () => {
         cursor: 'pointer',
         fontSize: '0.875rem',
         textAlign: 'left',
-        borderRadius: theme.borderRadius.small,
+        borderRadius: theme.borderRadius.medium,
         transition: 'background-color 0.15s ease-in-out',
       } as CSSProperties,
       organizationInfo: {
@@ -267,13 +267,13 @@ export interface BaseOrganizationSwitcherProps {
    */
   showMemberCount?: boolean;
   /**
-   * Show organization name next to avatar in the trigger button
-   */
-  showTriggerLabel?: boolean;
-  /**
    * Whether to show the role badge.
    */
   showRole?: boolean;
+  /**
+   * Show organization name next to avatar in the trigger button
+   */
+  showTriggerLabel?: boolean;
   /**
    * Custom styles for the component.
    */

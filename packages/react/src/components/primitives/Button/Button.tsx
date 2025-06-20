@@ -241,7 +241,7 @@ const useButtonStyles = (
       alignItems: 'center',
       justifyContent: 'center',
       gap: `${theme.spacing.unit}px`,
-      borderRadius: theme.borderRadius.small,
+      borderRadius: theme.borderRadius.medium,
       fontWeight: 500,
       cursor: disabled || loading ? 'not-allowed' : 'pointer',
       transition: 'all 0.2s ease-in-out',

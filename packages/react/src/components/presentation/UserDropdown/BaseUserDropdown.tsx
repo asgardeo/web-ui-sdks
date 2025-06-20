@@ -53,7 +53,7 @@ const useStyles = () => {
         border: 'none',
         background: 'none',
         cursor: 'pointer',
-        borderRadius: theme.borderRadius.small,
+        borderRadius: theme.borderRadius.medium,
         '&:hover': {
           backgroundColor: theme.colors.background,
         },
@@ -97,7 +97,7 @@ const useStyles = () => {
         cursor: 'pointer',
         fontSize: '0.875rem',
         textAlign: 'left',
-        borderRadius: theme.borderRadius.small,
+        borderRadius: theme.borderRadius.medium,
         transition: 'background-color 0.15s ease-in-out',
       } as CSSProperties,
       menuItemAnchor: {
@@ -114,7 +114,7 @@ const useStyles = () => {
         cursor: 'pointer',
         fontSize: '0.875rem',
         textAlign: 'left',
-        borderRadius: theme.borderRadius.small,
+        borderRadius: theme.borderRadius.medium,
         transition: 'background-color 0.15s ease-in-out',
       } as CSSProperties,
       divider: {

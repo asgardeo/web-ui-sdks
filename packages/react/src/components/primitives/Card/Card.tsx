@@ -1,6 +1,5 @@
 /**
- * Copyright (import {CSSProperties, HTMLAttributes, forwardRef, useMemo, ReactNode, ForwardRefExoticComponent, Ref} from 'react';
-import useTheme from '../../../theme/useTheme'; 2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) {{year}}, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -17,6 +16,8 @@ import useTheme from '../../../theme/useTheme'; 2025, WSO2 LLC. (https://www.wso
  * under the License.
  */
 
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import clsx from 'clsx';
 import {
   CSSProperties,
   HTMLAttributes,
@@ -27,25 +28,23 @@ import {
   RefAttributes,
 } from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
 import Typography from '../Typography/Typography';
 
 export type CardVariant = 'default' | 'outlined' | 'elevated';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   /**
-   * The visual variant of the card
+   * Card content
    */
-  variant?: CardVariant;
+  children?: ReactNode;
   /**
    * Whether the card should be clickable (shows hover effects)
    */
   clickable?: boolean;
   /**
-   * Card content
+   * The visual variant of the card
    */
-  children?: ReactNode;
+  variant?: CardVariant;
 }
 
 export interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> {
@@ -445,12 +444,12 @@ CardFooter.displayName = 'Card.Footer';
 
 // TypeScript interface augmentation for dot notation
 export interface CardComponent extends ForwardRefExoticComponent<CardProps & RefAttributes<HTMLDivElement>> {
-  Header: typeof CardHeader;
-  Title: typeof CardTitle;
-  Description: typeof CardDescription;
   Action: typeof CardAction;
   Content: typeof CardContent;
+  Description: typeof CardDescription;
   Footer: typeof CardFooter;
+  Header: typeof CardHeader;
+  Title: typeof CardTitle;
 }
 
 export default Card as CardComponent;

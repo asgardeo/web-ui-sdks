@@ -247,7 +247,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     () => ({
       padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
       margin: `${theme.spacing.unit}px`,
-      borderRadius: theme.borderRadius.small,
+      borderRadius: theme.borderRadius.medium,
       border: 'none',
       cursor: 'pointer',
       fontSize: '0.875rem',
@@ -698,7 +698,7 @@ const useStyles = () => {
         lineHeight: '32px',
         '& table': {
           backgroundColor: theme.colors.background,
-          borderRadius: theme.borderRadius.small,
+          borderRadius: theme.borderRadius.medium,
           whiteSpace: 'normal',
         },
         '& td': {

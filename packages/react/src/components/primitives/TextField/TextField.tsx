@@ -93,7 +93,7 @@ const TextField: FC<TextFieldProps> = ({
     width: '100%',
     padding: `${theme.spacing.unit}px ${rightPadding}px ${theme.spacing.unit}px ${leftPadding}px`,
     border: `1px solid ${error ? theme.colors.error.main : theme.colors.border}`,
-    borderRadius: theme.borderRadius.small,
+    borderRadius: theme.borderRadius.medium,
     fontSize: '1rem',
     color: theme.colors.text.primary,
     backgroundColor: disabled ? theme.colors.background.disabled : theme.colors.background.surface,

@@ -147,7 +147,7 @@ const OtpField: FC<OtpInputProps> = ({
     fontSize: '1.25rem',
     fontWeight: 500,
     border: `2px solid ${error ? theme.colors.error.main : theme.colors.border}`,
-    borderRadius: theme.borderRadius.small,
+    borderRadius: theme.borderRadius.medium,
     color: theme.colors.text.primary,
     backgroundColor: disabled ? theme.colors.background.disabled : theme.colors.background.surface,
     outline: 'none',
