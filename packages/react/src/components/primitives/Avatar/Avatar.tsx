@@ -16,78 +16,108 @@
  * under the License.
  */
 
-import {CSSProperties, FC, useMemo} from 'react';
-import useTheme from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
+import {CSSProperties, FC, JSX, useMemo} from 'react';
+import useTheme from '../../../contexts/Theme/useTheme';
 
 export interface AvatarProps {
-  /**
-   * The URL of the avatar image
-   */
-  imageUrl?: string;
   /**
    * Alternative text for the avatar image
    */
   alt?: string;
   /**
-   * The size of the avatar in pixels
+   * Optional className for the avatar
    */
-  size?: number;
+  className?: string;
+  /**
+   * The URL of the avatar image
+   */
+  imageUrl?: string;
   /**
    * The name to use for generating initials when no image is provided
    */
   name?: string;
   /**
-   * Optional className for the avatar
+   * The size of the avatar in pixels
    */
-  className?: string;
+  size?: number;
+  /**
+   * The variant of the avatar shape
+   * @default 'circular'
+   */
+  variant?: 'circular' | 'square';
 }
 
-const useStyles = ({size}) => {
+const useStyles = ({
+  size,
+  variant,
+}: {
+  size: number;
+  variant: 'circular' | 'square';
+}): {
+  avatar: CSSProperties;
+  image: CSSProperties;
+} => {
   const {theme, colorScheme} = useTheme();
 
   return useMemo(
     () => ({
       avatar: {
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: '50%',
-        overflow: 'hidden',
-        backgroundColor: theme.colors.background.surface,
-        display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        backgroundColor: theme.colors.background.surface,
+        border: `1px solid ${theme.colors.border}`,
+        borderRadius: variant === 'circular' ? '50%' : '8px',
+        color: theme.colors.text.primary,
+        display: 'flex',
         fontSize: `${size * 0.4}px`,
         fontWeight: 500,
-        color: theme.colors.text.primary,
-        border: `1px solid ${theme.colors.border}`,
+        height: `${size}px`,
+        justifyContent: 'center',
+        overflow: 'hidden',
+        width: `${size}px`,
       } as CSSProperties,
       image: {
-        width: '100%',
         height: '100%',
         objectFit: 'cover',
+        width: '100%',
       } as CSSProperties,
     }),
-    [size, theme, colorScheme],
+    [size, theme, colorScheme, variant],
   );
 };
 
-export const Avatar: FC<AvatarProps> = ({imageUrl, alt = 'User avatar', size = 64, name, className = ''}) => {
-  const styles = useStyles({size});
+export const Avatar: FC<AvatarProps> = ({
+  alt = 'User avatar',
+  className = '',
+  imageUrl,
+  name,
+  size = 64,
+  variant = 'circular',
+}): JSX.Element => {
+  const styles: {avatar: CSSProperties; image: CSSProperties} = useStyles({size, variant});
 
-  const getInitials = (name: string): string => {
-    return name
+  const getInitials = (fullName: string): string =>
+    fullName
       .split(' ')
-      .map(part => part[0])
+      .map((part: string) => part[0])
       .slice(0, 2)
       .join('')
       .toUpperCase();
+
+  const renderContent = (): JSX.Element | string => {
+    if (imageUrl) {
+      return <img src={imageUrl} alt={alt} style={styles.image} />;
+    }
+    if (name) {
+      return getInitials(name);
+    }
+    return '?';
   };
 
   return (
     <div style={styles.avatar} className={clsx(withVendorCSSClassPrefix('avatar'), className)}>
-      {imageUrl ? <img src={imageUrl} alt={alt} style={styles.image} /> : name ? getInitials(name) : '?'}
+      {renderContent()}
     </div>
   );
 };
