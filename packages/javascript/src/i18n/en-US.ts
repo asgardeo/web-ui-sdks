@@ -87,6 +87,20 @@ const translations: I18nTranslations = {
   'organization.switcher.loading.organizations': 'Loading organizations...',
   'organization.switcher.members': 'members',
   'organization.switcher.member': 'member',
+  'organization.switcher.create.organization': 'Create Organization',
+
+  'organization.create.title': 'Create Organization',
+  'organization.create.name.label': 'Organization Name',
+  'organization.create.name.placeholder': 'Enter organization name',
+  'organization.create.description.label': 'Description',
+  'organization.create.description.placeholder': 'Enter organization description',
+  'organization.create.type.label': 'Organization Type',
+  'organization.create.type.tenant': 'Tenant',
+  'organization.create.type.structural': 'Structural',
+  'organization.create.upload.logo': 'Upload Logo',
+  'organization.create.button': 'Create Organization',
+  'organization.create.creating': 'Creating...',
+  'organization.create.cancel': 'Cancel',
 
   /* |---------------------------------------------------------------| */
   /* |                        Messages                               | */

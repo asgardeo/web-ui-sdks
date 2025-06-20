@@ -164,6 +164,12 @@ export * from './components/presentation/OrganizationSwitcher/BaseOrganizationSw
 export {default as OrganizationSwitcher} from './components/presentation/OrganizationSwitcher/OrganizationSwitcher';
 export * from './components/presentation/OrganizationSwitcher/OrganizationSwitcher';
 
+export {BaseCreateOrganization} from './components/presentation/CreateOrganization/BaseCreateOrganization';
+export * from './components/presentation/CreateOrganization/BaseCreateOrganization';
+
+export {CreateOrganization} from './components/presentation/CreateOrganization/CreateOrganization';
+export * from './components/presentation/CreateOrganization/CreateOrganization';
+
 export {default as Button} from './components/primitives/Button/Button';
 export * from './components/primitives/Button/Button';
 
@@ -227,3 +233,9 @@ export * from './components/factories/FieldFactory';
 export type {FlowStep, FlowMessage, FlowContextValue} from './contexts/Flow/FlowContext';
 
 export type {FlowProviderProps} from './contexts/Flow/FlowProvider';
+
+// API Functions
+export {default as createOrganization} from './api/scim2/createOrganization';
+export * from './api/scim2/createOrganization';
+
+export {default as getMeOrganizations} from './api/scim2/getMeOrganizations';

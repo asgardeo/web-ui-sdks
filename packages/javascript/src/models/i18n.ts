@@ -85,6 +85,24 @@ export interface I18nTranslations {
   'organization.switcher.loading.organizations': string;
   'organization.switcher.members': string;
   'organization.switcher.member': string;
+  'organization.switcher.create.organization': string;
+
+  /* |---------------------------------------------------------------| */
+  /* |                     Organization Creation                     | */
+  /* |---------------------------------------------------------------| */
+
+  'organization.create.title': string;
+  'organization.create.name.label': string;
+  'organization.create.name.placeholder': string;
+  'organization.create.description.label': string;
+  'organization.create.description.placeholder': string;
+  'organization.create.type.label': string;
+  'organization.create.type.tenant': string;
+  'organization.create.type.structural': string;
+  'organization.create.upload.logo': string;
+  'organization.create.button': string;
+  'organization.create.creating': string;
+  'organization.create.cancel': string;
 
   /* |---------------------------------------------------------------| */
   /* |                        Messages                               | */

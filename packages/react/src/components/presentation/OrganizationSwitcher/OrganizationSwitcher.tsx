@@ -16,10 +16,13 @@
  * under the License.
  */
 
-import {FC, ReactElement} from 'react';
+import {FC, ReactElement, useState} from 'react';
+
 import BaseOrganizationSwitcher, {BaseOrganizationSwitcherProps, Organization} from './BaseOrganizationSwitcher';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useOrganization from '../../../contexts/Organization/useOrganization';
+import useTranslation from '../../../hooks/useTranslation';
+import {CreateOrganization} from '../CreateOrganization/CreateOrganization';
 
 /**
  * Props interface for the OrganizationSwitcher component.
@@ -87,6 +90,8 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
     isLoading,
     error,
   } = useOrganization();
+  const [isCreateOrgOpen, setIsCreateOrgOpen] = useState(false);
+  const {t} = useTranslation();
 
   // Don't render if not authenticated
   if (!isSignedIn && fallback) {
@@ -102,15 +107,45 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
   const currentOrganization: Organization | null = propCurrentOrganization || contextCurrentOrganization;
   const onOrganizationSwitch: (organization: Organization) => void = propOnOrganizationSwitch || switchOrganization;
 
+  // Add "Create Organization" menu item
+  const defaultMenuItems = [
+    {
+      label: t('organization.switcher.create.organization'),
+      onClick: () => setIsCreateOrgOpen(true),
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 5v14m-7-7h14" />
+        </svg>
+      ),
+    },
+  ];
+
+  const menuItems = props.menuItems ? [...defaultMenuItems, ...props.menuItems] : defaultMenuItems;
+
   return (
-    <BaseOrganizationSwitcher
-      organizations={organizations}
-      currentOrganization={currentOrganization}
-      onOrganizationSwitch={onOrganizationSwitch}
-      loading={isLoading}
-      error={error}
-      {...props}
-    />
+    <>
+      <BaseOrganizationSwitcher
+        organizations={organizations}
+        currentOrganization={currentOrganization}
+        onOrganizationSwitch={onOrganizationSwitch}
+        loading={isLoading}
+        error={error}
+        menuItems={menuItems}
+        {...props}
+      />
+      <CreateOrganization
+        mode="popup"
+        open={isCreateOrgOpen}
+        onOpenChange={setIsCreateOrgOpen}
+        onSuccess={(org: Organization) => {
+          // Optionally switch to the newly created organization
+          if (org && onOrganizationSwitch) {
+            onOrganizationSwitch(org);
+          }
+          setIsCreateOrgOpen(false);
+        }}
+      />
+    </>
   );
 };
 
