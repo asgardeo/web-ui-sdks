@@ -17,9 +17,10 @@
  */
 
 import {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './models/client';
-import {User, UserProfile} from './models/user';
 import {Config} from './models/config';
 import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './models/embedded-flow';
+import {Organization} from './models/organization';
+import {User, UserProfile} from './models/user';
 
 /**
  * Base class for implementing Asgardeo clients.
@@ -31,6 +32,8 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
   abstract initialize(config: T): Promise<boolean>;
 
   abstract getUser(): Promise<User>;
+
+  abstract getOrganizations(): Promise<Organization[]>;
 
   abstract getUserProfile(): Promise<UserProfile>;
 

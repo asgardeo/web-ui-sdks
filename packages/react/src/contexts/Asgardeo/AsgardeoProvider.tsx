@@ -32,6 +32,7 @@ import useBrowserUrl from '../../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../../models/config';
 import FlowProvider from '../Flow/FlowProvider';
 import I18nProvider from '../I18n/I18nProvider';
+import OrganizationProvider from '../Organization/OrganizationProvider';
 import ThemeProvider from '../Theme/ThemeProvider';
 import UserProvider from '../User/UserProvider';
 
@@ -224,7 +225,9 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
               profile={userProfile}
               revalidateProfile={async () => setUserProfile(await asgardeo.getUserProfile())}
             >
-              {children}
+              <OrganizationProvider getOrganizations={async () => asgardeo.getOrganizations()}>
+                {children}
+              </OrganizationProvider>
             </UserProvider>
           </FlowProvider>
         </ThemeProvider>

@@ -32,8 +32,10 @@ import {
   executeEmbeddedSignUpFlow,
   EmbeddedSignInFlowHandleRequestPayload,
   executeEmbeddedSignInFlow,
+  Organization,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
+import getMeOrganizations from './api/scim2/getMeOrganizations';
 import getMeProfile from './api/scim2/getMeProfile';
 import getSchemas from './api/scim2/getSchemas';
 import {AsgardeoReactConfig} from './models/config';
@@ -95,6 +97,24 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
         flattenedProfile: await this.asgardeo.getDecodedIdToken(),
         profile: await this.asgardeo.getDecodedIdToken(),
       };
+    }
+  }
+
+  override async getOrganizations(): Promise<Organization[]> {
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
+      const organizations = await getMeOrganizations({baseUrl});
+
+      return organizations;
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        'Failed to fetch organizations.',
+        'react-AsgardeoReactClient-GetOrganizationsError-001',
+        'react',
+        'An error occurred while fetching the organizations associated with the user.',
+      );
     }
   }
 

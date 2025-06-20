@@ -171,7 +171,7 @@ const useStyles = () => {
   );
 };
 
-export interface MenuItem {
+interface MenuItem {
   href?: string;
   icon?: ReactNode;
   label: ReactNode;

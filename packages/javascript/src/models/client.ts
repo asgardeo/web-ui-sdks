@@ -17,6 +17,7 @@
  */
 
 import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './embedded-flow';
+import {Organization} from './organization';
 import {User, UserProfile} from './user';
 
 export type SignInOptions = Record<string, unknown>;
@@ -34,6 +35,13 @@ export type SignUpOptions = Record<string, unknown>;
  * ```
  */
 export interface AsgardeoClient<T> {
+  /**
+   * Gets the users associated organizations.
+   *
+   * @returns Associated organizations.
+   */
+  getOrganizations(): Promise<Organization[]>;
+
   /**
    * Gets user information from the session.
    *
