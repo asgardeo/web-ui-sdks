@@ -28,6 +28,7 @@ import {
   User,
   UserProfile,
   initializeEmbeddedSignInFlow,
+  Organization,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
@@ -70,6 +71,10 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     const resolvedSessionId: string = userId || ((await getSessionId()) as string);
 
     return this.asgardeo.getUser(resolvedSessionId);
+  }
+
+  override async getOrganizations(): Promise<Organization[]> {
+    throw new Error('Method not implemented.');
   }
 
   override getUserProfile(): Promise<UserProfile> {
