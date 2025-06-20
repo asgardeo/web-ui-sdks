@@ -16,23 +16,23 @@
  * under the License.
  */
 
-import StyleConstants from '../constants/StyleConstants';
-
 /**
- * Adds a vendor-specific prefix to a CSS class name.
- *
- * @param className - The original CSS class name to be prefixed
- * @returns A new string with the vendor prefix added to the class name
+ * Constants for vendor-specific configurations.
+ * By default, the vendor is inferred as Asgardeo.
  *
  * @example
  * ```typescript
- * // Usage with clsx
- * clsx(withVendorCSSClassPrefix('sign-in-button'), className)
- * // Result: "wso2-sign-in-button"
+ *  // Using the vendor prefix in a URL
+ * const apiUrl = `${VendorConstants.VENDOR_PREFIX}/api/v1/resource`;
  * ```
  */
-const withVendorCSSClassPrefix = (className: string): string => {
-  return `${StyleConstants.VENDOR_CSS_CLASS_PREFIX}-${className}`;
-};
+const VendorConstants: {
+  VENDOR_PREFIX: string;
+} = {
+  /**
+   * The prefix used for vendor-specific API endpoints, CSS classes, or other identifiers.
+   */
+  VENDOR_PREFIX: 'asgardeo',
+} as const;
 
-export default withVendorCSSClassPrefix;
+export default VendorConstants;

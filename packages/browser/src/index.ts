@@ -43,12 +43,9 @@ export * from './__legacy__/helpers/spa-helper';
 // worker receiver
 export * from './__legacy__/worker/worker-receiver';
 
-export {default as StyleConstants} from './constants/StyleConstants';
-
 export {AsgardeoBrowserConfig} from './models/config';
 
 export {default as hasAuthParamsInUrl} from './utils/hasAuthParamsInUrl';
-export {default as withVendorCSSClassPrefix} from './utils/withVendorCSSClassPrefix';
 
 export {default as AsgardeoBrowserClient} from './AsgardeoBrowserClient';
 

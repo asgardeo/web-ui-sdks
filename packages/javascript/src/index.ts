@@ -29,6 +29,7 @@ export {default as getUserInfo} from './api/getUserInfo';
 export {default as ApplicationNativeAuthenticationConstants} from './constants/ApplicationNativeAuthenticationConstants';
 export {default as TokenConstants} from './constants/TokenConstants';
 export {default as OIDCRequestConstants} from './constants/OIDCRequestConstants';
+export {default as VendorConstants} from './constants/VendorConstants';
 
 export {default as AsgardeoError} from './errors/AsgardeoError';
 export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';
