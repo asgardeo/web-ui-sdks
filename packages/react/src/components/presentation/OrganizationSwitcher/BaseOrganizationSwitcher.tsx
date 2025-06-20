@@ -314,7 +314,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
   const {refs, floatingStyles, context} = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
-    placement: 'bottom-start',
+    placement: 'bottom-end',
     middleware: [offset(5), flip({fallbackAxisSideDirection: 'end'}), shift({padding: 5})],
     whileElementsMounted: autoUpdate,
   });
