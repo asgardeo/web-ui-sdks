@@ -77,6 +77,16 @@ export interface I18nTranslations {
   'username.password.subtitle': string;
 
   /* |---------------------------------------------------------------| */
+  /* |                     Organization Switcher                     | */
+  /* |---------------------------------------------------------------| */
+
+  'organization.switcher.select.organization': string;
+  'organization.switcher.switch.organization': string;
+  'organization.switcher.loading.organizations': string;
+  'organization.switcher.members': string;
+  'organization.switcher.member': string;
+
+  /* |---------------------------------------------------------------| */
   /* |                        Messages                               | */
   /* |---------------------------------------------------------------| */
 

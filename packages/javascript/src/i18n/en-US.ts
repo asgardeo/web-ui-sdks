@@ -16,6 +16,8 @@
  * under the License.
  */
 
+/* eslint-disable sort-keys */
+
 import {I18nTranslations, I18nMetadata, I18nBundle} from '../models/i18n';
 
 const translations: I18nTranslations = {
@@ -75,6 +77,16 @@ const translations: I18nTranslations = {
   'username.password.submit.button': 'Continue',
   'username.password.title': 'Sign In',
   'username.password.subtitle': 'Enter your username and password to continue.',
+
+  /* |---------------------------------------------------------------| */
+  /* |                     Organization Switcher                     | */
+  /* |---------------------------------------------------------------| */
+
+  'organization.switcher.select.organization': 'Select Organization',
+  'organization.switcher.switch.organization': 'Switch Organization',
+  'organization.switcher.loading.organizations': 'Loading organizations...',
+  'organization.switcher.members': 'members',
+  'organization.switcher.member': 'member',
 
   /* |---------------------------------------------------------------| */
   /* |                        Messages                               | */

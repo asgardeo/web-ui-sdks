@@ -33,6 +33,7 @@ import {
 import clsx from 'clsx';
 import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
+import useTranslation from '../../../hooks/useTranslation';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
 import Building from '../../primitives/Icons/Building';
@@ -134,7 +135,7 @@ const useStyles = () => {
         display: 'flex',
         alignItems: 'center',
         gap: `${theme.spacing.unit}px`,
-        padding: `${theme.spacing.unit * 1.5}px`,
+        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
         borderBottom: `1px solid ${theme.colors.border}`,
       } as CSSProperties,
       loadingContainer: {
@@ -308,6 +309,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
   const {theme, colorScheme} = useTheme();
+  const {t} = useTranslation();
 
   const hoverBackgroundColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)';
 
@@ -354,7 +356,12 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
           {organization.name}
         </Typography>
         <div style={styles.organizationMeta}>
-          {showMemberCount && organization.memberCount !== undefined && <span>{organization.memberCount} members</span>}
+          {showMemberCount && organization.memberCount !== undefined && (
+            <span>
+              {organization.memberCount}{' '}
+              {organization.memberCount === 1 ? t('organization.switcher.member') : t('organization.switcher.members')}
+            </span>
+          )}
           {showRole && organization.role && showMemberCount && organization.memberCount !== undefined && (
             <span> • </span>
           )}
@@ -368,7 +375,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
   const defaultRenderLoading = () => (
     <div style={styles.loadingContainer}>
       <Typography variant="caption" style={styles.loadingText}>
-        Loading organizations...
+        {t('organization.switcher.loading.organizations')}
       </Typography>
     </div>
   );
@@ -419,7 +426,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                 className={withVendorCSSClassPrefix('organization-switcher__trigger-label')}
                 style={styles.orgName}
               >
-                Select Organization
+                {t('organization.switcher.select.organization')}
               </Typography>
             )}
           </>
@@ -440,14 +447,14 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
               <div className={withVendorCSSClassPrefix('organization-switcher__header')} style={styles.dropdownHeader}>
                 <Typography
                   variant="caption"
-                  fontWeight="semibold"
+                  fontWeight={600}
                   style={{
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
                     color: theme.colors.text.secondary,
                   }}
                 >
-                  Switch Organization
+                  {t('organization.switcher.switch.organization')}
                 </Typography>
               </div>
 
