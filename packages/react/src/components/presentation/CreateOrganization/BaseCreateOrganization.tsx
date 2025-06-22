@@ -25,85 +25,105 @@ import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
+import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
+import FormControl from '../../primitives/FormControl/FormControl';
+import InputLabel from '../../primitives/InputLabel/InputLabel';
+import TextField from '../../primitives/TextField/TextField';
 import Typography from '../../primitives/Typography/Typography';
 
 const useStyles = () => {
-  const {theme} = useTheme();
+  const {theme, colorScheme} = useTheme();
 
   return useMemo(
     () => ({
-      container: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `${theme.spacing.unit * 3}px`,
-        maxWidth: '600px',
-        padding: `${theme.spacing.unit * 3}px`,
+      root: {
+        padding: `${theme.spacing.unit * 4}px`,
+        minWidth: '600px',
+        margin: '0 auto',
       } as CSSProperties,
-      form: {
-        backgroundColor: theme.colors.background.surface,
-        border: `1px solid ${theme.colors.border}`,
-        borderRadius: theme.borderRadius.medium,
+      card: {
+        background: theme.colors.background.surface,
+        borderRadius: theme.borderRadius.large,
+        padding: `${theme.spacing.unit * 4}px`,
+      } as CSSProperties,
+      content: {
         display: 'flex',
         flexDirection: 'column',
         gap: `${theme.spacing.unit * 2}px`,
-        padding: `${theme.spacing.unit * 3}px`,
       } as CSSProperties,
-      header: {
-        alignItems: 'center',
-        display: 'flex',
-        gap: `${theme.spacing.unit}px`,
-        marginBottom: `${theme.spacing.unit * 2}px`,
-      } as CSSProperties,
-      fieldGroup: {
+      form: {
         display: 'flex',
         flexDirection: 'column',
-        gap: `${theme.spacing.unit / 2}px`,
-      } as CSSProperties,
-      label: {
-        color: theme.colors.text.primary,
-        fontSize: '0.875rem',
-        fontWeight: 500,
-      } as CSSProperties,
-      input: {
-        backgroundColor: theme.colors.background.surface,
-        border: `1px solid ${theme.colors.border}`,
-        borderRadius: theme.borderRadius.small,
-        color: theme.colors.text.primary,
-        fontSize: '0.875rem',
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
+        gap: `${theme.spacing.unit * 2}px`,
         width: '100%',
+      } as CSSProperties,
+      header: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: `${theme.spacing.unit * 1.5}px`,
+        marginBottom: `${theme.spacing.unit * 1.5}px`,
+      } as CSSProperties,
+      field: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: `${theme.spacing.unit}px 0`,
+        borderBottom: `1px solid ${theme.colors.border}`,
+        minHeight: '32px',
       } as CSSProperties,
       textarea: {
-        backgroundColor: theme.colors.background.surface,
-        border: `1px solid ${theme.colors.border}`,
-        borderRadius: theme.borderRadius.small,
-        color: theme.colors.text.primary,
-        fontFamily: 'inherit',
-        fontSize: '0.875rem',
-        minHeight: '80px',
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
-        resize: 'vertical',
         width: '100%',
-      } as CSSProperties,
-      error: {
-        color: theme.colors.error.main,
-        fontSize: '0.75rem',
-        marginTop: `${theme.spacing.unit / 2}px`,
+        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
+        border: `1px solid ${theme.colors.border}`,
+        borderRadius: theme.borderRadius.medium,
+        fontSize: '1rem',
+        color: theme.colors.text.primary,
+        backgroundColor: theme.colors.background.surface,
+        fontFamily: 'inherit',
+        minHeight: '80px',
+        resize: 'vertical',
+        outline: 'none',
+        '&:focus': {
+          borderColor: theme.colors.primary.main,
+          boxShadow: `0 0 0 2px ${theme.colors.primary.main}20`,
+        },
+        '&:disabled': {
+          backgroundColor: theme.colors.background.disabled,
+          color: theme.colors.text.secondary,
+          cursor: 'not-allowed',
+        },
       } as CSSProperties,
       avatarContainer: {
-        alignItems: 'center',
+        alignItems: 'flex-start',
         display: 'flex',
-        gap: `${theme.spacing.unit}px`,
+        gap: `${theme.spacing.unit * 2}px`,
+        marginBottom: `${theme.spacing.unit}px`,
       } as CSSProperties,
       actions: {
-        borderTop: `1px solid ${theme.colors.border}`,
         display: 'flex',
         gap: `${theme.spacing.unit}px`,
         justifyContent: 'flex-end',
         paddingTop: `${theme.spacing.unit * 2}px`,
       } as CSSProperties,
+      infoContainer: {
+        display: 'flex',
+        flexDirection: 'column' as const,
+        gap: `${theme.spacing.unit}px`,
+      } as CSSProperties,
+      value: {
+        color: theme.colors.text.primary,
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        gap: `${theme.spacing.unit}px`,
+        overflow: 'hidden',
+        minHeight: '32px',
+        lineHeight: '32px',
+      } as CSSProperties,
+      popup: {
+        padding: `${theme.spacing.unit * 2}px`,
+      } as CSSProperties,
     }),
-    [theme],
+    [theme, colorScheme],
   );
 };
 
@@ -112,26 +132,29 @@ const useStyles = () => {
  */
 export interface OrganizationFormData {
   description: string;
+  handle: string;
   name: string;
-  type: 'TENANT' | 'STRUCTURAL';
 }
 
 /**
  * Props interface for the BaseCreateOrganization component.
  */
 export interface BaseCreateOrganizationProps {
+  cardLayout?: boolean;
   className?: string;
   defaultParentId?: string;
   error?: string | null;
   initialValues?: Partial<OrganizationFormData>;
   loading?: boolean;
+  mode?: 'inline' | 'popup';
   onCancel?: () => void;
+  onOpenChange?: (open: boolean) => void;
   onSubmit?: (payload: CreateOrganizationPayload) => void | Promise<void>;
   onSuccess?: (organization: any) => void;
+  open?: boolean;
   renderAdditionalFields?: () => ReactNode;
-  renderAvatar?: (url?: string) => ReactNode;
-  renderHeader?: () => ReactNode;
   style?: CSSProperties;
+  title?: string;
 }
 
 /**
@@ -139,35 +162,46 @@ export interface BaseCreateOrganizationProps {
  * This component serves as the base for framework-specific implementations.
  */
 export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
+  cardLayout = true,
   className = '',
   defaultParentId = '',
   error,
   initialValues = {},
   loading = false,
+  mode = 'inline',
   onCancel,
+  onOpenChange,
   onSubmit,
   onSuccess,
+  open = false,
   renderAdditionalFields,
-  renderAvatar,
-  renderHeader,
   style,
+  title = 'Create Organization',
 }): ReactElement => {
   const styles = useStyles();
+  const {theme} = useTheme();
   const {t} = useTranslation();
   const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<OrganizationFormData>({
     description: '',
+    handle: '',
     name: '',
-    type: 'TENANT',
     ...initialValues,
   });
-  const [formErrors, setFormErrors] = useState<Partial<OrganizationFormData>>({});
+  const [formErrors, setFormErrors] = useState<Partial<OrganizationFormData> & {avatar?: string}>({});
 
   const validateForm = (): boolean => {
     const errors: Partial<OrganizationFormData> = {};
 
     if (!formData.name.trim()) {
       errors.name = 'Organization name is required';
+    }
+
+    if (!formData.handle.trim()) {
+      errors.handle = 'Organization handle is required';
+    } else if (!/^[a-z0-9-]+$/.test(formData.handle)) {
+      errors.handle = 'Handle can only contain lowercase letters, numbers, and hyphens';
     }
 
     if (!formData.description.trim()) {
@@ -193,6 +227,63 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
     }
   };
 
+  const handleAvatarUpload = (event: ChangeEvent<HTMLInputElement>): void => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setFormErrors(prev => ({
+          ...prev,
+          avatar: 'Please select a valid image file',
+        }));
+        return;
+      }
+
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        setFormErrors(prev => ({
+          ...prev,
+          avatar: 'Image size must be less than 2MB',
+        }));
+        return;
+      }
+
+      setAvatarFile(file);
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = e => {
+        setAvatarUrl(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      // Clear any previous avatar errors
+      setFormErrors(prev => ({
+        ...prev,
+        avatar: undefined,
+      }));
+    }
+  };
+
+  const handleNameChange = (value: string): void => {
+    handleInputChange('name', value);
+
+    // Auto-generate handle from name if handle is empty or matches previous auto-generated value
+    if (!formData.handle || formData.handle === generateHandleFromName(formData.name)) {
+      const newHandle = generateHandleFromName(value);
+      handleInputChange('handle', newHandle);
+    }
+  };
+
+  const generateHandleFromName = (name: string): string => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+  };
+
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
 
@@ -202,9 +293,10 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
 
     const payload: CreateOrganizationPayload = {
       description: formData.description.trim(),
+      orgHandle: formData.handle.trim(),
       name: formData.name.trim(),
       parentId: defaultParentId,
-      type: formData.type,
+      type: 'TENANT',
     };
 
     try {
@@ -226,108 +318,81 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
     </div>
   );
 
-  const defaultRenderAvatar = (url?: string): ReactElement => (
-    <div className={withVendorCSSClassPrefix('create-organization__avatar-container')} style={styles.avatarContainer}>
-      <Avatar name={formData.name || 'Organization'} size={64} />
-      <Button
-        variant="text"
-        size="small"
-        onClick={() => {
-          // Avatar upload functionality can be implemented here
-          console.log('Avatar upload clicked');
-        }}
-      >
-        {t('organization.create.upload.logo')}
-      </Button>
-    </div>
-  );
+  const containerStyle = {
+    ...styles.root,
+    ...(cardLayout ? styles.card : {}),
+  };
 
-  return (
+  const createOrganizationContent = (
     <div
       className={clsx(withVendorCSSClassPrefix('create-organization'), className)}
-      style={{...styles.container, ...style}}
+      style={{...containerStyle, ...style}}
     >
-      {renderHeader ? renderHeader() : defaultRenderHeader()}
-
-      <form
-        className={withVendorCSSClassPrefix('create-organization__form')}
-        style={styles.form}
-        onSubmit={handleSubmit}
-      >
-        {/* Avatar Section */}
-        {renderAvatar ? renderAvatar(avatarUrl) : defaultRenderAvatar(avatarUrl)}
-
-        {/* Organization Name */}
-        <div className={withVendorCSSClassPrefix('create-organization__field-group')} style={styles.fieldGroup}>
-          <label className={withVendorCSSClassPrefix('create-organization__label')} style={styles.label}>
-            {t('organization.create.name.label')} *
-          </label>
-          <input
-            type="text"
-            className={withVendorCSSClassPrefix('create-organization__input')}
-            style={styles.input}
-            placeholder={t('organization.create.name.placeholder')}
-            value={formData.name}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange('name', e.target.value)}
-            disabled={loading}
-            required
-          />
-          {formErrors.name && (
-            <div className={withVendorCSSClassPrefix('create-organization__error')} style={styles.error}>
-              {formErrors.name}
-            </div>
-          )}
-        </div>
-
-        {/* Organization Description */}
-        <div className={withVendorCSSClassPrefix('create-organization__field-group')} style={styles.fieldGroup}>
-          <label className={withVendorCSSClassPrefix('create-organization__label')} style={styles.label}>
-            {t('organization.create.description.label')} *
-          </label>
-          <textarea
-            className={withVendorCSSClassPrefix('create-organization__textarea')}
-            style={styles.textarea}
-            placeholder={t('organization.create.description.placeholder')}
-            value={formData.description}
-            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange('description', e.target.value)}
-            disabled={loading}
-            required
-          />
-          {formErrors.description && (
-            <div className={withVendorCSSClassPrefix('create-organization__error')} style={styles.error}>
-              {formErrors.description}
-            </div>
-          )}
-        </div>
-
-        {/* Organization Type */}
-        <div className={withVendorCSSClassPrefix('create-organization__field-group')} style={styles.fieldGroup}>
-          <label className={withVendorCSSClassPrefix('create-organization__label')} style={styles.label}>
-            {t('organization.create.type.label')}
-          </label>
-          <select
-            className={withVendorCSSClassPrefix('create-organization__input')}
-            style={styles.input}
-            value={formData.type}
-            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-              handleInputChange('type', e.target.value as 'TENANT' | 'STRUCTURAL')
-            }
-            disabled={loading}
-          >
-            <option value="TENANT">{t('organization.create.type.tenant')}</option>
-            <option value="STRUCTURAL">{t('organization.create.type.structural')}</option>
-          </select>
-        </div>
-
-        {/* Additional Fields */}
-        {renderAdditionalFields && renderAdditionalFields()}
-
-        {/* Error Message */}
-        {error && (
-          <div className={withVendorCSSClassPrefix('create-organization__error')} style={styles.error}>
-            {error}
+      <div className={withVendorCSSClassPrefix('create-organization__content')} style={styles.content}>
+        <form
+          id="create-organization-form"
+          className={withVendorCSSClassPrefix('create-organization__form')}
+          style={styles.form}
+          onSubmit={handleSubmit}
+        >
+          {/* Organization Name */}
+          <div className={withVendorCSSClassPrefix('create-organization__field-group')}>
+            <TextField
+              label={`${t('organization.create.name.label')}`}
+              placeholder={t('organization.create.name.placeholder')}
+              value={formData.name}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => handleNameChange(e.target.value)}
+              disabled={loading}
+              required
+              error={formErrors.name}
+              className={withVendorCSSClassPrefix('create-organization__input')}
+            />
           </div>
-        )}
+
+          {/* Organization Handle */}
+          <div className={withVendorCSSClassPrefix('create-organization__field-group')}>
+            <TextField
+              label={`${t('organization.create.handle.label') || 'Organization Handle'}`}
+              placeholder={t('organization.create.handle.placeholder') || 'my-organization'}
+              value={formData.handle}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange('handle', e.target.value)}
+              disabled={loading}
+              required
+              error={formErrors.handle}
+              helperText="This will be your organization's unique identifier. Only lowercase letters, numbers, and hyphens are allowed."
+              className={withVendorCSSClassPrefix('create-organization__input')}
+            />
+          </div>
+
+          {/* Organization Description */}
+          <div className={withVendorCSSClassPrefix('create-organization__field-group')}>
+            <FormControl error={formErrors.description}>
+              <InputLabel required>{t('organization.create.description.label')}</InputLabel>
+              <textarea
+                className={withVendorCSSClassPrefix('create-organization__textarea')}
+                style={{
+                  ...styles.textarea,
+                  borderColor: formErrors.description ? theme.colors.error.main : theme.colors.border,
+                }}
+                placeholder={t('organization.create.description.placeholder')}
+                value={formData.description}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange('description', e.target.value)}
+                disabled={loading}
+                required
+              />
+            </FormControl>
+          </div>
+
+          {/* Additional Fields */}
+          {renderAdditionalFields && renderAdditionalFields()}
+
+          {/* Error Message */}
+          {error && (
+            <Typography variant="body2" style={{color: theme.colors.error.main, fontSize: '0.875rem'}}>
+              {error}
+            </Typography>
+          )}
+        </form>
 
         {/* Actions */}
         <div className={withVendorCSSClassPrefix('create-organization__actions')} style={styles.actions}>
@@ -336,13 +401,26 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               {t('organization.create.cancel')}
             </Button>
           )}
-          <Button type="submit" variant="solid" color="primary" disabled={loading}>
+          <Button type="submit" variant="solid" color="primary" disabled={loading} form="create-organization-form">
             {loading ? t('organization.create.creating') : t('organization.create.button')}
           </Button>
         </div>
-      </form>
+      </div>
     </div>
   );
+
+  if (mode === 'popup') {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeading>{title}</DialogHeading>
+          <div style={{padding: '1rem'}}>{createOrganizationContent}</div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return createOrganizationContent;
 };
 
 export default BaseCreateOrganization;

@@ -22,7 +22,6 @@ import {BaseCreateOrganization, BaseCreateOrganizationProps} from './BaseCreateO
 import createOrganization, {CreateOrganizationPayload} from '../../../api/scim2/createOrganization';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useOrganization from '../../../contexts/Organization/useOrganization';
-import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 
 /**
  * Props interface for the CreateOrganization component.
@@ -33,21 +32,9 @@ export interface CreateOrganizationProps extends Omit<BaseCreateOrganizationProp
    */
   fallback?: ReactElement;
   /**
-   * Display mode - inline renders within the parent, popup renders in a modal
-   */
-  mode?: 'inline' | 'popup';
-  /**
    * Custom organization creation handler (will use default API if not provided).
    */
   onCreateOrganization?: (payload: CreateOrganizationPayload) => Promise<any>;
-  /**
-   * Callback for popup open state changes
-   */
-  onOpenChange?: (open: boolean) => void;
-  /**
-   * Whether the popup is open (only for popup mode)
-   */
-  open?: boolean;
 }
 
 /**
@@ -62,13 +49,6 @@ export interface CreateOrganizationProps extends Omit<BaseCreateOrganizationProp
  * <CreateOrganization
  *   onSuccess={(org) => console.log('Created:', org)}
  *   onCancel={() => navigate('/organizations')}
- * />
- *
- * // Popup mode
- * <CreateOrganization
- *   mode="popup"
- *   open={isOpen}
- *   onOpenChange={setIsOpen}
  * />
  *
  * // With custom organization creation handler
@@ -94,9 +74,6 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
   fallback = null,
   onSuccess,
   defaultParentId,
-  mode = 'inline',
-  onOpenChange,
-  open = false,
   ...props
 }: CreateOrganizationProps): ReactElement => {
   const {isSignedIn, baseUrl} = useAsgardeo();
@@ -147,11 +124,6 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
       if (onSuccess) {
         onSuccess(result);
       }
-
-      // Close popup if in popup mode
-      if (mode === 'popup' && onOpenChange) {
-        onOpenChange(false);
-      }
     } catch (createError) {
       const errorMessage: string = createError instanceof Error ? createError.message : 'Failed to create organization';
       setError(errorMessage);
@@ -161,7 +133,7 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
     }
   };
 
-  const createOrgContent: ReactElement = (
+  return (
     <BaseCreateOrganization
       onSubmit={handleSubmit}
       loading={loading}
@@ -171,19 +143,6 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
       {...props}
     />
   );
-
-  if (mode === 'popup') {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeading>Create Organization</DialogHeading>
-          <div style={{padding: '1rem'}}>{createOrgContent}</div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  return createOrgContent;
 };
 
 export default CreateOrganization;

@@ -346,6 +346,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
   const defaultRenderOrganization = (organization: Organization, isSelected: boolean) => (
     <>
       <Avatar
+        variant="square"
         imageUrl={organization.avatar}
         name={organization.name}
         size={avatarSize * 1.25}
@@ -402,6 +403,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
         {currentOrganization ? (
           <>
             <Avatar
+              variant="square"
               imageUrl={currentOrganization.avatar}
               name={currentOrganization.name}
               size={avatarSize}

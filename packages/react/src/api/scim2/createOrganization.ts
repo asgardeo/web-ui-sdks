@@ -29,6 +29,10 @@ export interface CreateOrganizationPayload {
    */
   description: string;
   /**
+   * Organization handle/slug.
+   */
+  orgHandle?: string;
+  /**
    * Organization name.
    */
   name: string;
@@ -39,7 +43,7 @@ export interface CreateOrganizationPayload {
   /**
    * Organization type.
    */
-  type: 'TENANT' | 'STRUCTURAL';
+  type: 'TENANT';
 }
 
 /**
@@ -55,6 +59,7 @@ export interface CreateOrganizationPayload {
  *     payload: {
  *       description: "Share your screens",
  *       name: "Team Viewer",
+ *       orgHandle: "team-viewer",
  *       parentId: "f4825104-4948-40d9-ab65-a960eee3e3d5",
  *       type: "TENANT"
  *     }
@@ -95,8 +100,14 @@ const createOrganization = async ({
     );
   }
 
+  // Always set type to TENANT for now
+  const organizationPayload = {
+    ...payload,
+    type: 'TENANT' as const,
+  };
+
   const response: any = await httpClient({
-    data: JSON.stringify(payload),
+    data: JSON.stringify(organizationPayload),
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
