@@ -27,6 +27,14 @@ export interface AvatarProps {
    */
   alt?: string;
   /**
+   * Background generation strategy
+   * - 'random': Generate background color based on ASCII values of the name
+   * - 'none': Use default theme background
+   * - string: Use custom background color
+   * @default 'random'
+   */
+  background?: 'random' | 'none' | string;
+  /**
    * Optional className for the avatar
    */
   className?: string;
@@ -52,9 +60,11 @@ export interface AvatarProps {
 const useStyles = ({
   size,
   variant,
+  backgroundColor,
 }: {
   size: number;
   variant: 'circular' | 'square';
+  backgroundColor?: string;
 }): {
   avatar: CSSProperties;
   image: CSSProperties;
@@ -65,16 +75,17 @@ const useStyles = ({
     () => ({
       avatar: {
         alignItems: 'center',
-        backgroundColor: theme.colors.background.surface,
-        border: `1px solid ${theme.colors.border}`,
+        background: backgroundColor || theme.colors.background.surface,
+        border: backgroundColor ? 'none' : `1px solid ${theme.colors.border}`,
         borderRadius: variant === 'circular' ? '50%' : '8px',
-        color: theme.colors.text.primary,
+        color: backgroundColor ? '#ffffff' : theme.colors.text.primary,
         display: 'flex',
         fontSize: `${size * 0.4}px`,
-        fontWeight: 500,
+        fontWeight: 600,
         height: `${size}px`,
         justifyContent: 'center',
         overflow: 'hidden',
+        textShadow: backgroundColor ? '0 1px 2px rgba(0, 0, 0, 0.1)' : 'none',
         width: `${size}px`,
       } as CSSProperties,
       image: {
@@ -83,19 +94,65 @@ const useStyles = ({
         width: '100%',
       } as CSSProperties,
     }),
-    [size, theme, colorScheme, variant],
+    [size, theme, colorScheme, variant, backgroundColor],
   );
 };
 
 export const Avatar: FC<AvatarProps> = ({
   alt = 'User avatar',
+  background = 'random',
   className = '',
   imageUrl,
   name,
   size = 64,
   variant = 'circular',
 }): JSX.Element => {
-  const styles: {avatar: CSSProperties; image: CSSProperties} = useStyles({size, variant});
+  const generateBackgroundColor = (inputString: string): string => {
+    const hash = inputString.split('').reduce((acc, char) => {
+      const charCode = char.charCodeAt(0);
+      return ((acc << 5) - acc + charCode) & 0xffffffff;
+    }, 0);
+
+    const seed = Math.abs(hash);
+
+    const generateColor = (offset: number): string => {
+      const hue1 = (seed + offset) % 360;
+      const hue2 = (hue1 + 60 + (seed % 120)) % 360;
+
+      const saturation = 70 + (seed % 20);
+      const lightness1 = 55 + (seed % 15);
+      const lightness2 = 60 + ((seed + offset) % 15);
+
+      return `hsl(${hue1}, ${saturation}%, ${lightness1}%), hsl(${hue2}, ${saturation}%, ${lightness2}%)`;
+    };
+
+    const angle = 45 + (seed % 91);
+
+    const colors = generateColor(seed);
+    return `linear-gradient(${angle}deg, ${colors})`;
+  };
+
+  const backgroundColor = useMemo(() => {
+    if (!name || imageUrl) {
+      return undefined;
+    }
+
+    if (background === 'random') {
+      return generateBackgroundColor(name);
+    }
+
+    if (background === 'none') {
+      return undefined;
+    }
+
+    return background;
+  }, [background, name, imageUrl]);
+
+  const styles: {avatar: CSSProperties; image: CSSProperties} = useStyles({
+    size,
+    variant,
+    backgroundColor,
+  });
 
   const getInitials = (fullName: string): string =>
     fullName
