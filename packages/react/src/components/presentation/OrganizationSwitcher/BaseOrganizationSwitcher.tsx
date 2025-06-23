@@ -331,17 +331,22 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
     return fallback;
   }
 
-  const handleOrganizationSwitch = (organization: Organization) => {
+  const handleOrganizationSwitch = (organization: Organization): void => {
     onOrganizationSwitch(organization);
     setIsOpen(false);
   };
 
-  const handleMenuItemClick = (item: MenuItem) => {
+  const handleMenuItemClick = (item: MenuItem): void => {
     if (item.onClick) {
       item.onClick();
     }
     setIsOpen(false);
   };
+
+  // Filter out current organization from switchable list
+  const switchableOrganizations: Organization[] = organizations.filter(
+    (org: Organization): boolean => org.id !== currentOrganization?.id,
+  );
 
   const defaultRenderOrganization = (organization: Organization, isSelected: boolean) => (
     <>
@@ -445,20 +450,88 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
               style={{...floatingStyles, ...styles.dropdownContent}}
               {...getFloatingProps()}
             >
-              {/* Header */}
-              <div className={withVendorCSSClassPrefix('organization-switcher__header')} style={styles.dropdownHeader}>
-                <Typography
-                  variant="caption"
-                  fontWeight={600}
+              {/* Header - Current Organization */}
+              {currentOrganization && (
+                <div
+                  className={withVendorCSSClassPrefix('organization-switcher__header')}
+                  style={styles.dropdownHeader}
+                >
+                  <Avatar
+                    variant="square"
+                    imageUrl={currentOrganization.avatar}
+                    name={currentOrganization.name}
+                    size={avatarSize * 1.5}
+                    alt={`${currentOrganization.name} avatar`}
+                  />
+                  <div
+                    className={withVendorCSSClassPrefix('organization-switcher__header-info')}
+                    style={styles.organizationInfo}
+                  >
+                    <Typography
+                      noWrap
+                      className={withVendorCSSClassPrefix('organization-switcher__header-name')}
+                      variant="body1"
+                      fontWeight="medium"
+                      style={styles.organizationName}
+                    >
+                      {currentOrganization.name}
+                    </Typography>
+                    <div style={styles.organizationMeta}>
+                      {showMemberCount && currentOrganization.memberCount !== undefined && (
+                        <Typography
+                          noWrap
+                          className={withVendorCSSClassPrefix('organization-switcher__header-meta')}
+                          variant="caption"
+                          color="secondary"
+                        >
+                          {currentOrganization.memberCount}{' '}
+                          {currentOrganization.memberCount === 1
+                            ? t('organization.switcher.member')
+                            : t('organization.switcher.members')}
+                          {showRole && currentOrganization.role && <span> • {currentOrganization.role}</span>}
+                        </Typography>
+                      )}
+                      {showRole &&
+                        currentOrganization.role &&
+                        (!showMemberCount || currentOrganization.memberCount === undefined) && (
+                          <Typography
+                            noWrap
+                            className={withVendorCSSClassPrefix('organization-switcher__header-role')}
+                            variant="caption"
+                            color="secondary"
+                            style={{textTransform: 'capitalize'}}
+                          >
+                            {currentOrganization.role}
+                          </Typography>
+                        )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Section Header for Other Organizations */}
+              {organizations.length > 1 && (
+                <div
                   style={{
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    color: theme.colors.text.secondary,
+                    ...styles.dropdownHeader,
+                    borderTop: currentOrganization ? `1px solid ${theme.colors.border}` : 'none',
+                    borderBottom: 'none',
+                    paddingBottom: `${theme.spacing.unit / 2}px`,
                   }}
                 >
-                  {t('organization.switcher.switch.organization')}
-                </Typography>
-              </div>
+                  <Typography
+                    variant="caption"
+                    fontWeight={600}
+                    style={{
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      color: theme.colors.text.secondary,
+                    }}
+                  >
+                    {t('organization.switcher.switch.organization')}
+                  </Typography>
+                </div>
+              )}
 
               {/* Content */}
               <div className={withVendorCSSClassPrefix('organization-switcher__menu')} style={styles.dropdownMenu}>
@@ -476,12 +549,12 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                   )
                 ) : (
                   <>
-                    {organizations.map(organization => {
-                      const isSelected = currentOrganization?.id === organization.id;
+                    {switchableOrganizations.map((organization: Organization): ReactElement => {
+                      const isSelected: boolean = false; // Never selected since we exclude current org
                       return (
                         <Button
                           key={organization.id}
-                          onClick={() => handleOrganizationSwitch(organization)}
+                          onClick={(): void => handleOrganizationSwitch(organization)}
                           className={withVendorCSSClassPrefix('organization-switcher__menu-item')}
                           color="tertiary"
                           variant="text"
@@ -489,12 +562,12 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                           style={{
                             ...styles.menuItem,
                             backgroundColor:
-                              hoveredItemIndex === organizations.indexOf(organization)
+                              hoveredItemIndex === switchableOrganizations.indexOf(organization)
                                 ? hoverBackgroundColor
                                 : 'transparent',
                           }}
-                          onMouseEnter={() => setHoveredItemIndex(organizations.indexOf(organization))}
-                          onMouseLeave={() => setHoveredItemIndex(null)}
+                          onMouseEnter={(): void => setHoveredItemIndex(switchableOrganizations.indexOf(organization))}
+                          onMouseLeave={(): void => setHoveredItemIndex(null)}
                         >
                           {renderOrganization
                             ? renderOrganization(organization, isSelected)
@@ -510,50 +583,52 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                           className={withVendorCSSClassPrefix('organization-switcher__menu-divider')}
                           style={styles.divider}
                         />
-                        {menuItems.map((item, index) => (
-                          <div key={index}>
-                            {item.href ? (
-                              <a
-                                href={item.href}
-                                style={{
-                                  ...styles.menuItem,
-                                  backgroundColor:
-                                    hoveredItemIndex === organizations.length + index
-                                      ? hoverBackgroundColor
-                                      : 'transparent',
-                                }}
-                                className={withVendorCSSClassPrefix('organization-switcher__menu-item')}
-                                onMouseEnter={() => setHoveredItemIndex(organizations.length + index)}
-                                onMouseLeave={() => setHoveredItemIndex(null)}
-                                onFocus={() => setHoveredItemIndex(organizations.length + index)}
-                                onBlur={() => setHoveredItemIndex(null)}
-                              >
-                                {item.icon}
-                                <span>{item.label}</span>
-                              </a>
-                            ) : (
-                              <Button
-                                onClick={() => handleMenuItemClick(item)}
-                                style={{
-                                  ...styles.menuItem,
-                                  backgroundColor:
-                                    hoveredItemIndex === organizations.length + index
-                                      ? hoverBackgroundColor
-                                      : 'transparent',
-                                }}
-                                className={withVendorCSSClassPrefix('organization-switcher__menu-item')}
-                                color="tertiary"
-                                variant="text"
-                                size="small"
-                                startIcon={item.icon}
-                                onMouseEnter={() => setHoveredItemIndex(organizations.length + index)}
-                                onMouseLeave={() => setHoveredItemIndex(null)}
-                              >
-                                {item.label}
-                              </Button>
-                            )}
-                          </div>
-                        ))}
+                        {menuItems.map(
+                          (item, index: number): ReactElement => (
+                            <div key={index}>
+                              {item.href ? (
+                                <a
+                                  href={item.href}
+                                  style={{
+                                    ...styles.menuItem,
+                                    backgroundColor:
+                                      hoveredItemIndex === switchableOrganizations.length + index
+                                        ? hoverBackgroundColor
+                                        : 'transparent',
+                                  }}
+                                  className={withVendorCSSClassPrefix('organization-switcher__menu-item')}
+                                  onMouseEnter={(): void => setHoveredItemIndex(switchableOrganizations.length + index)}
+                                  onMouseLeave={(): void => setHoveredItemIndex(null)}
+                                  onFocus={(): void => setHoveredItemIndex(switchableOrganizations.length + index)}
+                                  onBlur={(): void => setHoveredItemIndex(null)}
+                                >
+                                  {item.icon}
+                                  <span>{item.label}</span>
+                                </a>
+                              ) : (
+                                <Button
+                                  onClick={(): void => handleMenuItemClick(item)}
+                                  style={{
+                                    ...styles.menuItem,
+                                    backgroundColor:
+                                      hoveredItemIndex === switchableOrganizations.length + index
+                                        ? hoverBackgroundColor
+                                        : 'transparent',
+                                  }}
+                                  className={withVendorCSSClassPrefix('organization-switcher__menu-item')}
+                                  color="tertiary"
+                                  variant="text"
+                                  size="small"
+                                  startIcon={item.icon}
+                                  onMouseEnter={(): void => setHoveredItemIndex(switchableOrganizations.length + index)}
+                                  onMouseLeave={(): void => setHoveredItemIndex(null)}
+                                >
+                                  {item.label}
+                                </Button>
+                              )}
+                            </div>
+                          ),
+                        )}
                       </>
                     )}
                   </>

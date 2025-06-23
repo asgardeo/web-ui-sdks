@@ -23,6 +23,7 @@ import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useOrganization from '../../../contexts/Organization/useOrganization';
 import useTranslation from '../../../hooks/useTranslation';
 import {CreateOrganization} from '../CreateOrganization/CreateOrganization';
+import OrganizationProfile from '../OrganizationProfile/OrganizationProfile';
 
 /**
  * Props interface for the OrganizationSwitcher component.
@@ -91,6 +92,7 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
     error,
   } = useOrganization();
   const [isCreateOrgOpen, setIsCreateOrgOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const {t} = useTranslation();
 
   // Don't render if not authenticated
@@ -108,18 +110,36 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
   const onOrganizationSwitch: (organization: Organization) => Promise<void> | void =
     propOnOrganizationSwitch || switchOrganization;
 
-  // Add "Create Organization" menu item
-  const defaultMenuItems = [
-    {
-      label: t('organization.switcher.create.organization'),
-      onClick: () => setIsCreateOrgOpen(true),
+  const handleManageOrganization = (): void => {
+    setIsProfileOpen(true);
+  };
+
+  // Add menu items - using the same MenuItem interface from BaseOrganizationSwitcher
+  const defaultMenuItems: Array<{icon?: ReactElement; label: string; onClick: () => void}> = [];
+
+  // Add "Manage Organization" menu item if there's a current organization
+  if (currentOrganization) {
+    defaultMenuItems.push({
       icon: (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 5v14m-7-7h14" />
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
         </svg>
       ),
-    },
-  ];
+      label: 'Manage Organization',
+      onClick: handleManageOrganization,
+    });
+  }
+
+  // Add "Create Organization" menu item
+  defaultMenuItems.push({
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M12 5v14m-7-7h14" />
+      </svg>
+    ),
+    label: t('organization.switcher.create.organization'),
+    onClick: (): void => setIsCreateOrgOpen(true),
+  });
 
   const menuItems = props.menuItems ? [...defaultMenuItems, ...props.menuItems] : defaultMenuItems;
 
@@ -146,6 +166,14 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
           setIsCreateOrgOpen(false);
         }}
       />
+      {currentOrganization && (
+        <OrganizationProfile
+          organizationId={currentOrganization.id}
+          cardLayout={true}
+          loadingFallback={<div>Loading organization...</div>}
+          errorFallback={<div>Failed to load organization</div>}
+        />
+      )}
     </>
   );
 };
