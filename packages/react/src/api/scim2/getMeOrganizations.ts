@@ -72,14 +72,18 @@ const getMeOrganizations = async ({
     );
   }
 
-  const queryParams = new URLSearchParams({
-    after,
-    authorizedAppName,
-    before,
-    filter,
-    limit: limit.toString(),
-    recursive: recursive.toString(),
-  });
+  const queryParams = new URLSearchParams(
+    Object.fromEntries(
+      Object.entries({
+        after,
+        authorizedAppName,
+        before,
+        filter,
+        limit: limit.toString(),
+        recursive: recursive.toString(),
+      }).filter(([, value]) => Boolean(value))
+    )
+  );
 
   const response: any = await httpClient({
     headers: {

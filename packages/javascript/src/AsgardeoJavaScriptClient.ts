@@ -35,6 +35,8 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
 
   abstract getOrganizations(): Promise<Organization[]>;
 
+  abstract getCurrentOrganization(): Promise<Organization | null>;
+
   abstract getUserProfile(): Promise<UserProfile>;
 
   abstract isLoading(): boolean;

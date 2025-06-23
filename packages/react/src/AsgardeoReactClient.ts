@@ -33,6 +33,7 @@ import {
   EmbeddedSignInFlowHandleRequestPayload,
   executeEmbeddedSignInFlow,
   Organization,
+  IdToken,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/scim2/getMeOrganizations';
@@ -116,6 +117,16 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
         'An error occurred while fetching the organizations associated with the user.',
       );
     }
+  }
+
+  override async getCurrentOrganization(): Promise<Organization | null> {
+    const idToken: IdToken = await this.asgardeo.getDecodedIdToken();
+
+    return {
+      orgHandle: idToken?.org_handle,
+      name: idToken?.org_name,
+      id: idToken?.org_id,
+    };
   }
 
   override isLoading(): boolean {

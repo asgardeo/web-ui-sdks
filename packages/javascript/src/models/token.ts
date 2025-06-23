@@ -33,11 +33,11 @@ export interface TokenResponse {
   accessToken: string;
 
   /**
-   * JSON Web Token (JWT) containing user identity information.
-   * This token can be decoded to access user claims and metadata
-   * without additional server requests.
+   * Unix timestamp (in seconds) when the token was created.
+   * Used in combination with expiresIn to determine when
+   * the token needs to be refreshed.
    */
-  idToken: string;
+  createdAt: number;
 
   /**
    * Duration in seconds until the access token expires.
@@ -47,11 +47,11 @@ export interface TokenResponse {
   expiresIn: string;
 
   /**
-   * Space-separated list of OAuth scopes granted to the application.
-   * These scopes determine what resources and actions the application
-   * has permission to access.
+   * JSON Web Token (JWT) containing user identity information.
+   * This token can be decoded to access user claims and metadata
+   * without additional server requests.
    */
-  scope: string;
+  idToken: string;
 
   /**
    * Token used to obtain new access tokens without re-authentication.
@@ -61,18 +61,18 @@ export interface TokenResponse {
   refreshToken: string;
 
   /**
+   * Space-separated list of OAuth scopes granted to the application.
+   * These scopes determine what resources and actions the application
+   * has permission to access.
+   */
+  scope: string;
+
+  /**
    * The type of token issued, typically "Bearer".
    * This indicates how the token should be used in
    * API request Authorization headers.
    */
   tokenType: string;
-
-  /**
-   * Unix timestamp (in seconds) when the token was created.
-   * Used in combination with expiresIn to determine when
-   * the token needs to be refreshed.
-   */
-  createdAt: number;
 }
 
 /**
@@ -92,18 +92,18 @@ export interface AccessTokenApiResponse {
   access_token: string;
 
   /**
-   * Raw expiration time in seconds.
-   * Indicates how long the access token will be valid
-   * from the time it was issued.
-   */
-  expires_in: string;
-
-  /**
    * Server-provided creation timestamp in Unix seconds.
    * Used to track when the token was originally issued
    * and calculate absolute expiration time.
    */
   created_at: number;
+
+  /**
+   * Raw expiration time in seconds.
+   * Indicates how long the access token will be valid
+   * from the time it was issued.
+   */
+  expires_in: string;
 
   /**
    * Raw ID token string containing encoded user information.
@@ -137,21 +137,11 @@ export interface AccessTokenApiResponse {
 /**
  * Interface for the standard (required) claims of an ID Token payload.
  */
-export interface IdTokenPayloadStandardClaims {
+export interface KnownIdToken {
   /**
    * The audience for which this token is intended.
    */
   aud: string | string[];
-
-  /**
-   * The unique identifier of the user to whom the ID token belongs.
-   */
-  sub: string;
-
-  /**
-   * The issuer identifier for the issuer of the response.
-   */
-  iss: string;
 
   /**
    * The email of the user.
@@ -159,9 +149,34 @@ export interface IdTokenPayloadStandardClaims {
   email?: string;
 
   /**
+   * The issuer identifier for the issuer of the response.
+   */
+  iss: string;
+
+  /**
+   * The unique human readable slug of the organization to which the user belongs.
+   */
+  org_handle?: string;
+
+  /**
+   * The unique identifier of the organization to which the user belongs.
+   */
+  org_id?: string;
+
+  /**
+   * The human readable name of the organization to which the user belongs.
+   */
+  org_name?: string;
+
+  /**
    * The username the user prefers to be called.
    */
   preferred_username?: string;
+
+  /**
+   * The unique identifier of the user to whom the ID token belongs.
+   */
+  sub: string;
 
   /**
    * The tenant domain of the user.
@@ -172,7 +187,7 @@ export interface IdTokenPayloadStandardClaims {
 /**
  * Interface for ID Token payload including custom claims.
  */
-export interface IdTokenPayload extends IdTokenPayloadStandardClaims {
+export interface IdToken extends KnownIdToken {
   /**
    * Other custom claims.
    */
@@ -180,11 +195,11 @@ export interface IdTokenPayload extends IdTokenPayloadStandardClaims {
 }
 
 export interface TokenExchangeRequestConfig {
-  id: string;
-  data: any;
-  signInRequired: boolean;
   attachToken: boolean;
+  data: any;
+  id: string;
   returnsSession: boolean;
-  tokenEndpoint?: string;
   shouldReplayAfterRefresh?: boolean;
+  signInRequired: boolean;
+  tokenEndpoint?: string;
 }

@@ -23,7 +23,7 @@ import {
   Crypto,
   TokenExchangeRequestConfig,
   StorageManager,
-  IdTokenPayload,
+  IdToken,
   OIDCEndpoints,
   SessionData,
   Storage,
@@ -219,7 +219,7 @@ export class AsgardeoNodeCore<T> {
     return this._auth.getOpenIDProviderEndpoints() as Promise<OIDCEndpoints>;
   }
 
-  public async getDecodedIdToken(userId?: string): Promise<IdTokenPayload> {
+  public async getDecodedIdToken(userId?: string): Promise<IdToken> {
     return this._auth.getDecodedIdToken(userId);
   }
 
@@ -227,10 +227,7 @@ export class AsgardeoNodeCore<T> {
     return this._auth.getAccessToken(userId);
   }
 
-  public async exchangeToken(
-    config: TokenExchangeRequestConfig,
-    userId?: string,
-  ): Promise<TokenResponse | Response> {
+  public async exchangeToken(config: TokenExchangeRequestConfig, userId?: string): Promise<TokenResponse | Response> {
     return this._auth.exchangeToken(config, userId);
   }
 

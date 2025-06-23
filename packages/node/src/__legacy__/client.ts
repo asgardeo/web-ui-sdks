@@ -20,7 +20,7 @@ import {
   AuthClientConfig,
   TokenExchangeRequestConfig,
   StorageManager,
-  IdTokenPayload,
+  IdToken,
   OIDCEndpoints,
   Storage,
   TokenResponse,
@@ -220,7 +220,7 @@ export class AsgardeoNodeClient<T> {
    * @param {string} userId - The userId of the user.
    * (If you are using ExpressJS, you may get this from the request cookies)
    *
-   * @return {Promise<IdTokenPayload>} -A Promise that resolves with
+   * @return {Promise<IdToken>} -A Promise that resolves with
    * an object containing the decoded ID token payload.
    *
    * @example
@@ -233,7 +233,7 @@ export class AsgardeoNodeClient<T> {
    * @memberof AsgardeoNodeClient
    *
    */
-  public async getDecodedIdToken(userId?: string): Promise<IdTokenPayload> {
+  public async getDecodedIdToken(userId?: string): Promise<IdToken> {
     return this._authCore.getDecodedIdToken(userId);
   }
 

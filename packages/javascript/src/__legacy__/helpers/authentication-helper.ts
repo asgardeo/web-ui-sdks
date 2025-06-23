@@ -24,7 +24,7 @@ import {User} from '../../models/user';
 import {SessionData} from '../../models/session';
 import {JWKInterface} from '../../models/crypto';
 import {TokenResponse, AccessTokenApiResponse} from '../../models/token';
-import {IdTokenPayload} from '../../models/token';
+import {IdToken} from '../../models/token';
 import PKCEConstants from '../../constants/PKCEConstants';
 import extractTenantDomainFromIdTokenPayload from '../../utils/extractTenantDomainFromIdTokenPayload';
 import extractUserClaimsFromIdToken from '../../utils/extractUserClaimsFromIdToken';
@@ -207,7 +207,7 @@ export class AuthenticationHelper<T> {
   }
 
   public getAuthenticatedUserInfo(idToken: string): User {
-    const payload: IdTokenPayload = this._cryptoHelper.decodeIdToken(idToken);
+    const payload: IdToken = this._cryptoHelper.decodeIdToken(idToken);
     const username: string = payload?.['username'] ?? '';
     const givenName: string = payload?.['given_name'] ?? '';
     const familyName: string = payload?.['family_name'] ?? '';

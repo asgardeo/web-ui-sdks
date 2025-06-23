@@ -43,6 +43,13 @@ export interface AsgardeoClient<T> {
   getOrganizations(): Promise<Organization[]>;
 
   /**
+   * Gets the current organization of the user.
+   *
+   * @returns The current organization if available, otherwise null.
+   */
+  getCurrentOrganization(): Promise<Organization | null>;
+
+  /**
    * Gets user information from the session.
    *
    * @returns User object containing user details.

@@ -24,7 +24,7 @@ import {
   IsomorphicCrypto,
   TokenExchangeRequestConfig,
   StorageManager,
-  IdTokenPayload,
+  IdToken,
   ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   TokenResponse,
@@ -659,11 +659,11 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     return this._authenticationClient.getUser();
   }
 
-  public async getDecodedIdToken(): Promise<IdTokenPayload> {
+  public async getDecodedIdToken(): Promise<IdToken> {
     return this._authenticationClient.getDecodedIdToken();
   }
 
-  public async getDecodedIDPIDToken(): Promise<IdTokenPayload> {
+  public async getDecodedIDPIDToken(): Promise<IdToken> {
     return this._authenticationClient.getDecodedIdToken();
   }
 

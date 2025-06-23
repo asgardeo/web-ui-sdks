@@ -23,7 +23,7 @@ import {
   User,
   IsomorphicCrypto,
   TokenExchangeRequestConfig,
-  IdTokenPayload,
+  IdToken,
   OIDCEndpoints,
   OIDCRequestConstants,
   SessionData,
@@ -166,7 +166,7 @@ export const WebWorkerCore = async (
     return _authenticationHelper.getUser();
   };
 
-  const getDecodedIdToken = async (): Promise<IdTokenPayload> => {
+  const getDecodedIdToken = async (): Promise<IdToken> => {
     return _authenticationHelper.getDecodedIdToken();
   };
 
@@ -174,7 +174,7 @@ export const WebWorkerCore = async (
     return _authenticationHelper.getCrypto();
   };
 
-  const getDecodedIDPIDToken = async (): Promise<IdTokenPayload> => {
+  const getDecodedIDPIDToken = async (): Promise<IdToken> => {
     return _authenticationHelper.getDecodedIDPIDToken();
   };
 

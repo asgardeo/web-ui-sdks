@@ -21,7 +21,7 @@ import {
   type AuthClientConfig,
   type BasicUserInfo,
   type Config,
-  type IdTokenPayload,
+  type IdToken,
   Hooks,
   type HttpRequestConfig,
   type HttpResponse,
@@ -348,13 +348,13 @@ describe('AuthAPI', () => {
 
   describe('token related methods', () => {
     it('should call getDecodedIdToken on the client', async () => {
-      const result: IdTokenPayload = await authApi.getDecodedIdToken();
+      const result: IdToken = await authApi.getDecodedIdToken();
       expect(mockClient.getDecodedIdToken).toHaveBeenCalled();
       expect(result).toEqual({sub: 'user-id-123'});
     });
 
     it('should call getDecodedIDPIDToken on the client', async () => {
-      const result: IdTokenPayload = await authApi.getDecodedIDPIDToken();
+      const result: IdToken = await authApi.getDecodedIDPIDToken();
       expect(mockClient.getDecodedIdToken).toHaveBeenCalled();
       expect(result).toEqual({sub: 'user-id-123'});
     });

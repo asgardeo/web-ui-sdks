@@ -94,7 +94,7 @@ export interface OrganizationProviderProps {
 const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = ({
   autoFetch = true,
   children,
-  currentOrganization: initialCurrentOrganization = null,
+  currentOrganization,
   getOrganizations,
   onError,
   onOrganizationSwitch,
@@ -102,7 +102,6 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
 }: PropsWithChildren<OrganizationProviderProps>): ReactElement => {
   const {baseUrl, isSignedIn} = useAsgardeo();
   const [organizations, setOrganizations] = useState<Organization[] | null>(initialOrganizations);
-  const [currentOrganization, setCurrentOrganization] = useState<Organization | null>(initialCurrentOrganization);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -132,10 +131,6 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
       }
 
       setOrganizations(organizationsData);
-
-      if (!currentOrganization && organizationsData.length > 0) {
-        setCurrentOrganization(organizationsData[0]);
-      }
     } catch (fetchError) {
       const errorMessage: string = fetchError instanceof Error ? fetchError.message : 'Failed to fetch organizations';
       setError(errorMessage);
@@ -145,7 +140,7 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
     } finally {
       setIsLoading(false);
     }
-  }, [baseUrl, currentOrganization, getOrganizations, isSignedIn, onError]);
+  }, [baseUrl, getOrganizations, isSignedIn, onError]);
 
   /**
    * Revalidates organizations by fetching fresh data
@@ -159,7 +154,6 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
    */
   const switchOrganization: (organization: Organization) => void = useCallback(
     (organization: Organization): void => {
-      setCurrentOrganization(organization);
       if (onOrganizationSwitch) {
         onOrganizationSwitch(organization);
       }

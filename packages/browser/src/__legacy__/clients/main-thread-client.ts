@@ -22,7 +22,7 @@ import {
   User,
   IsomorphicCrypto,
   StorageManager,
-  IdTokenPayload,
+  IdToken,
   ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   OIDCRequestConstants,
@@ -368,7 +368,7 @@ export const MainThreadClient = async (
 
   const getUser = async (): Promise<User> => _authenticationHelper.getUser();
 
-  const getDecodedIdToken = async (): Promise<IdTokenPayload> => _authenticationHelper.getDecodedIdToken();
+  const getDecodedIdToken = async (): Promise<IdToken> => _authenticationHelper.getDecodedIdToken();
 
   const getCrypto = async (): Promise<IsomorphicCrypto> => _authenticationHelper.getCrypto();
 

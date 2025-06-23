@@ -20,6 +20,7 @@ import {
   AsgardeoRuntimeError,
   EmbeddedFlowExecuteRequestPayload,
   EmbeddedFlowExecuteResponse,
+  Organization,
   SignInOptions,
   SignOutOptions,
   User,
@@ -55,6 +56,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const asgardeo: AsgardeoReactClient = useMemo(() => new AsgardeoReactClient(), []);
   const {hasAuthParams} = useBrowserUrl();
   const [user, setUser] = useState<any | null>(null);
+  const [currentOrganization, setCurrentOrganization] = useState<Organization | null>(null);
 
   const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
   const [isInitializedSync, setIsInitializedSync] = useState<boolean>(false);
@@ -95,6 +97,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       if (await asgardeo.isSignedIn()) {
         setUser(await asgardeo.getUser());
         setUserProfile(await asgardeo.getUserProfile());
+        setCurrentOrganization(await asgardeo.getCurrentOrganization());
 
         return;
       }
@@ -173,6 +176,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       if (await asgardeo.isSignedIn()) {
         setUser(await asgardeo.getUser());
         setUserProfile(await asgardeo.getUserProfile());
+        setCurrentOrganization(await asgardeo.getCurrentOrganization());
       }
 
       return response;
@@ -225,7 +229,10 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
               profile={userProfile}
               revalidateProfile={async () => setUserProfile(await asgardeo.getUserProfile())}
             >
-              <OrganizationProvider getOrganizations={async () => asgardeo.getOrganizations()}>
+              <OrganizationProvider
+                getOrganizations={async () => asgardeo.getOrganizations()}
+                currentOrganization={currentOrganization}
+              >
                 {children}
               </OrganizationProvider>
             </UserProvider>

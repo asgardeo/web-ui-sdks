@@ -21,7 +21,7 @@ import {
   AuthClientConfig,
   User,
   LegacyConfig as Config,
-  IdTokenPayload,
+  IdToken,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -296,7 +296,7 @@ class AuthAPI {
    * @return {Promise<DecodedIDTokenPayloadInterface>} - A Promise that resolves with
    * the decoded payload of the id token.
    */
-  public async getDecodedIdToken(): Promise<IdTokenPayload> {
+  public async getDecodedIdToken(): Promise<IdToken> {
     return this._client.getDecodedIdToken();
   }
 
@@ -306,7 +306,7 @@ class AuthAPI {
    * @return {Promise<DecodedIDTokenPayloadInterface>} - A Promise that resolves with
    * the decoded payload of the idp id token.
    */
-  public async getDecodedIDPIDToken(): Promise<IdTokenPayload> {
+  public async getDecodedIDPIDToken(): Promise<IdToken> {
     return this._client.getDecodedIdToken();
   }
 

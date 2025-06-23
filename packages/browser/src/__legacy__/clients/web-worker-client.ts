@@ -23,7 +23,7 @@ import {
   User,
   IsomorphicCrypto,
   TokenExchangeRequestConfig,
-  IdTokenPayload,
+  IdToken,
   ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   OIDCRequestConstants,
@@ -706,12 +706,12 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getDecodedIdToken = (): Promise<IdTokenPayload> => {
+  const getDecodedIdToken = (): Promise<IdToken> => {
     const message: Message<null> = {
       type: GET_DECODED_ID_TOKEN,
     };
 
-    return communicate<null, IdTokenPayload>(message)
+    return communicate<null, IdToken>(message)
       .then(response => {
         return Promise.resolve(response);
       })
@@ -720,12 +720,12 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getDecodedIDPIDToken = (): Promise<IdTokenPayload> => {
+  const getDecodedIDPIDToken = (): Promise<IdToken> => {
     const message: Message<null> = {
       type: GET_DECODED_IDP_ID_TOKEN,
     };
 
-    return communicate<null, IdTokenPayload>(message)
+    return communicate<null, IdToken>(message)
       .then(response => {
         return Promise.resolve(response);
       })

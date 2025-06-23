@@ -24,7 +24,7 @@ import {
   Storage,
   User,
   OIDCEndpoints,
-  IdTokenPayload,
+  IdToken,
   TokenExchangeRequestConfig,
   AsgardeoAuthException,
   Logger,
@@ -173,7 +173,7 @@ export class AsgardeoExpressClient {
     return this._authClient.getOpenIDProviderEndpoints();
   }
 
-  public async getDecodedIdToken(userId?: string): Promise<IdTokenPayload> {
+  public async getDecodedIdToken(userId?: string): Promise<IdToken> {
     return this._authClient.getDecodedIdToken(userId);
   }
 
@@ -181,10 +181,7 @@ export class AsgardeoExpressClient {
     return this._authClient.getAccessToken(userId);
   }
 
-  public async exchangeToken(
-    config: TokenExchangeRequestConfig,
-    userId?: string,
-  ): Promise<TokenResponse | Response> {
+  public async exchangeToken(config: TokenExchangeRequestConfig, userId?: string): Promise<TokenResponse | Response> {
     return this._authClient.exchangeToken(config, userId);
   }
 

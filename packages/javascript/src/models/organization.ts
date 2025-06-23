@@ -20,6 +20,6 @@ export interface Organization {
   id: string;
   name: string;
   orgHandle: string;
-  ref: string;
-  status: string;
+  ref?: string;
+  status?: string;
 }
