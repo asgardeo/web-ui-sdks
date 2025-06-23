@@ -44,7 +44,7 @@ export interface OrganizationProviderProps {
   /**
    * Callback function called when switching organizations
    */
-  onOrganizationSwitch?: (organization: Organization) => void;
+  onOrganizationSwitch?: (organization: Organization) => Promise<void>;
   /**
    * Initial list of organizations
    */
@@ -152,13 +152,36 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
   /**
    * Switches to a different organization
    */
-  const switchOrganization: (organization: Organization) => void = useCallback(
-    (organization: Organization): void => {
-      if (onOrganizationSwitch) {
-        onOrganizationSwitch(organization);
+  const switchOrganization: (organization: Organization) => Promise<void> = useCallback(
+    async (organization: Organization): Promise<void> => {
+      if (!onOrganizationSwitch) {
+        throw new AsgardeoRuntimeError(
+          'onOrganizationSwitch callback is required',
+          'OrganizationProvider-SwitchError-001',
+          'react',
+          'The onOrganizationSwitch callback must be provided to handle organization switching.',
+        );
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        await onOrganizationSwitch(organization);
+        // The organization state will be updated by the parent provider
+      } catch (switchError) {
+        const errorMessage: string =
+          switchError instanceof Error ? switchError.message : 'Failed to switch organization';
+        setError(errorMessage);
+        if (onError) {
+          onError(errorMessage);
+        }
+        throw switchError; // Re-throw so the UI can handle it
+      } finally {
+        setIsLoading(false);
       }
     },
-    [onOrganizationSwitch],
+    [onOrganizationSwitch, onError],
   );
 
   // Auto-fetch organizations when component mounts or dependencies change

@@ -29,7 +29,7 @@ export type OrganizationContextProps = {
   isLoading: boolean;
   organizations: Organization[] | null;
   revalidateOrganizations: () => Promise<void>;
-  switchOrganization: (organization: Organization) => void;
+  switchOrganization: (organization: Organization) => Promise<void>;
 };
 
 /**
@@ -42,7 +42,7 @@ const OrganizationContext: Context<OrganizationContextProps | null> = createCont
   isLoading: false,
   organizations: null,
   revalidateOrganizations: () => Promise.resolve(),
-  switchOrganization: () => {},
+  switchOrganization: () => Promise.resolve(),
 });
 
 OrganizationContext.displayName = 'OrganizationContext';

@@ -41,7 +41,7 @@ export interface OrganizationSwitcherProps
   /**
    * Optional callback for organization switch (will use context if not provided)
    */
-  onOrganizationSwitch?: (organization: Organization) => void;
+  onOrganizationSwitch?: (organization: Organization) => Promise<void> | void;
   /**
    * Optional override for organizations list (will use context if not provided)
    */
@@ -105,7 +105,8 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
   // Use prop values if provided, otherwise use context values
   const organizations: Organization[] = propOrganizations || contextOrganizations || [];
   const currentOrganization: Organization | null = propCurrentOrganization || contextCurrentOrganization;
-  const onOrganizationSwitch: (organization: Organization) => void = propOnOrganizationSwitch || switchOrganization;
+  const onOrganizationSwitch: (organization: Organization) => Promise<void> | void =
+    propOnOrganizationSwitch || switchOrganization;
 
   // Add "Create Organization" menu item
   const defaultMenuItems = [

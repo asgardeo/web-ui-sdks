@@ -129,6 +129,45 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     };
   }
 
+  override async switchOrganization(organization: Organization): Promise<void> {
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const scopes = configData?.scopes;
+
+      if (!organization.id) {
+        throw new AsgardeoRuntimeError(
+          'Organization ID is required for switching organizations',
+          'react-AsgardeoReactClient-SwitchOrganizationError-001',
+          'react',
+          'The organization object must contain a valid ID to perform the organization switch.',
+        );
+      }
+
+      const exchangeConfig = {
+        attachToken: false,
+        data: {
+          client_id: '{{clientId}}',
+          grant_type: 'organization_switch',
+          scope: '{{scopes}}',
+          switching_organization: organization.id,
+          token: '{{accessToken}}',
+        },
+        id: 'organization-switch',
+        returnsSession: true,
+        signInRequired: true,
+      };
+
+      await this.asgardeo.exchangeToken(exchangeConfig, (user: User) => {}, () => null);
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to switch organization: ${error.message || error}`,
+        'react-AsgardeoReactClient-SwitchOrganizationError-003',
+        'react',
+        'An error occurred while switching to the specified organization. Please try again.',
+      );
+    }
+  }
+
   override isLoading(): boolean {
     return this.asgardeo.isLoading();
   }

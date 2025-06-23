@@ -29,6 +29,8 @@ import {User, UserProfile} from './models/user';
  * @typeParam T - Configuration type that extends Config.
  */
 abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T> {
+  abstract switchOrganization(organization: Organization): Promise<void>;
+
   abstract initialize(config: T): Promise<boolean>;
 
   abstract getUser(): Promise<User>;

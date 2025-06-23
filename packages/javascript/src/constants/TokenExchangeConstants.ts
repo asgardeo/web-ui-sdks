@@ -43,7 +43,7 @@ const TokenExchangeConstants = {
      * Placeholder for the token value in exchange requests.
      * Usually replaced with an access token or refresh token.
      */
-    TOKEN: '{{token}}',
+    ACCESS_TOKEN: '{{accessToken}}',
 
     /**
      * Placeholder for the username in token exchange operations.
@@ -55,7 +55,7 @@ const TokenExchangeConstants = {
      * Placeholder for OAuth scopes in token exchange requests.
      * Replaced with space-separated scope strings.
      */
-    SCOPE: '{{scope}}',
+    SCOPES: '{{scopes}}',
 
     /**
      * Placeholder for client ID in token exchange operations.

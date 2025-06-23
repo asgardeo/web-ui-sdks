@@ -50,6 +50,13 @@ export interface AsgardeoClient<T> {
   getCurrentOrganization(): Promise<Organization | null>;
 
   /**
+   * Switches the current organization to the specified one.
+   * @param organization - The organization to switch to.
+   * @returns A promise that resolves when the switch is complete.
+   */
+  switchOrganization(organization: Organization): Promise<void>;
+
+  /**
    * Gets user information from the session.
    *
    * @returns User object containing user details.

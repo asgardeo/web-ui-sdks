@@ -201,6 +201,25 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<string> =>
     asgardeo.signOut(options, afterSignOut);
 
+  const switchOrganization = async (organization: Organization): Promise<void> => {
+    try {
+      await asgardeo.switchOrganization(organization);
+
+      if (await asgardeo.isSignedIn()) {
+        setUser(await asgardeo.getUser());
+        setUserProfile(await asgardeo.getUserProfile());
+        setCurrentOrganization(await asgardeo.getCurrentOrganization());
+      }
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to switch organization: ${error.message || error}`,
+        'asgardeo-switchOrganization-Error',
+        'react',
+        'An error occurred while switching to the specified organization.',
+      );
+    }
+  };
+
   const isDarkMode: boolean = useMemo(() => {
     if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -232,6 +251,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
               <OrganizationProvider
                 getOrganizations={async () => asgardeo.getOrganizations()}
                 currentOrganization={currentOrganization}
+                onOrganizationSwitch={switchOrganization}
               >
                 {children}
               </OrganizationProvider>
