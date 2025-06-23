@@ -41,6 +41,14 @@ export interface ThemeColors {
     main: string;
     contrastText: string;
   };
+  success: {
+    main: string;
+    contrastText: string;
+  };
+  warning: {
+    main: string;
+    contrastText: string;
+  };
 }
 
 export interface ThemeConfig {
@@ -49,6 +57,11 @@ export interface ThemeConfig {
     unit: number;
   };
   borderRadius: {
+    small: string;
+    medium: string;
+    large: string;
+  };
+  shadows: {
     small: string;
     medium: string;
     large: string;

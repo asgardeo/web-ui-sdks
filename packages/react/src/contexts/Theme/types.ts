@@ -17,14 +17,38 @@
  */
 
 export interface ThemeColors {
-  primary: string;
-  background: string;
-  surface: string;
+  primary: {
+    main: string;
+    contrastText: string;
+  };
+  secondary: {
+    main: string;
+    contrastText: string;
+  };
+  background: {
+    surface: string;
+    disabled: string;
+    body: {
+      main: string;
+    };
+  };
   text: {
     primary: string;
     secondary: string;
   };
   border: string;
+  error: {
+    main: string;
+    contrastText: string;
+  };
+  success: {
+    main: string;
+    contrastText: string;
+  };
+  warning: {
+    main: string;
+    contrastText: string;
+  };
 }
 
 export interface ThemeConfig {
@@ -33,6 +57,11 @@ export interface ThemeConfig {
     unit: number;
   };
   borderRadius: {
+    small: string;
+    medium: string;
+    large: string;
+  };
+  shadows: {
     small: string;
     medium: string;
     large: string;

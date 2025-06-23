@@ -389,7 +389,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
               code,
               state,
             },
-            actionId: component.id,
+            actionId: '',
           } as any;
 
           try {
@@ -469,7 +469,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
                     code,
                     state,
                   },
-                  actionId: component.id,
+                  actionId: '',
                 } as any;
 
                 try {
