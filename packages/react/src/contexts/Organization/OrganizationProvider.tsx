@@ -16,10 +16,9 @@
  * under the License.
  */
 
-import {Organization} from '@asgardeo/browser';
+import {AsgardeoRuntimeError, Organization} from '@asgardeo/browser';
 import {FC, PropsWithChildren, ReactElement, useCallback, useEffect, useMemo, useState} from 'react';
 import OrganizationContext, {OrganizationContextProps} from './OrganizationContext';
-import getMeOrganizations from '../../api/scim2/getMeOrganizations';
 import useAsgardeo from '../Asgardeo/useAsgardeo';
 
 /**
@@ -37,7 +36,7 @@ export interface OrganizationProviderProps {
   /**
    * Function to fetch organizations
    */
-  getOrganizations?: () => Promise<Organization[]>;
+  getOrganizations: () => Promise<Organization[]>;
   /**
    * Callback function called when an error occurs
    */
@@ -122,19 +121,18 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
       let organizationsData: Organization[];
 
       if (getOrganizations) {
-        // Use the provided getOrganizations function
         organizationsData = await getOrganizations();
       } else {
-        // Fallback to the direct API call
-        if (!baseUrl) {
-          throw new Error('Base URL is required when getOrganizations is not provided');
-        }
-        organizationsData = await getMeOrganizations({baseUrl});
+        throw new AsgardeoRuntimeError(
+          'getOrganizations function is required',
+          'OrganizationProvider-ValidationError-001',
+          'react',
+          'The getOrganizations function must be provided to fetch organization data.',
+        );
       }
 
       setOrganizations(organizationsData);
 
-      // Set current organization to the first one if none is set
       if (!currentOrganization && organizationsData.length > 0) {
         setCurrentOrganization(organizationsData[0]);
       }
@@ -180,14 +178,7 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
     () => ({
       currentOrganization,
       error,
-      getOrganizations:
-        getOrganizations ||
-        (async (): Promise<Organization[]> => {
-          if (!baseUrl) {
-            throw new Error('Base URL is required when getOrganizations is not provided');
-          }
-          return getMeOrganizations({baseUrl});
-        }),
+      getOrganizations,
       isLoading,
       organizations,
       revalidateOrganizations,

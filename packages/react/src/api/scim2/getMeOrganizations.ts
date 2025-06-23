@@ -23,13 +23,18 @@ const httpClient: HttpInstance = AsgardeoSPAClient.getInstance().httpRequest.bin
 /**
  * Retrieves the organizations associated with the current user.
  *
- * @param config - Configuration object containing baseUrl and optional request config.
+ * @param config - Configuration object containing baseUrl, optional query parameters, and request config.
  * @returns A promise that resolves with the organizations information.
  * @example
  * ```typescript
  * try {
  *   const organizations = await getMeOrganizations({
  *     baseUrl: "https://api.asgardeo.io/t/<ORGANIZATION>",
+ *     after: "",
+ *     before: "",
+ *     filter: "",
+ *     limit: 10,
+ *     recursive: false
  *   });
  *   console.log(organizations);
  * } catch (error) {
@@ -41,9 +46,21 @@ const httpClient: HttpInstance = AsgardeoSPAClient.getInstance().httpRequest.bin
  */
 const getMeOrganizations = async ({
   baseUrl,
+  after = '',
+  authorizedAppName = '',
+  before = '',
+  filter = '',
+  limit = 10,
+  recursive = false,
   ...requestConfig
 }: Partial<Request> & {
   baseUrl: string;
+  after?: string;
+  authorizedAppName?: string;
+  before?: string;
+  filter?: string;
+  limit?: number;
+  recursive?: boolean;
 }): Promise<Organization[]> => {
   if (!baseUrl) {
     throw new AsgardeoAPIError(
@@ -55,13 +72,22 @@ const getMeOrganizations = async ({
     );
   }
 
+  const queryParams = new URLSearchParams({
+    after,
+    authorizedAppName,
+    before,
+    filter,
+    limit: limit.toString(),
+    recursive: recursive.toString(),
+  });
+
   const response: any = await httpClient({
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
     method: 'GET',
-    url: `${baseUrl}/api/users/v1/me/organizations/root/descendants`,
+    url: `${baseUrl}/api/users/v1/me/organizations?${queryParams.toString()}`,
     ...requestConfig,
   } as HttpRequestConfig);
 
@@ -77,7 +103,7 @@ const getMeOrganizations = async ({
     );
   }
 
-  return response.data;
+  return response.data.organizations || [];
 };
 
 export default getMeOrganizations;
