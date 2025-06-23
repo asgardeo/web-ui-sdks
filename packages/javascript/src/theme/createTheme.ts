@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import { RecursivePartial } from '../models/utility-types';
 import {Theme, ThemeConfig} from './types';
+import {RecursivePartial} from '../models/utility-types';
 
 const lightTheme: ThemeConfig = {
   colors: {

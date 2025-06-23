@@ -81,6 +81,14 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     throw new Error('Method not implemented.');
   }
 
+  override switchOrganization(organization: Organization): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  override getCurrentOrganization(): Promise<Organization | null> {
+    throw new Error('Method not implemented.');
+  }
+
   override isLoading(): boolean {
     return false;
   }
