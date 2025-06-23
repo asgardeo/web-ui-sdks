@@ -132,10 +132,19 @@ const SignUp: FC<SignUpProps> = ({
   const handleComplete = (response: EmbeddedFlowExecuteResponse) => {
     onComplete?.(response);
 
+    // For non-redirection responses (regular sign-up completion), handle redirect if configured
+    if (shouldRedirectAfterSignUp && response?.type !== EmbeddedFlowResponseType.Redirection && afterSignUpUrl) {
+      window.location.href = afterSignUpUrl;
+    }
+
+    // For redirection responses (social sign-up), they are handled by BaseSignUp's popup mechanism
+    // and we only redirect after the OAuth flow is complete if shouldRedirectAfterSignUp is true
     if (
       shouldRedirectAfterSignUp &&
       response?.type === EmbeddedFlowResponseType.Redirection &&
-      response?.data?.redirectURL
+      response?.data?.redirectURL &&
+      !response.data.redirectURL.includes('oauth') && // Not a social provider redirect
+      !response.data.redirectURL.includes('auth') // Not an auth provider redirect
     ) {
       window.location.href = response.data.redirectURL;
     }

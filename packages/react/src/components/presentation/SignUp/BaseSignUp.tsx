@@ -21,6 +21,7 @@ import {
   EmbeddedFlowExecuteResponse,
   EmbeddedFlowStatus,
   EmbeddedFlowComponentType,
+  EmbeddedFlowResponseType,
   withVendorCSSClassPrefix,
   AsgardeoAPIError,
 } from '@asgardeo/browser';
@@ -73,6 +74,13 @@ export interface BaseSignUpProps {
   messageClassName?: string;
 
   /**
+   * Callback function called when the sign-up flow completes and requires redirection.
+   * This allows platform-specific handling of redirects (e.g., Next.js router.push).
+   * @param response - The response from the sign-up flow containing the redirect URL, etc.
+   */
+  onComplete?: (response: EmbeddedFlowExecuteResponse) => void;
+
+  /**
    * Callback function called when sign-up fails.
    * @param error - The error that occurred during sign-up.
    */
@@ -96,13 +104,6 @@ export interface BaseSignUpProps {
    * @returns Promise resolving to the sign-up response.
    */
   onSubmit: (payload: EmbeddedFlowExecuteRequestPayload) => Promise<EmbeddedFlowExecuteResponse>;
-
-  /**
-   * Callback function called when the sign-up flow completes and requires redirection.
-   * This allows platform-specific handling of redirects (e.g., Next.js router.push).
-   * @param response - The response from the sign-up flow containing the redirect URL, etc.
-   */
-  onComplete?: (response: EmbeddedFlowExecuteResponse) => void;
 
   /**
    * Size variant for the component.
@@ -319,11 +320,15 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
 
       if (response.flowStatus === EmbeddedFlowStatus.Complete) {
         onComplete?.(response);
-
         return;
       }
 
       if (response.flowStatus === EmbeddedFlowStatus.Incomplete) {
+        // Check if the response contains a redirection URL and redirect if needed
+        if (handleRedirectionIfNeeded(response, component)) {
+          return;
+        }
+
         setCurrentFlow(response);
         setupFormFields(response);
       }
@@ -334,6 +339,172 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  /**
+   * Check if the response contains a redirection URL and perform the redirect if necessary.
+   * @param response - The sign-up response
+   * @param component - The component that triggered the submission (needed for actionId)
+   * @returns true if a redirect was performed, false otherwise
+   */
+  const handleRedirectionIfNeeded = (response: EmbeddedFlowExecuteResponse, component: any): boolean => {
+    if (response?.type === EmbeddedFlowResponseType.Redirection && response?.data?.redirectURL) {
+      /**
+       * Open a popup window to handle redirection prompts for social sign-up
+       */
+      const redirectUrl = response.data.redirectURL;
+      const popup = window.open(redirectUrl, 'oauth_popup', 'width=500,height=600,scrollbars=yes,resizable=yes');
+
+      if (!popup) {
+        console.error('Failed to open popup window');
+        return false;
+      }
+
+      /**
+       * Add an event listener to the window to capture the message from the popup
+       */
+      const messageHandler = async function messageEventHandler(event: MessageEvent) {
+        /**
+         * Check if the message is from our popup window
+         */
+        if (event.source !== popup) {
+          return;
+        }
+
+        /**
+         * Check the origin of the message to ensure it's from a trusted source
+         */
+        const expectedOrigin = afterSignUpUrl ? new URL(afterSignUpUrl).origin : window.location.origin;
+        if (event.origin !== expectedOrigin && event.origin !== window.location.origin) {
+          return;
+        }
+
+        const {code, state} = event.data;
+
+        if (code && state) {
+          const payload: EmbeddedFlowExecuteRequestPayload = {
+            ...(currentFlow.flowId && {flowId: currentFlow.flowId}),
+            flowType: (currentFlow as any).flowType || 'REGISTRATION',
+            inputs: {
+              code,
+              state,
+            },
+            actionId: component.id,
+          } as any;
+
+          try {
+            const continueResponse = await onSubmit(payload);
+            onFlowChange?.(continueResponse);
+
+            if (continueResponse.flowStatus === EmbeddedFlowStatus.Complete) {
+              onComplete?.(continueResponse);
+            } else if (continueResponse.flowStatus === EmbeddedFlowStatus.Incomplete) {
+              setCurrentFlow(continueResponse);
+              setupFormFields(continueResponse);
+            }
+
+            popup.close();
+            cleanup();
+          } catch (err) {
+            const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.sign.up.flow.failure');
+            setError(errorMessage);
+            onError?.(err as Error);
+            popup.close();
+            cleanup();
+          }
+        }
+      };
+
+      const cleanup = () => {
+        window.removeEventListener('message', messageHandler);
+        if (popupMonitor) {
+          clearInterval(popupMonitor);
+        }
+      };
+
+      window.addEventListener('message', messageHandler);
+
+      /**
+       * Monitor popup for closure and URL changes
+       */
+      let hasProcessedCallback = false; // Prevent multiple processing
+      const popupMonitor = setInterval(async () => {
+        try {
+          if (popup.closed) {
+            cleanup();
+            return;
+          }
+
+          // Skip if we've already processed a callback
+          if (hasProcessedCallback) {
+            return;
+          }
+
+          // Try to access popup URL to check for callback
+          try {
+            const popupUrl = popup.location.href;
+
+            // Check if we've been redirected to the callback URL
+            if (popupUrl && (popupUrl.includes('code=') || popupUrl.includes('error='))) {
+              hasProcessedCallback = true; // Set flag to prevent multiple processing
+
+              // Parse the URL for OAuth parameters
+              const url = new URL(popupUrl);
+              const code = url.searchParams.get('code');
+              const state = url.searchParams.get('state');
+              const error = url.searchParams.get('error');
+
+              if (error) {
+                console.error('OAuth error:', error);
+                popup.close();
+                cleanup();
+                return;
+              }
+
+              if (code && state) {
+                const payload: EmbeddedFlowExecuteRequestPayload = {
+                  ...(currentFlow.flowId && {flowId: currentFlow.flowId}),
+                  flowType: (currentFlow as any).flowType || 'REGISTRATION',
+                  inputs: {
+                    code,
+                    state,
+                  },
+                  actionId: component.id,
+                } as any;
+
+                try {
+                  const continueResponse = await onSubmit(payload);
+                  onFlowChange?.(continueResponse);
+
+                  if (continueResponse.flowStatus === EmbeddedFlowStatus.Complete) {
+                    onComplete?.(continueResponse);
+                  } else if (continueResponse.flowStatus === EmbeddedFlowStatus.Incomplete) {
+                    setCurrentFlow(continueResponse);
+                    setupFormFields(continueResponse);
+                  }
+
+                  popup.close();
+                } catch (err) {
+                  const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.sign.up.flow.failure');
+                  setError(errorMessage);
+                  onError?.(err as Error);
+                  popup.close();
+                }
+              }
+            }
+          } catch (e) {
+            // Cross-origin error is expected when popup navigates to OAuth provider
+            // This is normal and we can ignore it
+          }
+        } catch (e) {
+          console.error('Error monitoring popup:', e);
+        }
+      }, 1000);
+
+      return true;
+    }
+
+    return false;
   };
 
   // Generate CSS classes
