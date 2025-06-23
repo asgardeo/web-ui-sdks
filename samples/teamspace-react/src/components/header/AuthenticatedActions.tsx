@@ -1,6 +1,6 @@
 'use client';
 
-import OrganizationSwitcher from './OrganizationSwitcher';
+import {OrganizationSwitcher} from '@asgardeo/react';
 import UserDropdown from './UserDropdown';
 
 interface AuthenticatedActionsProps {

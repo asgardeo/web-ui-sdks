@@ -5,7 +5,7 @@ import {useState, createContext, useContext} from 'react';
 import DashboardPage from './pages/Dashboard';
 import ProfilePage from './pages/Profile';
 import OrganizationsPage from './pages/Organizations';
-import CreateOrganizationPage from './pages/CreateOrganization';
+import CreateOrganizationPage from './pages/CreateOrganizationPage';
 import SignInPage from './pages/SignInPage';
 import LandingPage from './pages/LandingPage';
 import LandingLayout from './layouts/LandingLayout';

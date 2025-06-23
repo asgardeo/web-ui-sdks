@@ -39,6 +39,7 @@ export default function PublicActions({className = '', showMobileActions = false
     <div className={`flex items-center space-x-4 ${className}`}>
       {/* Desktop CTA */}
       <div className="hidden md:flex items-center space-x-4">
+        <SignInButton>Sign In with Redirect</SignInButton>
         <SignInButton>
           {({isLoading}) => (
             <Button
