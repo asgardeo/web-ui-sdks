@@ -32,6 +32,8 @@ import {
   EmbeddedSignInFlowHandleRequestPayload,
   executeEmbeddedSignInFlow,
   EmbeddedFlowExecuteRequestConfig,
+  CookieConfig,
+  generateSessionId,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
@@ -117,12 +119,6 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     const arg3 = args[2];
     const arg4 = args[3];
 
-    let resolvedSessionId: string = arg3 || ((await getSessionId()) as string);
-
-    if (!resolvedSessionId) {
-      resolvedSessionId = await setSessionId(arg3);
-    }
-
     if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg1 === 'object' && 'url' in arg2) {
       if (arg1.flowId === '') {
         return initializeEmbeddedSignInFlow({
@@ -139,7 +135,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
     return this.asgardeo.signIn(
       arg4,
-      resolvedSessionId,
+      arg3,
       undefined,
       undefined,
       undefined,
@@ -179,18 +175,24 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     const sanitizedPathname: string = removeTrailingSlash(pathname);
     const {method} = req;
 
-    if ((method === 'POST' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) || searchParams.get('code')) {
-      let response;
-
-      const userId: string | undefined = await getSessionId();
-
-      const signInUrl: URL = new URL(await this.asgardeo.getSignInUrl({response_mode: 'direct'}, userId));
-      const {pathname, origin, searchParams} = signInUrl;
-
-      console.log('[AsgardeoNextClient] Sign-in URL:', signInUrl.toString());
-      console.log('[AsgardeoNextClient] Search Params:', Object.fromEntries(searchParams.entries()));
+    // Handle POST sign-in request
+    if (method === 'POST' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) {
       try {
-        await this.signIn(
+        // Get session ID from cookies directly since we're in middleware context
+        let userId: string | undefined = req.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+
+        // Generate session ID if not present
+        if (!userId) {
+          userId = generateSessionId();
+        }
+
+        const signInUrl: URL = new URL(await this.asgardeo.getSignInUrl({response_mode: 'direct'}, userId));
+        const {pathname: urlPathname, origin, searchParams: urlSearchParams} = signInUrl;
+
+        console.log('[AsgardeoNextClient] Sign-in URL:', signInUrl.toString());
+        console.log('[AsgardeoNextClient] Search Params:', Object.fromEntries(urlSearchParams.entries()));
+
+        const response = await this.signIn(
           {
             flowId: '',
             selectedAuthenticator: {
@@ -199,41 +201,59 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
             },
           },
           {
-            url: `${origin}${pathname}`,
-            payload: Object.fromEntries(searchParams.entries()),
+            url: `${origin}${urlPathname}`,
+            payload: Object.fromEntries(urlSearchParams.entries()),
           },
+          userId,
         );
-      } catch (error) {
-        throw new AsgardeoRuntimeError(
-          `Failed to initialize embedded sign-in flow.: ${error?.toString()}`,
-          'react-AsgardeoReactClient-InitializationError-001',
-          'react',
-          'An error occurred while initializing the embedded sign-in flow.',
-        );
-      }
 
-      return NextResponse.json(response);
+        console.log('[AsgardeoNextClient] Sign-in response:', response);
+
+        // Clean the response to remove any non-serializable properties
+        const cleanResponse = response ? JSON.parse(JSON.stringify(response)) : {success: true};
+
+        // Create response with session cookie
+        const nextResponse = NextResponse.json(cleanResponse);
+        
+        // Set session cookie if it was generated
+        if (!req.cookies.get(CookieConfig.SESSION_COOKIE_NAME)) {
+          nextResponse.cookies.set(CookieConfig.SESSION_COOKIE_NAME, userId, {
+            httpOnly: CookieConfig.DEFAULT_HTTP_ONLY,
+            maxAge: CookieConfig.DEFAULT_MAX_AGE,
+            sameSite: CookieConfig.DEFAULT_SAME_SITE,
+            secure: CookieConfig.DEFAULT_SECURE,
+          });
+        }
+
+        return nextResponse;
+      } catch (error) {
+        console.error('[AsgardeoNextClient] Failed to initialize embedded sign-in flow:', error);
+        return NextResponse.json({error: 'Failed to initialize sign-in flow'}, {status: 500});
+      }
     }
 
+    // Handle GET sign-in request or callback with code
     if ((method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) || searchParams.get('code')) {
-      let response: NextResponse | undefined;
+      try {
+        if (searchParams.get('code')) {
+          // Handle OAuth callback
+          await this.signIn();
 
-      await this.signIn();
+          const cleanUrl: URL = new URL(req.url);
+          cleanUrl.searchParams.delete('code');
+          cleanUrl.searchParams.delete('state');
+          cleanUrl.searchParams.delete('session_state');
 
-      if (response) {
-        return response;
+          return NextResponse.redirect(cleanUrl.toString());
+        }
+
+        // Regular GET sign-in request
+        await this.signIn();
+        return NextResponse.next();
+      } catch (error) {
+        console.error('[AsgardeoNextClient] Sign-in failed:', error);
+        return NextResponse.json({error: 'Sign-in failed'}, {status: 500});
       }
-
-      if (searchParams.get('code')) {
-        const cleanUrl: URL = new URL(req.url);
-        cleanUrl.searchParams.delete('code');
-        cleanUrl.searchParams.delete('state');
-        cleanUrl.searchParams.delete('session_state');
-
-        return NextResponse.redirect(cleanUrl.toString());
-      }
-
-      return NextResponse.next();
     }
 
     if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.session) {

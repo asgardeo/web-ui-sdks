@@ -237,6 +237,8 @@ export class AsgardeoAuthClient<T> {
         await this._storageManager.setTemporaryDataParameter(pkceKey, codeVerifier, userId);
       }
 
+      console.log('[AsgardeoAuthClient] configData:', configData);
+
       const authorizeRequestParams: Map<string, string> = getAuthorizeRequestUrlParams(
         {
           redirectUri: configData.afterSignInUrl,
