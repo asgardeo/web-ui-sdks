@@ -24,6 +24,7 @@ import useOrganization from '../../../contexts/Organization/useOrganization';
 import useTranslation from '../../../hooks/useTranslation';
 import {CreateOrganization} from '../CreateOrganization/CreateOrganization';
 import OrganizationProfile from '../OrganizationProfile/OrganizationProfile';
+import OrganizationList from '../OrganizationList/OrganizationList';
 import BuildingAlt from '../../primitives/Icons/BuildingAlt';
 
 /**
@@ -94,6 +95,7 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
   } = useOrganization();
   const [isCreateOrgOpen, setIsCreateOrgOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isOrganizationListOpen, setIsOrganizationListOpen] = useState(false);
   const {t} = useTranslation();
 
   if (!isSignedIn && fallback) {
@@ -109,6 +111,10 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
   const onOrganizationSwitch: (organization: Organization) => Promise<void> | void =
     propOnOrganizationSwitch || switchOrganization;
 
+  const handleManageOrganizations = (): void => {
+    setIsOrganizationListOpen(true);
+  };
+
   const handleManageOrganization = (): void => {
     setIsProfileOpen(true);
   };
@@ -118,8 +124,8 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
   if (currentOrganization) {
     defaultMenuItems.push({
       icon: <BuildingAlt />,
-      label: t('organization.switcher.manage.organization'),
-      onClick: handleManageOrganization,
+      label: t('organization.switcher.manage.organizations'),
+      onClick: handleManageOrganizations,
     });
   }
 
@@ -144,6 +150,7 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
         loading={isLoading}
         error={error}
         menuItems={menuItems}
+        onManageProfile={handleManageOrganization}
         {...props}
       />
       <CreateOrganization
@@ -160,11 +167,26 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
       {currentOrganization && (
         <OrganizationProfile
           organizationId={currentOrganization.id}
+          mode="popup"
+          open={isProfileOpen}
+          onOpenChange={setIsProfileOpen}
           cardLayout={true}
           loadingFallback={<div>{t('organization.profile.loading')}</div>}
           errorFallback={<div>{t('organization.profile.error')}</div>}
         />
       )}
+      <OrganizationList
+        mode="popup"
+        open={isOrganizationListOpen}
+        onOpenChange={setIsOrganizationListOpen}
+        title={t('organization.switcher.manage.organizations')}
+        onOrganizationSelect={(organization: Organization) => {
+          if (onOrganizationSwitch) {
+            onOrganizationSwitch(organization);
+          }
+          setIsOrganizationListOpen(false);
+        }}
+      />
     </>
   );
 };

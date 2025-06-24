@@ -56,6 +56,14 @@ export interface OrganizationListProps
  *   }}
  * />
  *
+ * // As a popup dialog
+ * <OrganizationList
+ *   mode="popup"
+ *   open={isOpen}
+ *   onOpenChange={setIsOpen}
+ *   title="Select Organization"
+ * />
+ *
  * // With custom organization renderer
  * <OrganizationList
  *   renderOrganization={(org) => (

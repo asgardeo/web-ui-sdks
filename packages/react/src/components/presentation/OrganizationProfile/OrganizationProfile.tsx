@@ -20,6 +20,8 @@ import {FC, ReactElement, useEffect, useState} from 'react';
 import BaseOrganizationProfile, {BaseOrganizationProfileProps} from './BaseOrganizationProfile';
 import getOrganization, {OrganizationDetails} from '../../../api/scim2/getOrganization';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
+import useTranslation from '../../../hooks/useTranslation';
+import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 
 /**
  * Props for the OrganizationProfile component.
@@ -38,9 +40,29 @@ export type OrganizationProfileProps = Omit<BaseOrganizationProfileProps, 'organ
   loadingFallback?: ReactElement;
 
   /**
+   * Display mode for the component.
+   */
+  mode?: 'default' | 'popup';
+
+  /**
+   * Callback fired when the popup should be closed (only used in popup mode).
+   */
+  onOpenChange?: (open: boolean) => void;
+
+  /**
+   * Whether the popup is open (only used in popup mode).
+   */
+  open?: boolean;
+
+  /**
    * The ID of the organization to fetch and display.
    */
   organizationId: string;
+
+  /**
+   * Custom title for the popup dialog (only used in popup mode).
+   */
+  popupTitle?: string;
 };
 
 /**
@@ -64,15 +86,29 @@ export type OrganizationProfileProps = Omit<BaseOrganizationProfileProps, 'organ
  *   errorFallback={<div>Failed to load organization</div>}
  *   fallback={<div>No organization data available</div>}
  * />
+ *
+ * // In popup mode
+ * <OrganizationProfile
+ *   organizationId="0d5e071b-d3d3-475d-b3c6-1a20ee2fa9b1"
+ *   mode="popup"
+ *   open={isOpen}
+ *   onOpenChange={setIsOpen}
+ *   popupTitle="Organization Profile"
+ * />
  * ```
  */
 const OrganizationProfile: FC<OrganizationProfileProps> = ({
   organizationId,
+  mode = 'default',
+  open = false,
+  onOpenChange,
+  popupTitle,
   loadingFallback = <div>Loading organization...</div>,
   errorFallback = <div>Failed to load organization data</div>,
   ...rest
 }: OrganizationProfileProps): ReactElement => {
   const {baseUrl} = useAsgardeo();
+  const {t} = useTranslation();
   const [organization, setOrganization] = useState<OrganizationDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
@@ -106,14 +142,45 @@ const OrganizationProfile: FC<OrganizationProfileProps> = ({
   }, [baseUrl, organizationId]);
 
   if (loading) {
-    return loadingFallback;
+    return mode === 'popup' ? (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeading>{popupTitle || t('organization.profile.title')}</DialogHeading>
+          <div style={{padding: '1rem'}}>{loadingFallback}</div>
+        </DialogContent>
+      </Dialog>
+    ) : (
+      loadingFallback
+    );
   }
 
   if (error) {
-    return errorFallback;
+    return mode === 'popup' ? (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeading>{popupTitle || t('organization.profile.title')}</DialogHeading>
+          <div style={{padding: '1rem'}}>{errorFallback}</div>
+        </DialogContent>
+      </Dialog>
+    ) : (
+      errorFallback
+    );
   }
 
-  return <BaseOrganizationProfile organization={organization} {...rest} />;
+  const profileContent = <BaseOrganizationProfile organization={organization} {...rest} />;
+
+  if (mode === 'popup') {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeading>{popupTitle || t('organization.profile.title')}</DialogHeading>
+          <div style={{padding: '1rem'}}>{profileContent}</div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return profileContent;
 };
 
 export default OrganizationProfile;

@@ -9,7 +9,6 @@ export default function CreateOrganizationPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
       <div className="mb-8">
         <button
           onClick={() => navigate('/organizations')}
@@ -24,7 +23,6 @@ export default function CreateOrganizationPage() {
         </p>
       </div>
 
-      {/* Form */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <CreateOrganization />
       </div>

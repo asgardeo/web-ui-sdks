@@ -18,6 +18,7 @@
 
 import {FC, ReactElement, ReactNode} from 'react';
 import {OrganizationWithSwitchAccess} from '../../../hooks/useOrganizations';
+import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 
 /**
  * Props interface for the BaseOrganizationList component.
@@ -83,6 +84,22 @@ export interface BaseOrganizationListProps {
    * Total number of organizations
    */
   totalCount?: number;
+  /**
+   * Display mode: 'inline' for normal display, 'popup' for modal dialog
+   */
+  mode?: 'inline' | 'popup';
+  /**
+   * Function called when popup open state changes (only used in popup mode)
+   */
+  onOpenChange?: (open: boolean) => void;
+  /**
+   * Whether the popup is open (only used in popup mode)
+   */
+  open?: boolean;
+  /**
+   * Title for the popup dialog (only used in popup mode)
+   */
+  title?: string;
 }
 
 /**
@@ -221,43 +238,86 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   hasMore = false,
   isLoading = false,
   isLoadingMore = false,
+  mode = 'inline',
+  onOpenChange,
   onRefresh,
+  open = false,
   renderEmpty = defaultRenderEmpty,
   renderError = defaultRenderError,
   renderLoading = defaultRenderLoading,
   renderLoadMore = defaultRenderLoadMore,
   renderOrganization = defaultRenderOrganization,
   style,
+  title = 'Organizations',
   totalCount,
 }): ReactElement => {
   // Show loading state
   if (isLoading && data.length === 0) {
-    return (
+    const loadingContent = (
       <div className={className} style={style}>
         {renderLoading()}
       </div>
     );
+
+    if (mode === 'popup') {
+      return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+          <DialogContent>
+            <DialogHeading>{title}</DialogHeading>
+            <div style={{padding: '1rem'}}>{loadingContent}</div>
+          </DialogContent>
+        </Dialog>
+      );
+    }
+
+    return loadingContent;
   }
 
   // Show error state
   if (error && data.length === 0) {
-    return (
+    const errorContent = (
       <div className={className} style={style}>
         {renderError(error)}
       </div>
     );
+
+    if (mode === 'popup') {
+      return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+          <DialogContent>
+            <DialogHeading>{title}</DialogHeading>
+            <div style={{padding: '1rem'}}>{errorContent}</div>
+          </DialogContent>
+        </Dialog>
+      );
+    }
+
+    return errorContent;
   }
 
   // Show empty state
   if (!isLoading && data.length === 0) {
-    return (
+    const emptyContent = (
       <div className={className} style={style}>
         {renderEmpty()}
       </div>
     );
+
+    if (mode === 'popup') {
+      return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+          <DialogContent>
+            <DialogHeading>{title}</DialogHeading>
+            <div style={{padding: '1rem'}}>{emptyContent}</div>
+          </DialogContent>
+        </Dialog>
+      );
+    }
+
+    return emptyContent;
   }
 
-  return (
+  const organizationListContent = (
     <div className={className} style={style}>
       {/* Header with total count and refresh button */}
       <div style={{alignItems: 'center', display: 'flex', justifyContent: 'space-between', marginBottom: '16px'}}>
@@ -302,6 +362,19 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
       {hasMore && fetchMore && <div style={{marginTop: '24px'}}>{renderLoadMore(fetchMore, isLoadingMore)}</div>}
     </div>
   );
+
+  if (mode === 'popup') {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeading>{title}</DialogHeading>
+          <div style={{padding: '1rem'}}>{organizationListContent}</div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return organizationListContent;
 };
 
 export default BaseOrganizationList;
