@@ -67,3 +67,9 @@ export enum EmbeddedFlowComponentType {
   Select = 'SELECT',
   Typography = 'TYPOGRAPHY',
 }
+
+export interface EmbeddedFlowExecuteRequestConfig<T = any> extends Partial<Request> {
+  baseUrl?: string;
+  payload?: T;
+  url?: string;
+}

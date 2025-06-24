@@ -231,6 +231,7 @@ export const MainThreadClient = async (
         _dataLayer.setTemporaryDataParameter(TOKEN_REQUEST_CONFIG_KEY, JSON.stringify(tokenRequestConfig));
       }
 
+      // FIXME: This is a workaround to handle the `response_mode` as `direct` in the sign-in config.
       if (signInConfig && signInConfig['response_mode'] === 'direct') {
         const authorizeUrl: URL = new URL(url);
 
@@ -239,6 +240,7 @@ export const MainThreadClient = async (
           payload: Object.fromEntries(authorizeUrl.searchParams.entries()),
         });
       }
+
       location.href = url;
 
       await SPAUtils.waitTillPageRedirect();

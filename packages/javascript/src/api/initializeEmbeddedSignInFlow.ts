@@ -17,76 +17,8 @@
  */
 
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
+import {EmbeddedFlowExecuteRequestConfig} from '../models/embedded-flow';
 import {EmbeddedSignInFlowInitiateResponse} from '../models/embedded-signin-flow';
-
-/**
- * Represents the authorization request payload that can be sent to the authorization endpoint.
- */
-export interface AuthorizationRequest {
-  /**
-   * Additional authorization parameters.
-   */
-  [key: string]: any;
-  /**
-   * The client identifier.
-   */
-  client_id?: string;
-  /**
-   * PKCE code challenge.
-   */
-  code_challenge?: string;
-  /**
-   * PKCE code challenge method.
-   */
-  code_challenge_method?: string;
-  /**
-   * The allowable elapsed time in seconds since the last time the End-User was actively authenticated.
-   */
-  max_age?: number;
-  /**
-   * String value used to associate a Client session with an ID Token.
-   */
-  nonce?: string;
-  /**
-   * Space delimited, case sensitive list of ASCII string values.
-   */
-  prompt?: string;
-  /**
-   * The redirection URI after authorization.
-   */
-  redirect_uri?: string;
-  /**
-   * How the authorization response should be returned.
-   */
-  response_mode?: string;
-  /**
-   * The response type (e.g., 'code', 'token', 'id_token').
-   */
-  response_type?: string;
-  /**
-   * The scope of the access request.
-   */
-  scope?: string;
-  /**
-   * An unguessable random string to prevent CSRF attacks.
-   */
-  state?: string;
-}
-
-/**
- * Request configuration for the authorize function.
- */
-export interface AuthorizeRequestConfig extends Partial<Request> {
-  /**
-   * The base URL of the Asgardeo server.
-   */
-  baseUrl?: string;
-  /**
-   * The authorization request payload.
-   */
-  payload: AuthorizationRequest;
-  url?: string;
-}
 
 /**
  * Sends an authorization request to the specified OAuth2/OIDC authorization endpoint.
@@ -123,7 +55,7 @@ const initializeEmbeddedSignInFlow = async ({
   baseUrl,
   payload,
   ...requestConfig
-}: AuthorizeRequestConfig): Promise<EmbeddedSignInFlowInitiateResponse> => {
+}: EmbeddedFlowExecuteRequestConfig): Promise<EmbeddedSignInFlowInitiateResponse> => {
   if (!payload) {
     throw new AsgardeoAPIError(
       'Authorization payload is required',

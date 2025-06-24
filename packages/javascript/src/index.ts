@@ -58,6 +58,7 @@ export {
   EmbeddedFlowComponent,
   EmbeddedFlowComponentType,
   EmbeddedFlowExecuteRequestPayload,
+  EmbeddedFlowExecuteRequestConfig,
 } from './models/embedded-flow';
 export {FlowMode} from './models/flow';
 export {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './models/client';

@@ -34,6 +34,7 @@ import {
   executeEmbeddedSignInFlow,
   Organization,
   IdToken,
+  EmbeddedFlowExecuteRequestConfig,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/scim2/getMeOrganizations';
@@ -157,7 +158,11 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
         signInRequired: true,
       };
 
-      await this.asgardeo.exchangeToken(exchangeConfig, (user: User) => {}, () => null);
+      await this.asgardeo.exchangeToken(
+        exchangeConfig,
+        (user: User) => {},
+        () => null,
+      );
     } catch (error) {
       throw new AsgardeoRuntimeError(
         `Failed to switch organization: ${error.message || error}`,
@@ -180,16 +185,25 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     return this.asgardeo.isSignedIn();
   }
 
-  override signIn(options?: SignInOptions): Promise<User>;
-  override signIn(payload: EmbeddedSignInFlowHandleRequestPayload, request: Request): Promise<User>;
+  override signIn(
+    options?: SignInOptions,
+    sessionId?: string,
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
+  override signIn(
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: EmbeddedFlowExecuteRequestConfig,
+    sessionId?: string,
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
   override async signIn(...args: any[]): Promise<User> {
     const arg1 = args[0];
     const arg2 = args[1];
 
-    if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg1 === 'object' && 'url' in arg2) {
+    if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg2 === 'object' && 'url' in arg2) {
       return executeEmbeddedSignInFlow({
         payload: arg1,
-        url: (arg2 as Request).url,
+        url: arg2.url,
       });
     }
 

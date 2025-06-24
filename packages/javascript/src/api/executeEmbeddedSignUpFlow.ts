@@ -17,29 +17,7 @@
  */
 
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
-import {
-  EmbeddedFlowType,
-  EmbeddedFlowExecuteResponse,
-  EmbeddedFlowExecuteRequestPayload,
-} from '../models/embedded-flow';
-
-/**
- * Request configuration for the embedded signup flow execution function.
- */
-export interface EmbeddedSignUpFlowExecuteRequestConfig extends Partial<Request> {
-  /**
-   * The base URL of the Asgardeo server.
-   */
-  baseUrl?: string;
-  /**
-   * The embedded signup flow execution request payload.
-   */
-  payload?: EmbeddedFlowExecuteRequestPayload;
-  /**
-   *  The URL to which the request should be sent.
-   */
-  url?: string;
-}
+import {EmbeddedFlowType, EmbeddedFlowExecuteResponse, EmbeddedFlowExecuteRequestConfig} from '../models/embedded-flow';
 
 /**
  * Executes an embedded signup flow by sending a request to the specified flow execution endpoint.
@@ -70,7 +48,7 @@ const executeEmbeddedSignUpFlow = async ({
   baseUrl,
   payload,
   ...requestConfig
-}: EmbeddedSignUpFlowExecuteRequestConfig): Promise<EmbeddedFlowExecuteResponse> => {
+}: EmbeddedFlowExecuteRequestConfig): Promise<EmbeddedFlowExecuteResponse> => {
   if (!baseUrl && !url) {
     throw new AsgardeoAPIError(
       'Embedded SignUp flow execution failed: Base URL or URL is not provided.',

@@ -29,6 +29,9 @@ import {
   UserProfile,
   initializeEmbeddedSignInFlow,
   Organization,
+  EmbeddedSignInFlowHandleRequestPayload,
+  executeEmbeddedSignInFlow,
+  EmbeddedFlowExecuteRequestConfig,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
@@ -97,27 +100,51 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     return this.asgardeo.isSignedIn(sessionId as string);
   }
 
-  override async signIn(
+  override signIn(
     options?: SignInOptions,
     sessionId?: string,
-    beforeSignIn?: (redirectUrl: string) => NextResponse,
-    authorizationCode?: string,
-    sessionState?: string,
-    state?: string,
-  ): Promise<User> {
-    let resolvedSessionId: string = sessionId || ((await getSessionId()) as string);
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
+  override signIn(
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: EmbeddedFlowExecuteRequestConfig,
+    sessionId?: string,
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
+  override async signIn(...args: any[]): Promise<User> {
+    const arg1 = args[0];
+    const arg2 = args[1];
+    const arg3 = args[2];
+    const arg4 = args[3];
+
+    let resolvedSessionId: string = arg3 || ((await getSessionId()) as string);
 
     if (!resolvedSessionId) {
-      resolvedSessionId = await setSessionId(sessionId);
+      resolvedSessionId = await setSessionId(arg3);
+    }
+
+    if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg1 === 'object' && 'url' in arg2) {
+      if (arg1.flowId === '') {
+        return initializeEmbeddedSignInFlow({
+          payload: arg1,
+          url: arg2.url,
+        });
+      }
+
+      return executeEmbeddedSignInFlow({
+        payload: arg1,
+        url: arg2.url,
+      });
     }
 
     return this.asgardeo.signIn(
-      beforeSignIn as any,
+      arg4,
       resolvedSessionId,
-      authorizationCode,
-      sessionState,
-      state,
-    ) as unknown as User;
+      undefined,
+      undefined,
+      undefined,
+      arg1 as any,
+    ) as unknown as Promise<User>;
   }
 
   override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
@@ -160,13 +187,29 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       const signInUrl: URL = new URL(await this.asgardeo.getSignInUrl({response_mode: 'direct'}, userId));
       const {pathname, origin, searchParams} = signInUrl;
 
+      console.log('[AsgardeoNextClient] Sign-in URL:', signInUrl.toString());
+      console.log('[AsgardeoNextClient] Search Params:', Object.fromEntries(searchParams.entries()));
       try {
-        response = await initializeEmbeddedSignInFlow({
-          url: `${origin}${pathname}`,
-          payload: Object.fromEntries(searchParams.entries()),
-        });
+        await this.signIn(
+          {
+            flowId: '',
+            selectedAuthenticator: {
+              authenticatorId: '',
+              params: {},
+            },
+          },
+          {
+            url: `${origin}${pathname}`,
+            payload: Object.fromEntries(searchParams.entries()),
+          },
+        );
       } catch (error) {
-        throw new Error(`Failed to initialize application native authentication`);
+        throw new AsgardeoRuntimeError(
+          `Failed to initialize embedded sign-in flow.: ${error?.toString()}`,
+          'react-AsgardeoReactClient-InitializationError-001',
+          'react',
+          'An error occurred while initializing the embedded sign-in flow.',
+        );
       }
 
       return NextResponse.json(response);
@@ -175,16 +218,8 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     if ((method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) || searchParams.get('code')) {
       let response: NextResponse | undefined;
 
-      await this.signIn(
-        {},
-        undefined,
-        (redirectUrl: string) => (response = NextResponse.redirect(redirectUrl, 302)),
-        searchParams.get('code') as string,
-        searchParams.get('session_state') as string,
-        searchParams.get('state') as string,
-      );
+      await this.signIn();
 
-      // If we already redirected via the callback, return that
       if (response) {
         return response;
       }

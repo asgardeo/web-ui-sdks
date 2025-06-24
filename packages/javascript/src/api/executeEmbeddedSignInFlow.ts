@@ -17,28 +17,15 @@
  */
 
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
-import {EmbeddedSignInFlowHandleRequestPayload, EmbeddedSignInFlowHandleResponse} from '../models/embedded-signin-flow';
-
-/**
- * Request configuration for the authorize function.
- */
-export interface AuthorizeRequestConfig extends Partial<Request> {
-  /**
-   * The base URL of the Asgardeo server.
-   */
-  baseUrl?: string;
-  /**
-   * The authorization request payload.
-   */
-  payload: EmbeddedSignInFlowHandleRequestPayload;
-}
+import {EmbeddedFlowExecuteRequestConfig} from '../models/embedded-flow';
+import {EmbeddedSignInFlowHandleResponse} from '../models/embedded-signin-flow';
 
 const executeEmbeddedSignInFlow = async ({
   url,
   baseUrl,
   payload,
   ...requestConfig
-}: AuthorizeRequestConfig): Promise<EmbeddedSignInFlowHandleResponse> => {
+}: EmbeddedFlowExecuteRequestConfig): Promise<EmbeddedSignInFlowHandleResponse> => {
   if (!payload) {
     throw new AsgardeoAPIError(
       'Authorization payload is required',

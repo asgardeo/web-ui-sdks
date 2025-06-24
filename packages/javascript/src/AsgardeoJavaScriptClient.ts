@@ -19,6 +19,7 @@
 import {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './models/client';
 import {Config} from './models/config';
 import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './models/embedded-flow';
+import {EmbeddedSignInFlowHandleRequestPayload} from './models/embedded-signin-flow';
 import {Organization} from './models/organization';
 import {User, UserProfile} from './models/user';
 
@@ -45,7 +46,18 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
 
   abstract isSignedIn(): Promise<boolean>;
 
-  abstract signIn(options?: SignInOptions): Promise<User>;
+  abstract signIn(
+    options?: SignInOptions,
+    sessionId?: string,
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
+  abstract signIn(
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: Request,
+    sessionId?: string,
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
+
   abstract signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
   abstract signOut(
     options?: SignOutOptions,
