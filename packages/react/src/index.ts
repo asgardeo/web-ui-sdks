@@ -79,9 +79,6 @@ export * from './hooks/useTranslation';
 export {default as useForm} from './hooks/useForm';
 export * from './hooks/useForm';
 
-export {default as useOrganizations} from './hooks/useOrganizations';
-export * from './hooks/useOrganizations';
-
 export {default as BaseSignInButton} from './components/actions/SignInButton/BaseSignInButton';
 export * from './components/actions/SignInButton/BaseSignInButton';
 

@@ -16,29 +16,54 @@
  * under the License.
  */
 
-import {FC, ReactElement} from 'react';
-import BaseOrganizationList, {BaseOrganizationListProps} from './BaseOrganizationList';
-import useOrganizations, {UseOrganizationsConfig} from '../../../hooks/useOrganizations';
+import {FC, ReactElement, useEffect} from 'react';
+import {BaseOrganizationListProps} from './BaseOrganizationList';
+import BaseOrganizationList from './BaseOrganizationList';
+import useOrganization from '../../../contexts/Organization/useOrganization';
+import {OrganizationWithSwitchAccess} from '../../../contexts/Organization/OrganizationContext';
+
+/**
+ * Configuration options for the OrganizationList component.
+ */
+export interface OrganizationListConfig {
+  /**
+   * Whether to automatically fetch organizations on mount
+   */
+  autoFetch?: boolean;
+  /**
+   * Filter string for organizations
+   */
+  filter?: string;
+  /**
+   * Number of organizations to fetch per page
+   */
+  limit?: number;
+  /**
+   * Whether to include recursive organizations
+   */
+  recursive?: boolean;
+}
 
 /**
  * Props interface for the OrganizationList component.
- * Combines BaseOrganizationListProps with UseOrganizationsConfig.
+ * Uses the enhanced OrganizationContext instead of the useOrganizations hook.
  */
 export interface OrganizationListProps
   extends Omit<
       BaseOrganizationListProps,
       'data' | 'error' | 'fetchMore' | 'hasMore' | 'isLoading' | 'isLoadingMore' | 'totalCount'
     >,
-    UseOrganizationsConfig {
+    OrganizationListConfig {
   /**
    * Function called when an organization is selected/clicked
    */
-  onOrganizationSelect?: (organization: any) => void;
+  onOrganizationSelect?: (organization: OrganizationWithSwitchAccess) => void;
 }
 
 /**
  * OrganizationList component that provides organization listing functionality with pagination.
- * This component automatically fetches organizations and handles pagination.
+ * This component uses the enhanced OrganizationContext, eliminating the polling issue and 
+ * providing better integration with the existing context system.
  *
  * @example
  * ```tsx
@@ -77,24 +102,40 @@ export interface OrganizationListProps
  */
 export const OrganizationList: FC<OrganizationListProps> = ({
   autoFetch = true,
-  filter,
+  filter = '',
   limit = 10,
   onOrganizationSelect,
   recursive = false,
   ...baseProps
 }: OrganizationListProps): ReactElement => {
-  const {data, error, fetchMore, hasMore, isLoading, isLoadingMore, refresh, totalCount} = useOrganizations({
-    autoFetch,
-    filter,
-    limit,
-    recursive,
-  });
+  const {
+    paginatedOrganizations,
+    error,
+    fetchMore,
+    hasMore,
+    isLoading,
+    isLoadingMore,
+    totalCount,
+    fetchPaginatedOrganizations,
+  } = useOrganization();
+
+  // Auto-fetch organizations on mount or when parameters change
+  useEffect(() => {
+    if (autoFetch) {
+      fetchPaginatedOrganizations({
+        filter,
+        limit,
+        recursive,
+        reset: true,
+      });
+    }
+  }, [autoFetch, filter, limit, recursive, fetchPaginatedOrganizations]);
 
   // Enhanced organization renderer that includes selection handler
   const enhancedRenderOrganization = baseProps.renderOrganization
     ? baseProps.renderOrganization
     : onOrganizationSelect
-    ? (organization: any, index: number) => (
+    ? (organization: OrganizationWithSwitchAccess, index: number) => (
         <div
           key={organization.id}
           onClick={() => onOrganizationSelect(organization)}
@@ -159,15 +200,24 @@ export const OrganizationList: FC<OrganizationListProps> = ({
       )
     : undefined;
 
+  const refreshHandler = async () => {
+    await fetchPaginatedOrganizations({
+      filter,
+      limit,
+      recursive,
+      reset: true,
+    });
+  };
+
   return (
     <BaseOrganizationList
-      data={data}
+      data={paginatedOrganizations}
       error={error}
       fetchMore={fetchMore}
       hasMore={hasMore}
       isLoading={isLoading}
       isLoadingMore={isLoadingMore}
-      onRefresh={refresh}
+      onRefresh={refreshHandler}
       renderOrganization={enhancedRenderOrganization}
       totalCount={totalCount}
       {...baseProps}

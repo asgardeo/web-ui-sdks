@@ -20,6 +20,16 @@ import {Organization} from '@asgardeo/browser';
 import {Context, createContext} from 'react';
 
 /**
+ * Interface for organizations with switch access information.
+ */
+export interface OrganizationWithSwitchAccess extends Organization {
+  /**
+   * Whether the user has switch access to this organization
+   */
+  canSwitch: boolean;
+}
+
+/**
  * Props interface of {@link OrganizationContext}
  */
 export type OrganizationContextProps = {
@@ -30,6 +40,37 @@ export type OrganizationContextProps = {
   organizations: Organization[] | null;
   revalidateOrganizations: () => Promise<void>;
   switchOrganization: (organization: Organization) => Promise<void>;
+
+  // Enhanced features for paginated organizations with switch access
+  /**
+   * Paginated organizations with switch access information
+   */
+  paginatedOrganizations: OrganizationWithSwitchAccess[];
+  /**
+   * Whether there are more organizations to load
+   */
+  hasMore: boolean;
+  /**
+   * Whether more data is being loaded
+   */
+  isLoadingMore: boolean;
+  /**
+   * Total number of organizations
+   */
+  totalCount: number;
+  /**
+   * Function to fetch more organizations (pagination)
+   */
+  fetchMore: () => Promise<void>;
+  /**
+   * Function to fetch paginated organizations with switch access
+   */
+  fetchPaginatedOrganizations: (config?: {
+    filter?: string;
+    limit?: number;
+    recursive?: boolean;
+    reset?: boolean;
+  }) => Promise<void>;
 };
 
 /**
@@ -43,6 +84,14 @@ const OrganizationContext: Context<OrganizationContextProps | null> = createCont
   organizations: null,
   revalidateOrganizations: () => Promise.resolve(),
   switchOrganization: () => Promise.resolve(),
+
+  // Enhanced features for paginated organizations with switch access
+  paginatedOrganizations: [],
+  hasMore: false,
+  isLoadingMore: false,
+  totalCount: 0,
+  fetchMore: () => Promise.resolve(),
+  fetchPaginatedOrganizations: () => Promise.resolve(),
 });
 
 OrganizationContext.displayName = 'OrganizationContext';

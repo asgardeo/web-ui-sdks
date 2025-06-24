@@ -17,7 +17,7 @@
  */
 
 import {FC, ReactElement, ReactNode} from 'react';
-import {OrganizationWithSwitchAccess} from '../../../hooks/useOrganizations';
+import {OrganizationWithSwitchAccess} from '../../../contexts/Organization/OrganizationContext';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 
 /**
