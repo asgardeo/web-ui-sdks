@@ -1,7 +1,7 @@
 'use client';
 
 import {type ReactNode} from 'react';
-import Header from '../components/Header';
+import Header from '../components/Header/Header';
 
 interface LandingLayoutProps {
   children: ReactNode;

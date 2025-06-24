@@ -1,12 +1,12 @@
 'use client';
 
 import {SignedIn, SignedOut} from '@asgardeo/react';
-import Logo from './header/Logo';
-import PublicNavigation from './header/PublicNavigation';
-import AuthenticatedNavigation from './header/AuthenticatedNavigation';
-import AuthenticatedMobileMenu from './header/AuthenticatedMobileMenu';
-import PublicActions from './header/PublicActions';
-import AuthenticatedActions from './header/AuthenticatedActions';
+import Logo from './Logo';
+import PublicNavigation from './PublicNavigation';
+import AuthenticatedNavigation from './AuthenticatedNavigation';
+import AuthenticatedMobileMenu from './AuthenticatedMobileMenu';
+import PublicActions from './PublicActions';
+import AuthenticatedActions from './AuthenticatedActions';
 
 export default function Header() {
   return (
