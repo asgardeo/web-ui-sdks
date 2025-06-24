@@ -241,6 +241,7 @@ export class AsgardeoAuthClient<T> {
         {
           redirectUri: configData.afterSignInUrl,
           clientId: configData.clientId,
+          clientSecret: configData.clientSecret,
           scopes: processOpenIDScopes(configData.scopes),
           responseMode: configData.responseMode,
           codeChallengeMethod: PKCEConstants.DEFAULT_CODE_CHALLENGE_METHOD,

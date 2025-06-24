@@ -126,7 +126,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg1 === 'object' && 'url' in arg2) {
       if (arg1.flowId === '') {
         return initializeEmbeddedSignInFlow({
-          payload: arg1,
+          payload: arg2.payload,
           url: arg2.url,
         });
       }
