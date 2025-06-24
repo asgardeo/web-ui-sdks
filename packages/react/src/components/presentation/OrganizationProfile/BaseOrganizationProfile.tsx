@@ -25,6 +25,7 @@ import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
 import Checkbox from '../../primitives/Checkbox/Checkbox';
 import DatePicker from '../../primitives/DatePicker/DatePicker';
+import KeyValueInput from '../../primitives/KeyValueInput/KeyValueInput';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 import TextField from '../../primitives/TextField/TextField';
 import Card from '../../primitives/Card/Card';
@@ -236,11 +237,6 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
       editable: false,
       render: value => formatDate(value),
     },
-    {
-      key: 'attributes',
-      label: 'Organization Attributes',
-      editable: true,
-    },
   ],
 }): ReactElement => {
   const {theme} = useTheme();
@@ -412,28 +408,42 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
       let fieldInput: ReactElement;
 
       if (key === 'attributes') {
-        // For attributes, use a textarea
+        // For attributes, use KeyValueInput component
+        const attributesValue = typeof fieldValue === 'object' && fieldValue !== null ? fieldValue : {};
         fieldInput = (
-          <textarea
-            value={typeof fieldValue === 'object' ? JSON.stringify(fieldValue, null, 2) : fieldValue}
-            onChange={e => {
-              try {
-                const parsed = JSON.parse(e.target.value);
-                onEditValue(parsed);
-              } catch {
-                onEditValue(e.target.value);
+          <KeyValueInput
+            value={attributesValue}
+            onChange={pairs => {
+              const attributesObject = pairs.reduce((acc, pair) => {
+                acc[pair.key] = pair.value;
+                return acc;
+              }, {} as Record<string, any>);
+              onEditValue(attributesObject);
+            }}
+            onAdd={pair => {
+              if (onUpdate) {
+                const operation = {
+                  operation: 'ADD',
+                  path: `/attributes/${pair.key}`,
+                  value: pair.value,
+                };
+                onUpdate([operation]);
               }
             }}
-            placeholder="Enter attributes as JSON"
-            style={{
-              ...commonProps.style,
-              minHeight: '60px',
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              resize: 'vertical',
+            onRemove={(pair, index) => {
+              if (onUpdate) {
+                const operation = {
+                  operation: 'REMOVE',
+                  path: `/attributes/${pair.key}`,
+                  value: '',
+                };
+                onUpdate([operation]);
+              }
             }}
+            label=""
+            keyPlaceholder="Attribute name"
+            valuePlaceholder="Attribute value"
+            helperText="Add custom attributes as key-value pairs"
           />
         );
       } else {
@@ -456,16 +466,7 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
     if (hasValue) {
       displayValue =
         key === 'attributes' && typeof value === 'object' && value !== null ? (
-          <div style={styles.attributesList}>
-            {Object.entries(value).length > 0
-              ? Object.entries(value).map(([attrKey, val]) => (
-                  <div key={attrKey} style={styles.attributeItem}>
-                    <span style={styles.attributeKey}>{attrKey}:</span>
-                    <span style={styles.attributeValue}>{String(val)}</span>
-                  </div>
-                ))
-              : '-'}
-          </div>
+          <KeyValueInput value={value} readOnly={true} label="" />
         ) : (
           String(renderedValue)
         );
@@ -645,7 +646,6 @@ const useStyles = () => {
         gap: `${theme.spacing.unit * 2}px`,
         marginBottom: `${theme.spacing.unit * 3}px`,
         paddingBottom: `${theme.spacing.unit * 2}px`,
-        borderBottom: `1px solid ${theme.colors.border}`,
       } as CSSProperties,
       orgInfo: {
         flex: 1,
@@ -670,9 +670,9 @@ const useStyles = () => {
       field: {
         display: 'flex',
         alignItems: 'flex-start',
-        padding: `${theme.spacing.unit}px 0`,
+        padding: `${theme.spacing.unit / 2}px 0`,
         borderBottom: `1px solid ${theme.colors.border}`,
-        minHeight: '32px',
+        minHeight: '28px',
       } as CSSProperties,
       lastField: {
         borderBottom: 'none',
@@ -681,9 +681,9 @@ const useStyles = () => {
         fontSize: '0.875rem',
         fontWeight: 500,
         color: theme.colors.text.secondary,
-        width: '140px',
+        width: '120px',
         flexShrink: 0,
-        lineHeight: '32px',
+        lineHeight: '28px',
       } as CSSProperties,
       value: {
         color: theme.colors.text.primary,
@@ -692,8 +692,8 @@ const useStyles = () => {
         alignItems: 'center',
         gap: `${theme.spacing.unit}px`,
         overflow: 'hidden',
-        minHeight: '32px',
-        lineHeight: '32px',
+        minHeight: '28px',
+        lineHeight: '28px',
         wordBreak: 'break-word' as const,
       } as CSSProperties,
       statusBadge: {
@@ -721,24 +721,26 @@ const useStyles = () => {
       attributesList: {
         display: 'flex',
         flexDirection: 'column' as const,
-        gap: `${theme.spacing.unit / 2}px`,
+        gap: `${theme.spacing.unit / 4}px`,
       } as CSSProperties,
       attributeItem: {
         display: 'flex',
         gap: `${theme.spacing.unit}px`,
-        padding: `${theme.spacing.unit / 2}px 0`,
+        padding: `${theme.spacing.unit / 4}px 0`,
+        alignItems: 'center',
       } as CSSProperties,
       attributeKey: {
         fontSize: '0.75rem',
         fontWeight: 500,
         color: theme.colors.text.secondary,
-        minWidth: '100px',
+        minWidth: '80px',
         flexShrink: 0,
       } as CSSProperties,
       attributeValue: {
         fontSize: '0.75rem',
         color: theme.colors.text.primary,
         wordBreak: 'break-word' as const,
+        flex: 1,
       } as CSSProperties,
     }),
     [theme, colorScheme],

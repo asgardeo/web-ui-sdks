@@ -215,6 +215,9 @@ export * from './components/primitives/FormControl/FormControl';
 export {default as InputLabel} from './components/primitives/InputLabel/InputLabel';
 export * from './components/primitives/InputLabel/InputLabel';
 
+export {default as KeyValueInput} from './components/primitives/KeyValueInput/KeyValueInput';
+export * from './components/primitives/KeyValueInput/KeyValueInput';
+
 export {default as Typography} from './components/primitives/Typography/Typography';
 export * from './components/primitives/Typography/Typography';
 

@@ -22,6 +22,7 @@ export {default as Eye} from './Eye';
 export {default as EyeOff} from './EyeOff';
 export {default as Info} from './Info';
 export {default as LogOut} from './LogOut';
+export {default as Plus} from './Plus';
 export {default as TriangleAlert} from './TriangleAlert';
 export {default as User} from './User';
 export {default as X} from './X';

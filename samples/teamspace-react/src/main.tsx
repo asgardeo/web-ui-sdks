@@ -26,14 +26,13 @@ createRoot(document.getElementById('root')!).render(
       preferences={{
         theme: {
           mode: 'light',
-          overrides: {
-            colors: {
-              primary: {
-                main: '#1976d2',
-                contrastText: '#ffffff',
-              },
-            },
-          },
+          // overrides: {
+          //   colors: {
+          //     primary: {
+          //       main: 'var(--color-blue-600)',
+          //     },
+          //   },
+          // },
         },
       }}
     >
