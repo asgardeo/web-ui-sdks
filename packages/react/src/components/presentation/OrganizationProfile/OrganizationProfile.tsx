@@ -19,6 +19,7 @@
 import {FC, ReactElement, useEffect, useState} from 'react';
 import BaseOrganizationProfile, {BaseOrganizationProfileProps} from './BaseOrganizationProfile';
 import getOrganization, {OrganizationDetails} from '../../../api/scim2/getOrganization';
+import updateOrganization, {createPatchOperations} from '../../../api/scim2/updateOrganization';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useTranslation from '../../../hooks/useTranslation';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
@@ -28,7 +29,7 @@ import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Pop
  * Extends BaseOrganizationProfileProps but makes the organization prop optional
  * since it will be fetched using the organizationId
  */
-export type OrganizationProfileProps = Omit<BaseOrganizationProfileProps, 'organization'> & {
+export type OrganizationProfileProps = Omit<BaseOrganizationProfileProps, 'organization' | 'mode'> & {
   /**
    * Component to show when there's an error loading organization data.
    */
@@ -48,6 +49,11 @@ export type OrganizationProfileProps = Omit<BaseOrganizationProfileProps, 'organ
    * Callback fired when the popup should be closed (only used in popup mode).
    */
   onOpenChange?: (open: boolean) => void;
+
+  /**
+   * Callback fired when the organization should be updated.
+   */
+  onUpdate?: (payload: any) => Promise<void>;
 
   /**
    * Whether the popup is open (only used in popup mode).
@@ -70,13 +76,22 @@ export type OrganizationProfileProps = Omit<BaseOrganizationProfileProps, 'organ
  * structured and styled format. It automatically fetches organization details
  * using the provided organization ID and displays them using BaseOrganizationProfile.
  *
+ * The component supports editing functionality, allowing users to modify organization
+ * fields inline. Updates are automatically synced with the backend via the SCIM2 API.
+ *
  * This component is the React-specific implementation that automatically
  * retrieves the organization data from Asgardeo API.
  *
  * @example
  * ```tsx
- * // Basic usage
+ * // Basic usage with editing enabled (default)
  * <OrganizationProfile organizationId="0d5e071b-d3d3-475d-b3c6-1a20ee2fa9b1" />
+ *
+ * // Read-only mode
+ * <OrganizationProfile
+ *   organizationId="0d5e071b-d3d3-475d-b3c6-1a20ee2fa9b1"
+ *   editable={false}
+ * />
  *
  * // With card layout and custom fallbacks
  * <OrganizationProfile
@@ -87,17 +102,22 @@ export type OrganizationProfileProps = Omit<BaseOrganizationProfileProps, 'organ
  *   fallback={<div>No organization data available</div>}
  * />
  *
- * // With custom fields configuration
+ * // With custom fields configuration and update callback
  * <OrganizationProfile
  *   organizationId="0d5e071b-d3d3-475d-b3c6-1a20ee2fa9b1"
  *   fields={[
- *     { key: 'id', label: 'Organization ID' },
- *     { key: 'name', label: 'Organization Name' },
- *     { key: 'description', label: 'Description', render: (value) => value || 'No description' },
- *     { key: 'created', label: 'Created Date', render: (value) => new Date(value).toLocaleDateString() },
- *     { key: 'lastModified', label: 'Last Modified Date', render: (value) => new Date(value).toLocaleDateString() },
- *     { key: 'attributes', label: 'Custom Attributes' }
+ *     { key: 'id', label: 'Organization ID', editable: false },
+ *     { key: 'name', label: 'Organization Name', editable: true },
+ *     { key: 'description', label: 'Description', editable: true, render: (value) => value || 'No description' },
+ *     { key: 'created', label: 'Created Date', editable: false, render: (value) => new Date(value).toLocaleDateString() },
+ *     { key: 'lastModified', label: 'Last Modified Date', editable: false, render: (value) => new Date(value).toLocaleDateString() },
+ *     { key: 'attributes', label: 'Custom Attributes', editable: true }
  *   ]}
+ *   onUpdate={async (payload) => {
+ *     console.log('Organization updated:', payload);
+ *     // payload contains the updated field values
+ *     // The component automatically converts these to patch operations
+ *   }}
  * />
  *
  * // In popup mode
@@ -106,7 +126,7 @@ export type OrganizationProfileProps = Omit<BaseOrganizationProfileProps, 'organ
  *   mode="popup"
  *   open={isOpen}
  *   onOpenChange={setIsOpen}
- *   popupTitle="Organization Profile"
+ *   popupTitle="Edit Organization Profile"
  * />
  * ```
  */
@@ -115,6 +135,7 @@ const OrganizationProfile: FC<OrganizationProfileProps> = ({
   mode = 'default',
   open = false,
   onOpenChange,
+  onUpdate,
   popupTitle,
   loadingFallback = <div>Loading organization...</div>,
   errorFallback = <div>Failed to load organization data</div>,
@@ -126,33 +147,58 @@ const OrganizationProfile: FC<OrganizationProfileProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
+  const fetchOrganization = async () => {
+    if (!baseUrl || !organizationId) {
+      setLoading(false);
+      setError(true);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(false);
+      const orgData = await getOrganization({
+        baseUrl,
+        organizationId,
+      });
+      setOrganization(orgData);
+    } catch (err) {
+      console.error('Failed to fetch organization:', err);
+      setError(true);
+      setOrganization(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchOrganization = async () => {
-      if (!baseUrl || !organizationId) {
-        setLoading(false);
-        setError(true);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        setError(false);
-        const orgData = await getOrganization({
-          baseUrl,
-          organizationId,
-        });
-        setOrganization(orgData);
-      } catch (err) {
-        console.error('Failed to fetch organization:', err);
-        setError(true);
-        setOrganization(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchOrganization();
   }, [baseUrl, organizationId]);
+
+  const handleOrganizationUpdate = async (payload: any): Promise<void> => {
+    if (!baseUrl || !organizationId) return;
+
+    try {
+      // Convert payload to patch operations format
+      const operations = createPatchOperations(payload);
+
+      await updateOrganization({
+        baseUrl,
+        organizationId,
+        operations,
+      });
+      // Refetch organization data after update
+      await fetchOrganization();
+
+      // Call the optional onUpdate callback
+      if (onUpdate) {
+        await onUpdate(payload);
+      }
+    } catch (err) {
+      console.error('Failed to update organization:', err);
+      throw err;
+    }
+  };
 
   if (loading) {
     return mode === 'popup' ? (
@@ -180,18 +226,17 @@ const OrganizationProfile: FC<OrganizationProfileProps> = ({
     );
   }
 
-  const profileContent = <BaseOrganizationProfile organization={organization} fields={rest.fields} {...rest} />;
-
-  if (mode === 'popup') {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeading>{popupTitle || t('organization.profile.title')}</DialogHeading>
-          <div style={{padding: '1rem'}}>{profileContent}</div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  const profileContent = (
+    <BaseOrganizationProfile
+      organization={organization}
+      onUpdate={handleOrganizationUpdate}
+      mode={mode === 'popup' ? 'popup' : 'inline'}
+      open={open}
+      onOpenChange={onOpenChange}
+      title={popupTitle || t('organization.profile.title')}
+      {...rest}
+    />
+  );
 
   return profileContent;
 };

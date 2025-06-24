@@ -18,10 +18,15 @@
 
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
-import {FC, ReactElement, useMemo, CSSProperties} from 'react';
+import {FC, ReactElement, useMemo, CSSProperties, useState, useCallback, useRef} from 'react';
 import {OrganizationDetails} from '../../../api/scim2/getOrganization';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
+import Button from '../../primitives/Button/Button';
+import Checkbox from '../../primitives/Checkbox/Checkbox';
+import DatePicker from '../../primitives/DatePicker/DatePicker';
+import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
+import TextField from '../../primitives/TextField/TextField';
 import Card from '../../primitives/Card/Card';
 
 /**
@@ -42,6 +47,11 @@ const formatDate = (dateString?: string): string => {
 
 export interface BaseOrganizationProfileProps {
   /**
+   * Callback fired when the cancel button is clicked (only used in editable mode).
+   */
+  cancelButtonText?: string;
+
+  /**
    * Whether to display the profile in a card layout.
    */
   cardLayout?: boolean;
@@ -50,6 +60,11 @@ export interface BaseOrganizationProfileProps {
    * CSS class name for styling the component.
    */
   className?: string;
+
+  /**
+   * Whether the organization profile is editable.
+   */
+  editable?: boolean;
 
   /**
    * Component to render when no organization data is available.
@@ -62,13 +77,49 @@ export interface BaseOrganizationProfileProps {
   fields?: Array<{
     key: keyof OrganizationDetails | 'attributes';
     label: string;
+    editable?: boolean;
     render?: (value: any, organization: OrganizationDetails) => React.ReactNode;
   }>;
+
+  /**
+   * Display mode for the component.
+   */
+  mode?: 'inline' | 'popup';
+
+  /**
+   * Callback fired when a field value changes.
+   */
+  onChange?: (field: string, value: any) => void;
+
+  /**
+   * Callback fired when the popup should be closed (only used in popup mode).
+   */
+  onOpenChange?: (open: boolean) => void;
+
+  /**
+   * Callback fired when the form is submitted (only used in editable mode).
+   */
+  onSubmit?: (data: any) => void;
+
+  /**
+   * Callback fired when the organization should be updated.
+   */
+  onUpdate?: (payload: any) => Promise<void>;
+
+  /**
+   * Whether the popup is open (only used in popup mode).
+   */
+  open?: boolean;
 
   /**
    * The organization details to display.
    */
   organization?: OrganizationDetails | null;
+
+  /**
+   * Text for the save button (only used in editable mode).
+   */
+  saveButtonText?: string;
 
   /**
    * Custom title for the profile.
@@ -79,15 +130,25 @@ export interface BaseOrganizationProfileProps {
 /**
  * BaseOrganizationProfile component displays organization information in a
  * structured and styled format. It shows organization details such as name,
- * description, status, and other available information.
+ * description, status, and other available information with support for inline editing.
  *
  * This is the base component that can be used in any context where you have
- * an organization object available.
+ * an organization object available. It provides editing capabilities similar to
+ * the UserProfile component, allowing users to modify organization fields directly.
  *
  * @example
  * ```tsx
  * // Basic usage
  * <BaseOrganizationProfile organization={organizationData} />
+ *
+ * // With editing enabled and update handler
+ * <BaseOrganizationProfile
+ *   organization={organizationData}
+ *   editable={true}
+ *   onUpdate={async (payload) => {
+ *     await updateOrganizationAPI(orgId, payload);
+ *   }}
+ * />
  *
  * // With card layout and custom title
  * <BaseOrganizationProfile
@@ -98,6 +159,27 @@ export interface BaseOrganizationProfileProps {
  * />
  *
  * // With custom fields configuration
+ * <BaseOrganizationProfile
+ *   organization={organizationData}
+ *   fields={[
+ *     { key: 'id', label: 'Organization ID', editable: false },
+ *     { key: 'name', label: 'Organization Name', editable: true },
+ *     { key: 'description', label: 'Description', editable: true, render: (value) => value || 'No description' },
+ *     { key: 'created', label: 'Created Date', editable: false, render: (value) => new Date(value).toLocaleDateString() },
+ *     { key: 'attributes', label: 'Custom Attributes', editable: true }
+ *   ]}
+ *   onUpdate={handleUpdate}
+ * />
+ *
+ * // In popup mode
+ * <BaseOrganizationProfile
+ *   organization={organizationData}
+ *   mode="popup"
+ *   open={isOpen}
+ *   onOpenChange={setIsOpen}
+ *   title="Edit Organization"
+ * />
+ * ```
  * <BaseOrganizationProfile
  *   organization={organizationData}
  *   fields={[
@@ -116,37 +198,123 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
   cardLayout = true,
   organization,
   title = 'Organization Profile',
+  mode = 'inline',
+  editable = true,
+  onChange,
+  onOpenChange,
+  onSubmit,
+  onUpdate,
+  open = false,
+  saveButtonText = 'Save Changes',
+  cancelButtonText = 'Cancel',
   fields = [
     {
       key: 'id',
       label: 'Organization ID',
+      editable: false,
     },
     {
       key: 'name',
       label: 'Organization Name',
+      editable: true,
     },
     {
       key: 'description',
       label: 'Organization Description',
+      editable: true,
       render: value => value || '-',
     },
     {
       key: 'created',
       label: 'Created Date',
+      editable: false,
       render: value => formatDate(value),
     },
     {
       key: 'lastModified',
       label: 'Last Modified Date',
+      editable: false,
       render: value => formatDate(value),
     },
     {
       key: 'attributes',
       label: 'Organization Attributes',
+      editable: true,
     },
   ],
 }): ReactElement => {
   const {theme} = useTheme();
+  const [editedOrganization, setEditedOrganization] = useState(organization);
+  const [editingFields, setEditingFields] = useState<Record<string, boolean>>({});
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const PencilIcon = () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    </svg>
+  );
+
+  const toggleFieldEdit = useCallback((fieldName: string) => {
+    setEditingFields(prev => ({
+      ...prev,
+      [fieldName]: !prev[fieldName],
+    }));
+  }, []);
+
+  const getFieldPlaceholder = useCallback((fieldKey: string): string => {
+    const fieldLabels: Record<string, string> = {
+      name: 'organization name',
+      description: 'organization description',
+      orgHandle: 'organization handle',
+      status: 'organization status',
+      type: 'organization type',
+    };
+
+    const fieldLabel = fieldLabels[fieldKey] || fieldKey.toLowerCase();
+    return `Enter ${fieldLabel}`;
+  }, []);
+
+  const handleFieldSave = useCallback(
+    (fieldKey: string): void => {
+      if (!onUpdate || !fieldKey) return;
+
+      const fieldValue: any =
+        editedOrganization && fieldKey && editedOrganization[fieldKey as keyof OrganizationDetails] !== undefined
+          ? editedOrganization[fieldKey as keyof OrganizationDetails]
+          : organization && organization[fieldKey as keyof OrganizationDetails] !== undefined
+          ? organization[fieldKey as keyof OrganizationDetails]
+          : '';
+
+      const payload: Record<string, any> = {
+        [fieldKey]: fieldValue,
+      };
+
+      onUpdate(payload);
+      // Exit edit mode for this field after save
+      toggleFieldEdit(fieldKey);
+    },
+    [editedOrganization, organization, onUpdate, toggleFieldEdit],
+  );
+
+  const handleFieldCancel = useCallback(
+    (fieldKey: string) => {
+      setEditedOrganization(prev => ({
+        ...prev,
+        [fieldKey]: organization?.[fieldKey as keyof OrganizationDetails],
+      }));
+      toggleFieldEdit(fieldKey);
+    },
+    [organization, toggleFieldEdit],
+  );
 
   const formatLabel = (key: string): string =>
     key
@@ -178,6 +346,247 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
   };
 
   const styles = useStyles();
+  const buttonStyle = useMemo(
+    () => ({
+      padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+      margin: `${theme.spacing.unit}px`,
+      borderRadius: theme.borderRadius.medium,
+      border: 'none',
+      cursor: 'pointer',
+      fontSize: '0.875rem',
+      fontWeight: 500,
+    }),
+    [theme],
+  );
+
+  const saveButtonStyle = useMemo(
+    () => ({
+      ...buttonStyle,
+      backgroundColor: theme.colors.primary.main,
+      color: theme.colors.primary.contrastText,
+    }),
+    [theme, buttonStyle],
+  );
+
+  const cancelButtonStyle = useMemo(
+    () => ({
+      ...buttonStyle,
+      backgroundColor: theme.colors.secondary.main,
+      border: `1px solid ${theme.colors.border}`,
+    }),
+    [theme, buttonStyle],
+  );
+
+  // Renders individual field in view or edit mode
+  const renderField = (
+    field: any,
+    isEditing: boolean,
+    onEditValue?: (value: any) => void,
+    onStartEdit?: () => void,
+  ): ReactElement | null => {
+    if (!field) return null;
+
+    const {key, label, editable: fieldEditable = true} = field;
+    const value =
+      key === 'attributes' ? organization?.attributes || {} : organization?.[key as keyof OrganizationDetails];
+
+    const renderedValue = field.render ? field.render(value, organization) : value;
+
+    // If editing, show input field
+    if (isEditing && onEditValue && fieldEditable && editable) {
+      const fieldValue =
+        editedOrganization && key && editedOrganization[key as keyof OrganizationDetails] !== undefined
+          ? editedOrganization[key as keyof OrganizationDetails]
+          : value || '';
+
+      const commonProps = {
+        label: undefined,
+        value: typeof fieldValue === 'object' ? JSON.stringify(fieldValue) : String(fieldValue || ''),
+        onChange: (e: any) => onEditValue(e.target ? e.target.value : e),
+        placeholder: getFieldPlaceholder(key),
+        style: {
+          marginBottom: 0,
+        },
+      };
+
+      let fieldInput: ReactElement;
+
+      if (key === 'attributes') {
+        // For attributes, use a textarea
+        fieldInput = (
+          <textarea
+            value={typeof fieldValue === 'object' ? JSON.stringify(fieldValue, null, 2) : fieldValue}
+            onChange={e => {
+              try {
+                const parsed = JSON.parse(e.target.value);
+                onEditValue(parsed);
+              } catch {
+                onEditValue(e.target.value);
+              }
+            }}
+            placeholder="Enter attributes as JSON"
+            style={{
+              ...commonProps.style,
+              minHeight: '60px',
+              width: '100%',
+              padding: '8px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              resize: 'vertical',
+            }}
+          />
+        );
+      } else {
+        fieldInput = <TextField {...commonProps} />;
+      }
+
+      return (
+        <>
+          <span style={styles.label}>{label}</span>
+          <div style={styles.value}>{fieldInput}</div>
+        </>
+      );
+    }
+
+    // Default: view mode
+    const hasValue = value !== undefined && value !== null && value !== '';
+    const isFieldEditable = editable && fieldEditable;
+
+    let displayValue: string | ReactElement;
+    if (hasValue) {
+      displayValue =
+        key === 'attributes' && typeof value === 'object' && value !== null ? (
+          <div style={styles.attributesList}>
+            {Object.entries(value).length > 0
+              ? Object.entries(value).map(([attrKey, val]) => (
+                  <div key={attrKey} style={styles.attributeItem}>
+                    <span style={styles.attributeKey}>{attrKey}:</span>
+                    <span style={styles.attributeValue}>{String(val)}</span>
+                  </div>
+                ))
+              : '-'}
+          </div>
+        ) : (
+          String(renderedValue)
+        );
+    } else if (isFieldEditable) {
+      displayValue = getFieldPlaceholder(key);
+    } else {
+      displayValue = '-';
+    }
+
+    return (
+      <>
+        <span style={styles.label}>{label}</span>
+        <div
+          style={{
+            ...styles.value,
+            fontStyle: hasValue ? 'normal' : 'italic',
+            opacity: hasValue ? 1 : 0.7,
+          }}
+        >
+          {!hasValue && isFieldEditable && onStartEdit ? (
+            <button
+              onClick={onStartEdit}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'inherit',
+                cursor: 'pointer',
+                padding: 0,
+                font: 'inherit',
+                fontStyle: 'italic',
+                textDecoration: 'underline',
+                opacity: 0.7,
+              }}
+              title="Click to edit"
+            >
+              {displayValue}
+            </button>
+          ) : (
+            displayValue
+          )}
+        </div>
+      </>
+    );
+  };
+
+  const renderOrganizationField = (field: any) => {
+    if (!field || !field.key) return null;
+
+    const hasValue =
+      organization?.[field.key as keyof OrganizationDetails] !== undefined &&
+      organization?.[field.key as keyof OrganizationDetails] !== '' &&
+      organization?.[field.key as keyof OrganizationDetails] !== null;
+    const isFieldEditing = editingFields[field.key];
+    const isFieldEditable = editable && field.editable !== false;
+
+    // Show field if: has value, currently editing, or is editable
+    const shouldShow = hasValue || isFieldEditing || isFieldEditable;
+
+    if (!shouldShow) {
+      return null;
+    }
+
+    const fieldStyle = {
+      ...styles.field,
+      display: 'flex',
+      alignItems: 'center',
+      gap: `${theme.spacing.unit}px`,
+    };
+
+    return (
+      <div style={fieldStyle} key={field.key}>
+        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: `${theme.spacing.unit}px`}}>
+          {renderField(
+            field,
+            isFieldEditing,
+            value => {
+              const tempEditedOrganization = {...editedOrganization};
+              tempEditedOrganization[field.key as keyof OrganizationDetails] = value;
+              setEditedOrganization(tempEditedOrganization);
+            },
+            () => toggleFieldEdit(field.key),
+          )}
+        </div>
+        {isFieldEditable && (
+          <div style={{display: 'flex', alignItems: 'center', gap: `${theme.spacing.unit / 2}px`}}>
+            {isFieldEditing ? (
+              <>
+                <button onClick={() => handleFieldSave(field.key)} style={saveButtonStyle} title="Save changes">
+                  {saveButtonText}
+                </button>
+                <button onClick={() => handleFieldCancel(field.key)} style={cancelButtonStyle} title="Cancel editing">
+                  {cancelButtonText}
+                </button>
+              </>
+            ) : (
+              // Only show pencil icon when there's a value
+              hasValue && (
+                <button
+                  onClick={() => toggleFieldEdit(field.key)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: `${theme.spacing.unit / 2}px`,
+                    borderRadius: theme.borderRadius.small,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: theme.colors.text.secondary,
+                  }}
+                  title="Edit field"
+                >
+                  <PencilIcon />
+                </button>
+              )
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   if (!organization) {
     return fallback;
@@ -188,7 +597,7 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
     ...(cardLayout ? styles.card : {}),
   };
 
-  return (
+  const profileContent = (
     <Card style={containerStyle} className={clsx(withVendorCSSClassPrefix('organization-profile'), className)}>
       <div style={styles.header}>
         <Avatar name={getOrgInitials(organization.name)} size={80} alt={`${organization.name} logo`} />
@@ -198,46 +607,22 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
         </div>
       </div>
 
-      <div style={styles.infoContainer}>
-        {fields.map((field, index) => {
-          const value =
-            field.key === 'attributes'
-              ? organization.attributes || {}
-              : organization[field.key as keyof OrganizationDetails];
-
-          const renderedValue = field.render ? field.render(value, organization) : value;
-
-          return (
-            <div
-              key={field.key}
-              style={{
-                ...styles.field,
-                ...(index === fields.length - 1 ? styles.lastField : {}),
-              }}
-            >
-              <span style={styles.label}>{field.label}:</span>
-              <span style={styles.value}>
-                {field.key === 'attributes' && typeof value === 'object' && value !== null ? (
-                  <div style={styles.attributesList}>
-                    {Object.entries(value).length > 0
-                      ? Object.entries(value).map(([key, val]) => (
-                          <div key={key} style={styles.attributeItem}>
-                            <span style={styles.attributeKey}>{key}:</span>
-                            <span style={styles.attributeValue}>{String(val)}</span>
-                          </div>
-                        ))
-                      : '-'}
-                  </div>
-                ) : (
-                  renderedValue || '-'
-                )}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+      <div style={styles.infoContainer}>{fields.map((field, index) => renderOrganizationField(field))}</div>
     </Card>
   );
+
+  if (mode === 'popup') {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeading>{title}</DialogHeading>
+          <div style={{padding: '1rem'}}>{profileContent}</div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return profileContent;
 };
 
 const useStyles = () => {

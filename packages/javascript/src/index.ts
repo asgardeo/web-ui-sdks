@@ -93,6 +93,7 @@ export {default as generateUserProfile} from './utils/generateUserProfile';
 export {default as getLatestStateParam} from './utils/getLatestStateParam';
 export {default as generateFlattenedUserProfile} from './utils/generateFlattenedUserProfile';
 export {default as getI18nBundles} from './utils/getI18nBundles';
+export {default as isEmpty} from './utils/isEmpty';
 export {default as set} from './utils/set';
 export {default as get} from './utils/get';
 export {default as removeTrailingSlash} from './utils/removeTrailingSlash';
