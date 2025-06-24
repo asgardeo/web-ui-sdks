@@ -1,75 +1,75 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/hooks/use-auth"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Building2, Upload, ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import { Header } from "@/components/header"
-import { redirect } from "next/navigation"
+import {useState, useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {useAuth} from '@/hooks/use-auth';
+import {Button} from '@/components/ui/button';
+import {Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
+import {Textarea} from '@/components/ui/textarea';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
+import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
+import {Building2, Upload, ArrowLeft} from 'lucide-react';
+import Link from 'next/link';
+import {Header} from '@/components/Header/Header';
+import {redirect} from 'next/navigation';
 
 export default function CreateOrganizationPage() {
-  const router = useRouter()
-  const { addOrganization, isAuthenticated, isLoading } = useAuth()
+  const router = useRouter();
+  const {addOrganization, isAuthenticated, isLoading} = useAuth();
   const [formData, setFormData] = useState({
-    name: "",
-    slug: "",
-    description: "",
-    website: "",
-    avatar: "/placeholder.svg?height=64&width=64",
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    name: '',
+    slug: '',
+    description: '',
+    website: '',
+    avatar: '/placeholder.svg?height=64&width=64',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      redirect("/")
+      redirect('/');
     }
-  }, [isAuthenticated, isLoading])
+  }, [isAuthenticated, isLoading]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    return null
+    return null;
   }
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value
+    const name = e.target.value;
     const slug = name
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "")
-    setFormData({ ...formData, name, slug })
-  }
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+    setFormData({...formData, name, slug});
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     const newOrg = {
       id: Date.now().toString(),
       name: formData.name,
       slug: formData.slug,
       avatar: formData.avatar,
-      role: "owner" as const,
+      role: 'owner' as const,
       memberCount: 1,
-    }
+    };
 
-    addOrganization(newOrg)
-    router.push("/organizations")
-  }
+    addOrganization(newOrg);
+    router.push('/organizations');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -103,7 +103,7 @@ export default function CreateOrganizationPage() {
                 <Label className="text-sm font-medium">Organization avatar</Label>
                 <div className="flex items-center space-x-4 mt-2">
                   <Avatar className="w-16 h-16">
-                    <AvatarImage src={formData.avatar || "/placeholder.svg"} alt="Organization avatar" />
+                    <AvatarImage src={formData.avatar || '/placeholder.svg'} alt="Organization avatar" />
                     <AvatarFallback>
                       <Building2 className="h-8 w-8" />
                     </AvatarFallback>
@@ -142,7 +142,7 @@ export default function CreateOrganizationPage() {
                     id="slug"
                     required
                     value={formData.slug}
-                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                    onChange={e => setFormData({...formData, slug: e.target.value})}
                     placeholder="organization-slug"
                     className="rounded-l-none"
                   />
@@ -159,7 +159,7 @@ export default function CreateOrganizationPage() {
                   id="description"
                   rows={3}
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={e => setFormData({...formData, description: e.target.value})}
                   placeholder="Tell us about your organization..."
                   className="mt-2"
                 />
@@ -172,7 +172,7 @@ export default function CreateOrganizationPage() {
                   id="website"
                   type="url"
                   value={formData.website}
-                  onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                  onChange={e => setFormData({...formData, website: e.target.value})}
                   placeholder="https://example.com"
                   className="mt-2"
                 />
@@ -199,7 +199,7 @@ export default function CreateOrganizationPage() {
                   <Link href="/organizations">Cancel</Link>
                 </Button>
                 <Button type="submit" disabled={isSubmitting || !formData.name || !formData.slug}>
-                  {isSubmitting ? "Creating..." : "Create organization"}
+                  {isSubmitting ? 'Creating...' : 'Create organization'}
                 </Button>
               </div>
             </form>
@@ -207,5 +207,5 @@ export default function CreateOrganizationPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
