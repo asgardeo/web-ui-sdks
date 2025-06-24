@@ -56,25 +56,25 @@ export interface BaseOrganizationListProps {
    */
   onRefresh?: () => Promise<void>;
   /**
-   * Custom renderer for each organization item
+   * Custom renderer for when no organizations are found
    */
-  renderOrganization?: (organization: OrganizationWithSwitchAccess, index: number) => ReactNode;
+  renderEmpty?: () => ReactNode;
   /**
    * Custom renderer for the error state
    */
   renderError?: (error: string) => ReactNode;
   /**
-   * Custom renderer for the loading state
-   */
-  renderLoading?: () => ReactNode;
-  /**
    * Custom renderer for the load more button
    */
   renderLoadMore?: (onLoadMore: () => Promise<void>, isLoading: boolean) => ReactNode;
   /**
-   * Custom renderer for when no organizations are found
+   * Custom renderer for the loading state
    */
-  renderEmpty?: () => ReactNode;
+  renderLoading?: () => ReactNode;
+  /**
+   * Custom renderer for each organization item
+   */
+  renderOrganization?: (organization: OrganizationWithSwitchAccess, index: number) => ReactNode;
   /**
    * Inline styles to apply to the container
    */
@@ -103,7 +103,8 @@ const defaultRenderOrganization = (organization: OrganizationWithSwitchAccess): 
       <h3 style={{fontSize: '18px', fontWeight: 'bold', margin: '0 0 8px 0'}}>{organization.name}</h3>
       <p style={{color: '#6b7280', fontSize: '14px', margin: '0'}}>Handle: {organization.orgHandle}</p>
       <p style={{color: '#6b7280', fontSize: '14px', margin: '4px 0 0 0'}}>
-        Status: <span style={{color: organization.status === 'ACTIVE' ? '#10b981' : '#ef4444'}}>{organization.status}</span>
+        Status:{' '}
+        <span style={{color: organization.status === 'ACTIVE' ? '#10b981' : '#ef4444'}}>{organization.status}</span>
       </p>
     </div>
     <div style={{alignItems: 'center', display: 'flex'}}>
@@ -231,17 +232,29 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
 }): ReactElement => {
   // Show loading state
   if (isLoading && data.length === 0) {
-    return <div className={className} style={style}>{renderLoading()}</div>;
+    return (
+      <div className={className} style={style}>
+        {renderLoading()}
+      </div>
+    );
   }
 
   // Show error state
   if (error && data.length === 0) {
-    return <div className={className} style={style}>{renderError(error)}</div>;
+    return (
+      <div className={className} style={style}>
+        {renderError(error)}
+      </div>
+    );
   }
 
   // Show empty state
   if (!isLoading && data.length === 0) {
-    return <div className={className} style={style}>{renderEmpty()}</div>;
+    return (
+      <div className={className} style={style}>
+        {renderEmpty()}
+      </div>
+    );
   }
 
   return (
@@ -278,23 +291,15 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
       {/* Organizations list */}
       <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
         {data.map((organization: OrganizationWithSwitchAccess, index: number) =>
-          renderOrganization(organization, index)
+          renderOrganization(organization, index),
         )}
       </div>
 
       {/* Error message for additional data */}
-      {error && data.length > 0 && (
-        <div style={{marginTop: '16px'}}>
-          {renderError(error)}
-        </div>
-      )}
+      {error && data.length > 0 && <div style={{marginTop: '16px'}}>{renderError(error)}</div>}
 
       {/* Load more button */}
-      {hasMore && fetchMore && (
-        <div style={{marginTop: '24px'}}>
-          {renderLoadMore(fetchMore, isLoadingMore)}
-        </div>
-      )}
+      {hasMore && fetchMore && <div style={{marginTop: '24px'}}>{renderLoadMore(fetchMore, isLoadingMore)}</div>}
     </div>
   );
 };
