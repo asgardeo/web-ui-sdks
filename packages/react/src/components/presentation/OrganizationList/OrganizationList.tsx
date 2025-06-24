@@ -16,11 +16,14 @@
  * under the License.
  */
 
-import {FC, ReactElement, useEffect} from 'react';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {FC, ReactElement, useEffect, useMemo, CSSProperties} from 'react';
 import {BaseOrganizationListProps} from './BaseOrganizationList';
 import BaseOrganizationList from './BaseOrganizationList';
 import useOrganization from '../../../contexts/Organization/useOrganization';
+import useTheme from '../../../contexts/Theme/useTheme';
 import {OrganizationWithSwitchAccess} from '../../../contexts/Organization/OrganizationContext';
+import {Avatar} from '../../primitives/Avatar/Avatar';
 
 /**
  * Configuration options for the OrganizationList component.
@@ -62,7 +65,7 @@ export interface OrganizationListProps
 
 /**
  * OrganizationList component that provides organization listing functionality with pagination.
- * This component uses the enhanced OrganizationContext, eliminating the polling issue and 
+ * This component uses the enhanced OrganizationContext, eliminating the polling issue and
  * providing better integration with the existing context system.
  *
  * @example
