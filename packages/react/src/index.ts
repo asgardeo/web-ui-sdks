@@ -170,6 +170,12 @@ export * from './components/presentation/OrganizationList/BaseOrganizationList';
 export {default as OrganizationList} from './components/presentation/OrganizationList/OrganizationList';
 export * from './components/presentation/OrganizationList/OrganizationList';
 
+export {default as BaseOrganizationProfile} from './components/presentation/OrganizationProfile/BaseOrganizationProfile';
+export * from './components/presentation/OrganizationProfile/BaseOrganizationProfile';
+
+export {default as OrganizationProfile} from './components/presentation/OrganizationProfile/OrganizationProfile';
+export * from './components/presentation/OrganizationProfile/OrganizationProfile';
+
 export {BaseCreateOrganization} from './components/presentation/CreateOrganization/BaseCreateOrganization';
 export * from './components/presentation/CreateOrganization/BaseCreateOrganization';
 

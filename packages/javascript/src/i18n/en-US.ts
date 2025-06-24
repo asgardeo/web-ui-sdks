@@ -89,6 +89,8 @@ const translations: I18nTranslations = {
   'organization.switcher.member': 'member',
   'organization.switcher.create.organization': 'Create Organization',
   'organization.switcher.manage.organizations': 'Manage Organization',
+  'organization.switcher.manage.button': 'Manage',
+  'organization.profile.title': 'Organization Profile',
   'organization.profile.loading': 'Loading organization...',
   'organization.profile.error': 'Failed to load organization',
 

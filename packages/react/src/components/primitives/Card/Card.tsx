@@ -100,7 +100,6 @@ const useCardStyles = (variant: CardVariant, clickable: boolean) => {
     const baseStyles: CSSProperties = {
       borderRadius: theme.borderRadius.medium,
       backgroundColor: theme.colors.background.surface,
-      border: `1px solid ${theme.colors.border}`,
       transition: 'all 0.2s ease-in-out',
       position: 'relative',
       display: 'flex',
@@ -115,7 +114,7 @@ const useCardStyles = (variant: CardVariant, clickable: boolean) => {
       },
       outlined: {
         ...baseStyles,
-        border: `2px solid ${theme.colors.border}`,
+        border: `1px solid ${theme.colors.border}`,
         backgroundColor: 'transparent',
       },
       elevated: {

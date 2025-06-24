@@ -24,6 +24,7 @@ const httpClient: HttpInstance = AsgardeoSPAClient.getInstance().httpRequest.bin
  * Extended organization interface with additional properties
  */
 export interface OrganizationDetails {
+  attributes?: Record<string, any>;
   created?: string;
   description?: string;
   id: string;

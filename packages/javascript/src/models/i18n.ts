@@ -87,6 +87,8 @@ export interface I18nTranslations {
   'organization.switcher.member': string;
   'organization.switcher.create.organization': string;
   'organization.switcher.manage.organizations': string;
+  'organization.switcher.manage.button': string;
+  'organization.profile.title': string;
   'organization.profile.loading': string;
   'organization.profile.error': string;
 

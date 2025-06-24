@@ -87,6 +87,19 @@ export type OrganizationProfileProps = Omit<BaseOrganizationProfileProps, 'organ
  *   fallback={<div>No organization data available</div>}
  * />
  *
+ * // With custom fields configuration
+ * <OrganizationProfile
+ *   organizationId="0d5e071b-d3d3-475d-b3c6-1a20ee2fa9b1"
+ *   fields={[
+ *     { key: 'id', label: 'Organization ID' },
+ *     { key: 'name', label: 'Organization Name' },
+ *     { key: 'description', label: 'Description', render: (value) => value || 'No description' },
+ *     { key: 'created', label: 'Created Date', render: (value) => new Date(value).toLocaleDateString() },
+ *     { key: 'lastModified', label: 'Last Modified Date', render: (value) => new Date(value).toLocaleDateString() },
+ *     { key: 'attributes', label: 'Custom Attributes' }
+ *   ]}
+ * />
+ *
  * // In popup mode
  * <OrganizationProfile
  *   organizationId="0d5e071b-d3d3-475d-b3c6-1a20ee2fa9b1"
@@ -167,7 +180,7 @@ const OrganizationProfile: FC<OrganizationProfileProps> = ({
     );
   }
 
-  const profileContent = <BaseOrganizationProfile organization={organization} {...rest} />;
+  const profileContent = <BaseOrganizationProfile organization={organization} fields={rest.fields} {...rest} />;
 
   if (mode === 'popup') {
     return (

@@ -161,6 +161,23 @@ const useStyles = () => {
         fontSize: '0.875rem',
         textAlign: 'center',
       } as CSSProperties,
+      manageButton: {
+        minWidth: 'auto',
+        marginLeft: 'auto',
+      } as CSSProperties,
+      roleCapitalized: {
+        textTransform: 'capitalize',
+      } as CSSProperties,
+      sectionHeader: {
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em',
+        color: theme.colors.text.secondary,
+      } as CSSProperties,
+      sectionHeaderContainer: {
+        borderTop: 'none',
+        borderBottom: 'none',
+        paddingBottom: `${theme.spacing.unit / 2}px`,
+      } as CSSProperties,
     }),
     [theme, colorScheme],
   );
@@ -376,7 +393,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
           {showRole && organization.role && showMemberCount && organization.memberCount !== undefined && (
             <span> • </span>
           )}
-          {showRole && organization.role && <span style={{textTransform: 'capitalize'}}>{organization.role}</span>}
+          {showRole && organization.role && <span style={styles.roleCapitalized}>{organization.role}</span>}
         </div>
       </div>
       {isSelected && <Check width="16" height="16" color={theme.colors.text.primary} />}
@@ -504,7 +521,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                             className={withVendorCSSClassPrefix('organization-switcher__header-role')}
                             variant="caption"
                             color="secondary"
-                            style={{textTransform: 'capitalize'}}
+                            style={styles.roleCapitalized}
                           >
                             {currentOrganization.role}
                           </Typography>
@@ -515,28 +532,27 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                     <Button
                       onClick={onManageProfile}
                       color="tertiary"
-                      variant="text"
+                      variant="outline"
                       size="small"
-                      aria-label="Manage organization profile"
-                      style={{
-                        minWidth: 'auto',
-                        padding: `${theme.spacing.unit / 2}px`,
-                        marginLeft: 'auto',
-                      }}
+                      aria-label="Manage Organization Profile"
+                      style={styles.manageButton}
+                      endIcon={
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <circle cx="12" cy="12" r="3" />
+                          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        </svg>
+                      }
                     >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="12" cy="12" r="3" />
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                      </svg>
+                      {t('organization.switcher.manage.button')}
                     </Button>
                   )}
                 </div>
@@ -547,20 +563,11 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                 <div
                   style={{
                     ...styles.dropdownHeader,
+                    ...styles.sectionHeaderContainer,
                     borderTop: currentOrganization ? `1px solid ${theme.colors.border}` : 'none',
-                    borderBottom: 'none',
-                    paddingBottom: `${theme.spacing.unit / 2}px`,
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    fontWeight={600}
-                    style={{
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      color: theme.colors.text.secondary,
-                    }}
-                  >
+                  <Typography variant="caption" fontWeight={600} style={styles.sectionHeader}>
                     {t('organization.switcher.switch.organization')}
                   </Typography>
                 </div>

@@ -27,6 +27,7 @@ import Checkbox from '../../primitives/Checkbox/Checkbox';
 import DatePicker from '../../primitives/DatePicker/DatePicker';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 import TextField from '../../primitives/TextField/TextField';
+import Card from '../../primitives/Card/Card';
 
 interface ExtendedFlatSchema {
   path?: string;
@@ -573,7 +574,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const fieldsToSkip: string[] = ['verifiedMobileNumbers', 'verifiedEmailAddresses'];
 
   const profileContent = (
-    <div style={containerStyle} className={clsx(withVendorCSSClassPrefix('user-profile'), className)}>
+    <Card style={containerStyle} className={clsx(withVendorCSSClassPrefix('user-profile'), className)}>
       <div style={styles.header}>
         <Avatar
           imageUrl={getMappedUserProfileValue('picture', mergedMappings, currentUser)}
@@ -614,7 +615,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
             return <div key={schema.name || index}>{renderUserInfo(schemaWithValue)}</div>;
           })}
       </div>
-    </div>
+    </Card>
   );
 
   if (mode === 'popup') {

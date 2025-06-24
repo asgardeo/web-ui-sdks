@@ -22,6 +22,23 @@ import {FC, ReactElement, useMemo, CSSProperties} from 'react';
 import {OrganizationDetails} from '../../../api/scim2/getOrganization';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
+import Card from '../../primitives/Card/Card';
+
+/**
+ * Formats a date string to a human-readable format
+ */
+const formatDate = (dateString?: string): string => {
+  if (!dateString) return '-';
+  try {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  } catch {
+    return dateString;
+  }
+};
 
 export interface BaseOrganizationProfileProps {
   /**
@@ -38,6 +55,15 @@ export interface BaseOrganizationProfileProps {
    * Component to render when no organization data is available.
    */
   fallback?: ReactElement;
+
+  /**
+   * Array of field configurations to display. Each field specifies what organization data to show.
+   */
+  fields?: Array<{
+    key: keyof OrganizationDetails | 'attributes';
+    label: string;
+    render?: (value: any, organization: OrganizationDetails) => React.ReactNode;
+  }>;
 
   /**
    * The organization details to display.
@@ -70,6 +96,18 @@ export interface BaseOrganizationProfileProps {
  *   title="Organization Details"
  *   fallback={<div>No organization data available</div>}
  * />
+ *
+ * // With custom fields configuration
+ * <BaseOrganizationProfile
+ *   organization={organizationData}
+ *   fields={[
+ *     { key: 'id', label: 'Organization ID' },
+ *     { key: 'name', label: 'Organization Name' },
+ *     { key: 'description', label: 'Description', render: (value) => value || 'No description' },
+ *     { key: 'created', label: 'Created Date', render: (value) => new Date(value).toLocaleDateString() },
+ *     { key: 'attributes', label: 'Custom Attributes' }
+ *   ]}
+ * />
  * ```
  */
 const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
@@ -78,21 +116,37 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
   cardLayout = true,
   organization,
   title = 'Organization Profile',
+  fields = [
+    {
+      key: 'id',
+      label: 'Organization ID',
+    },
+    {
+      key: 'name',
+      label: 'Organization Name',
+    },
+    {
+      key: 'description',
+      label: 'Organization Description',
+      render: value => value || '-',
+    },
+    {
+      key: 'created',
+      label: 'Created Date',
+      render: value => formatDate(value),
+    },
+    {
+      key: 'lastModified',
+      label: 'Last Modified Date',
+      render: value => formatDate(value),
+    },
+    {
+      key: 'attributes',
+      label: 'Organization Attributes',
+    },
+  ],
 }): ReactElement => {
   const {theme} = useTheme();
-
-  const formatDate = (dateString?: string): string => {
-    if (!dateString) return '-';
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
-    } catch {
-      return dateString;
-    }
-  };
 
   const formatLabel = (key: string): string =>
     key
@@ -134,52 +188,8 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
     ...(cardLayout ? styles.card : {}),
   };
 
-  const orgFields = [
-    {
-      key: 'id',
-      label: 'Organization ID',
-      value: organization.id,
-    },
-    {
-      key: 'orgHandle',
-      label: 'Organization Handle',
-      value: organization.orgHandle,
-    },
-    {
-      key: 'description',
-      label: 'Description',
-      value: organization.description || '-',
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      value: organization.status,
-      isStatus: true,
-    },
-    {
-      key: 'type',
-      label: 'Type',
-      value: organization.type || '-',
-    },
-    {
-      key: 'created',
-      label: 'Created',
-      value: formatDate(organization.created),
-    },
-    {
-      key: 'lastModified',
-      label: 'Last Modified',
-      value: formatDate(organization.lastModified),
-    },
-    {
-      key: 'parent',
-      label: 'Parent Organization',
-      value: organization.parent?.id || '-',
-    },
-  ];
-
   return (
-    <div style={containerStyle} className={clsx(withVendorCSSClassPrefix('organization-profile'), className)}>
+    <Card style={containerStyle} className={clsx(withVendorCSSClassPrefix('organization-profile'), className)}>
       <div style={styles.header}>
         <Avatar name={getOrgInitials(organization.name)} size={80} alt={`${organization.name} logo`} />
         <div style={styles.orgInfo}>
@@ -189,46 +199,44 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
       </div>
 
       <div style={styles.infoContainer}>
-        {orgFields.map((field, index) => (
-          <div
-            key={field.key}
-            style={{
-              ...styles.field,
-              ...(index === orgFields.length - 1 ? styles.lastField : {}),
-            }}
-          >
-            <span style={styles.label}>{field.label}:</span>
-            <span style={styles.value}>
-              {field.isStatus ? (
-                <span
-                  style={{
-                    ...styles.statusBadge,
-                    backgroundColor: getStatusColor(field.value),
-                  }}
-                >
-                  {field.value}
-                </span>
-              ) : (
-                field.value
-              )}
-            </span>
-          </div>
-        ))}
+        {fields.map((field, index) => {
+          const value =
+            field.key === 'attributes'
+              ? organization.attributes || {}
+              : organization[field.key as keyof OrganizationDetails];
 
-        {organization.permissions && organization.permissions.length > 0 && (
-          <div style={styles.field}>
-            <span style={styles.label}>Permissions:</span>
-            <div style={styles.permissionsList}>
-              {organization.permissions.map((permission, index) => (
-                <span key={index} style={styles.permissionBadge}>
-                  {permission}
-                </span>
-              ))}
+          const renderedValue = field.render ? field.render(value, organization) : value;
+
+          return (
+            <div
+              key={field.key}
+              style={{
+                ...styles.field,
+                ...(index === fields.length - 1 ? styles.lastField : {}),
+              }}
+            >
+              <span style={styles.label}>{field.label}:</span>
+              <span style={styles.value}>
+                {field.key === 'attributes' && typeof value === 'object' && value !== null ? (
+                  <div style={styles.attributesList}>
+                    {Object.entries(value).length > 0
+                      ? Object.entries(value).map(([key, val]) => (
+                          <div key={key} style={styles.attributeItem}>
+                            <span style={styles.attributeKey}>{key}:</span>
+                            <span style={styles.attributeValue}>{String(val)}</span>
+                          </div>
+                        ))
+                      : '-'}
+                  </div>
+                ) : (
+                  renderedValue || '-'
+                )}
+              </span>
             </div>
-          </div>
-        )}
+          );
+        })}
       </div>
-    </div>
+    </Card>
   );
 };
 
@@ -245,7 +253,6 @@ const useStyles = () => {
       card: {
         background: theme.colors.background.surface,
         borderRadius: theme.borderRadius.large,
-        boxShadow: theme.shadows.small,
       } as CSSProperties,
       header: {
         display: 'flex',
@@ -325,6 +332,28 @@ const useStyles = () => {
         backgroundColor: theme.colors.primary.main,
         color: theme.colors.primary.contrastText,
         border: `1px solid ${theme.colors.border}`,
+      } as CSSProperties,
+      attributesList: {
+        display: 'flex',
+        flexDirection: 'column' as const,
+        gap: `${theme.spacing.unit / 2}px`,
+      } as CSSProperties,
+      attributeItem: {
+        display: 'flex',
+        gap: `${theme.spacing.unit}px`,
+        padding: `${theme.spacing.unit / 2}px 0`,
+      } as CSSProperties,
+      attributeKey: {
+        fontSize: '0.75rem',
+        fontWeight: 500,
+        color: theme.colors.text.secondary,
+        minWidth: '100px',
+        flexShrink: 0,
+      } as CSSProperties,
+      attributeValue: {
+        fontSize: '0.75rem',
+        color: theme.colors.text.primary,
+        wordBreak: 'break-word' as const,
       } as CSSProperties,
     }),
     [theme, colorScheme],
