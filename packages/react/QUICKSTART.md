@@ -126,7 +126,6 @@ function App() {
 +          {({ user }) => (
 +            <div>
 +              <h1>Welcome, {user.username}</h1>
-+              <UserProfile />
 +            </div>
 +          )}
 +        </User>
