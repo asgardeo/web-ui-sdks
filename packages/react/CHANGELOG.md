@@ -1,5 +1,13 @@
 # @asgardeo/react
 
+## 0.5.0
+
+### Minor Changes
+
+- [#71](https://github.com/asgardeo/web-ui-sdks/pull/71)
+  [`3aa86ce`](https://github.com/asgardeo/web-ui-sdks/commit/3aa86cebb7077f516994a9a6773f3389e7d6a6c8) Thanks
+  [@brionmario](https://github.com/brionmario)! - Introduce `SignUp` & B2B components.
+
 ## 0.4.0
 
 ### Minor Changes
