@@ -1,19 +1,22 @@
-import type { NextRequest } from "next/server"
-import { updateSession } from "@/lib/auth"
+import {AsgardeoNext} from '@asgardeo/nextjs';
+import {NextRequest} from 'next/server';
+
+const asgardeo = new AsgardeoNext();
+
+asgardeo.initialize({
+  baseUrl: process.env.NEXT_PUBLIC_ASGARDEO_BASE_URL,
+  clientId: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_ID,
+  clientSecret: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_SECRET,
+  afterSignInUrl: 'http://localhost:3000/dashboard',
+});
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+  return await asgardeo.middleware(request);
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
   ],
-}
+};

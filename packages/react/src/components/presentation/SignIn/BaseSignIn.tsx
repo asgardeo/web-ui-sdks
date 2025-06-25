@@ -27,6 +27,7 @@ import {
   AsgardeoAPIError,
   withVendorCSSClassPrefix,
   EmbeddedSignInFlowHandleRequestPayload,
+  EmbeddedFlowExecuteRequestConfig,
 } from '@asgardeo/browser';
 import {clsx} from 'clsx';
 import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef} from 'react';
@@ -36,7 +37,7 @@ import useFlow from '../../../contexts/Flow/useFlow';
 import {useForm, FormField} from '../../../hooks/useForm';
 import useTranslation from '../../../hooks/useTranslation';
 import Alert from '../../primitives/Alert/Alert';
-import Card from '../../primitives/Card/Card';
+import Card, {CardProps} from '../../primitives/Card/Card';
 import Divider from '../../primitives/Divider/Divider';
 import Spinner from '../../primitives/Spinner/Spinner';
 import Typography from '../../primitives/Typography/Typography';
@@ -264,7 +265,7 @@ export interface BaseSignInProps {
    */
   onSubmit?: (
     payload: EmbeddedSignInFlowHandleRequestPayload,
-    request: Partial<Request>,
+    request: EmbeddedFlowExecuteRequestConfig,
   ) => Promise<EmbeddedSignInFlowHandleResponse>;
 
   /**
@@ -280,7 +281,7 @@ export interface BaseSignInProps {
   /**
    * Theme variant for the component.
    */
-  variant?: 'default' | 'outlined' | 'filled';
+  variant?: CardProps['variant'];
 }
 
 /**
@@ -337,7 +338,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   errorClassName = '',
   messageClassName = '',
   size = 'medium',
-  variant = 'default',
+  variant = 'outlined',
 }: BaseSignInProps) => {
   const {t} = useTranslation();
   const {subtitle: flowSubtitle, title: flowTitle, messages: flowMessages} = useFlow();
@@ -1013,8 +1014,6 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
       withVendorCSSClassPrefix('signin__button'),
       size === 'small' && withVendorCSSClassPrefix('signin__button--small'),
       size === 'large' && withVendorCSSClassPrefix('signin__button--large'),
-      variant === 'outlined' && withVendorCSSClassPrefix('signin__button--outlined'),
-      variant === 'filled' && withVendorCSSClassPrefix('signin__button--filled'),
     ],
     buttonClassName,
   );
@@ -1087,7 +1086,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
   if (!isInitialized && isLoading) {
     return (
-      <Card className={containerClasses}>
+      <Card className={containerClasses} variant={variant}>
         <Card.Content>
           <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem'}}>
             <Spinner size="medium" />
@@ -1113,7 +1112,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     const optionAuthenticators = availableAuthenticators.filter(auth => !userPromptAuthenticators.includes(auth));
 
     return (
-      <Card className={containerClasses}>
+      <Card className={containerClasses} variant={variant}>
         <Card.Header>
           <Card.Title level={3}>{flowTitle || t('signin.title')}</Card.Title>
           {flowSubtitle && (
@@ -1228,7 +1227,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
   if (!currentAuthenticator) {
     return (
-      <Card className={containerClasses}>
+      <Card className={containerClasses} variant={variant}>
         <Card.Content>
           {error && (
             <Alert variant="error">
@@ -1250,7 +1249,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
     // Show loading state while passkey authentication is in progress
     return (
-      <Card className={containerClasses}>
+      <Card className={containerClasses} variant={variant}>
         <Card.Content>
           <div style={{textAlign: 'center', padding: '2rem'}}>
             <div style={{marginBottom: '1rem'}}>
@@ -1267,7 +1266,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   }
 
   return (
-    <Card className={containerClasses}>
+    <Card className={containerClasses} variant={variant}>
       <Card.Header>
         <Card.Title level={2}>{flowTitle || t('signin.title')}</Card.Title>
         <Typography variant="body1" style={{marginTop: '0.5rem'}}>

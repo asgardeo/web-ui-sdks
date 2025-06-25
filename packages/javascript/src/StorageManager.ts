@@ -112,8 +112,8 @@ class StorageManager<T> {
     this.setDataInBulk(this._resolveKey(key, userId), customData);
   }
 
-  public async getConfigData(): Promise<AuthClientConfig<T>> {
-    return JSON.parse((await this._store.getData(this._resolveKey(Stores.ConfigData))) ?? null);
+  public async getConfigData(userId?: string): Promise<AuthClientConfig<T>> {
+        return JSON.parse((await this._store.getData(this._resolveKey(Stores.ConfigData, userId))) ?? null);
   }
 
   public async loadOpenIDProviderConfiguration(): Promise<OIDCDiscoveryApiResponse> {

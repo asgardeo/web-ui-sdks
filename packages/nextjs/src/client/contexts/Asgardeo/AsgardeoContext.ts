@@ -19,7 +19,7 @@
 'use client';
 
 import {AsgardeoContextProps as AsgardeoReactContextProps} from '@asgardeo/react';
-import {User} from '@asgardeo/node';
+import {EmbeddedFlowExecuteRequestConfig, EmbeddedSignInFlowHandleRequestPayload, User} from '@asgardeo/node';
 import {Context, createContext} from 'react';
 
 /**
@@ -29,7 +29,7 @@ export type AsgardeoContextProps = Partial<AsgardeoReactContextProps> & {
   user?: User | null;
   isSignedIn?: boolean;
   isLoading?: boolean;
-  signIn?: () => void;
+  signIn?: (payload: EmbeddedSignInFlowHandleRequestPayload, request: EmbeddedFlowExecuteRequestConfig) => void;
   signOut?: () => void;
 };
 

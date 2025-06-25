@@ -24,6 +24,7 @@ import {
 import {FC} from 'react';
 import BaseSignIn from './BaseSignIn';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
+import {CardProps} from '../../primitives/Card/Card';
 
 /**
  * Props for the SignIn component.
@@ -42,7 +43,7 @@ export interface SignInProps {
   /**
    * Theme variant for the component.
    */
-  variant?: 'default' | 'outlined' | 'filled';
+  variant?: CardProps['variant'];
 }
 
 /**
@@ -70,7 +71,7 @@ export interface SignInProps {
  * };
  * ```
  */
-const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'default'}: SignInProps) => {
+const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'outlined'}: SignInProps) => {
   const {signIn, afterSignInUrl} = useAsgardeo();
 
   /**

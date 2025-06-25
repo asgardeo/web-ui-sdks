@@ -12,10 +12,10 @@ export default function PublicActions({className = '', showMobileActions = false
     return (
       <div className="pt-4 border-t border-gray-200 space-y-2">
         <Button variant="ghost" asChild className="w-full">
-          <Link href="/auth/signin">Sign In</Link>
+          <Link href="/signin">Sign In</Link>
         </Button>
         <Button asChild className="w-full">
-          <Link href="/auth/signup">Get Started</Link>
+          <Link href="/signup">Get Started</Link>
         </Button>
       </div>
     );
@@ -24,10 +24,10 @@ export default function PublicActions({className = '', showMobileActions = false
   return (
     <div className={`hidden md:flex items-center space-x-4 ${className}`}>
       <Button variant="ghost" asChild>
-        <Link href="/auth/signin">Sign In</Link>
+        <Link href="/signin">Sign In</Link>
       </Button>
       <Button asChild>
-        <Link href="/auth/signup">Get Started</Link>
+        <Link href="/signup">Get Started</Link>
       </Button>
     </div>
   );

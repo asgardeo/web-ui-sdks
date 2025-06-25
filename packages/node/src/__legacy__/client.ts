@@ -112,6 +112,15 @@ export class AsgardeoNodeClient<T> {
   }
 
   /**
+   * Method to get the configuration data.
+   *
+   * @returns {Promise<AuthClientConfig<Config>>} - A promise that resolves with the configuration data.
+   */
+  public async getConfigData(): Promise<AuthClientConfig<T>> {
+    return this._authCore.getConfigData();
+  }
+
+  /**
    * This method clears all session data and returns the sign-out URL.
    * @param {string} userId - The userId of the user. (If you are using ExpressJS,
    * you may get this from the request cookies)

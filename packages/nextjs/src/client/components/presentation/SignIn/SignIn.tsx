@@ -18,7 +18,12 @@
 
 'use client';
 
-import {EmbeddedSignInFlowInitiateResponse} from '@asgardeo/node';
+import {
+  EmbeddedFlowExecuteRequestConfig,
+  EmbeddedSignInFlowHandleRequestPayload,
+  EmbeddedSignInFlowHandleResponse,
+  EmbeddedSignInFlowInitiateResponse,
+} from '@asgardeo/node';
 import {BaseSignIn, BaseSignInProps} from '@asgardeo/react';
 import {FC} from 'react';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
@@ -27,28 +32,7 @@ import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
  * Props for the SignIn component.
  * Extends BaseSignInProps for full compatibility with the React BaseSignIn component
  */
-export interface SignInProps extends BaseSignInProps {
-  /**
-   * URL to redirect to after successful sign-in.
-   * If not provided, will use the current window location.
-   */
-  afterSignInUrl?: string;
-
-  /**
-   * Additional CSS class names for customization.
-   */
-  className?: string;
-
-  /**
-   * Size variant for the component.
-   */
-  size?: 'small' | 'medium' | 'large';
-
-  /**
-   * Theme variant for the component.
-   */
-  variant?: 'default' | 'outlined' | 'filled';
-}
+export type SignInProps = BaseSignInProps;
 
 /**
  * A SignIn component for Next.js that provides native authentication flow.
@@ -102,23 +86,25 @@ const SignIn: FC<SignInProps> = ({
   onSubmit,
   onSuccess,
   size = 'medium',
-  variant = 'default',
+  variant = 'outlined',
   ...rest
 }: SignInProps) => {
   const {signIn} = useAsgardeo();
 
-  /**
-   * Handle successful authentication and redirect with query params.
-   */
-  /**
-   * Initialize the authentication flow.
-   */
   const handleInitialize = async (): Promise<EmbeddedSignInFlowInitiateResponse> =>
-    await signIn({response_mode: 'direct'});
+    await signIn({
+      flowId: '',
+      selectedAuthenticator: {
+        authenticatorId: '',
+        params: {},
+      },
+    });
 
-  /**
-   * Handle authentication errors
-   */
+  const handleOnSubmit = async (
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: EmbeddedFlowExecuteRequestConfig,
+  ): Promise<EmbeddedSignInFlowHandleResponse> => await signIn(payload, request);
+
   const handleError = (error: Error): void => {
     onError?.(error);
   };
@@ -127,7 +113,7 @@ const SignIn: FC<SignInProps> = ({
     <BaseSignIn
       afterSignInUrl={afterSignInUrl}
       onInitialize={handleInitialize}
-      onSubmit={onSubmit}
+      onSubmit={handleOnSubmit}
       onSuccess={onSuccess}
       onError={handleError}
       onFlowChange={onFlowChange}

@@ -23,51 +23,13 @@ import {
   EmbeddedFlowType,
 } from '@asgardeo/browser';
 import {FC} from 'react';
-import BaseSignUp from './BaseSignUp';
+import BaseSignUp, {BaseSignUpProps} from './BaseSignUp';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 
 /**
  * Props for the SignUp component.
  */
-export interface SignUpProps {
-  /**
-   * URL to redirect after successful sign-up.
-   */
-  afterSignUpUrl?: string;
-
-  /**
-   * Additional CSS class names for customization.
-   */
-  className?: string;
-
-  /**
-   * Callback function called when the sign-up flow completes and requires redirection.
-   * This allows platform-specific handling of redirects (e.g., Next.js router.push).
-   * @param response - The response from the sign-up flow containing the redirect URL, etc.
-   */
-  onComplete?: (response: EmbeddedFlowExecuteResponse) => void;
-
-  /**
-   * Callback function called when sign-up fails.
-   * @param error - The error that occurred during sign-up.
-   */
-  onError?: (error: Error) => void;
-
-  /**
-   *  Whether to redirect after sign-up.
-   */
-  shouldRedirectAfterSignUp?: boolean;
-
-  /**
-   * Size variant for the component.
-   */
-  size?: 'small' | 'medium' | 'large';
-
-  /**
-   * Theme variant for the component.
-   */
-  variant?: 'default' | 'outlined' | 'filled';
-}
+export type SignUpProps = BaseSignUpProps;
 
 /**
  * A styled SignUp component that provides embedded sign-up flow with pre-built styling.
@@ -102,7 +64,7 @@ export interface SignUpProps {
 const SignUp: FC<SignUpProps> = ({
   className,
   size = 'medium',
-  variant = 'default',
+  variant = 'outlined',
   afterSignUpUrl,
   onError,
   onComplete,

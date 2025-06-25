@@ -27,7 +27,6 @@ import GoogleButton from './GoogleButton';
 import ImageComponent from './ImageComponent';
 import NumberInput from './NumberInput';
 import PasswordInput from './PasswordInput';
-import SocialButton from './SocialButton';
 import ButtonComponent from './SubmitButton';
 import TelephoneInput from './TelephoneInput';
 import TextInput from './TextInput';
@@ -97,7 +96,7 @@ export interface BaseSignUpOptionProps extends WithPreferences {
   /**
    * Component theme variant.
    */
-  variant?: 'default' | 'outlined' | 'filled';
+  variant?: any;
 }
 
 /**
@@ -181,7 +180,7 @@ export const createSignUpOptionFromComponent = (
     key?: string | number;
     onSubmit?: (component: EmbeddedFlowComponent, data?: Record<string, any>) => void;
     size?: 'small' | 'medium' | 'large';
-    variant?: 'default' | 'outlined' | 'filled';
+    variant?: any;
   },
 ): ReactElement =>
   createSignUpComponent({
@@ -212,7 +211,7 @@ export const renderSignUpComponents = (
     inputClassName?: string;
     onSubmit?: (component: EmbeddedFlowComponent, data?: Record<string, any>) => void;
     size?: 'small' | 'medium' | 'large';
-    variant?: 'default' | 'outlined' | 'filled';
+    variant?: any;
   },
 ): ReactElement[] =>
   components

@@ -18,9 +18,10 @@
 
 'use client';
 
-import {User} from '@asgardeo/node';
+import {EmbeddedFlowExecuteRequestConfig, EmbeddedSignInFlowHandleRequestPayload, User} from '@asgardeo/node';
 import {I18nProvider, FlowProvider, UserProvider, ThemeProvider} from '@asgardeo/react';
 import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import AsgardeoContext from './AsgardeoContext';
 import InternalAuthAPIRoutesConfig from '../../../configs/InternalAuthAPIRoutesConfig';
 
@@ -38,6 +39,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   children,
   preferences,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
+  const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,10 +83,19 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     fetchUserData();
   }, []);
 
-  const signIn = async () => {
+  const signIn = async (payload: EmbeddedSignInFlowHandleRequestPayload, request: EmbeddedFlowExecuteRequestConfig) => {
     const response = await fetch(InternalAuthAPIRoutesConfig.signIn, {
       method: 'POST',
+      body: JSON.stringify({
+        payload,
+        request,
+      }),
     });
+
+    if (response.redirected && response.url) {
+      router.push(response.url!);
+      return {redirected: true, location: response.url};
+    }
 
     return response.json();
   };

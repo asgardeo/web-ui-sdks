@@ -215,6 +215,10 @@ export class AsgardeoNodeCore<T> {
     return this._auth.getUser(userId);
   }
 
+  public async getConfigData(): Promise<AuthClientConfig<T>> {
+    return this._storageManager.getConfigData();
+  }
+
   public async getOpenIDProviderEndpoints(): Promise<OIDCEndpoints> {
     return this._auth.getOpenIDProviderEndpoints() as Promise<OIDCEndpoints>;
   }

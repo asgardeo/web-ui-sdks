@@ -33,7 +33,7 @@ import useFlow from '../../../contexts/Flow/useFlow';
 import {useForm, FormField} from '../../../hooks/useForm';
 import useTranslation from '../../../hooks/useTranslation';
 import Alert from '../../primitives/Alert/Alert';
-import Card from '../../primitives/Card/Card';
+import Card, {CardProps} from '../../primitives/Card/Card';
 import Spinner from '../../primitives/Spinner/Spinner';
 import Typography from '../../primitives/Typography/Typography';
 
@@ -112,7 +112,12 @@ export interface BaseSignUpProps {
   /**
    * Theme variant for the component.
    */
-  variant?: 'default' | 'outlined' | 'filled';
+  variant?: CardProps['variant'];
+
+  /**
+   *  Whether to redirect after sign-up.
+   */
+  shouldRedirectAfterSignUp?: boolean;
 }
 
 /**
@@ -172,7 +177,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   errorClassName = '',
   messageClassName = '',
   size = 'medium',
-  variant = 'default',
+  variant = 'outlined',
   isInitialized,
 }) => {
   const {t} = useTranslation();
@@ -531,8 +536,6 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
       withVendorCSSClassPrefix('signup__button'),
       size === 'small' && withVendorCSSClassPrefix('signup__button--small'),
       size === 'large' && withVendorCSSClassPrefix('signup__button--large'),
-      variant === 'outlined' && withVendorCSSClassPrefix('signup__button--outlined'),
-      variant === 'filled' && withVendorCSSClassPrefix('signup__button--filled'),
     ],
     buttonClassName,
   );
@@ -629,7 +632,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
 
   if (!isFlowInitialized && isLoading) {
     return (
-      <Card className={containerClasses}>
+      <Card className={containerClasses} variant={variant}>
         <Card.Content>
           <div style={{display: 'flex', justifyContent: 'center', padding: '2rem'}}>
             <Spinner size="medium" />
@@ -641,7 +644,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
 
   if (!currentFlow) {
     return (
-      <Card className={containerClasses}>
+      <Card className={containerClasses} variant={variant}>
         <Card.Content>
           <Alert variant="error" className={errorClasses}>
             <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
@@ -653,7 +656,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   }
 
   return (
-    <Card className={containerClasses}>
+    <Card className={containerClasses} variant={variant}>
       <Card.Header>
         {flowMessages && flowMessages.length > 0 && (
           <div style={{marginTop: '1rem'}}>

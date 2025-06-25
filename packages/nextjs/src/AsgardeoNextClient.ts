@@ -34,6 +34,7 @@ import {
   EmbeddedFlowExecuteRequestConfig,
   CookieConfig,
   generateSessionId,
+  EmbeddedSignInFlowStatus,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
@@ -68,6 +69,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       clientId,
       clientSecret,
       afterSignInUrl,
+      enablePKCE: false,
       ...rest,
     } as any);
   }
@@ -136,9 +138,9 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     return this.asgardeo.signIn(
       arg4,
       arg3,
-      undefined,
-      undefined,
-      undefined,
+      arg1?.code,
+      arg1?.session_state,
+      arg1?.state,
       arg1 as any,
     ) as unknown as Promise<User>;
   }
@@ -191,30 +193,27 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
         console.log('[AsgardeoNextClient] Sign-in URL:', signInUrl.toString());
         console.log('[AsgardeoNextClient] Search Params:', Object.fromEntries(urlSearchParams.entries()));
+        const body = await req.json();
 
-        const response = await this.signIn(
+        console.log('[AsgardeoNextClient] Sign-in request:', body);
+
+        const {payload, request} = body;
+
+        const response: any = await this.signIn(
+          payload,
           {
-            flowId: '',
-            selectedAuthenticator: {
-              authenticatorId: '',
-              params: {},
-            },
-          },
-          {
-            url: `${origin}${urlPathname}`,
-            payload: Object.fromEntries(urlSearchParams.entries()),
+            url: request?.url ?? `${origin}${urlPathname}`,
+            payload: request?.payload ?? Object.fromEntries(urlSearchParams.entries()),
           },
           userId,
         );
-
-        console.log('[AsgardeoNextClient] Sign-in response:', response);
 
         // Clean the response to remove any non-serializable properties
         const cleanResponse = response ? JSON.parse(JSON.stringify(response)) : {success: true};
 
         // Create response with session cookie
         const nextResponse = NextResponse.json(cleanResponse);
-        
+
         // Set session cookie if it was generated
         if (!req.cookies.get(CookieConfig.SESSION_COOKIE_NAME)) {
           nextResponse.cookies.set(CookieConfig.SESSION_COOKIE_NAME, userId, {
@@ -223,6 +222,27 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
             sameSite: CookieConfig.DEFAULT_SAME_SITE,
             secure: CookieConfig.DEFAULT_SECURE,
           });
+        }
+
+        if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
+          const res = await this.signIn(
+            {
+              code: response?.authData?.code,
+              session_state: response?.authData?.session_state,
+              state: response?.authData?.state,
+            } as any,
+            {},
+            userId,
+            (afterSignInUrl: string) => null,
+          );
+
+          const afterSignInUrl = await (
+            await this.asgardeo.getStorageManager()
+          ).getConfigDataParameter('afterSignInUrl');
+          const redirectUrl = String(afterSignInUrl);
+          console.log('[AsgardeoNextClient] Sign-in successful, redirecting to:', redirectUrl);
+
+          return NextResponse.redirect(redirectUrl, 303);
         }
 
         return nextResponse;
