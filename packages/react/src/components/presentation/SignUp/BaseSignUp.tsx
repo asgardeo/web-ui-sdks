@@ -96,14 +96,14 @@ export interface BaseSignUpProps {
    * Function to initialize sign-up flow.
    * @returns Promise resolving to the initial sign-up response.
    */
-  onInitialize: (payload?: EmbeddedFlowExecuteRequestPayload) => Promise<EmbeddedFlowExecuteResponse>;
+  onInitialize?: (payload?: EmbeddedFlowExecuteRequestPayload) => Promise<EmbeddedFlowExecuteResponse>;
 
   /**
    * Function to handle sign-up steps.
    * @param payload - The sign-up payload.
    * @returns Promise resolving to the sign-up response.
    */
-  onSubmit: (payload: EmbeddedFlowExecuteRequestPayload) => Promise<EmbeddedFlowExecuteResponse>;
+  onSubmit?: (payload: EmbeddedFlowExecuteRequestPayload) => Promise<EmbeddedFlowExecuteResponse>;
 
   /**
    * Size variant for the component.
