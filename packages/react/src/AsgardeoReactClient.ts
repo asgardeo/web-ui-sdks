@@ -25,11 +25,22 @@ import {
   SignOutOptions,
   User,
   generateUserProfile,
+  EmbeddedFlowExecuteResponse,
+  SignUpOptions,
+  EmbeddedFlowExecuteRequestPayload,
+  AsgardeoRuntimeError,
+  executeEmbeddedSignUpFlow,
+  EmbeddedSignInFlowHandleRequestPayload,
+  executeEmbeddedSignInFlow,
+  Organization,
+  IdToken,
+  EmbeddedFlowExecuteRequestConfig,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
-import {AsgardeoReactConfig} from './models/config';
+import getMeOrganizations from './api/scim2/getMeOrganizations';
 import getMeProfile from './api/scim2/getMeProfile';
 import getSchemas from './api/scim2/getSchemas';
+import {AsgardeoReactConfig} from './models/config';
 
 /**
  * Client for mplementing Asgardeo in React applications.
@@ -47,54 +58,156 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     this.asgardeo = new AuthAPI();
   }
 
-  override initialize(config: T): Promise<boolean> {
-    const scopes: string[] = Array.isArray(config.scopes) ? config.scopes : config.scopes.split(' ');
-
-    return this.asgardeo.init({
-      baseUrl: config.baseUrl,
-      clientId: config.clientId,
-      afterSignInUrl: config.afterSignInUrl,
-      scopes: [...scopes, 'internal_login'],
-    });
+  override initialize(config: AsgardeoReactConfig): Promise<boolean> {
+    return this.asgardeo.init(config as any);
   }
 
   override async getUser(): Promise<User> {
-    const baseUrl = await (await this.asgardeo.getConfigData()).baseUrl;
-    const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
-    const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
 
-    return generateUserProfile(profile, flattenUserSchema(schemas));
+      const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
+      const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
+
+      return generateUserProfile(profile, flattenUserSchema(schemas));
+    } catch (error) {
+      return this.asgardeo.getDecodedIdToken();
+    }
   }
 
   async getUserProfile(): Promise<UserProfile> {
-    const baseUrl: string = (await this.asgardeo.getConfigData()).baseUrl;
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
 
-    const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
-    const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
-    
-    console.log('Raw Schemas:', JSON.stringify(schemas, null, 2));
+      const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
+      const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
 
-    const processedSchemas = flattenUserSchema(schemas);
-    
-    console.log('Processed Schemas:', JSON.stringify(processedSchemas, null, 2));
+      const processedSchemas = flattenUserSchema(schemas);
+
+      const output = {
+        schemas: processedSchemas,
+        flattenedProfile: generateFlattenedUserProfile(profile, processedSchemas),
+        profile,
+      };
+
+      return output;
+    } catch (error) {
+      return {
+        schemas: [],
+        flattenedProfile: await this.asgardeo.getDecodedIdToken(),
+        profile: await this.asgardeo.getDecodedIdToken(),
+      };
+    }
+  }
+
+  override async getOrganizations(): Promise<Organization[]> {
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
+      const organizations = await getMeOrganizations({baseUrl});
+
+      return organizations;
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        'Failed to fetch organizations.',
+        'react-AsgardeoReactClient-GetOrganizationsError-001',
+        'react',
+        'An error occurred while fetching the organizations associated with the user.',
+      );
+    }
+  }
+
+  override async getCurrentOrganization(): Promise<Organization | null> {
+    const idToken: IdToken = await this.asgardeo.getDecodedIdToken();
 
     return {
-      schemas: processedSchemas,
-      flattenedProfile: generateFlattenedUserProfile(profile, processedSchemas),
-      profile,
+      orgHandle: idToken?.org_handle,
+      name: idToken?.org_name,
+      id: idToken?.org_id,
     };
+  }
+
+  override async switchOrganization(organization: Organization): Promise<void> {
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const scopes = configData?.scopes;
+
+      if (!organization.id) {
+        throw new AsgardeoRuntimeError(
+          'Organization ID is required for switching organizations',
+          'react-AsgardeoReactClient-SwitchOrganizationError-001',
+          'react',
+          'The organization object must contain a valid ID to perform the organization switch.',
+        );
+      }
+
+      const exchangeConfig = {
+        attachToken: false,
+        data: {
+          client_id: '{{clientId}}',
+          grant_type: 'organization_switch',
+          scope: '{{scopes}}',
+          switching_organization: organization.id,
+          token: '{{accessToken}}',
+        },
+        id: 'organization-switch',
+        returnsSession: true,
+        signInRequired: true,
+      };
+
+      await this.asgardeo.exchangeToken(
+        exchangeConfig,
+        (user: User) => {},
+        () => null,
+      );
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to switch organization: ${error.message || error}`,
+        'react-AsgardeoReactClient-SwitchOrganizationError-003',
+        'react',
+        'An error occurred while switching to the specified organization. Please try again.',
+      );
+    }
   }
 
   override isLoading(): boolean {
     return this.asgardeo.isLoading();
   }
 
+  async isInitialized(): Promise<boolean> {
+    return this.asgardeo.isInitialized();
+  }
+
   override isSignedIn(): Promise<boolean> {
     return this.asgardeo.isSignedIn();
   }
 
-  override signIn(options?: SignInOptions): Promise<User> {
-    return this.asgardeo.signIn(options as any) as unknown as Promise<User>;
+  override signIn(
+    options?: SignInOptions,
+    sessionId?: string,
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
+  override signIn(
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: EmbeddedFlowExecuteRequestConfig,
+    sessionId?: string,
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
+  override async signIn(...args: any[]): Promise<User> {
+    const arg1 = args[0];
+    const arg2 = args[1];
+
+    if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg2 === 'object' && 'url' in arg2) {
+      return executeEmbeddedSignInFlow({
+        payload: arg1,
+        url: arg2.url,
+      });
+    }
+
+    return this.asgardeo.signIn(arg1 as any) as unknown as Promise<User>;
   }
 
   override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
@@ -111,6 +224,37 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     const response: boolean = await this.asgardeo.signOut(args[1]);
 
     return Promise.resolve(String(response));
+  }
+
+  override async signUp(options?: SignUpOptions): Promise<void>;
+  override async signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
+  override async signUp(...args: any[]): Promise<void | EmbeddedFlowExecuteResponse> {
+    if (args.length === 0) {
+      throw new AsgardeoRuntimeError(
+        'No arguments provided for signUp method.',
+        'react-AsgardeoReactClient-ValidationError-001',
+        'react',
+        'The signUp method requires at least one argument, either a SignUpOptions object or an EmbeddedFlowExecuteRequestPayload.',
+      );
+    }
+
+    const firstArg = args[0];
+
+    if (typeof firstArg === 'object' && 'flowType' in firstArg) {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl: string = configData?.baseUrl;
+
+      return executeEmbeddedSignUpFlow({
+        baseUrl,
+        payload: firstArg as EmbeddedFlowExecuteRequestPayload,
+      });
+    }
+    throw new AsgardeoRuntimeError(
+      'Not implemented',
+      'react-AsgardeoReactClient-ValidationError-002',
+      'react',
+      'The signUp method with SignUpOptions is not implemented in the React client.',
+    );
   }
 }
 

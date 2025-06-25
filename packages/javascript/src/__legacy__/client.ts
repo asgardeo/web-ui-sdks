@@ -20,7 +20,7 @@ import StorageManager from '../StorageManager';
 import {AuthClientConfig, StrictAuthClientConfig} from './models';
 import {ExtendedAuthorizeRequestUrlParams} from '../models/oauth-request';
 import {Crypto} from '../models/crypto';
-import {TokenResponse, IdTokenPayload, TokenExchangeRequestConfig} from '../models/token';
+import {TokenResponse, IdToken, TokenExchangeRequestConfig} from '../models/token';
 import {OIDCEndpoints} from '../models/oidc-endpoints';
 import {Storage} from '../models/store';
 import ScopeConstants from '../constants/ScopeConstants';
@@ -237,10 +237,13 @@ export class AsgardeoAuthClient<T> {
         await this._storageManager.setTemporaryDataParameter(pkceKey, codeVerifier, userId);
       }
 
+      console.log('[AsgardeoAuthClient] configData:', configData);
+
       const authorizeRequestParams: Map<string, string> = getAuthorizeRequestUrlParams(
         {
           redirectUri: configData.afterSignInUrl,
           clientId: configData.clientId,
+          clientSecret: configData.clientSecret,
           scopes: processOpenIDScopes(configData.scopes),
           responseMode: configData.responseMode,
           codeChallengeMethod: PKCEConstants.DEFAULT_CODE_CHALLENGE_METHOD,
@@ -582,9 +585,9 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async getDecodedIdToken(userId?: string): Promise<IdTokenPayload> {
+  public async getDecodedIdToken(userId?: string): Promise<IdToken> {
     const idToken: string = (await this._storageManager.getSessionData(userId)).id_token;
-    const payload: IdTokenPayload = this._cryptoHelper.decodeIdToken(idToken);
+    const payload: IdToken = this._cryptoHelper.decodeIdToken(idToken);
 
     return payload;
   }
@@ -891,10 +894,7 @@ export class AsgardeoAuthClient<T> {
    *
    * @preserve
    */
-  public async exchangeToken(
-    config: TokenExchangeRequestConfig,
-    userId?: string,
-  ): Promise<TokenResponse | Response> {
+  public async exchangeToken(config: TokenExchangeRequestConfig, userId?: string): Promise<TokenResponse | Response> {
     const oidcProviderMetadata: OIDCDiscoveryApiResponse = await this._oidcProviderMetaData();
     const configData: StrictAuthClientConfig = await this._config();
 

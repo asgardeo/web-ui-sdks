@@ -23,7 +23,7 @@ import {
   BasicUserInfo,
   Config,
   TokenExchangeRequestConfig,
-  IdTokenPayload,
+  IdToken,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -95,7 +95,7 @@ export interface AuthContextInterface {
   error: AsgardeoAuthException;
   getAccessToken(): Promise<string>;
   getUser(): Promise<BasicUserInfo>;
-  getDecodedIdToken(): Promise<IdTokenPayload>;
+  getDecodedIdToken(): Promise<IdToken>;
   getHttpClient(): Promise<HttpClientInstance>;
   getIdToken(): Promise<string>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
@@ -106,10 +106,7 @@ export interface AuthContextInterface {
   on(hook: Exclude<Hooks, Hooks.CustomGrant>, callback: (response?: any) => void): void;
   on(hook: Hooks, callback: (response?: any) => void, id?: string): void;
   refreshAccessToken(): Promise<BasicUserInfo>;
-  exchangeToken(
-    config: TokenExchangeRequestConfig,
-    callback?: (response: BasicUserInfo | Response) => void,
-  ): void;
+  exchangeToken(config: TokenExchangeRequestConfig, callback?: (response: BasicUserInfo | Response) => void): void;
   revokeAccessToken(): Promise<boolean>;
   signIn: (
     config?: SignInConfig,

@@ -17,8 +17,8 @@
  */
 
 import {
-  ApplicationNativeAuthenticationAuthenticator,
-  ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
+  EmbeddedSignInFlowAuthenticator,
+  EmbeddedSignInFlowAuthenticatorKnownIdPType,
   ApplicationNativeAuthenticationConstants,
   WithPreferences,
 } from '@asgardeo/browser';
@@ -44,7 +44,7 @@ export interface BaseSignInOptionProps extends WithPreferences {
   /**
    * The authenticator configuration.
    */
-  authenticator: ApplicationNativeAuthenticationAuthenticator;
+  authenticator: EmbeddedSignInFlowAuthenticator;
 
   /**
    * Current form values.
@@ -74,7 +74,7 @@ export interface BaseSignInOptionProps extends WithPreferences {
   /**
    * Callback function called when the option is submitted.
    */
-  onSubmit: (authenticator: ApplicationNativeAuthenticationAuthenticator, formData?: Record<string, string>) => void;
+  onSubmit: (authenticator: EmbeddedSignInFlowAuthenticator, formData?: Record<string, string>) => void;
 
   /**
    * Custom CSS class name for form inputs.
@@ -141,7 +141,7 @@ export const createSignInOption = (props: BaseSignInOptionProps): ReactElement =
 
     default:
       // Check if it's a federated authenticator (non-LOCAL idp)
-      if (authenticator.idp !== ApplicationNativeAuthenticationAuthenticatorKnownIdPType.Local) {
+      if (authenticator.idp !== EmbeddedSignInFlowAuthenticatorKnownIdPType.Local) {
         // For unknown federated authenticators, use generic social login
         return <SocialButton {...props} />;
       }
@@ -161,12 +161,12 @@ export const createSignInOption = (props: BaseSignInOptionProps): ReactElement =
  * Convenience function that creates the appropriate sign-in option component from an authenticator.
  */
 export const createSignInOptionFromAuthenticator = (
-  authenticator: ApplicationNativeAuthenticationAuthenticator,
+  authenticator: EmbeddedSignInFlowAuthenticator,
   formValues: Record<string, string>,
   touchedFields: Record<string, boolean>,
   isLoading: boolean,
   onInputChange: (param: string, value: string) => void,
-  onSubmit: (authenticator: ApplicationNativeAuthenticationAuthenticator, formData?: Record<string, string>) => void,
+  onSubmit: (authenticator: EmbeddedSignInFlowAuthenticator, formData?: Record<string, string>) => void,
   options?: {
     inputClassName?: string;
     buttonClassName?: string;

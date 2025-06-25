@@ -23,7 +23,7 @@ import {
   IsomorphicCrypto,
   TokenExchangeRequestConfig,
   StorageManager,
-  IdTokenPayload,
+  IdToken,
   OIDCEndpoints,
   User,
 } from '@asgardeo/javascript';
@@ -737,7 +737,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getDecodedIdToken(): Promise<IdTokenPayload | undefined> {
+  public async getDecodedIdToken(): Promise<IdToken | undefined> {
     await this._validateMethod();
 
     return this._client?.getDecodedIdToken();

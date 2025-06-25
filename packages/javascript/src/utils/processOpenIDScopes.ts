@@ -39,17 +39,19 @@ import AsgardeoRuntimeError from '../errors/AsgardeoRuntimeError';
 const processOpenIDScopes = (scopes: string | string[]): string => {
   let processedScopes: string[] = [];
 
-  if (Array.isArray(scopes)) {
-    processedScopes = scopes;
-  } else if (typeof scopes === 'string') {
-    processedScopes = scopes.split(' ');
-  } else {
-    throw new AsgardeoRuntimeError(
-      'Scopes must be a string or an array of strings.',
-      'processOpenIDScopes-Invalid-001',
-      'javascript',
-      'The provided scopes are not in the expected format. Please provide a string or an array of strings.',
-    );
+  if (scopes) {
+    if (Array.isArray(scopes)) {
+      processedScopes = scopes;
+    } else if (typeof scopes === 'string') {
+      processedScopes = scopes.split(' ');
+    } else {
+      throw new AsgardeoRuntimeError(
+        'Scopes must be a string or an array of strings.',
+        'processOpenIDScopes-Invalid-001',
+        'javascript',
+        'The provided scopes are not in the expected format. Please provide a string or an array of strings.',
+      );
+    }
   }
 
   OIDCRequestConstants.SignIn.Payload.DEFAULT_SCOPES.forEach((defaultScope: string) => {

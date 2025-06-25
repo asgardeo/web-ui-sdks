@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {IdTokenPayload} from '../models/token';
+import {IdToken} from '../models/token';
 
 /**
  * Extracts the tenant domain from the ID token payload.
@@ -29,7 +29,7 @@ import {IdTokenPayload} from '../models/token';
  *
  * Consider extracting the tenant domain using a dedicated claim (e.g., `tenant_domain`) when available.
  */
-const extractTenantDomainFromIdTokenPayload = (payload: IdTokenPayload, subjectSeparator: string = '@'): string => {
+const extractTenantDomainFromIdTokenPayload = (payload: IdToken, subjectSeparator: string = '@'): string => {
   const uid: string = payload.sub;
 
   if (!uid) return '';

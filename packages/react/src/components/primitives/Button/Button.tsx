@@ -241,7 +241,7 @@ const useButtonStyles = (
       alignItems: 'center',
       justifyContent: 'center',
       gap: `${theme.spacing.unit}px`,
-      borderRadius: theme.borderRadius.small,
+      borderRadius: theme.borderRadius.medium,
       fontWeight: 500,
       cursor: disabled || loading ? 'not-allowed' : 'pointer',
       transition: 'all 0.2s ease-in-out',
@@ -327,17 +327,17 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...rest}
       >
         {loading && (
-          <Spinner 
-            size={size as SpinnerSize} 
-            color="currentColor" 
+          <Spinner
+            size={size as SpinnerSize}
+            color="currentColor"
             style={{
               width: size === 'small' ? '12px' : size === 'medium' ? '16px' : '20px',
-              height: size === 'small' ? '12px' : size === 'medium' ? '16px' : '20px'
+              height: size === 'small' ? '12px' : size === 'medium' ? '16px' : '20px',
             }}
           />
         )}
         {!loading && startIcon && <span>{startIcon}</span>}
-        {children && <span>{children}</span>}
+        {children && <>{children}</>}
         {!loading && endIcon && <span>{endIcon}</span>}
       </button>
     );

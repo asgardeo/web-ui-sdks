@@ -16,11 +16,7 @@
  * under the License.
  */
 
-import {
-  ApplicationNativeAuthenticationAuthenticator,
-  ApplicationNativeAuthenticationAuthenticatorParamType,
-  FieldType,
-} from '@asgardeo/browser';
+import {EmbeddedSignInFlowAuthenticator, EmbeddedSignInFlowAuthenticatorParamType, FieldType} from '@asgardeo/browser';
 import {FC, useEffect} from 'react';
 import {createField} from '../../../factories/FieldFactory';
 import Button from '../../../primitives/Button/Button';
@@ -60,7 +56,7 @@ const IdentifierFirst: FC<BaseSignInOptionProps> = ({
           {createField({
             name: param.param,
             type:
-              param.type === ApplicationNativeAuthenticationAuthenticatorParamType.String
+              param.type === EmbeddedSignInFlowAuthenticatorParamType.String
                 ? param.confidential
                   ? FieldType.Password
                   : FieldType.Text

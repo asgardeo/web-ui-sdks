@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import {FC, HTMLAttributes, useMemo} from 'react';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import {clsx} from 'clsx';
+import {FC, HTMLAttributes, useMemo} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import Typography from '../Typography/Typography';
 
@@ -26,16 +26,6 @@ export type DividerOrientation = 'horizontal' | 'vertical';
 export type DividerVariant = 'solid' | 'dashed' | 'dotted';
 
 export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
-  /**
-   * The orientation of the divider
-   */
-  orientation?: DividerOrientation;
-
-  /**
-   * The variant style of the divider
-   */
-  variant?: DividerVariant;
-
   /**
    * Text to display in the center of the divider
    */
@@ -45,6 +35,16 @@ export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
    * Custom color for the divider
    */
   color?: string;
+
+  /**
+   * The orientation of the divider
+   */
+  orientation?: DividerOrientation;
+
+  /**
+   * The variant style of the divider
+   */
+  variant?: DividerVariant;
 }
 
 const useStyles = (orientation: DividerOrientation, variant: DividerVariant, color?: string, hasChildren?: boolean) => {
@@ -84,7 +84,7 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
           borderTop: `1px ${borderStyle} ${baseColor}`,
         },
         text: {
-          backgroundColor: 'var(--background-color, #fff)',
+          backgroundColor: theme.colors.background.surface,
           padding: `0 ${theme.spacing.unit}px`,
           whiteSpace: 'nowrap' as const,
         },

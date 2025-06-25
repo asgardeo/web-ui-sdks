@@ -18,7 +18,7 @@
 
 import {AsgardeoAuthException} from './errors/exception';
 import {Crypto, JWKInterface} from './models/crypto';
-import {IdTokenPayload} from './models/token';
+import {IdToken} from './models/token';
 import TokenConstants from './constants/TokenConstants';
 
 export class IsomorphicCrypto<T = any> {
@@ -136,10 +136,10 @@ export class IsomorphicCrypto<T = any> {
    *
    * @throws
    */
-  public decodeIdToken(idToken: string): IdTokenPayload {
+  public decodeIdToken(idToken: string): IdToken {
     try {
       const utf8String: string = this._cryptoUtils.base64URLDecode(idToken?.split('.')[1]);
-      const payload: IdTokenPayload = JSON.parse(utf8String);
+      const payload: IdToken = JSON.parse(utf8String);
 
       return payload;
     } catch (error: any) {

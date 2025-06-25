@@ -174,35 +174,35 @@ const Typography: FC<TypographyProps> = ({
       case 'h1':
         return {
           fontSize: '2.125rem', // 34px
-          fontWeight: 400,
+          fontWeight: 600,
           lineHeight: 1.235,
           letterSpacing: '-0.00735em',
         };
       case 'h2':
         return {
           fontSize: '1.5rem', // 24px
-          fontWeight: 400,
+          fontWeight: 600,
           lineHeight: 1.334,
           letterSpacing: '0em',
         };
       case 'h3':
         return {
           fontSize: '1.25rem', // 20px
-          fontWeight: 400,
+          fontWeight: 600,
           lineHeight: 1.6,
           letterSpacing: '0.0075em',
         };
       case 'h4':
         return {
           fontSize: '1.125rem', // 18px
-          fontWeight: 400,
+          fontWeight: 600,
           lineHeight: 1.5,
           letterSpacing: '0.00938em',
         };
       case 'h5':
         return {
           fontSize: '1rem', // 16px
-          fontWeight: 400,
+          fontWeight: 600,
           lineHeight: 1.334,
           letterSpacing: '0em',
         };

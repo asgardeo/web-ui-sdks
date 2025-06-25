@@ -5,12 +5,13 @@ import {useState, createContext, useContext} from 'react';
 import DashboardPage from './pages/Dashboard';
 import ProfilePage from './pages/Profile';
 import OrganizationsPage from './pages/Organizations';
-import CreateOrganizationPage from './pages/CreateOrganization';
-import SignInPage from './pages/SignIn';
+import CreateOrganizationPage from './pages/CreateOrganizationPage';
+import SignInPage from './pages/SignInPage';
 import LandingPage from './pages/LandingPage';
 import LandingLayout from './layouts/LandingLayout';
 import DashboardLayout from './layouts/DashboardLayout';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
+import SignUpPage from './pages/SignUpPage';
 
 // Types
 export interface User {
@@ -52,7 +53,7 @@ const mockUser: User = {
   id: '1',
   name: 'John Doe',
   email: 'john@example.com',
-  avatar: '/placeholder.svg?height=32&width=32',
+  avatar: 'https://avatar.vercel.sh/john?size=30',
   username: 'johndoe',
 };
 
@@ -61,7 +62,7 @@ const mockOrganizations: Organization[] = [
     id: '1',
     name: 'Acme Corp',
     slug: 'acme-corp',
-    avatar: '/placeholder.svg?height=32&width=32',
+    avatar: 'https://avatar.vercel.sh/acme-corp?size=32',
     role: 'owner',
     memberCount: 12,
   },
@@ -69,7 +70,7 @@ const mockOrganizations: Organization[] = [
     id: '2',
     name: 'Tech Startup',
     slug: 'tech-startup',
-    avatar: '/placeholder.svg?height=32&width=32',
+    avatar: 'https://avatar.vercel.sh/tech-startup?size=30',
     role: 'admin',
     memberCount: 8,
   },
@@ -112,6 +113,14 @@ function App() {
             element={
               <AuthenticatedLayout>
                 <SignInPage />
+              </AuthenticatedLayout>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <AuthenticatedLayout>
+                <SignUpPage />
               </AuthenticatedLayout>
             }
           />

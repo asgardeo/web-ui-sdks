@@ -22,7 +22,7 @@ import {
   IsomorphicCrypto,
   TokenExchangeRequestConfig,
   StorageManager,
-  IdTokenPayload,
+  IdToken,
   OIDCEndpoints,
 } from '@asgardeo/javascript';
 import {
@@ -59,7 +59,7 @@ export interface MainThreadClientInterface {
   refreshAccessToken(): Promise<User>;
   revokeAccessToken(): Promise<boolean>;
   getUser(): Promise<User>;
-  getDecodedIdToken(): Promise<IdTokenPayload>;
+  getDecodedIdToken(): Promise<IdToken>;
   getCrypto(): Promise<IsomorphicCrypto>;
   getConfigData(): Promise<AuthClientConfig<MainThreadClientConfig>>;
   getIdToken(): Promise<string>;
@@ -96,8 +96,8 @@ export interface WebWorkerClientInterface {
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getUser(): Promise<User>;
   getConfigData(): Promise<AuthClientConfig<WebWorkerClientConfig>>;
-  getDecodedIdToken(): Promise<IdTokenPayload>;
-  getDecodedIDPIDToken(): Promise<IdTokenPayload>;
+  getDecodedIdToken(): Promise<IdToken>;
+  getDecodedIDPIDToken(): Promise<IdToken>;
   getCrypto(): Promise<IsomorphicCrypto>;
   getIdToken(): Promise<string>;
   isSignedIn(): Promise<boolean>;

@@ -44,3 +44,5 @@ Thumbs.db
 # Environment files
 *.env
 .env*
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

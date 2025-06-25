@@ -1,22 +1,13 @@
 {
-    "conventionalCommits.scopes": [
-        "workspace",
-        "core",
-        "react",
-        "auth-components",
-        "sample-app",
-        "docs"
-    ],
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
-    },
-    "css.validate": false,
-    "less.validate": false,
-    "scss.validate": false,
-    "stylelint.validate": [
-        "css",
-        "scss"
-    ],
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "editor.formatOnSave": true
+  "conventionalCommits.scopes": ["workspace", "core", "react", "auth-components", "sample-app", "docs"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "css.validate": false,
+  "less.validate": false,
+  "scss.validate": false,
+  "stylelint.validate": ["css", "scss"],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.formatOnSave": true,
+  "nxConsole.generateAiAgentRules": true
 }

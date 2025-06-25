@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {User, StorageManager, IdTokenPayload, OIDCEndpoints} from '@asgardeo/node';
+import type {User, StorageManager, IdToken, OIDCEndpoints} from '@asgardeo/node';
 
 export interface ModuleOptions {
   /**
@@ -61,7 +61,7 @@ export interface AuthInterface {
   getAccessToken: () => Promise<string | null>;
   getUser: () => Promise<User | null>;
   getStorageManager: () => Promise<StorageManager<any> | null>;
-  getDecodedIdToken: () => Promise<IdTokenPayload | null>;
+  getDecodedIdToken: () => Promise<IdToken | null>;
   getIdToken: () => Promise<string | null>;
   getOpenIDProviderEndpoints: () => Promise<OIDCEndpoints | null>;
   isSignedIn: () => Promise<boolean>;

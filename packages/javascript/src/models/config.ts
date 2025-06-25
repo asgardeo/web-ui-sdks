@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import {ThemeConfig, ThemeMode} from '../theme/types';
 import {I18nBundle} from './i18n';
 import {RecursivePartial} from './utility-types';
+import {ThemeConfig, ThemeMode} from '../theme/types';
 
 export interface BaseConfig<T = unknown> extends WithPreferences {
   /**
@@ -31,6 +31,18 @@ export interface BaseConfig<T = unknown> extends WithPreferences {
    * For production: "https://your-app.com/api/auth/callback"
    */
   afterSignInUrl?: string | undefined;
+
+  /**
+   * Optional URL where the authorization server should redirect after sign out.
+   * This must match one of the allowed post logout redirect URIs configured in your IdP
+   * and is used to redirect the user after they have signed out.
+   * If not provided, the framework layer will use the default sign out URL based on the
+   *
+   * @example
+   * For development: "http://localhost:3000/api/auth/signout"
+   * For production: "https://your-app.com/api/auth/signout"
+   */
+  afterSignOutUrl?: string | undefined;
 
   /**
    * The base URL of the Asgardeo identity server.
@@ -88,30 +100,30 @@ export interface ThemePreferences {
 
 export interface I18nPreferences {
   /**
-   * The language to use for translations.
-   * Defaults to the browser's default language.
+   * Custom translations to override default ones.
    */
-  language?: string;
+  bundles?: {
+    [key: string]: I18nBundle;
+  };
   /**
    * The fallback language to use if translations are not available in the specified language.
    * Defaults to 'en-US'.
    */
   fallbackLanguage?: string;
   /**
-   * Custom translations to override default ones.
+   * The language to use for translations.
+   * Defaults to the browser's default language.
    */
-  bundles?: {
-    [key: string]: I18nBundle;
-  };
+  language?: string;
 }
 
 export interface Preferences {
   /**
-   * Theme preferences for the Asgardeo UI components
-   */
-  theme?: ThemePreferences;
-  /**
    * Internationalization preferences for the Asgardeo UI components
    */
   i18n?: I18nPreferences;
+  /**
+   * Theme preferences for the Asgardeo UI components
+   */
+  theme?: ThemePreferences;
 }

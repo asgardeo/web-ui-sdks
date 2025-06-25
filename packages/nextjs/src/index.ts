@@ -30,6 +30,9 @@ export {SignedOutProps} from './client/components/control/SignedOut/SignedOut';
 export {default as SignInButton} from './client/components/actions/SignInButton/SignInButton';
 export type {SignInButtonProps} from './client/components/actions/SignInButton/SignInButton';
 
+export {default as SignIn} from './client/components/presentation/SignIn/SignIn';
+export type {SignInProps} from './client/components/presentation/SignIn/SignIn';
+
 export {default as SignOutButton} from './client/components/actions/SignOutButton/SignOutButton';
 export type {SignOutButtonProps} from './client/components/actions/SignOutButton/SignOutButton';
 

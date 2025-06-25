@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {User, StorageManager, IdTokenPayload, OIDCEndpoints} from '@asgardeo/node';
+import type {User, StorageManager, IdToken, OIDCEndpoints} from '@asgardeo/node';
 import type {AuthInterface} from '../../types';
 import {navigateTo} from '#imports';
 
@@ -98,9 +98,9 @@ export const useAuth = (): AuthInterface => {
    * which expects a valid session cookie. If the session is valid, the function
    * returns the decoded ID token payload.
    *
-   * @returns {Promise<IdTokenPayload | null>} - A promise that resolves to the decoded ID token payload if available, or null if not.
+   * @returns {Promise<IdToken | null>} - A promise that resolves to the decoded ID token payload if available, or null if not.
    */
-  const getDecodedIdToken = async (): Promise<IdTokenPayload | null> => {
+  const getDecodedIdToken = async (): Promise<IdToken | null> => {
     try {
       const response: Response = await fetch(`/api/auth/get-decoded-id-token`, {
         credentials: 'include',

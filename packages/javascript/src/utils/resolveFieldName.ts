@@ -17,7 +17,7 @@
  */
 
 import AsgardeoRuntimeError from '../errors/AsgardeoRuntimeError';
-import {ApplicationNativeAuthenticationAuthenticatorExtendedParamType} from '../models/application-native-authentication';
+import {EmbeddedSignInFlowAuthenticatorExtendedParamType} from '../models/embedded-signin-flow';
 import {FieldType} from '../models/field';
 
 const resolveFieldName = (field: any): string => {

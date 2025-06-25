@@ -18,20 +18,32 @@
 
 import {
   AsgardeoNodeClient,
+  AsgardeoRuntimeError,
+  EmbeddedFlowExecuteRequestPayload,
+  EmbeddedFlowExecuteResponse,
   LegacyAsgardeoNodeClient,
   SignInOptions,
   SignOutOptions,
+  SignUpOptions,
   User,
   UserProfile,
+  initializeEmbeddedSignInFlow,
+  Organization,
+  EmbeddedSignInFlowHandleRequestPayload,
+  executeEmbeddedSignInFlow,
+  EmbeddedFlowExecuteRequestConfig,
+  CookieConfig,
+  generateSessionId,
+  EmbeddedSignInFlowStatus,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
+import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
 import {AsgardeoNextConfig} from './models/config';
 import deleteSessionId from './server/actions/deleteSessionId';
 import getSessionId from './server/actions/getSessionId';
 import getIsSignedIn from './server/actions/isSignedIn';
 import setSessionId from './server/actions/setSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
-import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
 
 const removeTrailingSlash = (path: string): string => (path.endsWith('/') ? path.slice(0, -1) : path);
 /**
@@ -54,20 +66,33 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
     return this.asgardeo.initialize({
       baseUrl,
-      clientId: clientId,
+      clientId,
       clientSecret,
-      afterSignInUrl: afterSignInUrl,
+      afterSignInUrl,
+      enablePKCE: false,
       ...rest,
     } as any);
   }
 
   override async getUser(userId?: string): Promise<User> {
-    let resolvedSessionId: string = userId || ((await getSessionId()) as string);
+    const resolvedSessionId: string = userId || ((await getSessionId()) as string);
 
     return this.asgardeo.getUser(resolvedSessionId);
   }
 
+  override async getOrganizations(): Promise<Organization[]> {
+    throw new Error('Method not implemented.');
+  }
+
   override getUserProfile(): Promise<UserProfile> {
+    throw new Error('Method not implemented.');
+  }
+
+  override switchOrganization(organization: Organization): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  override getCurrentOrganization(): Promise<Organization | null> {
     throw new Error('Method not implemented.');
   }
 
@@ -79,27 +104,45 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     return this.asgardeo.isSignedIn(sessionId as string);
   }
 
-  override async signIn(
+  override signIn(
     options?: SignInOptions,
     sessionId?: string,
-    beforeSignIn?: (redirectUrl: string) => NextResponse,
-    authorizationCode?: string,
-    sessionState?: string,
-    state?: string,
-  ): Promise<User> {
-    let resolvedSessionId: string = sessionId || ((await getSessionId()) as string);
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
+  override signIn(
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: EmbeddedFlowExecuteRequestConfig,
+    sessionId?: string,
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
+  override async signIn(...args: any[]): Promise<User> {
+    const arg1 = args[0];
+    const arg2 = args[1];
+    const arg3 = args[2];
+    const arg4 = args[3];
 
-    if (!resolvedSessionId) {
-      resolvedSessionId = await setSessionId(sessionId);
+    if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg1 === 'object' && 'url' in arg2) {
+      if (arg1.flowId === '') {
+        return initializeEmbeddedSignInFlow({
+          payload: arg2.payload,
+          url: arg2.url,
+        });
+      }
+
+      return executeEmbeddedSignInFlow({
+        payload: arg1,
+        url: arg2.url,
+      });
     }
 
     return this.asgardeo.signIn(
-      beforeSignIn as any,
-      resolvedSessionId,
-      authorizationCode,
-      sessionState,
-      state,
-    ) as unknown as User;
+      arg4,
+      arg3,
+      arg1?.code,
+      arg1?.session_state,
+      arg1?.state,
+      arg1 as any,
+    ) as unknown as Promise<User>;
   }
 
   override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
@@ -118,47 +161,126 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     return Promise.resolve(await this.asgardeo.signOut(resolvedSessionId));
   }
 
+  override async signUp(options?: SignUpOptions): Promise<void>;
+  override async signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
+  override async signUp(...args: any[]): Promise<void | EmbeddedFlowExecuteResponse> {
+    throw new AsgardeoRuntimeError(
+      'Not implemented',
+      'react-AsgardeoReactClient-ValidationError-002',
+      'react',
+      'The signUp method with SignUpOptions is not implemented in the React client.',
+    );
+  }
+
   async handler(req: NextRequest): Promise<NextResponse> {
     const {pathname, searchParams} = req.nextUrl;
     const sanitizedPathname: string = removeTrailingSlash(pathname);
     const {method} = req;
 
+    // Handle POST sign-in request
+    if (method === 'POST' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) {
+      try {
+        // Get session ID from cookies directly since we're in middleware context
+        let userId: string | undefined = req.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+
+        // Generate session ID if not present
+        if (!userId) {
+          userId = generateSessionId();
+        }
+
+        const signInUrl: URL = new URL(await this.asgardeo.getSignInUrl({response_mode: 'direct'}, userId));
+        const {pathname: urlPathname, origin, searchParams: urlSearchParams} = signInUrl;
+
+        console.log('[AsgardeoNextClient] Sign-in URL:', signInUrl.toString());
+        console.log('[AsgardeoNextClient] Search Params:', Object.fromEntries(urlSearchParams.entries()));
+        const body = await req.json();
+
+        console.log('[AsgardeoNextClient] Sign-in request:', body);
+
+        const {payload, request} = body;
+
+        const response: any = await this.signIn(
+          payload,
+          {
+            url: request?.url ?? `${origin}${urlPathname}`,
+            payload: request?.payload ?? Object.fromEntries(urlSearchParams.entries()),
+          },
+          userId,
+        );
+
+        // Clean the response to remove any non-serializable properties
+        const cleanResponse = response ? JSON.parse(JSON.stringify(response)) : {success: true};
+
+        // Create response with session cookie
+        const nextResponse = NextResponse.json(cleanResponse);
+
+        // Set session cookie if it was generated
+        if (!req.cookies.get(CookieConfig.SESSION_COOKIE_NAME)) {
+          nextResponse.cookies.set(CookieConfig.SESSION_COOKIE_NAME, userId, {
+            httpOnly: CookieConfig.DEFAULT_HTTP_ONLY,
+            maxAge: CookieConfig.DEFAULT_MAX_AGE,
+            sameSite: CookieConfig.DEFAULT_SAME_SITE,
+            secure: CookieConfig.DEFAULT_SECURE,
+          });
+        }
+
+        if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
+          const res = await this.signIn(
+            {
+              code: response?.authData?.code,
+              session_state: response?.authData?.session_state,
+              state: response?.authData?.state,
+            } as any,
+            {},
+            userId,
+            (afterSignInUrl: string) => null,
+          );
+
+          const afterSignInUrl = await (
+            await this.asgardeo.getStorageManager()
+          ).getConfigDataParameter('afterSignInUrl');
+          const redirectUrl = String(afterSignInUrl);
+          console.log('[AsgardeoNextClient] Sign-in successful, redirecting to:', redirectUrl);
+
+          return NextResponse.redirect(redirectUrl, 303);
+        }
+
+        return nextResponse;
+      } catch (error) {
+        console.error('[AsgardeoNextClient] Failed to initialize embedded sign-in flow:', error);
+        return NextResponse.json({error: 'Failed to initialize sign-in flow'}, {status: 500});
+      }
+    }
+
+    // Handle GET sign-in request or callback with code
     if ((method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) || searchParams.get('code')) {
-      let response: NextResponse | undefined;
+      try {
+        if (searchParams.get('code')) {
+          // Handle OAuth callback
+          await this.signIn();
 
-      await this.signIn(
-        {},
-        undefined,
-        (redirectUrl: string) => {
-          return (response = NextResponse.redirect(redirectUrl, 302));
-        },
-        searchParams.get('code') as string,
-        searchParams.get('session_state') as string,
-        searchParams.get('state') as string,
-      );
+          const cleanUrl: URL = new URL(req.url);
+          cleanUrl.searchParams.delete('code');
+          cleanUrl.searchParams.delete('state');
+          cleanUrl.searchParams.delete('session_state');
 
-      // If we already redirected via the callback, return that
-      if (response) {
-        return response;
+          return NextResponse.redirect(cleanUrl.toString());
+        }
+
+        // Regular GET sign-in request
+        await this.signIn();
+        return NextResponse.next();
+      } catch (error) {
+        console.error('[AsgardeoNextClient] Sign-in failed:', error);
+        return NextResponse.json({error: 'Sign-in failed'}, {status: 500});
       }
-
-      if (searchParams.get('code')) {
-        const cleanUrl: URL = new URL(req.url);
-        cleanUrl.searchParams.delete('code');
-        cleanUrl.searchParams.delete('state');
-        cleanUrl.searchParams.delete('session_state');
-
-        return NextResponse.redirect(cleanUrl.toString());
-      }
-
-      return NextResponse.next();
     }
 
     if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.session) {
       try {
         const isSignedIn: boolean = await getIsSignedIn();
 
-        return NextResponse.json({isSignedIn: isSignedIn});
+        return NextResponse.json({isSignedIn});
       } catch (error) {
         return NextResponse.json({error: 'Failed to check session'}, {status: 500});
       }

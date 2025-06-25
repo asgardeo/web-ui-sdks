@@ -18,11 +18,11 @@
 
 import {describe, expect, it} from 'vitest';
 import extractUserClaimsFromIdToken from '../extractUserClaimsFromIdToken';
-import {IdTokenPayload} from '../../models/id-token';
+import {IdToken} from '../../models/id-token';
 
 describe('extractUserClaimsFromIdToken', (): void => {
   it('should remove protocol claims and keep user claims', (): void => {
-    const payload: IdTokenPayload = {
+    const payload: IdToken = {
       iss: 'https://example.com',
       aud: 'client_id',
       exp: 1712345678,
@@ -46,17 +46,17 @@ describe('extractUserClaimsFromIdToken', (): void => {
   });
 
   it('should handle empty payload', (): void => {
-    const payload = {} as IdTokenPayload;
+    const payload = {} as IdToken;
 
     expect(extractUserClaimsFromIdToken(payload)).toEqual({});
   });
 
   it('should convert snake_case to camelCase', (): void => {
-    const payload: IdTokenPayload = {
+    const payload: IdToken = {
       phone_number: '+1234567890',
       custom_claim_value: 'test',
       normalClaim: 'value',
-    } as IdTokenPayload;
+    } as IdToken;
 
     const expected: {
       phoneNumber: string;
@@ -72,7 +72,7 @@ describe('extractUserClaimsFromIdToken', (): void => {
   });
 
   it('should remove all protocol claims', (): void => {
-    const payload: IdTokenPayload = {
+    const payload: IdToken = {
       iss: 'https://example.com',
       aud: 'client_id',
       exp: 1712345678,
@@ -88,7 +88,7 @@ describe('extractUserClaimsFromIdToken', (): void => {
       isk: 'key1',
       sid: 'session1',
       custom_claim: 'value',
-    } as IdTokenPayload;
+    } as IdToken;
 
     expect(extractUserClaimsFromIdToken(payload)).toEqual({
       customClaim: 'value',

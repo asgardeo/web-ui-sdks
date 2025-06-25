@@ -16,15 +16,25 @@
  * under the License.
  */
 
-import {SignInOptions, SignOutOptions, User, UserProfile} from '@asgardeo/browser';
+import {
+  AsgardeoRuntimeError,
+  EmbeddedFlowExecuteRequestPayload,
+  EmbeddedFlowExecuteResponse,
+  Organization,
+  SignInOptions,
+  SignOutOptions,
+  User,
+  UserProfile,
+} from '@asgardeo/browser';
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, use} from 'react';
-import AsgardeoReactClient from '../../AsgardeoReactClient';
 import AsgardeoContext from './AsgardeoContext';
+import AsgardeoReactClient from '../../AsgardeoReactClient';
 import useBrowserUrl from '../../hooks/useBrowserUrl';
 import {AsgardeoReactConfig} from '../../models/config';
-import ThemeProvider from '../Theme/ThemeProvider';
-import I18nProvider from '../I18n/I18nProvider';
 import FlowProvider from '../Flow/FlowProvider';
+import I18nProvider from '../I18n/I18nProvider';
+import OrganizationProvider from '../Organization/OrganizationProvider';
+import ThemeProvider from '../Theme/ThemeProvider';
 import UserProvider from '../User/UserProvider';
 
 /**
@@ -34,18 +44,22 @@ export type AsgardeoProviderProps = AsgardeoReactConfig;
 
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   afterSignInUrl = window.location.origin,
+  afterSignOutUrl = window.location.origin,
   baseUrl,
   clientId,
   children,
   scopes,
   preferences,
+  ...rest
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const asgardeo: AsgardeoReactClient = useMemo(() => new AsgardeoReactClient(), []);
   const {hasAuthParams} = useBrowserUrl();
   const [user, setUser] = useState<any | null>(null);
+  const [currentOrganization, setCurrentOrganization] = useState<Organization | null>(null);
 
   const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
+  const [isInitializedSync, setIsInitializedSync] = useState<boolean>(false);
 
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
@@ -53,9 +67,11 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     (async (): Promise<void> => {
       await asgardeo.initialize({
         afterSignInUrl,
+        afterSignOutUrl,
         baseUrl,
         clientId,
         scopes,
+        ...rest,
       });
     })();
   }, []);
@@ -81,6 +97,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       if (await asgardeo.isSignedIn()) {
         setUser(await asgardeo.getUser());
         setUserProfile(await asgardeo.getUserProfile());
+        setCurrentOrganization(await asgardeo.getCurrentOrganization());
 
         return;
       }
@@ -96,7 +113,6 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
           // setError(null);
         } catch (error) {
-          debugger;
           if (error && Object.prototype.hasOwnProperty.call(error, 'code')) {
             // setError(error);
           }
@@ -113,14 +129,16 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    (async () => {
+    (async (): Promise<void> => {
       try {
-        const status = await asgardeo.isSignedIn();
+        const status: boolean = await asgardeo.isSignedIn();
+
         setIsSignedInSync(status);
 
         if (!status) {
           interval = setInterval(async () => {
-            const newStatus = await asgardeo.isSignedIn();
+            const newStatus: boolean = await asgardeo.isSignedIn();
+
             if (newStatus) {
               setIsSignedInSync(true);
               clearInterval(interval);
@@ -132,17 +150,34 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       }
     })();
 
-    return () => {
+    return (): void => {
       if (interval) {
         clearInterval(interval);
       }
     };
   }, [asgardeo]);
 
-  const signIn = async (options?: SignInOptions): Promise<User> => {
+  useEffect(() => {
+    (async (): Promise<void> => {
+      try {
+        const status: boolean = await asgardeo.isInitialized();
+
+        setIsInitializedSync(status);
+      } catch (error) {
+        setIsInitializedSync(false);
+      }
+    })();
+  }, [asgardeo]);
+
+  const signIn = async (...args: any): Promise<User> => {
     try {
-      const response = await asgardeo.signIn(options);
-      // setUser(await asgardeo.getUser());
+      const response: User = await asgardeo.signIn(...args);
+
+      if (await asgardeo.isSignedIn()) {
+        setUser(await asgardeo.getUser());
+        setUserProfile(await asgardeo.getUserProfile());
+        setCurrentOrganization(await asgardeo.getCurrentOrganization());
+      }
 
       return response;
     } catch (error) {
@@ -150,14 +185,42 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     }
   };
 
-  const signUp = (): void => {
-    throw new Error('Not implemented');
+  const signUp = async (payload?: EmbeddedFlowExecuteRequestPayload): Promise<void | EmbeddedFlowExecuteResponse> => {
+    try {
+      return await asgardeo.signUp(payload);
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Error while signing up: ${error.message || error}`,
+        'asgardeo-signUp-Error',
+        'react',
+        'An error occurred while trying to sign up.',
+      );
+    }
   };
 
   const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<string> =>
     asgardeo.signOut(options, afterSignOut);
 
-  const isDarkMode = useMemo(() => {
+  const switchOrganization = async (organization: Organization): Promise<void> => {
+    try {
+      await asgardeo.switchOrganization(organization);
+
+      if (await asgardeo.isSignedIn()) {
+        setUser(await asgardeo.getUser());
+        setUserProfile(await asgardeo.getUserProfile());
+        setCurrentOrganization(await asgardeo.getCurrentOrganization());
+      }
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to switch organization: ${error.message || error}`,
+        'asgardeo-switchOrganization-Error',
+        'react',
+        'An error occurred while switching to the specified organization.',
+      );
+    }
+  };
+
+  const isDarkMode: boolean = useMemo(() => {
     if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
@@ -167,23 +230,32 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   return (
     <AsgardeoContext.Provider
       value={{
-        isLoading: false,
+        afterSignInUrl,
+        baseUrl,
+        isInitialized: isInitializedSync,
+        isLoading: asgardeo.isLoading(),
         isSignedIn: isSignedInSync,
         signIn,
         signOut,
-        signUp: () => {
-          // TODO: Implement signUp functionality
-          throw new Error('Sign up functionality not implemented yet');
-        },
+        signUp,
         user,
-        baseUrl,
-        afterSignInUrl
       }}
     >
       <I18nProvider preferences={preferences?.i18n}>
         <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
-            <UserProvider profile={userProfile}>{children}</UserProvider>
+            <UserProvider
+              profile={userProfile}
+              revalidateProfile={async () => setUserProfile(await asgardeo.getUserProfile())}
+            >
+              <OrganizationProvider
+                getOrganizations={async () => asgardeo.getOrganizations()}
+                currentOrganization={currentOrganization}
+                onOrganizationSwitch={switchOrganization}
+              >
+                {children}
+              </OrganizationProvider>
+            </UserProvider>
           </FlowProvider>
         </ThemeProvider>
       </I18nProvider>

@@ -16,6 +16,8 @@
  * under the License.
  */
 
+import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
+import clsx from 'clsx';
 import {
   ButtonHTMLAttributes,
   forwardRef,
@@ -25,8 +27,6 @@ import {
   Ref,
   RefAttributes,
 } from 'react';
-import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
 import Button from '../../primitives/Button/Button';
 
 /**
@@ -34,13 +34,13 @@ import Button from '../../primitives/Button/Button';
  */
 export interface CommonBaseSignInButtonProps {
   /**
-   * Function to initiate the sign-in process
-   */
-  signIn: () => Promise<void>;
-  /**
    * Loading state during sign-in process
    */
   isLoading?: boolean;
+  /**
+   * Function to initiate the sign-in process
+   */
+  signIn: () => Promise<void>;
 }
 
 /**
@@ -87,7 +87,7 @@ const BaseSignInButton: ForwardRefExoticComponent<BaseSignInButtonProps & RefAtt
       ref: Ref<HTMLButtonElement>,
     ): ReactElement => {
       if (typeof children === 'function') {
-        return <>{children({signIn, isLoading})}</>;
+        return <>{children({isLoading, signIn})}</>;
       }
 
       return (

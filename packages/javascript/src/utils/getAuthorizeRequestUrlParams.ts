@@ -55,6 +55,7 @@ const getAuthorizeRequestUrlParams = (
   options: {
     redirectUri: string;
     clientId: string;
+    clientSecret?: string;
     scopes?: string;
     responseMode?: string;
     codeChallenge?: string;
@@ -64,7 +65,8 @@ const getAuthorizeRequestUrlParams = (
   pkceOptions: {key: string},
   customParams: Record<string, string | number | boolean>,
 ): Map<string, string> => {
-  const {redirectUri, clientId, scopes, responseMode, codeChallenge, codeChallengeMethod, prompt} = options;
+  const {redirectUri, clientId, clientSecret, scopes, responseMode, codeChallenge, codeChallengeMethod, prompt} =
+    options;
   const authorizeRequestParams: Map<string, string> = new Map<string, string>();
 
   authorizeRequestParams.set('response_type', 'code');
@@ -75,6 +77,10 @@ const getAuthorizeRequestUrlParams = (
 
   if (responseMode) {
     authorizeRequestParams.set('response_mode', responseMode as string);
+  }
+
+  if (clientSecret) {
+    authorizeRequestParams.set('client_secret', clientSecret as string);
   }
 
   const pkceKey: string = pkceOptions?.key;

@@ -16,6 +16,8 @@
  * under the License.
  */
 
+/* eslint-disable typescript-sort-keys/interface */
+
 export interface I18nTranslations {
   /* |---------------------------------------------------------------| */
   /* |                        Elements                               | */
@@ -43,6 +45,11 @@ export interface I18nTranslations {
 
   /* Base Sign In */
   'signin.title': string;
+  'signin.subtitle': string;
+
+  /* Base Sign Up */
+  'signup.title': string;
+  'signup.subtitle': string;
 
   /* Email OTP */
   'email.otp.title': string;
@@ -68,6 +75,37 @@ export interface I18nTranslations {
   'username.password.submit.button': string;
   'username.password.title': string;
   'username.password.subtitle': string;
+
+  /* |---------------------------------------------------------------| */
+  /* |                     Organization Switcher                     | */
+  /* |---------------------------------------------------------------| */
+
+  'organization.switcher.select.organization': string;
+  'organization.switcher.switch.organization': string;
+  'organization.switcher.loading.organizations': string;
+  'organization.switcher.members': string;
+  'organization.switcher.member': string;
+  'organization.switcher.create.organization': string;
+  'organization.switcher.manage.organizations': string;
+  'organization.switcher.manage.button': string;
+  'organization.profile.title': string;
+  'organization.profile.loading': string;
+  'organization.profile.error': string;
+
+  /* |---------------------------------------------------------------| */
+  /* |                     Organization Creation                     | */
+  /* |---------------------------------------------------------------| */
+
+  'organization.create.title': string;
+  'organization.create.name.label': string;
+  'organization.create.name.placeholder': string;
+  'organization.create.handle.label': string;
+  'organization.create.handle.placeholder': string;
+  'organization.create.description.label': string;
+  'organization.create.description.placeholder': string;
+  'organization.create.button': string;
+  'organization.create.creating': string;
+  'organization.create.cancel': string;
 
   /* |---------------------------------------------------------------| */
   /* |                        Messages                               | */

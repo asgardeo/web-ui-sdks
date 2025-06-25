@@ -16,11 +16,11 @@
  * under the License.
  */
 
+import {AsgardeoRuntimeError} from '@asgardeo/browser';
 import {forwardRef, ForwardRefExoticComponent, MouseEvent, ReactElement, Ref, RefAttributes, useState} from 'react';
+import BaseSignInButton, {BaseSignInButtonProps} from './BaseSignInButton';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useTranslation from '../../../hooks/useTranslation';
-import BaseSignInButton, {BaseSignInButtonProps} from './BaseSignInButton';
-import {AsgardeoRuntimeError} from '@asgardeo/browser';
 
 /**
  * Props interface of {@link SignInButton}

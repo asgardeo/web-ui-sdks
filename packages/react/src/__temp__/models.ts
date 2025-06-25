@@ -22,7 +22,7 @@ import {
   AuthSPAClientConfig,
   Config,
   TokenExchangeRequestConfig,
-  IdTokenPayload,
+  IdToken,
   Hooks,
   HttpClientInstance,
   HttpRequestConfig,
@@ -95,8 +95,8 @@ export interface AuthContextInterface {
   revokeAccessToken(): Promise<boolean>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getHttpClient(): Promise<HttpClientInstance>;
-  getDecodedIDPIDToken(): Promise<IdTokenPayload>;
-  getDecodedIdToken(): Promise<IdTokenPayload>;
+  getDecodedIDPIDToken(): Promise<IdToken>;
+  getDecodedIdToken(): Promise<IdToken>;
   getIdToken(): Promise<string>;
   getAccessToken(): Promise<string>;
   refreshAccessToken(): Promise<User>;

@@ -16,17 +16,14 @@
  * under the License.
  */
 
-import {
-  ApplicationNativeAuthenticationAuthenticator,
-  ApplicationNativeAuthenticationAuthenticatorParamType,
-} from '@asgardeo/browser';
+import {EmbeddedSignInFlowAuthenticator, EmbeddedSignInFlowAuthenticatorParamType} from '@asgardeo/browser';
 
 /**
  * Interface for form field state.
  */
 export interface FormField {
   param: string;
-  type: ApplicationNativeAuthenticationAuthenticatorParamType;
+  type: EmbeddedSignInFlowAuthenticatorParamType;
   displayName: string;
   confidential: boolean;
   required: boolean;
@@ -40,7 +37,7 @@ export interface BaseAuthenticatorProps {
   /**
    * The authenticator configuration.
    */
-  authenticator: ApplicationNativeAuthenticationAuthenticator;
+  authenticator: EmbeddedSignInFlowAuthenticator;
 
   /**
    * Current form values.
@@ -65,7 +62,7 @@ export interface BaseAuthenticatorProps {
   /**
    * Callback function called when the authenticator is submitted.
    */
-  onSubmit: (authenticator: ApplicationNativeAuthenticationAuthenticator, formData?: Record<string, string>) => void;
+  onSubmit: (authenticator: EmbeddedSignInFlowAuthenticator, formData?: Record<string, string>) => void;
 
   /**
    * Custom CSS class name for form inputs.
@@ -90,7 +87,7 @@ export interface AuthenticatorSelectorProps {
   /**
    * Available authenticators for selection.
    */
-  authenticators: ApplicationNativeAuthenticationAuthenticator[];
+  authenticators: EmbeddedSignInFlowAuthenticator[];
 
   /**
    * Current form values.
@@ -120,10 +117,7 @@ export interface AuthenticatorSelectorProps {
   /**
    * Callback function called when an authenticator is selected.
    */
-  onAuthenticatorSelection: (
-    authenticator: ApplicationNativeAuthenticationAuthenticator,
-    formData?: Record<string, string>,
-  ) => void;
+  onAuthenticatorSelection: (authenticator: EmbeddedSignInFlowAuthenticator, formData?: Record<string, string>) => void;
 
   /**
    * Custom CSS class names.

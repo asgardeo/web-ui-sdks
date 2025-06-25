@@ -17,13 +17,14 @@
  */
 
 import {
-  handleApplicationNativeAuthentication,
-  ApplicationNativeAuthenticationInitiateResponse,
-  ApplicationNativeAuthenticationHandleResponse,
+  EmbeddedSignInFlowInitiateResponse,
+  EmbeddedSignInFlowHandleResponse,
+  EmbeddedSignInFlowHandleRequestPayload,
 } from '@asgardeo/browser';
 import {FC} from 'react';
 import BaseSignIn from './BaseSignIn';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
+import {CardProps} from '../../primitives/Card/Card';
 
 /**
  * Props for the SignIn component.
@@ -42,7 +43,7 @@ export interface SignInProps {
   /**
    * Theme variant for the component.
    */
-  variant?: 'default' | 'outlined' | 'filled';
+  variant?: CardProps['variant'];
 }
 
 /**
@@ -70,45 +71,31 @@ export interface SignInProps {
  * };
  * ```
  */
-const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'default'}) => {
-  const {signIn, baseUrl, afterSignInUrl} = useAsgardeo();
+const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'outlined'}: SignInProps) => {
+  const {signIn, afterSignInUrl} = useAsgardeo();
 
   /**
    * Initialize the authentication flow.
    */
-  const handleInitialize = async (): Promise<ApplicationNativeAuthenticationInitiateResponse> => {
-    return await signIn({response_mode: 'direct'});
-  };
+  const handleInitialize = async (): Promise<EmbeddedSignInFlowInitiateResponse> =>
+    await signIn({response_mode: 'direct'});
 
   /**
    * Handle authentication steps.
    */
-  const handleOnSubmit = async (flow: {
-    requestConfig?: {
-      method: string;
-      url: string;
-    };
-    payload: {
-      flowId: string;
-      selectedAuthenticator: {
-        authenticatorId: string;
-        params: Record<string, string>;
-      };
-    };
-  }): Promise<ApplicationNativeAuthenticationHandleResponse> => {
-    return await signIn({
-      flow,
-    });
-  };
+  const handleOnSubmit = async (
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: Request,
+  ): Promise<EmbeddedSignInFlowHandleResponse> => await signIn(payload, request);
 
   /**
    * Handle successful authentication and redirect with query params.
    */
-  const handleSuccess = (authData: Record<string, any>) => {
+  const handleSuccess = (authData: Record<string, any>): void => {
     if (authData && afterSignInUrl) {
-      const url = new URL(afterSignInUrl, window.location.origin);
+      const url: URL = new URL(afterSignInUrl, window.location.origin);
 
-      Object.entries(authData).forEach(([key, value]) => {
+      Object.entries(authData).forEach(([key, value]: [string, any]) => {
         if (value !== undefined && value !== null) {
           url.searchParams.append(key, String(value));
         }

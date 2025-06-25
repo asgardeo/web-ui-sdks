@@ -21,7 +21,7 @@ import useTheme from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
-import {withVendorCSSClassPrefix} from 'packages/browser/dist';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 
 export interface OtpInputProps {
   /**
@@ -147,7 +147,7 @@ const OtpField: FC<OtpInputProps> = ({
     fontSize: '1.25rem',
     fontWeight: 500,
     border: `2px solid ${error ? theme.colors.error.main : theme.colors.border}`,
-    borderRadius: theme.borderRadius.small,
+    borderRadius: theme.borderRadius.medium,
     color: theme.colors.text.primary,
     backgroundColor: disabled ? theme.colors.background.disabled : theme.colors.background.surface,
     outline: 'none',

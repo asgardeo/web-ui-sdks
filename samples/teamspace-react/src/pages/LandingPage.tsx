@@ -17,6 +17,7 @@ import {
   Linkedin,
   Mail,
 } from 'lucide-react';
+import {SignUpButton} from '@asgardeo/react';
 
 export default function LandingPage() {
   const features = [
@@ -347,17 +348,20 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-
-                <Link
-                  to="/signup"
-                  className={`block w-full text-center py-3 px-6 rounded-lg font-semibold transition-colors ${
-                    plan.popular
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                  }`}
-                >
-                  {plan.cta}
-                </Link>
+                <SignUpButton>
+                  {isLoading => (
+                    <Link
+                      to="/signup"
+                      className={`block w-full text-center py-3 px-6 rounded-lg font-semibold transition-colors ${
+                        plan.popular
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
+                          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                      }`}
+                    >
+                      {isLoading ? 'Loading...' : plan.cta}
+                    </Link>
+                  )}
+                </SignUpButton>
               </div>
             ))}
           </div>

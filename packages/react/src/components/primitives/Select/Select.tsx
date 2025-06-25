@@ -21,7 +21,7 @@ import useTheme from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
-import {withVendorCSSClassPrefix} from 'packages/browser/dist';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 
 export interface SelectOption {
   /**
@@ -82,7 +82,7 @@ const Select: FC<SelectProps> = ({
     width: '100%',
     padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
     border: `1px solid ${error ? theme.colors.error.main : theme.colors.border}`,
-    borderRadius: theme.borderRadius.small,
+    borderRadius: theme.borderRadius.medium,
     fontSize: '1rem',
     color: theme.colors.text.primary,
     backgroundColor: disabled ? theme.colors.background.disabled : theme.colors.background.surface,

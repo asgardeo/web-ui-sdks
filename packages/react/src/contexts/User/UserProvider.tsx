@@ -16,19 +16,20 @@
  * under the License.
  */
 
-import {FC, PropsWithChildren, ReactElement, useEffect, useState, useCallback, useMemo} from 'react';
 import {UserProfile} from '@asgardeo/browser';
+import {FC, PropsWithChildren, ReactElement, useEffect, useState, useCallback, useMemo} from 'react';
 import UserContext from './UserContext';
-import useAsgardeo from '../Asgardeo/useAsgardeo';
 import getMeProfile from '../../api/scim2/getMeProfile';
 import getSchemas from '../../api/scim2/getSchemas';
 import updateMeProfile from '../../api/scim2/updateMeProfile';
+import useAsgardeo from '../Asgardeo/useAsgardeo';
 
 /**
  * Props interface of {@link UserProvider}
  */
 export interface UserProviderProps {
   profile: UserProfile;
+  revalidateProfile?: () => Promise<void>;
 }
 
 /**
@@ -62,12 +63,14 @@ export interface UserProviderProps {
 const UserProvider: FC<PropsWithChildren<UserProviderProps>> = ({
   children,
   profile,
+  revalidateProfile,
 }: PropsWithChildren<UserProviderProps>): ReactElement => {
   const contextValue = useMemo(
     () => ({
       schemas: profile?.schemas,
       profile: profile?.profile,
       flattenedProfile: profile?.flattenedProfile,
+      revalidateProfile,
     }),
     [profile],
   );

@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,19 +22,19 @@ import {
   User,
   IsomorphicCrypto,
   StorageManager,
-  IdTokenPayload,
+  IdToken,
   ExtendedAuthorizeRequestUrlParams,
   OIDCEndpoints,
   OIDCRequestConstants,
   SessionData,
   Storage,
   extractPkceStorageKeyFromState,
-  initializeApplicationNativeAuthentication,
-  handleApplicationNativeAuthentication,
-  TemporaryStore,
+  initializeEmbeddedSignInFlow,
 } from '@asgardeo/javascript';
 import {SILENT_SIGN_IN_STATE, TOKEN_REQUEST_CONFIG_KEY} from '../constants';
-import {AuthenticationHelper, SPAHelper, SessionManagementHelper} from '../helpers';
+import {AuthenticationHelper} from '../helpers/authentication-helper';
+import {SessionManagementHelper} from '../helpers/session-management-helper';
+import {SPAHelper} from '../helpers/spa-helper';
 import {HttpClient, HttpClientInstance} from '../http-client';
 import {HttpError, HttpRequestConfig, HttpResponse, MainThreadClientConfig, MainThreadClientInterface} from '../models';
 import {SPACustomGrantConfig} from '../models/request-custom-grant';
@@ -72,9 +72,7 @@ export const MainThreadClient = async (
   const _spaHelper = new SPAHelper<MainThreadClientConfig>(_authenticationClient);
   const _dataLayer = _authenticationClient.getStorageManager();
   const _sessionManagementHelper = await SessionManagementHelper(
-    async () => {
-      return _authenticationClient.getSignOutUrl();
-    },
+    async () => _authenticationClient.getSignOutUrl(),
     (config.storage as BrowserStorage) ?? BrowserStorage.SessionStorage,
     (sessionState: string) =>
       _dataLayer.setSessionDataParameter(
@@ -114,29 +112,25 @@ export const MainThreadClient = async (
     _httpErrorCallback = callback;
   };
 
-  const httpRequest = async (requestConfig: HttpRequestConfig): Promise<HttpResponse> => {
-    return await _authenticationHelper.httpRequest(
+  const httpRequest = async (requestConfig: HttpRequestConfig): Promise<HttpResponse> =>
+    _authenticationHelper.httpRequest(
       _httpClient,
       requestConfig,
       _isHttpHandlerEnabled,
       _httpErrorCallback,
       _httpFinishCallback,
     );
-  };
 
-  const httpRequestAll = async (requestConfigs: HttpRequestConfig[]): Promise<HttpResponse[] | undefined> => {
-    return await _authenticationHelper.httpRequestAll(
+  const httpRequestAll = async (requestConfigs: HttpRequestConfig[]): Promise<HttpResponse[] | undefined> =>
+    _authenticationHelper.httpRequestAll(
       requestConfigs,
       _httpClient,
       _isHttpHandlerEnabled,
       _httpErrorCallback,
       _httpFinishCallback,
     );
-  };
 
-  const getHttpClient = (): HttpClientInstance => {
-    return _httpClient;
-  };
+  const getHttpClient = (): HttpClientInstance => _httpClient;
 
   const enableHttpHandler = (): boolean => {
     _authenticationHelper.enableHttpHandler(_httpClient);
@@ -165,15 +159,13 @@ export const MainThreadClient = async (
     );
   };
 
-  const shouldStopAuthn = async (): Promise<boolean> => {
-    return await _sessionManagementHelper.receivePromptNoneResponse(async (sessionState: string | null) => {
+  const shouldStopAuthn = async (): Promise<boolean> =>
+    _sessionManagementHelper.receivePromptNoneResponse(async (sessionState: string | null) => {
       await _dataLayer.setSessionDataParameter(
         OIDCRequestConstants.Params.SESSION_STATE as keyof SessionData,
         sessionState ?? '',
       );
-      return;
     });
-  };
 
   const setSessionStatus = async (sessionStatus: string): Promise<void> => {
     await _dataLayer.setSessionStatus(sessionStatus);
@@ -188,88 +180,81 @@ export const MainThreadClient = async (
       params: Record<string, unknown>;
     },
   ): Promise<User> => {
-    if (signInConfig['flow']) {
-      return handleApplicationNativeAuthentication({
-        url: signInConfig['flow']['requestConfig']['url'],
-        payload: signInConfig['flow']['payload'],
-      });
-    }
-
     const basicUserInfo = await _authenticationHelper.handleSignIn(shouldStopAuthn, checkSession, undefined);
 
     if (basicUserInfo) {
       return basicUserInfo;
-    } else {
-      let resolvedAuthorizationCode: string;
-      let resolvedSessionState: string;
-      let resolvedState: string;
-      let resolvedTokenRequestConfig: {
-        params: Record<string, unknown>;
-      } = {params: {}};
-
-      if (config?.responseMode === 'form_post' && authorizationCode) {
-        resolvedAuthorizationCode = authorizationCode;
-        resolvedSessionState = sessionState ?? '';
-        resolvedState = state ?? '';
-      } else {
-        resolvedAuthorizationCode =
-          new URL(window.location.href).searchParams.get(OIDCRequestConstants.Params.AUTHORIZATION_CODE) ?? '';
-        resolvedSessionState =
-          new URL(window.location.href).searchParams.get(OIDCRequestConstants.Params.SESSION_STATE) ?? '';
-        resolvedState = new URL(window.location.href).searchParams.get(OIDCRequestConstants.Params.STATE) ?? '';
-
-        SPAUtils.removeAuthorizationCode();
-      }
-
-      if (resolvedAuthorizationCode && resolvedState) {
-        setSessionStatus('true');
-        const storedTokenRequestConfig = await _dataLayer.getTemporaryDataParameter(TOKEN_REQUEST_CONFIG_KEY);
-        if (storedTokenRequestConfig && typeof storedTokenRequestConfig === 'string') {
-          resolvedTokenRequestConfig = JSON.parse(storedTokenRequestConfig);
-        }
-        return requestAccessToken(
-          resolvedAuthorizationCode,
-          resolvedSessionState,
-          resolvedState,
-          resolvedTokenRequestConfig,
-        );
-      }
-
-      return _authenticationClient.getSignInUrl(signInConfig).then(async (url: string) => {
-        if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE) {
-          const pkceKey: string = extractPkceStorageKeyFromState(resolvedState);
-
-          SPAUtils.setPKCE(pkceKey, (await _authenticationClient.getPKCECode(resolvedState)) as string);
-        }
-
-        if (tokenRequestConfig) {
-          _dataLayer.setTemporaryDataParameter(TOKEN_REQUEST_CONFIG_KEY, JSON.stringify(tokenRequestConfig));
-        }
-
-        if (signInConfig['response_mode'] === 'direct') {
-          const authorizeUrl: URL = new URL(url);
-
-          return initializeApplicationNativeAuthentication({
-            url: `${authorizeUrl.origin}${authorizeUrl.pathname}`,
-            payload: Object.fromEntries(authorizeUrl.searchParams.entries()),
-          });
-        } else {
-          location.href = url;
-        }
-
-        await SPAUtils.waitTillPageRedirect();
-
-        return Promise.resolve({
-          allowedScopes: '',
-          displayName: '',
-          email: '',
-          sessionState: '',
-          sub: '',
-          tenantDomain: '',
-          username: '',
-        });
-      });
     }
+    let resolvedAuthorizationCode: string;
+    let resolvedSessionState: string;
+    let resolvedState: string;
+    let resolvedTokenRequestConfig: {
+      params: Record<string, unknown>;
+    } = {params: {}};
+
+    if (config?.responseMode === 'form_post' && authorizationCode) {
+      resolvedAuthorizationCode = authorizationCode;
+      resolvedSessionState = sessionState ?? '';
+      resolvedState = state ?? '';
+    } else {
+      resolvedAuthorizationCode =
+        new URL(window.location.href).searchParams.get(OIDCRequestConstants.Params.AUTHORIZATION_CODE) ?? '';
+      resolvedSessionState =
+        new URL(window.location.href).searchParams.get(OIDCRequestConstants.Params.SESSION_STATE) ?? '';
+      resolvedState = new URL(window.location.href).searchParams.get(OIDCRequestConstants.Params.STATE) ?? '';
+
+      SPAUtils.removeAuthorizationCode();
+    }
+
+    if (resolvedAuthorizationCode && resolvedState) {
+      setSessionStatus('true');
+      const storedTokenRequestConfig = await _dataLayer.getTemporaryDataParameter(TOKEN_REQUEST_CONFIG_KEY);
+      if (storedTokenRequestConfig && typeof storedTokenRequestConfig === 'string') {
+        resolvedTokenRequestConfig = JSON.parse(storedTokenRequestConfig);
+      }
+      return requestAccessToken(
+        resolvedAuthorizationCode,
+        resolvedSessionState,
+        resolvedState,
+        resolvedTokenRequestConfig,
+      );
+    }
+
+    return _authenticationClient.getSignInUrl(signInConfig).then(async (url: string) => {
+      if (config.storage === BrowserStorage.BrowserMemory && config.enablePKCE) {
+        const pkceKey: string = extractPkceStorageKeyFromState(resolvedState);
+
+        SPAUtils.setPKCE(pkceKey, (await _authenticationClient.getPKCECode(resolvedState)) as string);
+      }
+
+      if (tokenRequestConfig) {
+        _dataLayer.setTemporaryDataParameter(TOKEN_REQUEST_CONFIG_KEY, JSON.stringify(tokenRequestConfig));
+      }
+
+      // FIXME: This is a workaround to handle the `response_mode` as `direct` in the sign-in config.
+      if (signInConfig && signInConfig['response_mode'] === 'direct') {
+        const authorizeUrl: URL = new URL(url);
+
+        return initializeEmbeddedSignInFlow({
+          url: `${authorizeUrl.origin}${authorizeUrl.pathname}`,
+          payload: Object.fromEntries(authorizeUrl.searchParams.entries()),
+        });
+      }
+
+      location.href = url;
+
+      await SPAUtils.waitTillPageRedirect();
+
+      return Promise.resolve({
+        allowedScopes: '',
+        displayName: '',
+        email: '',
+        sessionState: '',
+        sub: '',
+        tenantDomain: '',
+        username: '',
+      });
+    });
   };
 
   const signOut = async (): Promise<boolean> => {
@@ -297,9 +282,8 @@ export const MainThreadClient = async (
     }
   };
 
-  const exchangeToken = async (config: SPACustomGrantConfig): Promise<User | Response> => {
-    return await _authenticationHelper.exchangeToken(config, enableRetrievingSignOutURLFromSession);
-  };
+  const exchangeToken = async (config: SPACustomGrantConfig): Promise<User | Response> =>
+    _authenticationHelper.exchangeToken(config, enableRetrievingSignOutURLFromSession);
 
   const refreshAccessToken = async (): Promise<User> => {
     try {
@@ -330,8 +314,8 @@ export const MainThreadClient = async (
     tokenRequestConfig?: {
       params: Record<string, unknown>;
     },
-  ): Promise<User> => {
-    return await _authenticationHelper.requestAccessToken(
+  ): Promise<User> =>
+    _authenticationHelper.requestAccessToken(
       resolvedAuthorizationCode,
       resolvedSessionState,
       checkSession,
@@ -339,7 +323,6 @@ export const MainThreadClient = async (
       resolvedState,
       tokenRequestConfig,
     );
-  };
 
   const constructSilentSignInUrl = async (additionalParams: Record<string, string | boolean> = {}): Promise<string> => {
     const config = await _dataLayer.getConfigData();
@@ -376,55 +359,36 @@ export const MainThreadClient = async (
   const trySignInSilently = async (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
-  ): Promise<User | boolean> => {
-    return await _authenticationHelper.trySignInSilently(
+  ): Promise<User | boolean> =>
+    _authenticationHelper.trySignInSilently(
       constructSilentSignInUrl,
       requestAccessToken,
       _sessionManagementHelper,
       additionalParams,
       tokenRequestConfig,
     );
-  };
 
-  const getUser = async (): Promise<User> => {
-    return _authenticationHelper.getUser();
-  };
+  const getUser = async (): Promise<User> => _authenticationHelper.getUser();
 
-  const getDecodedIdToken = async (): Promise<IdTokenPayload> => {
-    return _authenticationHelper.getDecodedIdToken();
-  };
+  const getDecodedIdToken = async (): Promise<IdToken> => _authenticationHelper.getDecodedIdToken();
 
-  const getCrypto = async (): Promise<IsomorphicCrypto> => {
-    return _authenticationHelper.getCrypto();
-  };
+  const getCrypto = async (): Promise<IsomorphicCrypto> => _authenticationHelper.getCrypto();
 
-  const getIdToken = async (): Promise<string> => {
-    return _authenticationHelper.getIdToken();
-  };
+  const getIdToken = async (): Promise<string> => _authenticationHelper.getIdToken();
 
-  const getOpenIDProviderEndpoints = async (): Promise<OIDCEndpoints> => {
-    return _authenticationHelper.getOpenIDProviderEndpoints();
-  };
+  const getOpenIDProviderEndpoints = async (): Promise<OIDCEndpoints> =>
+    _authenticationHelper.getOpenIDProviderEndpoints();
 
-  const getAccessToken = async (): Promise<string> => {
-    return _authenticationHelper.getAccessToken();
-  };
+  const getAccessToken = async (): Promise<string> => _authenticationHelper.getAccessToken();
 
-  const getStorageManager = async (): Promise<StorageManager<MainThreadClientConfig>> => {
-    return _authenticationHelper.getStorageManager();
-  };
+  const getStorageManager = async (): Promise<StorageManager<MainThreadClientConfig>> =>
+    _authenticationHelper.getStorageManager();
 
-  const getConfigData = async (): Promise<AuthClientConfig<MainThreadClientConfig>> => {
-    return await _dataLayer.getConfigData();
-  };
+  const getConfigData = async (): Promise<AuthClientConfig<MainThreadClientConfig>> => _dataLayer.getConfigData();
 
-  const isSignedIn = async (): Promise<boolean> => {
-    return _authenticationHelper.isSignedIn();
-  };
+  const isSignedIn = async (): Promise<boolean> => _authenticationHelper.isSignedIn();
 
-  const isSessionActive = async (): Promise<boolean> => {
-    return (await _dataLayer.getSessionStatus()) === 'true';
-  };
+  const isSessionActive = async (): Promise<boolean> => (await _dataLayer.getSessionStatus()) === 'true';
 
   const reInitialize = async (newConfig: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void> => {
     const existingConfig = await _dataLayer.getConfigData();

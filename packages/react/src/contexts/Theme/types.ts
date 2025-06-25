@@ -17,25 +17,54 @@
  */
 
 export interface ThemeColors {
-  primary: string;
-  background: string;
-  surface: string;
+  background: {
+    body: {
+      main: string;
+    };
+    disabled: string;
+    surface: string;
+  };
+  border: string;
+  error: {
+    contrastText: string;
+    main: string;
+  };
+  primary: {
+    contrastText: string;
+    main: string;
+  };
+  secondary: {
+    contrastText: string;
+    main: string;
+  };
+  success: {
+    contrastText: string;
+    main: string;
+  };
   text: {
     primary: string;
     secondary: string;
   };
-  border: string;
+  warning: {
+    contrastText: string;
+    main: string;
+  };
 }
 
 export interface ThemeConfig {
+  borderRadius: {
+    large: string;
+    medium: string;
+    small: string;
+  };
   colors: ThemeColors;
+  shadows: {
+    large: string;
+    medium: string;
+    small: string;
+  };
   spacing: {
     unit: number;
-  };
-  borderRadius: {
-    small: string;
-    medium: string;
-    large: string;
   };
 }
 

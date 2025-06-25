@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import { RecursivePartial } from '../models/utility-types';
 import {Theme, ThemeConfig} from './types';
+import {RecursivePartial} from '../models/utility-types';
 
 const lightTheme: ThemeConfig = {
   colors: {
@@ -40,6 +40,14 @@ const lightTheme: ThemeConfig = {
       main: '#d32f2f',
       contrastText: '#ffffff',
     },
+    success: {
+      main: '#4caf50',
+      contrastText: '#ffffff',
+    },
+    warning: {
+      main: '#ff9800',
+      contrastText: '#ffffff',
+    },
     text: {
       primary: '#1a1a1a',
       secondary: '#666666',
@@ -53,6 +61,11 @@ const lightTheme: ThemeConfig = {
     small: '4px',
     medium: '8px',
     large: '16px',
+  },
+  shadows: {
+    small: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    medium: '0 4px 16px rgba(0, 0, 0, 0.15)',
+    large: '0 8px 32px rgba(0, 0, 0, 0.2)',
   },
 };
 
@@ -77,6 +90,14 @@ const darkTheme: ThemeConfig = {
       main: '#d32f2f',
       contrastText: '#ffffff',
     },
+    success: {
+      main: '#4caf50',
+      contrastText: '#ffffff',
+    },
+    warning: {
+      main: '#ff9800',
+      contrastText: '#ffffff',
+    },
     text: {
       primary: '#ffffff',
       secondary: '#b3b3b3',
@@ -90,6 +111,11 @@ const darkTheme: ThemeConfig = {
     small: '4px',
     medium: '8px',
     large: '16px',
+  },
+  shadows: {
+    small: '0 2px 8px rgba(0, 0, 0, 0.3)',
+    medium: '0 4px 16px rgba(0, 0, 0, 0.4)',
+    large: '0 8px 32px rgba(0, 0, 0, 0.5)',
   },
 };
 
@@ -106,6 +132,10 @@ const toCssVariables = (theme: RecursivePartial<ThemeConfig>): Record<string, st
   cssVars['--asgardeo-color-background-body-main'] = theme.colors.background.body.main;
   cssVars['--asgardeo-color-error-main'] = theme.colors.error.main;
   cssVars['--asgardeo-color-error-contrastText'] = theme.colors.error.contrastText;
+  cssVars['--asgardeo-color-success-main'] = theme.colors.success.main;
+  cssVars['--asgardeo-color-success-contrastText'] = theme.colors.success.contrastText;
+  cssVars['--asgardeo-color-warning-main'] = theme.colors.warning.main;
+  cssVars['--asgardeo-color-warning-contrastText'] = theme.colors.warning.contrastText;
   cssVars['--asgardeo-color-text-primary'] = theme.colors.text.primary;
   cssVars['--asgardeo-color-text-secondary'] = theme.colors.text.secondary;
   cssVars['--asgardeo-color-border'] = theme.colors.border;
@@ -117,6 +147,11 @@ const toCssVariables = (theme: RecursivePartial<ThemeConfig>): Record<string, st
   cssVars['--asgardeo-border-radius-small'] = theme.borderRadius.small;
   cssVars['--asgardeo-border-radius-medium'] = theme.borderRadius.medium;
   cssVars['--asgardeo-border-radius-large'] = theme.borderRadius.large;
+
+  // Shadows
+  cssVars['--asgardeo-shadow-small'] = theme.shadows.small;
+  cssVars['--asgardeo-shadow-medium'] = theme.shadows.medium;
+  cssVars['--asgardeo-shadow-large'] = theme.shadows.large;
 
   return cssVars;
 };
@@ -141,6 +176,10 @@ const createTheme = (config: RecursivePartial<ThemeConfig> = {}, isDark = false)
     borderRadius: {
       ...baseTheme.borderRadius,
       ...config.borderRadius,
+    },
+    shadows: {
+      ...baseTheme.shadows,
+      ...config.shadows,
     },
   } as ThemeConfig;
 

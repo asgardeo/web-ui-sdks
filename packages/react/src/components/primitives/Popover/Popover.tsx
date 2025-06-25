@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import React, {CSSProperties, useMemo} from 'react';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import {
   useFloating,
   autoUpdate,
@@ -35,10 +35,11 @@ import {
   UseFloatingReturn,
   UseInteractionsReturn,
 } from '@floating-ui/react';
-import useTheme from '../../../contexts/Theme/useTheme';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
+import React, {CSSProperties, useMemo} from 'react';
+import useTheme from '../../../contexts/Theme/useTheme';
 import Button from '../Button/Button';
+import {X} from '../Icons';
 
 const useStyles = () => {
   const {theme, colorScheme} = useTheme();
@@ -96,18 +97,18 @@ const useStyles = () => {
 // Modal Dialog hook and components
 interface DialogOptions {
   initialOpen?: boolean;
-  open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  open?: boolean;
 }
 
 // Return type for dialog hook
 interface DialogHookReturn extends UseFloatingReturn, UseInteractionsReturn {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  labelId: string | undefined;
   descriptionId: string | undefined;
-  setLabelId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  labelId: string | undefined;
+  open: boolean;
   setDescriptionId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setLabelId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setOpen: (open: boolean) => void;
 }
 
 export function useDialog({
@@ -127,7 +128,7 @@ export function useDialog({
     onOpenChange: setOpen,
   });
 
-  const context = data.context;
+  const {context} = data;
 
   const click = useClick(context, {
     enabled: controlledOpen == null,
@@ -155,20 +156,20 @@ export function useDialog({
 // Dropdown Popover hook
 interface PopoverOptions {
   initialOpen?: boolean;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  placement?: 'top' | 'bottom' | 'left' | 'right' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
   offset?: number;
+  onOpenChange?: (open: boolean) => void;
+  open?: boolean;
+  placement?: 'top' | 'bottom' | 'left' | 'right' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
 }
 
 // Return type for popover hook
 interface PopoverHookReturn extends UseFloatingReturn, UseInteractionsReturn {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  labelId: string | undefined;
   descriptionId: string | undefined;
-  setLabelId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  labelId: string | undefined;
+  open: boolean;
   setDescriptionId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setLabelId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setOpen: (open: boolean) => void;
 }
 
 export function usePopover({
@@ -193,7 +194,7 @@ export function usePopover({
     placement,
   });
 
-  const context = data.context;
+  const {context} = data;
 
   const click = useClick(context);
   const dismiss = useDismiss(context, {outsidePressEvent: 'mousedown'});
@@ -219,15 +220,15 @@ export function usePopover({
 // Context types
 type DialogContextType =
   | (DialogHookReturn & {
-      setLabelId: React.Dispatch<React.SetStateAction<string | undefined>>;
       setDescriptionId: React.Dispatch<React.SetStateAction<string | undefined>>;
+      setLabelId: React.Dispatch<React.SetStateAction<string | undefined>>;
     })
   | null;
 
 type PopoverContextType =
   | (PopoverHookReturn & {
-      setLabelId: React.Dispatch<React.SetStateAction<string | undefined>>;
       setDescriptionId: React.Dispatch<React.SetStateAction<string | undefined>>;
+      setLabelId: React.Dispatch<React.SetStateAction<string | undefined>>;
     })
   | null;
 
@@ -257,12 +258,12 @@ export function Dialog({children, ...options}: {children: React.ReactNode} & Dia
 }
 
 interface DialogTriggerProps {
-  children: React.ReactNode;
   asChild?: boolean;
+  children: React.ReactNode;
 }
 
 export const DialogTrigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLElement> & DialogTriggerProps>(
-  function DialogTrigger({children, asChild = false, ...props}, propRef) {
+  ({children, asChild = false, ...props}, propRef) => {
     const context = useDialogContext();
     const childrenRef = (children as any).ref;
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
@@ -287,10 +288,7 @@ export const DialogTrigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLE
   },
 );
 
-export const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(function DialogContent(
-  props,
-  propRef,
-) {
+export const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>((props, propRef) => {
   const {context: floatingContext, ...context} = useDialogContext();
   const ref = useMergeRefs([context.refs.setFloating, propRef]);
   const styles = useStyles();
@@ -324,12 +322,12 @@ export function Popover({children, ...options}: {children: React.ReactNode} & Po
 }
 
 interface PopoverTriggerProps {
-  children: React.ReactNode;
   asChild?: boolean;
+  children: React.ReactNode;
 }
 
 export const PopoverTrigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLElement> & PopoverTriggerProps>(
-  function PopoverTrigger({children, asChild = false, ...props}, propRef) {
+  ({children, asChild = false, ...props}, propRef) => {
     const context = usePopoverContext();
     const childrenRef = (children as any).ref;
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
@@ -354,10 +352,7 @@ export const PopoverTrigger = React.forwardRef<HTMLElement, React.HTMLProps<HTML
   },
 );
 
-export const PopoverContent = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(function PopoverContent(
-  props,
-  propRef,
-) {
+export const PopoverContent = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>((props, propRef) => {
   const {context: floatingContext, ...context} = usePopoverContext();
   const ref = useMergeRefs([context.refs.setFloating, propRef]);
   const styles = useStyles();
@@ -384,7 +379,7 @@ export const PopoverContent = React.forwardRef<HTMLDivElement, React.HTMLProps<H
 
 // Shared components
 export const PopoverHeading = React.forwardRef<HTMLHeadingElement, React.HTMLProps<HTMLHeadingElement>>(
-  function PopoverHeading({children, ...props}, ref) {
+  ({children, ...props}, ref) => {
     const context = usePopoverContext();
     const styles = useStyles();
     const id = useId();
@@ -400,7 +395,7 @@ export const PopoverHeading = React.forwardRef<HTMLHeadingElement, React.HTMLPro
           {children}
         </h2>
         <Button color="tertiary" variant="text" size="small" onClick={() => context.setOpen(false)} aria-label="Close">
-          ×
+          <X width={16} height={16} />
         </Button>
       </div>
     );
@@ -408,7 +403,7 @@ export const PopoverHeading = React.forwardRef<HTMLHeadingElement, React.HTMLPro
 );
 
 export const DialogHeading = React.forwardRef<HTMLHeadingElement, React.HTMLProps<HTMLHeadingElement>>(
-  function DialogHeading({children, ...props}, ref) {
+  ({children, ...props}, ref) => {
     const context = useDialogContext();
     const styles = useStyles();
     const id = useId();
@@ -424,7 +419,7 @@ export const DialogHeading = React.forwardRef<HTMLHeadingElement, React.HTMLProp
           {children}
         </h2>
         <Button color="tertiary" variant="text" size="small" onClick={() => context.setOpen(false)} aria-label="Close">
-          ×
+          <X width={16} height={16} />
         </Button>
       </div>
     );
@@ -432,7 +427,7 @@ export const DialogHeading = React.forwardRef<HTMLHeadingElement, React.HTMLProp
 );
 
 export const PopoverDescription = React.forwardRef<HTMLParagraphElement, React.HTMLProps<HTMLParagraphElement>>(
-  function PopoverDescription({children, ...props}, ref) {
+  ({children, ...props}, ref) => {
     const context = usePopoverContext();
     const id = useId();
 
@@ -450,7 +445,7 @@ export const PopoverDescription = React.forwardRef<HTMLParagraphElement, React.H
 );
 
 export const DialogDescription = React.forwardRef<HTMLParagraphElement, React.HTMLProps<HTMLParagraphElement>>(
-  function DialogDescription({children, ...props}, ref) {
+  ({children, ...props}, ref) => {
     const context = useDialogContext();
     const id = useId();
 
@@ -468,14 +463,14 @@ export const DialogDescription = React.forwardRef<HTMLParagraphElement, React.HT
 );
 
 export const PopoverClose = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-  function PopoverClose(props, ref) {
+  (props, ref) => {
     const context = usePopoverContext();
     return <button type="button" {...props} ref={ref} onClick={() => context.setOpen(false)} />;
   },
 );
 
 export const DialogClose = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-  function DialogClose(props, ref) {
+  (props, ref) => {
     const context = useDialogContext();
     return <button type="button" {...props} ref={ref} onClick={() => context.setOpen(false)} />;
   },
@@ -483,14 +478,14 @@ export const DialogClose = React.forwardRef<HTMLButtonElement, React.ButtonHTMLA
 
 // Legacy API compatibility (for existing code)
 interface LegacyPopoverProps {
-  isOpen: boolean;
   children: React.ReactNode;
-  onClose: () => void;
   className?: string;
+  isOpen: boolean;
   mode?: 'modal' | 'dropdown';
-  trigger?: HTMLElement | null;
-  placement?: 'top' | 'bottom' | 'left' | 'right' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
   offset?: number;
+  onClose: () => void;
+  placement?: 'top' | 'bottom' | 'left' | 'right' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
+  trigger?: HTMLElement | null;
 }
 
 // Legacy Header component for backward compatibility
@@ -508,8 +503,8 @@ const LegacyPopoverContent: React.FC<{children: React.ReactNode}> = ({children})
 
 // Legacy component for backward compatibility
 export const LegacyPopover: React.FC<LegacyPopoverProps> & {
-  Header: typeof LegacyPopoverHeader;
   Content: typeof LegacyPopoverContent;
+  Header: typeof LegacyPopoverHeader;
 } = ({isOpen, children, onClose, className = '', mode = 'modal', trigger, placement, offset}) => {
   if (mode === 'modal') {
     return (

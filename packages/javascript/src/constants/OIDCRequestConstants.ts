@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import ScopeConstants from "./ScopeConstants";
+import ScopeConstants from './ScopeConstants';
 
 /**
  * Constants representing standard OpenID Connect (OIDC) request and response parameters.
@@ -59,7 +59,7 @@ const OIDCRequestConstants = {
       /**
        * The default scopes used in OIDC sign-in requests.
        */
-      DEFAULT_SCOPES: [ScopeConstants.OPENID],
+      DEFAULT_SCOPES: [ScopeConstants.OPENID, ScopeConstants.INTERNAL_LOGIN],
     },
   },
 

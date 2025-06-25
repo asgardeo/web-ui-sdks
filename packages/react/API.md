@@ -5,7 +5,7 @@ This document provides complete API documentation for the Asgardeo React SDK, in
 ## Table of Contents
 
 - [Components](#components)
-  - [AsgardeoProvider](#asgardeyprovider)
+  - [AsgardeoProvider](#asgardeoprovider)
   - [SignIn](#signin)
   - [SignedIn](#signedin)
   - [SignedOut](#signedout)
@@ -13,6 +13,8 @@ This document provides complete API documentation for the Asgardeo React SDK, in
   - [SignOutButton](#signoutbutton)
   - [User](#user)
   - [UserProfile](#userprofile)
+  - [Loaded](#loaded)
+  - [Loading](#loading)
 - [Hooks](#hooks)
   - [useAsgardeo](#useasgardeo)
 - [Customization](#customization)
@@ -36,6 +38,10 @@ The root provider component that configures the Asgardeo SDK and provides authen
 
 #### Example
 
+##### Minimal Setup
+
+Following is a minimal setup with the mandatory configuration for the `AsgardeoProvider` in your main application file (e.g., `index.tsx`):
+
 ```diff
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -49,8 +55,32 @@ root.render(
 +     <AsgardeoProvider
 +       baseUrl="https://api.asgardeo.io/t/your-org"
 +       clientId="your-client-id"
-+       afterSignInUrl="/dashboard"
-+       afterSignOutUrl="/"
++     >
+        <App />
++     </AsgardeoProvider>
+  </StrictMode>
+);
+```
+
+##### Advanced Usage
+
+For more advanced configurations, you can specify additional props like `afterSignInUrl`, `afterSignOutUrl`, and `scopes`:
+
+```diff
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
++ import { AsgardeoProvider } from '@asgardeo/react';
+import App from './App';
+
+const root = createRoot(document.getElementById('root'));
+
+root.render(
+  <StrictMode>
++     <AsgardeoProvider
++       baseUrl="https://api.asgardeo.io/t/your-org"
++       clientId="your-client-id"
++       afterSignInUrl="https://localhost:5173/dashboard"
++       afterSignOutUrl="https://localhost:5173"
 +       scopes={['openid', 'profile', 'email']}
 +     >
         <App />
@@ -58,6 +88,7 @@ root.render(
   </StrictMode>
 );
 ```
+
 
 **Customization:** See [Customization](#customization) section for theming and styling options. The provider doesn't render any visual elements but can be styled through CSS custom properties.
 
@@ -102,13 +133,7 @@ const SignInPage = () => {
   return (
     <div className="signin-container">
       <h1>Welcome Back</h1>
-+       <SignIn 
-+         className="custom-signin"
-+         redirectUrl="/dashboard"
-+         buttonText="Login with Asgardeo"
-+         onSignInSuccess={handleSignInSuccess}
-+         onSignInError={handleSignInError}
-+       />
++       <SignIn />
     </div>
   );
 };
@@ -661,33 +686,132 @@ Replace default button text with custom content:
 
 ### Bring your own UI Library
 
-For applications using popular UI libraries, you can easily integrate Asgardeo components:
+For applications using popular UI libraries, you can leverage render props for maximum flexibility and control:
 
-#### Material-UI Integration
+#### Material-UI Integration with Render Props
 ```tsx
-import { Button } from '@mui/material'
-import { useAsgardeo } from '@asgardeo/react'
+import { Button, CircularProgress } from '@mui/material'
+import { SignIn } from '@asgardeo/react'
 
 function CustomSignInButton() {
-  const { signIn } = useAsgardeo()
-  
   return (
-    <Button 
-      variant="contained" 
-      color="primary"
-      onClick={() => signIn()}
-    >
-      Sign In with Asgardeo
-    </Button>
+    <SignIn>
+      {({ signIn, isLoading, error }) => (
+        <Button 
+          variant="contained" 
+          color="primary"
+          onClick={signIn}
+          disabled={isLoading}
+          startIcon={isLoading ? <CircularProgress size={20} /> : null}
+        >
+          {isLoading ? 'Signing In...' : 'Sign In with Asgardeo'}
+        </Button>
+      )}
+    </SignIn>
   )
 }
 ```
 
-#### Tailwind CSS Integration
+#### Tailwind CSS Integration with Render Props
 ```tsx
-<SignInButton className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-  Sign In
-</SignInButton>
+import { SignIn } from '@asgardeo/react'
+
+function TailwindSignInButton() {
+  return (
+    <SignIn>
+      {({ signIn, isLoading, error }) => (
+        <div className="space-y-2">
+          <button 
+            onClick={signIn}
+            disabled={isLoading}
+            className={`
+              bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded
+              ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+            `}
+          >
+            {isLoading ? (
+              <div className="flex items-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                <span>Signing in...</span>
+              </div>
+            ) : (
+              'Sign In'
+            )}
+          </button>
+          {error && (
+            <p className="text-red-500 text-sm">{error.message}</p>
+          )}
+        </div>
+      )}
+    </SignIn>
+  )
+}
+```
+
+#### Ant Design Integration with Render Props
+```tsx
+import { Button, Alert } from 'antd'
+import { SignIn } from '@asgardeo/react'
+
+function AntdSignInButton() {
+  return (
+    <SignIn>
+      {({ signIn, isLoading, error }) => (
+        <div>
+          <Button 
+            type="primary"
+            onClick={signIn}
+            loading={isLoading}
+            size="large"
+          >
+            Sign In with Asgardeo
+          </Button>
+          {error && (
+            <Alert 
+              message="Sign In Failed" 
+              description={error.message}
+              type="error" 
+              showIcon 
+              style={{ marginTop: 8 }}
+            />
+          )}
+        </div>
+      )}
+    </SignIn>
+  )
+}
+```
+
+#### Chakra UI Integration with Render Props
+```tsx
+import { Button, Alert, AlertIcon, Spinner } from '@chakra-ui/react'
+import { SignIn } from '@asgardeo/react'
+
+function ChakraSignInButton() {
+  return (
+    <SignIn>
+      {({ signIn, isLoading, error }) => (
+        <div>
+          <Button 
+            colorScheme="blue"
+            onClick={signIn}
+            isLoading={isLoading}
+            loadingText="Signing in..."
+            leftIcon={isLoading ? <Spinner size="sm" /> : undefined}
+          >
+            Sign In with Asgardeo
+          </Button>
+          {error && (
+            <Alert status="error" mt={2}>
+              <AlertIcon />
+              {error.message}
+            </Alert>
+          )}
+        </div>
+      )}
+    </SignIn>
+  )
+}
 ```
 
 ### Custom Loading States

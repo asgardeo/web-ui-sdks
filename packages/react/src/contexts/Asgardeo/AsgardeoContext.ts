@@ -17,12 +17,14 @@
  */
 
 import {Context, createContext} from 'react';
-import {User} from '@asgardeo/browser';
 
 /**
  * Props interface of {@link AsgardeoContext}
  */
 export type AsgardeoContextProps = {
+  afterSignInUrl: string;
+  baseUrl: string;
+  isInitialized: boolean;
   /**
    * Flag indicating whether the SDK is working in the background.
    */
@@ -50,22 +52,21 @@ export type AsgardeoContextProps = {
    */
   signUp: any;
   user: any;
-  baseUrl: string;
-  afterSignInUrl: string;
 };
 
 /**
  * Context object for managing the Authentication flow builder core context.
  */
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
+  afterSignInUrl: '',
+  baseUrl: '',
+  isInitialized: false,
   isLoading: true,
   isSignedIn: false,
   signIn: null,
   signOut: null,
   signUp: null,
   user: null,
-  baseUrl: '',
-  afterSignInUrl: '',
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';

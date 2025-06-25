@@ -21,13 +21,15 @@ export * from './__legacy__/models';
 
 export * from './IsomorphicCrypto';
 
-export {default as initializeApplicationNativeAuthentication} from './api/initializeApplicationNativeAuthentication';
-export {default as handleApplicationNativeAuthentication} from './api/handleApplicationNativeAuthentication';
+export {default as initializeEmbeddedSignInFlow} from './api/initializeEmbeddedSignInFlow';
+export {default as executeEmbeddedSignInFlow} from './api/executeEmbeddedSignInFlow';
+export {default as executeEmbeddedSignUpFlow} from './api/executeEmbeddedSignUpFlow';
 export {default as getUserInfo} from './api/getUserInfo';
 
 export {default as ApplicationNativeAuthenticationConstants} from './constants/ApplicationNativeAuthenticationConstants';
 export {default as TokenConstants} from './constants/TokenConstants';
 export {default as OIDCRequestConstants} from './constants/OIDCRequestConstants';
+export {default as VendorConstants} from './constants/VendorConstants';
 
 export {default as AsgardeoError} from './errors/AsgardeoError';
 export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';
@@ -35,21 +37,33 @@ export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
 export {AsgardeoAuthException} from './errors/exception';
 
 export {
-  ApplicationNativeAuthenticationInitiateResponse,
-  ApplicationNativeAuthenticationFlowStatus,
-  ApplicationNativeAuthenticationFlowType,
-  ApplicationNativeAuthenticationStepType,
-  ApplicationNativeAuthenticationAuthenticator,
-  ApplicationNativeAuthenticationLink,
-  ApplicationNativeAuthenticationHandleRequestPayload,
-  ApplicationNativeAuthenticationHandleResponse,
-  ApplicationNativeAuthenticationAuthenticatorParamType,
-  ApplicationNativeAuthenticationAuthenticatorPromptType,
-  ApplicationNativeAuthenticationAuthenticatorKnownIdPType,
-} from './models/application-native-authentication';
-export {AsgardeoClient, SignInOptions, SignOutOptions} from './models/client';
+  EmbeddedSignInFlowInitiateResponse,
+  EmbeddedSignInFlowStatus,
+  EmbeddedSignInFlowType,
+  EmbeddedSignInFlowStepType,
+  EmbeddedSignInFlowAuthenticator,
+  EmbeddedSignInFlowLink,
+  EmbeddedSignInFlowHandleRequestPayload,
+  EmbeddedSignInFlowHandleResponse,
+  EmbeddedSignInFlowAuthenticatorParamType,
+  EmbeddedSignInFlowAuthenticatorPromptType,
+  EmbeddedSignInFlowAuthenticatorKnownIdPType,
+} from './models/embedded-signin-flow';
+export {
+  EmbeddedFlowType,
+  EmbeddedFlowStatus,
+  EmbeddedFlowExecuteResponse,
+  EmbeddedFlowResponseType,
+  EmbeddedSignUpFlowData,
+  EmbeddedFlowComponent,
+  EmbeddedFlowComponentType,
+  EmbeddedFlowExecuteRequestPayload,
+  EmbeddedFlowExecuteRequestConfig,
+} from './models/embedded-flow';
+export {FlowMode} from './models/flow';
+export {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './models/client';
 export {BaseConfig, Config, Preferences, ThemePreferences, I18nPreferences, WithPreferences} from './models/config';
-export {TokenResponse, IdTokenPayload, TokenExchangeRequestConfig} from './models/token';
+export {TokenResponse, IdToken, TokenExchangeRequestConfig} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';
 export {OAuthResponseMode} from './models/oauth-response';
 export {
@@ -61,6 +75,7 @@ export {OIDCEndpoints} from './models/oidc-endpoints';
 export {Storage, TemporaryStore} from './models/store';
 export {User, UserProfile} from './models/user';
 export {SessionData} from './models/session';
+export {Organization} from './models/organization';
 export {Schema, SchemaAttribute, WellKnownSchemaIds, FlattenedSchema} from './models/scim2-schema';
 export {RecursivePartial} from './models/utility-types';
 export {FieldType} from './models/field';
@@ -79,11 +94,13 @@ export {default as generateUserProfile} from './utils/generateUserProfile';
 export {default as getLatestStateParam} from './utils/getLatestStateParam';
 export {default as generateFlattenedUserProfile} from './utils/generateFlattenedUserProfile';
 export {default as getI18nBundles} from './utils/getI18nBundles';
+export {default as isEmpty} from './utils/isEmpty';
 export {default as set} from './utils/set';
 export {default as get} from './utils/get';
 export {default as removeTrailingSlash} from './utils/removeTrailingSlash';
 export {default as resolveFieldType} from './utils/resolveFieldType';
 export {default as resolveFieldName} from './utils/resolveFieldName';
 export {default as processOpenIDScopes} from './utils/processOpenIDScopes';
+export {default as withVendorCSSClassPrefix} from './utils/withVendorCSSClassPrefix';
 
 export {default as StorageManager} from './StorageManager';

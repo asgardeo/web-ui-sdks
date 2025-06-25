@@ -22,9 +22,9 @@ import {useState, useCallback} from 'react';
  * Generic form field configuration
  */
 export interface FormField {
+  initialValue?: string;
   name: string;
   required?: boolean;
-  initialValue?: string;
   validator?: (value: string) => string | null;
 }
 
@@ -32,8 +32,8 @@ export interface FormField {
  * Form validation result
  */
 export interface ValidationResult {
-  isValid: boolean;
   errors: Record<string, string>;
+  isValid: boolean;
 }
 
 /**
@@ -41,29 +41,29 @@ export interface ValidationResult {
  */
 export interface UseFormConfig<T extends Record<string, string>> {
   /**
-   * Initial form values
-   */
-  initialValues?: Partial<T>;
-  /**
    * Form field definitions
    */
   fields?: FormField[];
   /**
-   * Global form validator function
+   * Initial form values
    */
-  validator?: (values: T) => Record<string, string>;
+  initialValues?: Partial<T>;
   /**
-   * Whether to validate on change (default: false)
+   * Custom required field validation message
    */
-  validateOnChange?: boolean;
+  requiredMessage?: string;
   /**
    * Whether to validate on blur (default: true)
    */
   validateOnBlur?: boolean;
   /**
-   * Custom required field validation message
+   * Whether to validate on change (default: false)
    */
-  requiredMessage?: string;
+  validateOnChange?: boolean;
+  /**
+   * Global form validator function
+   */
+  validator?: (values: T) => Record<string, string>;
 }
 
 /**
@@ -71,45 +71,41 @@ export interface UseFormConfig<T extends Record<string, string>> {
  */
 export interface UseFormReturn<T extends Record<string, string>> {
   /**
-   * Current form values
+   * Clear all errors
    */
-  values: T;
-  /**
-   * Fields that have been touched by the user
-   */
-  touched: Record<keyof T, boolean>;
+  clearErrors: () => void;
   /**
    * Current validation errors
    */
   errors: Record<keyof T, string>;
   /**
-   * Whether the form is currently valid
+   * Get field props for easy integration with form components
    */
-  isValid: boolean;
+  getFieldProps: (name: keyof T) => {
+    error: string | undefined;
+    name: keyof T;
+    onBlur: () => void;
+    onChange: (value: string) => void;
+    required: boolean;
+    touched: boolean;
+    value: string;
+  };
+  /**
+   * Handle form submission
+   */
+  handleSubmit: (onSubmit: (values: T) => void | Promise<void>) => (e?: React.FormEvent) => Promise<void>;
   /**
    * Whether the form has been submitted
    */
   isSubmitted: boolean;
   /**
-   * Set a single field value
+   * Whether the form is currently valid
    */
-  setValue: (name: keyof T, value: string) => void;
+  isValid: boolean;
   /**
-   * Set multiple field values
+   * Reset the form to initial values
    */
-  setValues: (values: Partial<T>) => void;
-  /**
-   * Mark a field as touched
-   */
-  setTouched: (name: keyof T, touched?: boolean) => void;
-  /**
-   * Mark multiple fields as touched
-   */
-  setTouchedFields: (touched: Partial<Record<keyof T, boolean>>) => void;
-  /**
-   * Mark all fields as touched
-   */
-  touchAllFields: () => void;
+  reset: () => void;
   /**
    * Set a field error
    */
@@ -119,37 +115,41 @@ export interface UseFormReturn<T extends Record<string, string>> {
    */
   setErrors: (errors: Partial<Record<keyof T, string>>) => void;
   /**
-   * Clear all errors
+   * Mark a field as touched
    */
-  clearErrors: () => void;
+  setTouched: (name: keyof T, touched?: boolean) => void;
   /**
-   * Validate a single field
+   * Mark multiple fields as touched
    */
-  validateField: (name: keyof T) => string | null;
+  setTouchedFields: (touched: Partial<Record<keyof T, boolean>>) => void;
+  /**
+   * Set a single field value
+   */
+  setValue: (name: keyof T, value: string) => void;
+  /**
+   * Set multiple field values
+   */
+  setValues: (values: Partial<T>) => void;
+  /**
+   * Mark all fields as touched
+   */
+  touchAllFields: () => void;
   /**
    * Validate all fields
    */
   validateForm: () => ValidationResult;
   /**
-   * Reset the form to initial values
+   * Current form values
    */
-  reset: () => void;
+  values: T;
   /**
-   * Handle form submission
+   * Validate a single field
    */
-  handleSubmit: (onSubmit: (values: T) => void | Promise<void>) => (e?: React.FormEvent) => Promise<void>;
+  validateField: (name: keyof T) => string | null;
   /**
-   * Get field props for easy integration with form components
+   * Fields that have been touched by the user
    */
-  getFieldProps: (name: keyof T) => {
-    name: keyof T;
-    value: string;
-    onChange: (value: string) => void;
-    onBlur: () => void;
-    error: string | undefined;
-    touched: boolean;
-    required: boolean;
-  };
+  touched: Record<keyof T, boolean>;
 }
 
 /**
@@ -213,9 +213,7 @@ export const useForm = <T extends Record<string, string>>(config: UseFormConfig<
 
   // Get field configuration by name
   const getFieldConfig = useCallback(
-    (name: keyof T): FormField | undefined => {
-      return fields.find(field => field.name === name);
-    },
+    (name: keyof T): FormField | undefined => fields.find(field => field.name === name),
     [fields],
   );
 
@@ -274,8 +272,8 @@ export const useForm = <T extends Record<string, string>>(config: UseFormConfig<
 
   // Set a single field value
   const setValue = useCallback(
-    (name: keyof T, value: string) => {
-      setFormValues(prev => ({
+    (name: keyof T, value: string): void => {
+      setFormValues((prev: T) => ({
         ...prev,
         [name]: value,
       }));
@@ -283,18 +281,23 @@ export const useForm = <T extends Record<string, string>>(config: UseFormConfig<
       // Validate on change if enabled
       if (validateOnChange) {
         const error = validateField(name);
-        setFormErrors(prev => ({
-          ...prev,
-          [name]: error || '',
-        }));
+        setFormErrors((prev: Record<keyof T, string>) => {
+          const newErrors: Record<keyof T, string> = {...prev};
+          if (error) {
+            newErrors[name] = error;
+          } else {
+            delete newErrors[name];
+          }
+          return newErrors;
+        });
       }
     },
     [validateField, validateOnChange],
   );
 
   // Set multiple field values
-  const setValues = useCallback((newValues: Partial<T>) => {
-    setFormValues(prev => ({
+  const setValues = useCallback((newValues: Partial<T>): void => {
+    setFormValues((prev: T) => ({
       ...prev,
       ...newValues,
     }));
@@ -302,8 +305,8 @@ export const useForm = <T extends Record<string, string>>(config: UseFormConfig<
 
   // Mark a field as touched
   const setTouched = useCallback(
-    (name: keyof T, isTouched: boolean = true) => {
-      setFormTouched(prev => ({
+    (name: keyof T, isTouched: boolean = true): void => {
+      setFormTouched((prev: Record<keyof T, boolean>) => ({
         ...prev,
         [name]: isTouched,
       }));
@@ -311,26 +314,31 @@ export const useForm = <T extends Record<string, string>>(config: UseFormConfig<
       // Validate on blur if enabled and field is touched
       if (validateOnBlur && isTouched) {
         const error = validateField(name);
-        setFormErrors(prev => ({
-          ...prev,
-          [name]: error || '',
-        }));
+        setFormErrors((prev: Record<keyof T, string>) => {
+          const newErrors: Record<keyof T, string> = {...prev};
+          if (error) {
+            newErrors[name] = error;
+          } else {
+            delete newErrors[name];
+          }
+          return newErrors;
+        });
       }
     },
     [validateField, validateOnBlur],
   );
 
   // Set multiple touched fields
-  const setTouchedFields = useCallback((touchedFields: Partial<Record<keyof T, boolean>>) => {
-    setFormTouched(prev => ({
+  const setTouchedFields = useCallback((touchedFields: Partial<Record<keyof T, boolean>>): void => {
+    setFormTouched((prev: Record<keyof T, boolean>) => ({
       ...prev,
       ...touchedFields,
     }));
   }, []);
 
   // Mark all fields as touched
-  const touchAllFields = useCallback(() => {
-    const allTouched = fields.reduce((acc, field) => {
+  const touchAllFields = useCallback((): void => {
+    const allTouched: Record<keyof T, boolean> = fields.reduce((acc: Record<keyof T, boolean>, field: FormField) => {
       acc[field.name as keyof T] = true;
       return acc;
     }, {} as Record<keyof T, boolean>);
@@ -338,33 +346,33 @@ export const useForm = <T extends Record<string, string>>(config: UseFormConfig<
     setFormTouched(allTouched);
 
     // Validate all fields
-    const validation = validateForm();
+    const validation: ValidationResult = validateForm();
     setFormErrors(validation.errors as Record<keyof T, string>);
   }, [fields, validateForm]);
 
   // Set a field error
-  const setError = useCallback((name: keyof T, error: string) => {
-    setFormErrors(prev => ({
+  const setError = useCallback((name: keyof T, error: string): void => {
+    setFormErrors((prev: Record<keyof T, string>) => ({
       ...prev,
       [name]: error,
     }));
   }, []);
 
   // Set multiple field errors
-  const setErrors = useCallback((newErrors: Partial<Record<keyof T, string>>) => {
-    setFormErrors(prev => ({
+  const setErrors = useCallback((newErrors: Partial<Record<keyof T, string>>): void => {
+    setFormErrors((prev: Record<keyof T, string>) => ({
       ...prev,
       ...newErrors,
     }));
   }, []);
 
   // Clear all errors
-  const clearErrors = useCallback(() => {
+  const clearErrors = useCallback((): void => {
     setFormErrors({} as Record<keyof T, string>);
   }, []);
 
   // Reset form to initial state
-  const reset = useCallback(() => {
+  const reset = useCallback((): void => {
     setFormValues({...initialValues} as T);
     setFormTouched({} as Record<keyof T, boolean>);
     setFormErrors({} as Record<keyof T, string>);
@@ -372,63 +380,63 @@ export const useForm = <T extends Record<string, string>>(config: UseFormConfig<
   }, [initialValues]);
 
   // Handle form submission
-  const handleSubmit = useCallback(
-    (onSubmit: (values: T) => void | Promise<void>) => {
-      return async (e?: React.FormEvent) => {
-        if (e) {
-          e.preventDefault();
-        }
+  const handleSubmit: (onSubmit: (values: T) => void | Promise<void>) => (e?: React.FormEvent) => Promise<void> =
+    useCallback(
+      (onSubmit: (values: T) => void | Promise<void>) =>
+        async (e?: React.FormEvent): Promise<void> => {
+          if (e) {
+            e.preventDefault();
+          }
 
-        setIsSubmitted(true);
-        touchAllFields();
+          setIsSubmitted(true);
+          touchAllFields();
 
-        const validation = validateForm();
+          const validation: ValidationResult = validateForm();
 
-        if (validation.isValid) {
-          await onSubmit(values);
-        }
-      };
-    },
-    [values, touchAllFields, validateForm],
-  );
+          if (validation.isValid) {
+            await onSubmit(values);
+          }
+        },
+      [values, touchAllFields, validateForm],
+    );
 
   // Get field props for easy integration
   const getFieldProps = useCallback(
     (name: keyof T) => {
-      const fieldConfig = getFieldConfig(name);
+      const fieldConfig: FormField | undefined = getFieldConfig(name);
 
       return {
-        name,
-        value: values[name] || '',
-        onChange: (value: string) => setValue(name, value),
-        onBlur: () => setTouched(name, true),
         error: touched[name] ? errors[name] : undefined,
-        touched: touched[name] || false,
+        name,
+        onBlur: (): void => setTouched(name, true),
+        onChange: (value: string): void => setValue(name, value),
         required: fieldConfig?.required || false,
+        touched: touched[name] || false,
+        value: values[name] || '',
       };
     },
     [values, errors, touched, setValue, setTouched, getFieldConfig],
   );
 
   return {
-    values,
-    touched,
+    clearErrors,
     errors,
-    isValid,
+    getFieldProps,
+    handleSubmit,
     isSubmitted,
-    setValue,
-    setValues,
-    setTouched,
-    setTouchedFields,
-    touchAllFields,
+    isValid,
+    reset,
     setError,
     setErrors,
-    clearErrors,
+    setTouched,
+    setTouchedFields,
+    setValue,
+    setValues,
+    touchAllFields,
+    touched,
     validateField,
     validateForm,
-    reset,
-    handleSubmit,
-    getFieldProps,
+    values,
   };
 };
 

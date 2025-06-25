@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {IdTokenPayload} from '../models/token';
+import {IdToken} from '../models/token';
 
 /**
  * Removes standard protocol-specific claims from the ID token payload
@@ -42,8 +42,8 @@ import {IdTokenPayload} from '../models/token';
  * // }
  * ```
  */
-const extractUserClaimsFromIdToken = (payload: IdTokenPayload): Record<string, unknown> => {
-  const filteredPayload: Partial<IdTokenPayload> = {...payload};
+const extractUserClaimsFromIdToken = (payload: IdToken): Record<string, unknown> => {
+  const filteredPayload: Partial<IdToken> = {...payload};
 
   const protocolClaims = [
     'iss',
@@ -65,7 +65,7 @@ const extractUserClaimsFromIdToken = (payload: IdTokenPayload): Record<string, u
   ];
 
   protocolClaims.forEach(claim => {
-    delete filteredPayload[claim as keyof IdTokenPayload];
+    delete filteredPayload[claim as keyof IdToken];
   });
 
   const userClaims: Record<string, unknown> = {};

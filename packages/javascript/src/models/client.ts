@@ -16,10 +16,14 @@
  * under the License.
  */
 
+import {EmbeddedFlowExecuteRequestConfig, EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './embedded-flow';
+import {EmbeddedSignInFlowHandleRequestPayload} from './embedded-signin-flow';
+import {Organization} from './organization';
 import {User, UserProfile} from './user';
 
 export type SignInOptions = Record<string, unknown>;
 export type SignOutOptions = Record<string, unknown>;
+export type SignUpOptions = Record<string, unknown>;
 
 /**
  * Interface defining the core functionality for Asgardeo authentication clients.
@@ -32,6 +36,27 @@ export type SignOutOptions = Record<string, unknown>;
  * ```
  */
 export interface AsgardeoClient<T> {
+  /**
+   * Gets the users associated organizations.
+   *
+   * @returns Associated organizations.
+   */
+  getOrganizations(): Promise<Organization[]>;
+
+  /**
+   * Gets the current organization of the user.
+   *
+   * @returns The current organization if available, otherwise null.
+   */
+  getCurrentOrganization(): Promise<Organization | null>;
+
+  /**
+   * Switches the current organization to the specified one.
+   * @param organization - The organization to switch to.
+   * @returns A promise that resolves when the switch is complete.
+   */
+  switchOrganization(organization: Organization): Promise<void>;
+
   /**
    * Gets user information from the session.
    *
@@ -74,9 +99,31 @@ export interface AsgardeoClient<T> {
    * Initiates the sign-in process for the user.
    *
    * @param options - Optional sign-in options like additional parameters to be sent in the authorize request, etc.
+   * @param sessionId - Optional session ID to be used for sign-in.
+   * @param onSignInSuccess - Callback function to be executed upon successful sign-in.
    * @returns Promise resolving the user upon successful sign in.
    */
-  signIn(options?: SignInOptions): Promise<User>;
+  signIn(
+    options?: SignInOptions,
+    sessionId?: string,
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
+
+  /**
+   * Initiates an embedded (App-Native) sign-in flow for the user.
+   *
+   * @param payload - The payload containing the necessary information to execute the embedded sign-in flow.
+   * @param request - The request object containing URL and parameters for the sign-in flow HTTP request.
+   * @param sessionId - Optional session ID to be used for sign-in.
+   * @param onSignInSuccess - Callback function to be executed upon successful sign-in.
+   * @returns A promise that resolves to an EmbeddedFlowExecuteResponse containing the flow execution details.
+   */
+  signIn(
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: EmbeddedFlowExecuteRequestConfig<EmbeddedSignInFlowHandleRequestPayload>,
+    sessionId?: string,
+    onSignInSuccess?: (afterSignInUrl: string) => void,
+  ): Promise<User>;
 
   /**
    * Signs out the currently signed-in user.
@@ -97,4 +144,20 @@ export interface AsgardeoClient<T> {
    * @returns A promise that resolves to true if sign-out is successful
    */
   signOut(options?: SignOutOptions, sessionId?: string, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
+
+  /**
+   * Initiates a redirection-based sign-up process for the user.
+   *
+   * @param options - Optional sign-up options like additional parameters to be sent in the sign-up request, etc.
+   * @returns Promise resolving to the user upon successful sign up.
+   */
+  signUp(options?: SignUpOptions): Promise<void>;
+
+  /**
+   * Initiates an embedded (App-Native) sign-up flow for the user.
+   *
+   * @param payload - The payload containing the necessary information to execute the embedded sign-up flow.
+   * @returns A promise that resolves to an EmbeddedFlowExecuteResponse containing the flow execution details.
+   */
+  signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
 }
