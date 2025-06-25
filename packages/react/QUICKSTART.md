@@ -91,7 +91,7 @@ Replace:
 Update your `App.tsx` to include sign-in and sign-out functionality:
 
 ```tsx
-import { SignedIn, SignedOut, SignInButton, SignOutButton, User } from '@asgardeo/react'
+import { SignedIn, SignedOut, SignInButton, SignOutButton } from '@asgardeo/react'
 import './App.css'
 
 function App() {
@@ -115,7 +115,7 @@ export default App
 You can also display user information by using the `User` component & the `UserProfile` component:
 
 ```diff
-import { User, UserProfile } from '@asgardeo/react'
+import { SignedIn, SignedOut, SignInButton, SignOutButton, User, UserProfile } from '@asgardeo/react'
 import './App.css'
 
 function App() {
