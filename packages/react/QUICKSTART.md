@@ -21,7 +21,7 @@ This guide will help you quickly integrate Asgardeo authentication into your Rea
 
 3. **Note Down Your Credentials from the `Quickstart` tab**
    - Copy the **Client ID** from the application details
-   - Note your **Base URL** (ex: `https://api.asgardeo.io/t/<ORGANIZATION>`)
+   - Note your **Base URL** (ex: `https://api.asgardeo.io/t/<your-organization-name>`)
 
 4. **Configure Application Settings from the `Protocol` tab**
    - **Authorized redirect URLs**: Add your application URLs
@@ -73,8 +73,8 @@ import { AsgardeoProvider } from '@asgardeo/react'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AsgardeoProvider
-      baseUrl="<Base URL>"
-      clientId="<CLIENT_ID>"
+      baseUrl="<your-organization-base-url>"
+      clientId="<your-app-client-id>"
     >
       <App />
     </AsgardeoProvider>
@@ -83,8 +83,8 @@ createRoot(document.getElementById('root')!).render(
 ```
 
 Replace:
-- `<Base URL>` with the Base URL you noted in Step 1 (e.g., `https://api.asgardeo.io/t/<ORGANIZATION>`)
-- `<CLIENT_ID>` with the Client ID from Step 1
+- `<your-organization-base-url>` with the Base URL you noted in Step 1 (e.g., `https://api.asgardeo.io/t/<your-organization-name>`)
+- `<your-app-client-id>` with the Client ID from Step 1
 
 ## Step 4: Add Sign-in & Sign-out to Your App
 
