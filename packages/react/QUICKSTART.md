@@ -114,7 +114,7 @@ export default App
 
 You can also display user information by using the `User` component & the `UserProfile` component:
 
-```diff
+```tsx
 import { SignedIn, SignedOut, SignInButton, SignOutButton, User, UserProfile } from '@asgardeo/react'
 import './App.css'
 
@@ -122,14 +122,14 @@ function App() {
   return (
     <>
       <SignedIn>
-+        <User>
-+          {({ user }) => (
-+            <div>
-+              <h1>Welcome, {user.username}</h1>
-+            </div>
-+          )}
-+        </User>
-+        <UserProfile />
+        <User>
+          {({ user }) => (
+            <div>
+              <h1>Welcome, {user.username}</h1>
+            </div>
+          )}
+        </User>
+        <UserProfile />
         <SignOutButton />
       </SignedIn>
       <SignedOut>
