@@ -35,13 +35,13 @@ If you don't have a React application set up yet, you can create one using Vite:
 
 ```bash
 # Using npm
-npm create vite@latest teamspace --template react
+npm create vite@latest react-sample --template react
 
 # Using pnpm
-pnpm create vite@latest teamspace --template react
+pnpm create vite@latest react-sample --template react
 
 # Using yarn
-yarn create vite teamspace --template react
+yarn create vite react-sample --template react
 ```
 
 ## Step 3: Install the SDK
@@ -86,7 +86,7 @@ Replace:
 - `<your-organization-base-url>` with the Base URL you noted in Step 1 (e.g., `https://api.asgardeo.io/t/<your-organization-name>`)
 - `<your-app-client-id>` with the Client ID from Step 1
 
-## Step 4: Add Sign-in & Sign-out to Your App
+## Step 5: Add Sign-in & Sign-out to Your App
 
 Update your `App.tsx` to include sign-in and sign-out functionality:
 
@@ -110,7 +110,40 @@ function App() {
 export default App
 ```
 
-## Step 6: Try Login
+## Step 6: Display User Information
+
+You can also display user information by using the `User` component & the `UserProfile` component:
+
+```diff
+import { User, UserProfile } from '@asgardeo/react'
+import './App.css'
+
+function App() {
+  return (
+    <>
+      <SignedIn>
++        <User>
++          {({ user }) => (
++            <div>
++              <h1>Welcome, {user.username}</h1>
++              <UserProfile />
++            </div>
++          )}
++        </User>
++        <UserProfile />
+        <SignOutButton />
+      </SignedIn>
+      <SignedOut>
+        <SignInButton />
+      </SignedOut>
+    </>
+  )
+}
+
+export default App
+```
+
+## Step 7: Try Login
 
 Run your application and test the sign-in functionality. You should see a "Sign In" button when you're not signed in, and clicking it will redirect you to the Asgardeo sign-in page.
 
