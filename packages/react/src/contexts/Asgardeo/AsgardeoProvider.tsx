@@ -50,6 +50,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   children,
   scopes,
   preferences,
+  signInUrl,
   ...rest
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
@@ -230,6 +231,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   return (
     <AsgardeoContext.Provider
       value={{
+        signInUrl,
         afterSignInUrl,
         baseUrl,
         isInitialized: isInitializedSync,
