@@ -25,13 +25,7 @@ import {Context, createContext} from 'react';
 /**
  * Props interface of {@link AsgardeoContext}
  */
-export type AsgardeoContextProps = Partial<AsgardeoReactContextProps> & {
-  user?: User | null;
-  isSignedIn?: boolean;
-  isLoading?: boolean;
-  signIn?: (payload: EmbeddedSignInFlowHandleRequestPayload, request: EmbeddedFlowExecuteRequestConfig) => Promise<any>;
-  signOut?: () => Promise<never>;
-};
+export type AsgardeoContextProps = AsgardeoReactContextProps;
 
 /**
  * Context object for managing the Authentication flow builder core context.

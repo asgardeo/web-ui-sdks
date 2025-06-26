@@ -46,6 +46,8 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
 
   abstract isSignedIn(): Promise<boolean>;
 
+  abstract getConfiguration(): T;
+
   abstract signIn(
     options?: SignInOptions,
     sessionId?: string,

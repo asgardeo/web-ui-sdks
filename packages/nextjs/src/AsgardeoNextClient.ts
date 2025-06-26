@@ -90,7 +90,8 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       return Promise.resolve(true);
     }
 
-    const {baseUrl, clientId, clientSecret, signInUrl, afterSignInUrl, afterSignOutUrl, signUpUrl, ...rest} = decorateConfigWithNextEnv(config);
+    const {baseUrl, clientId, clientSecret, signInUrl, afterSignInUrl, afterSignOutUrl, signUpUrl, ...rest} =
+      decorateConfigWithNextEnv(config);
 
     this.isInitialized = true;
 
@@ -147,6 +148,10 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
   override isSignedIn(sessionId?: string): Promise<boolean> {
     return this.asgardeo.isSignedIn(sessionId as string);
+  }
+
+  override getConfiguration(): T {
+    return this.asgardeo.getConfigData() as unknown as T;
   }
 
   override signIn(

@@ -74,8 +74,16 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     );
   }
 
+  const configuration = await asgardeoClient.getConfiguration();
+  console.log('Asgardeo client initialized with configuration:', configuration);
+
   return (
-    <AsgardeoClientProvider signIn={signInAction} signOut={signOutAction}>
+    <AsgardeoClientProvider
+      signIn={signInAction}
+      signOut={signOutAction}
+      signInUrl={configuration.signInUrl}
+      preferences={config.preferences}
+    >
       {children}
     </AsgardeoClientProvider>
   );

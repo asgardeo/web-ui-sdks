@@ -23,7 +23,7 @@ import {SignOutOptions} from '@asgardeo/javascript/dist/models/client';
 /**
  * Base class for implementing Asgardeo in Node.js based applications.
  * This class provides the core functionality for managing user authentication and sessions.
- *
+ *getConfigData
  * @typeParam T - Configuration type that extends AsgardeoNodeConfig.
  */
 abstract class AsgardeoNodeClient<T = AsgardeoNodeConfig> extends AsgardeoJavaScriptClient<T> {}

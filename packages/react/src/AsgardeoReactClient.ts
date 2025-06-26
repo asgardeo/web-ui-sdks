@@ -185,6 +185,10 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     return this.asgardeo.isSignedIn();
   }
 
+  override getConfiguration(): T {
+    return this.asgardeo.getConfigData() as unknown as T;
+  }
+
   override signIn(
     options?: SignInOptions,
     sessionId?: string,

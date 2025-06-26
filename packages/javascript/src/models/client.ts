@@ -57,6 +57,8 @@ export interface AsgardeoClient<T> {
    */
   switchOrganization(organization: Organization): Promise<void>;
 
+  getConfiguration(): T;
+
   /**
    * Gets user information from the session.
    *
