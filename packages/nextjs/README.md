@@ -23,6 +23,8 @@ yarn add @asgardeo/nextjs
 
 ## Quick Start
 
+### Option 1: Provider-based Configuration (Recommended)
+
 1. Create a `.env.local` file with your Asgardeo configuration:
 
 ```bash
@@ -31,24 +33,64 @@ NEXT_PUBLIC_ASGARDEO_CLIENT_ID=<your-client-id>
 NEXT_PUBLIC_ASGARDEO_CLIENT_SECRET=<your-client-secret>
 ```
 
+2. Add the `AsgardeoProvider` to your root layout with configuration:
+
+```tsx
+// app/layout.tsx
+import { AsgardeoProvider } from '@asgardeo/nextjs';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const asgardeoConfig = {
+    baseUrl: process.env.NEXT_PUBLIC_ASGARDEO_BASE_URL,
+    clientId: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_ID,
+    clientSecret: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_SECRET,
+    afterSignInUrl: process.env.NEXT_PUBLIC_ASGARDEO_AFTER_SIGN_IN_URL || 'http://localhost:3000',
+  };
+
+  return (
+    <html lang="en">
+      <body>
+        <AsgardeoProvider config={asgardeoConfig}>
+          {children}
+        </AsgardeoProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+3. Create a simple `middleware.ts` file in your project root:
+
+```typescript
+import { asgardeoMiddleware } from '@asgardeo/nextjs/middleware';
+
+export default asgardeoMiddleware;
+
+export const config = {
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
+};
+```
+
+### Option 2: Middleware-based Configuration
+
 2. Then create a `middleware.ts` file in your project root to handle authentication:
 
 ```typescript
-import { AsgardeoNext } from '@asgardeo/nextjs';
-import { NextRequest } from 'next/server';
+import { createAsgardeoMiddleware } from '@asgardeo/nextjs/middleware';
 
-const asgardeo = new AsgardeoNext();
-
-asgardeo.initialize({
+const middleware = createAsgardeoMiddleware({
   baseUrl: process.env.NEXT_PUBLIC_ASGARDEO_BASE_URL,
   clientId: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_ID,
   clientSecret: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_SECRET,
   afterSignInUrl: 'http://localhost:3000',
 });
 
-export async function middleware(request: NextRequest) {
-  return await asgardeo.middleware(request);
-}
+export { middleware };
 
 export const config = {
   matcher: [
@@ -81,6 +123,24 @@ export default function Home() {
   );
 }
 ```
+
+## Server-side Usage
+
+You can access the Asgardeo client instance in server actions and other server-side code:
+
+```typescript
+import { getAsgardeoClient } from '@asgardeo/nextjs/server';
+
+export async function getUserProfile() {
+  const client = getAsgardeoClient();
+  const user = await client.getUser();
+  return user;
+}
+```
+
+## Architecture
+
+The SDK uses a singleton pattern for the `AsgardeoNextClient` to ensure consistent authentication state across your application. The client is automatically initialized when you provide configuration through the `AsgardeoProvider` or through the middleware configuration.
 
 ## License
 

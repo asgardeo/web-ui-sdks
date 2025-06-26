@@ -40,3 +40,5 @@ export {default as User} from './client/components/presentation/User/User';
 export type {UserProps} from './client/components/presentation/User/User';
 
 export {default as AsgardeoNext} from './AsgardeoNextClient';
+
+export {default as asgardeoMiddleware} from './middleware/asgardeoMiddleware';

@@ -29,8 +29,8 @@ export type AsgardeoContextProps = Partial<AsgardeoReactContextProps> & {
   user?: User | null;
   isSignedIn?: boolean;
   isLoading?: boolean;
-  signIn?: (payload: EmbeddedSignInFlowHandleRequestPayload, request: EmbeddedFlowExecuteRequestConfig) => void;
-  signOut?: () => void;
+  signIn?: (payload: EmbeddedSignInFlowHandleRequestPayload, request: EmbeddedFlowExecuteRequestConfig) => Promise<any>;
+  signOut?: () => Promise<never>;
 };
 
 /**

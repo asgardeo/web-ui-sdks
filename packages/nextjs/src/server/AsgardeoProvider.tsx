@@ -17,32 +17,68 @@
  */
 
 import {FC, PropsWithChildren, ReactElement} from 'react';
+import {AsgardeoRuntimeError} from '@asgardeo/node';
 import AsgardeoClientProvider, {AsgardeoClientProviderProps} from '../client/contexts/Asgardeo/AsgardeoProvider';
+import AsgardeoNextClient from '../AsgardeoNextClient';
+import {AsgardeoNextConfig} from '../models/config';
+import {signInAction, getUserAction, getIsSignedInAction} from './actions/authActions';
+import gerClientOrigin from './actions/gerClientOrigin';
+import signOutAction from './actions/signOutAction';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
  */
-export type AsgardeoServerProviderProps = AsgardeoClientProviderProps;
+export type AsgardeoServerProviderProps = AsgardeoClientProviderProps & {
+  clientSecret?: string;
+};
 
 /**
  * Server-side provider component for Asgardeo authentication.
  * Wraps the client-side provider and handles server-side authentication logic.
+ * Uses the singleton AsgardeoNextClient instance for consistent authentication state.
  *
  * @param props - Props injected into the component.
  *
  * @example
  * ```tsx
- * <AsgardeoServerProvider>
+ * <AsgardeoServerProvider config={asgardeoConfig}>
  *   <YourApp />
  * </AsgardeoServerProvider>
  * ```
  *
  * @returns AsgardeoServerProvider component.
  */
-const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>> = ({
+const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>> = async ({
   children,
-}: PropsWithChildren<AsgardeoServerProviderProps>): ReactElement => (
-  <AsgardeoClientProvider>{children}</AsgardeoClientProvider>
-);
+  afterSignInUrl,
+  afterSignOutUrl,
+  ...config
+}: PropsWithChildren<AsgardeoServerProviderProps>): Promise<ReactElement> => {
+  const asgardeoClient = AsgardeoNextClient.getInstance();
+  console.log('Initializing Asgardeo client with config:', config);
+
+  const origin = await gerClientOrigin();
+
+  try {
+    asgardeoClient.initialize({
+      afterSignInUrl: afterSignInUrl ?? origin,
+      afterSignOutUrl: afterSignOutUrl ?? origin,
+      ...config,
+    });
+  } catch (error) {
+    throw new AsgardeoRuntimeError(
+      `Failed to initialize Asgardeo client: ${error?.toString()}`,
+      'next-ConfigurationError-001',
+      'next',
+      'An error occurred while initializing the Asgardeo client. Please check your configuration.',
+    );
+  }
+
+  return (
+    <AsgardeoClientProvider signIn={signInAction} signOut={signOutAction}>
+      {children}
+    </AsgardeoClientProvider>
+  );
+};
 
 export default AsgardeoServerProvider;

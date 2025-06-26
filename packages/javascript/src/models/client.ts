@@ -132,7 +132,7 @@ export interface AsgardeoClient<T> {
    * @param afterSignOut - Callback function to be executed after sign-out is complete.
    * @returns A promise that resolves to true if sign-out is successful
    */
-  signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
+  signOut(options?: SignOutOptions, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;
 
   /**
    * Signs out the currently signed-in user with an optional session ID.
@@ -143,7 +143,7 @@ export interface AsgardeoClient<T> {
    * @param afterSignOut - Callback function to be executed after sign-out is complete.
    * @returns A promise that resolves to true if sign-out is successful
    */
-  signOut(options?: SignOutOptions, sessionId?: string, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
+  signOut(options?: SignOutOptions, sessionId?: string, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;
 
   /**
    * Initiates a redirection-based sign-up process for the user.

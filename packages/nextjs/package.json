@@ -19,8 +19,18 @@
   "module": "dist/index.js",
   "commonjs": "dist/cjs/index.js",
   "exports": {
-    "import": "./dist/index.js",
-    "require": "./dist/cjs/index.js"
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./middleware": {
+      "import": "./dist/middleware/index.js",
+      "require": "./dist/cjs/middleware/index.js"
+    },
+    "./server": {
+      "import": "./dist/server/index.js",
+      "require": "./dist/cjs/server/index.js"
+    }
   },
   "files": [
     "dist",

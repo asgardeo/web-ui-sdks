@@ -37,38 +37,83 @@ import {
   EmbeddedSignInFlowStatus,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
-import InternalAuthAPIRoutesConfig from './configs/InternalAuthAPIRoutesConfig';
 import {AsgardeoNextConfig} from './models/config';
-import deleteSessionId from './server/actions/deleteSessionId';
 import getSessionId from './server/actions/getSessionId';
-import getIsSignedIn from './server/actions/isSignedIn';
-import setSessionId from './server/actions/setSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
+import authRouter from './server/actions/authRouter';
 
 const removeTrailingSlash = (path: string): string => (path.endsWith('/') ? path.slice(0, -1) : path);
 /**
  * Client for mplementing Asgardeo in Next.js applications.
  * This class provides the core functionality for managing user authentication and sessions.
  *
+ * This class is implemented as a singleton to ensure a single instance across the application.
+ *
  * @typeParam T - Configuration type that extends AsgardeoNextConfig.
  */
 class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> extends AsgardeoNodeClient<T> {
+  private static instance: AsgardeoNextClient<any>;
   private asgardeo: LegacyAsgardeoNodeClient<T>;
+  private isInitialized: boolean = false;
 
-  constructor() {
+  private constructor() {
     super();
 
     this.asgardeo = new LegacyAsgardeoNodeClient();
   }
 
+  /**
+   * Get the singleton instance of AsgardeoNextClient
+   */
+  public static getInstance<T extends AsgardeoNextConfig = AsgardeoNextConfig>(): AsgardeoNextClient<T> {
+    if (!AsgardeoNextClient.instance) {
+      AsgardeoNextClient.instance = new AsgardeoNextClient<T>();
+    }
+    return AsgardeoNextClient.instance as AsgardeoNextClient<T>;
+  }
+
+  /**
+   * Ensures the client is initialized before using it.
+   * Throws an error if the client is not initialized.
+   */
+  private async ensureInitialized(): Promise<void> {
+    if (!this.isInitialized) {
+      throw new Error(
+        '[AsgardeoNextClient] Client is not initialized. Make sure you have wrapped your app with AsgardeoProvider and provided the required configuration (baseUrl, clientId, etc.).',
+      );
+    }
+  }
+
   override initialize(config: T): Promise<boolean> {
-    const {baseUrl, clientId, clientSecret, afterSignInUrl, ...rest} = decorateConfigWithNextEnv(config);
+    if (this.isInitialized) {
+      console.warn('[AsgardeoNextClient] Client is already initialized');
+      return Promise.resolve(true);
+    }
+
+    const {baseUrl, clientId, clientSecret, signInUrl, afterSignInUrl, afterSignOutUrl, signUpUrl, ...rest} = decorateConfigWithNextEnv(config);
+
+    this.isInitialized = true;
+
+    console.log('[AsgardeoNextClient] Initializing with decorateConfigWithNextEnv:', {
+      baseUrl,
+      clientId,
+      clientSecret,
+      signInUrl,
+      signUpUrl,
+      afterSignInUrl,
+      afterSignOutUrl,
+      enablePKCE: false,
+      ...rest,
+    });
 
     return this.asgardeo.initialize({
       baseUrl,
       clientId,
       clientSecret,
+      signInUrl,
+      signUpUrl,
       afterSignInUrl,
+      afterSignOutUrl,
       enablePKCE: false,
       ...rest,
     } as any);
@@ -145,11 +190,11 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     ) as unknown as Promise<User>;
   }
 
-  override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
+  override signOut(options?: SignOutOptions, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;
   override signOut(
     options?: SignOutOptions,
     sessionId?: string,
-    afterSignOut?: (redirectUrl: string) => void,
+    afterSignOut?: (afterSignOutUrl: string) => void,
   ): Promise<string>;
   override async signOut(...args: any[]): Promise<string> {
     if (args[1] && typeof args[1] !== 'string') {
@@ -172,165 +217,40 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     );
   }
 
-  async handler(req: NextRequest): Promise<NextResponse> {
-    const {pathname, searchParams} = req.nextUrl;
-    const sanitizedPathname: string = removeTrailingSlash(pathname);
-    const {method} = req;
-
-    // Handle POST sign-in request
-    if (method === 'POST' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) {
-      try {
-        // Get session ID from cookies directly since we're in middleware context
-        let userId: string | undefined = req.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
-
-        // Generate session ID if not present
-        if (!userId) {
-          userId = generateSessionId();
-        }
-
-        const signInUrl: URL = new URL(await this.asgardeo.getSignInUrl({response_mode: 'direct'}, userId));
-        const {pathname: urlPathname, origin, searchParams: urlSearchParams} = signInUrl;
-
-        console.log('[AsgardeoNextClient] Sign-in URL:', signInUrl.toString());
-        console.log('[AsgardeoNextClient] Search Params:', Object.fromEntries(urlSearchParams.entries()));
-        const body = await req.json();
-
-        console.log('[AsgardeoNextClient] Sign-in request:', body);
-
-        const {payload, request} = body;
-
-        const response: any = await this.signIn(
-          payload,
-          {
-            url: request?.url ?? `${origin}${urlPathname}`,
-            payload: request?.payload ?? Object.fromEntries(urlSearchParams.entries()),
-          },
-          userId,
-        );
-
-        // Clean the response to remove any non-serializable properties
-        const cleanResponse = response ? JSON.parse(JSON.stringify(response)) : {success: true};
-
-        // Create response with session cookie
-        const nextResponse = NextResponse.json(cleanResponse);
-
-        // Set session cookie if it was generated
-        if (!req.cookies.get(CookieConfig.SESSION_COOKIE_NAME)) {
-          nextResponse.cookies.set(CookieConfig.SESSION_COOKIE_NAME, userId, {
-            httpOnly: CookieConfig.DEFAULT_HTTP_ONLY,
-            maxAge: CookieConfig.DEFAULT_MAX_AGE,
-            sameSite: CookieConfig.DEFAULT_SAME_SITE,
-            secure: CookieConfig.DEFAULT_SECURE,
-          });
-        }
-
-        if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
-          const res = await this.signIn(
-            {
-              code: response?.authData?.code,
-              session_state: response?.authData?.session_state,
-              state: response?.authData?.state,
-            } as any,
-            {},
-            userId,
-            (afterSignInUrl: string) => null,
-          );
-
-          const afterSignInUrl = await (
-            await this.asgardeo.getStorageManager()
-          ).getConfigDataParameter('afterSignInUrl');
-          const redirectUrl = String(afterSignInUrl);
-          console.log('[AsgardeoNextClient] Sign-in successful, redirecting to:', redirectUrl);
-
-          return NextResponse.redirect(redirectUrl, 303);
-        }
-
-        return nextResponse;
-      } catch (error) {
-        console.error('[AsgardeoNextClient] Failed to initialize embedded sign-in flow:', error);
-        return NextResponse.json({error: 'Failed to initialize sign-in flow'}, {status: 500});
-      }
-    }
-
-    // Handle GET sign-in request or callback with code
-    if ((method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signIn) || searchParams.get('code')) {
-      try {
-        if (searchParams.get('code')) {
-          // Handle OAuth callback
-          await this.signIn();
-
-          const cleanUrl: URL = new URL(req.url);
-          cleanUrl.searchParams.delete('code');
-          cleanUrl.searchParams.delete('state');
-          cleanUrl.searchParams.delete('session_state');
-
-          return NextResponse.redirect(cleanUrl.toString());
-        }
-
-        // Regular GET sign-in request
-        await this.signIn();
-        return NextResponse.next();
-      } catch (error) {
-        console.error('[AsgardeoNextClient] Sign-in failed:', error);
-        return NextResponse.json({error: 'Sign-in failed'}, {status: 500});
-      }
-    }
-
-    if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.session) {
-      try {
-        const isSignedIn: boolean = await getIsSignedIn();
-
-        return NextResponse.json({isSignedIn});
-      } catch (error) {
-        return NextResponse.json({error: 'Failed to check session'}, {status: 500});
-      }
-    }
-
-    if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.user) {
-      try {
-        const user: User = await this.getUser();
-
-        console.log('[AsgardeoNextClient] User fetched successfully:', user);
-
-        return NextResponse.json({user});
-      } catch (error) {
-        console.error('[AsgardeoNextClient] Failed to get user:', error);
-        return NextResponse.json({error: 'Failed to get user'}, {status: 500});
-      }
-    }
-
-    if (method === 'GET' && sanitizedPathname === InternalAuthAPIRoutesConfig.signOut) {
-      try {
-        const afterSignOutUrl: string = await this.signOut();
-
-        await deleteSessionId();
-
-        return NextResponse.redirect(afterSignOutUrl, 302);
-      } catch (error) {
-        console.error('[AsgardeoNextClient] Sign-out failed:', error);
-        return NextResponse.json({error: 'Failed to sign out'}, {status: 500});
-      }
-    }
-
-    // no auth handler found, simply touch the sessions
-    // TODO: this should only happen if rolling sessions are enabled. Also, we should
-    // try to avoid reading from the DB (for stateful sessions) on every request if possible.
-    // const res = NextResponse.next();
-    // const session = await this.sessionStore.get(req.cookies);
-
-    // if (session) {
-    //   // we pass the existing session (containing an `createdAt` timestamp) to the set method
-    //   // which will update the cookie's `maxAge` property based on the `createdAt` time
-    //   await this.sessionStore.set(req.cookies, res.cookies, {
-    //     ...session,
-    //   });
-    // }
-
-    return NextResponse.next();
+  /**
+   * Gets the sign-in URL for authentication.
+   * Ensures the client is initialized before making the call.
+   *
+   * @param userId - The user ID
+   * @returns Promise that resolves to the sign-in URL
+   */
+  public async getSignInUrl(userId?: string): Promise<string> {
+    await this.ensureInitialized();
+    return this.asgardeo.getSignInUrl(undefined, userId);
   }
 
-  middleware(req: NextRequest): Promise<NextResponse> {
-    return this.handler(req);
+  /**
+   * Gets the sign-in URL for authentication with custom request config.
+   * Ensures the client is initialized before making the call.
+   *
+   * @param requestConfig - Custom request configuration
+   * @param userId - The user ID
+   * @returns Promise that resolves to the sign-in URL
+   */
+  public async getSignInUrlWithConfig(requestConfig?: any, userId?: string): Promise<string> {
+    await this.ensureInitialized();
+    return this.asgardeo.getSignInUrl(requestConfig, userId);
+  }
+
+  /**
+   * Gets the storage manager from the underlying Asgardeo client.
+   * Ensures the client is initialized before making the call.
+   *
+   * @returns Promise that resolves to the storage manager
+   */
+  public async getStorageManager(): Promise<any> {
+    await this.ensureInitialized();
+    return this.asgardeo.getStorageManager();
   }
 }
 

@@ -19,24 +19,21 @@
 'use client';
 
 import {EmbeddedFlowExecuteRequestConfig, EmbeddedSignInFlowHandleRequestPayload, User} from '@asgardeo/node';
-import {I18nProvider, FlowProvider, UserProvider, ThemeProvider} from '@asgardeo/react';
+import {I18nProvider, FlowProvider, UserProvider, ThemeProvider, AsgardeoProviderProps} from '@asgardeo/react';
 import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import AsgardeoContext from './AsgardeoContext';
-import InternalAuthAPIRoutesConfig from '../../../configs/InternalAuthAPIRoutesConfig';
+import {getIsSignedInAction, getUserAction} from '../../../server/actions/authActions';
 
 /**
  * Props interface of {@link AsgardeoClientProvider}
  */
-export type AsgardeoClientProviderProps = {
-  /**
-   * Preferences for theming, i18n, and other UI customizations.
-   */
-  preferences?: any;
-};
+export type AsgardeoClientProviderProps = AsgardeoProviderProps;
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
   children,
+  signIn,
+  signOut,
   preferences,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const router = useRouter();
@@ -58,16 +55,15 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       try {
         setIsLoading(true);
 
-        const sessionResponse = await fetch(InternalAuthAPIRoutesConfig.session);
-        const sessionData = await sessionResponse.json();
-        setIsSignedIn(sessionData.isSignedIn);
+        const sessionResult = await getIsSignedInAction();
 
-        if (sessionData.isSignedIn) {
-          const userResponse = await fetch(InternalAuthAPIRoutesConfig.user);
+        setIsSignedIn(sessionResult.isSignedIn);
 
-          if (userResponse.ok) {
-            const userData = await userResponse.json();
-            setUser(userData);
+        if (sessionResult.isSignedIn) {
+          const userResult = await getUserAction();
+
+          if (userResult.user) {
+            setUser(userResult.user);
           }
         } else {
           setUser(null);
@@ -83,21 +79,45 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     fetchUserData();
   }, []);
 
-  const signIn = async (payload: EmbeddedSignInFlowHandleRequestPayload, request: EmbeddedFlowExecuteRequestConfig) => {
-    const response = await fetch(InternalAuthAPIRoutesConfig.signIn, {
-      method: 'POST',
-      body: JSON.stringify({
-        payload,
-        request,
-      }),
-    });
+  const handleSignIn = async (
+    payload: EmbeddedSignInFlowHandleRequestPayload,
+    request: EmbeddedFlowExecuteRequestConfig,
+  ) => {
+    try {
+      const result = await signIn(payload, request);
 
-    if (response.redirected && response.url) {
-      router.push(response.url!);
-      return {redirected: true, location: response.url};
+      if (result?.afterSignInUrl) {
+        router.push(result.afterSignInUrl);
+        return {redirected: true, location: result.afterSignInUrl};
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      return result;
+    } catch (error) {
+      throw error;
     }
+  };
 
-    return response.json();
+  const handleSignOut = async () => {
+    try {
+      const result = await signOut();
+
+      if (result?.afterSignOutUrl) {
+        router.push(result.afterSignOutUrl);
+        return {redirected: true, location: result.afterSignOutUrl};
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const contextValue = useMemo(
@@ -105,8 +125,8 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       user,
       isSignedIn,
       isLoading,
-      signIn,
-      signOut: () => (window.location.href = InternalAuthAPIRoutesConfig.signOut),
+      signIn: handleSignIn,
+      signOut: handleSignOut,
     }),
     [user, isSignedIn, isLoading],
   );

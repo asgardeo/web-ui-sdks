@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import {Button} from '@/components/ui/button';
+import {SignInButton} from '@asgardeo/nextjs';
 
 interface PublicActionsProps {
   className?: string;
@@ -23,6 +24,7 @@ export default function PublicActions({className = '', showMobileActions = false
 
   return (
     <div className={`hidden md:flex items-center space-x-4 ${className}`}>
+      <SignInButton />
       <Button variant="ghost" asChild>
         <Link href="/signin">Sign In</Link>
       </Button>

@@ -19,8 +19,9 @@
 'use client';
 
 import {forwardRef, ForwardRefExoticComponent, ReactElement, Ref, RefAttributes} from 'react';
-import InternalAuthAPIRoutesConfig from '../../../../configs/InternalAuthAPIRoutesConfig';
-import {BaseSignInButton, BaseSignInButtonProps} from '@asgardeo/react';
+import {BaseSignInButton, BaseSignInButtonProps, useTranslation} from '@asgardeo/react';
+import useAsgardeo from '../../../../client/contexts/Asgardeo/useAsgardeo';
+import {useRouter} from 'next/navigation';
 
 /**
  * Props interface of {@link SignInButton}
@@ -28,7 +29,7 @@ import {BaseSignInButton, BaseSignInButtonProps} from '@asgardeo/react';
 export type SignInButtonProps = BaseSignInButtonProps;
 
 /**
- * SignInButton component that supports both render props and traditional props patterns for Next.js.
+ * SignInButton component that uses server actions for authentication in Next.js.
  *
  * @example Using render props
  * ```tsx
@@ -47,16 +48,42 @@ export type SignInButtonProps = BaseSignInButtonProps;
  * ```
  *
  * @remarks
- * In Next.js with server actions, the sign-in is handled via form submission.
+ * In Next.js with server actions, the sign-in is handled via the server action.
  * When using render props, the custom button should use `type="submit"` instead of `onClick={signIn}`.
  * The `signIn` function in render props is provided for API consistency but should not be used directly.
  */
 const SignInButton = forwardRef<HTMLButtonElement, SignInButtonProps>(
-  ({className, style, ...rest}: SignInButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+  (
+    {className, style, children, preferences, ...rest}: SignInButtonProps,
+    ref: Ref<HTMLButtonElement>,
+  ): ReactElement => {
+    const {signIn, signInUrl} = useAsgardeo();
+    const router = useRouter();
+    const {t} = useTranslation(preferences?.i18n);
+
+    const handleOnSubmit = (...args) => {
+      console.log('SignInButton: handleOnSubmit called with: ', signInUrl);
+      if (signInUrl) {
+        router.push(signInUrl);
+
+        return;
+      }
+
+      signIn();
+    };
+
     return (
-      <form action={InternalAuthAPIRoutesConfig.signIn}>
-        <BaseSignInButton className={className} style={style} ref={ref} type="submit" {...rest} />
-      </form>
+      <BaseSignInButton
+        className={className}
+        style={style}
+        ref={ref}
+        preferences={preferences}
+        type="submit"
+        onClick={handleOnSubmit}
+        {...rest}
+      >
+        {children ?? t('elements.buttons.signIn')}
+      </BaseSignInButton>
     );
   },
 );

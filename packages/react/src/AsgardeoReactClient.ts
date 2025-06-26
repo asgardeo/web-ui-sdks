@@ -210,11 +210,11 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     return this.asgardeo.signIn(arg1 as any) as unknown as Promise<User>;
   }
 
-  override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
+  override signOut(options?: SignOutOptions, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;
   override signOut(
     options?: SignOutOptions,
     sessionId?: string,
-    afterSignOut?: (redirectUrl: string) => void,
+    afterSignOut?: (afterSignOutUrl: string) => void,
   ): Promise<string>;
   override async signOut(...args: any[]): Promise<string> {
     if (args[1] && typeof args[1] !== 'function') {
