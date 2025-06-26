@@ -7,28 +7,10 @@ import {Users, MessageSquare, Calendar, FileText, TrendingUp, Clock, CheckCircle
 import {redirect} from 'next/navigation';
 import {useEffect} from 'react';
 import {Header} from '@/components/Header/Header';
+import {useAsgardeo, User} from '@asgardeo/nextjs';
 
 export default function DashboardPage() {
-  const {user, currentOrg, isAuthenticated, isLoading} = {
-    user: null, // Replace with actual user data fetching logic
-    currentOrg: null, // Replace with actual organization data fetching logic
-    isAuthenticated: false, // Replace with actual authentication check
-    isLoading: true, // Replace with actual loading state
-  };
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      redirect('/');
-    }
-  }, [isAuthenticated, isLoading]);
-
-  if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
+  const {organization, user} = useAsgardeo();
 
   const stats = [
     {
@@ -40,7 +22,7 @@ export default function DashboardPage() {
     },
     {
       name: 'Team Members',
-      value: currentOrg?.memberCount.toString() || '0',
+      value: '0',
       change: '+5.4%',
       changeType: 'positive' as const,
       icon: Users,
@@ -122,8 +104,19 @@ export default function DashboardPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome back {user?.name}!</h1>
-          <p className="text-gray-600 mt-2">Here's what's happening with {currentOrg?.name} today.</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Welcome back{' '}
+            <User>
+              {user => (
+                <span>
+                  {user?.givenName || user?.name?.givenName || user?.given_name}{' '}
+                  {user?.name?.familyName || user?.familyName || user?.family_name}
+                </span>
+              )}
+            </User>
+            !
+          </h1>
+          <p className="text-gray-600 mt-2">Here's what's happening with {organization?.orgHandle} today.</p>
         </div>
 
         {/* Stats Grid */}

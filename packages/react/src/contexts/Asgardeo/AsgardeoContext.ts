@@ -17,6 +17,7 @@
  */
 
 import {Context, createContext} from 'react';
+import {Organization} from '@asgardeo/browser';
 
 /**
  * Props interface of {@link AsgardeoContext}
@@ -53,6 +54,7 @@ export type AsgardeoContextProps = {
    */
   signUp: any;
   user: any;
+  organization: Organization;
 };
 
 /**
@@ -65,6 +67,7 @@ const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null
   isInitialized: false,
   isLoading: true,
   isSignedIn: false,
+  organization: null,
   signIn: null,
   signOut: null,
   signUp: null,

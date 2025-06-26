@@ -19,6 +19,9 @@
 export {default as AsgardeoProvider} from './server/AsgardeoProvider';
 export * from './server/AsgardeoProvider';
 
+export {default as useAsgardeo} from './client/contexts/Asgardeo/useAsgardeo';
+export * from './client/contexts/Asgardeo/useAsgardeo';
+
 export {default as isSignedIn} from './server/actions/isSignedIn';
 
 export {default as SignedIn} from './client/components/control/SignedIn/SignedIn';

@@ -237,6 +237,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         isInitialized: isInitializedSync,
         isLoading: asgardeo.isLoading(),
         isSignedIn: isSignedInSync,
+        organization: currentOrganization,
         signIn,
         signOut,
         signUp,
