@@ -79,10 +79,12 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
 
   return (
     <AsgardeoClientProvider
+      baseUrl={config.baseUrl}
       signIn={signInAction}
       signOut={signOutAction}
       signInUrl={configuration.signInUrl}
       preferences={config.preferences}
+      clientId={config.clientId}
     >
       {children}
     </AsgardeoClientProvider>

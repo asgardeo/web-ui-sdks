@@ -40,7 +40,6 @@ import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
 import getSessionId from './server/actions/getSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
-import authRouter from './server/actions/authRouter';
 
 const removeTrailingSlash = (path: string): string => (path.endsWith('/') ? path.slice(0, -1) : path);
 /**

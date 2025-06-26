@@ -22,13 +22,16 @@ import {EmbeddedFlowExecuteRequestConfig, EmbeddedSignInFlowHandleRequestPayload
 import {I18nProvider, FlowProvider, UserProvider, ThemeProvider, AsgardeoProviderProps} from '@asgardeo/react';
 import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import AsgardeoContext from './AsgardeoContext';
+import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
 import {getIsSignedInAction, getUserAction} from '../../../server/actions/authActions';
 
 /**
  * Props interface of {@link AsgardeoClientProvider}
  */
-export type AsgardeoClientProviderProps = AsgardeoProviderProps;
+export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'baseUrl' | 'clientId'>> & Pick<AsgardeoProviderProps, 'baseUrl' | 'clientId'> & {
+  signOut: AsgardeoContextProps['signOut'];
+  signIn: AsgardeoContextProps['signIn'];
+};
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
   children,

@@ -25,12 +25,23 @@ import {Context, createContext} from 'react';
 /**
  * Props interface of {@link AsgardeoContext}
  */
-export type AsgardeoContextProps = AsgardeoReactContextProps;
+export type AsgardeoContextProps = Partial<AsgardeoReactContextProps>;
 
 /**
  * Context object for managing the Authentication flow builder core context.
  */
-const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({});
+const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
+  signInUrl: undefined,
+  afterSignInUrl: undefined,
+  baseUrl: undefined,
+  isInitialized: false,
+  isLoading: true,
+  isSignedIn: false,
+  signIn: null,
+  signOut: null,
+  signUp: null,
+  user: null,
+});
 
 AsgardeoContext.displayName = 'AsgardeoContext';
 

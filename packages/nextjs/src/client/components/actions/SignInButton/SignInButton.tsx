@@ -18,7 +18,8 @@
 
 'use client';
 
-import {forwardRef, ForwardRefExoticComponent, ReactElement, Ref, RefAttributes} from 'react';
+import {forwardRef, ForwardRefExoticComponent, ReactElement, Ref, RefAttributes, useState, MouseEvent} from 'react';
+import {AsgardeoRuntimeError} from '@asgardeo/node';
 import {BaseSignInButton, BaseSignInButtonProps, useTranslation} from '@asgardeo/react';
 import useAsgardeo from '../../../../client/contexts/Asgardeo/useAsgardeo';
 import {useRouter} from 'next/navigation';
@@ -54,22 +55,39 @@ export type SignInButtonProps = BaseSignInButtonProps;
  */
 const SignInButton = forwardRef<HTMLButtonElement, SignInButtonProps>(
   (
-    {className, style, children, preferences, ...rest}: SignInButtonProps,
+    {className, style, children, preferences, onClick, ...rest}: SignInButtonProps,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => {
     const {signIn, signInUrl} = useAsgardeo();
     const router = useRouter();
     const {t} = useTranslation(preferences?.i18n);
 
-    const handleOnSubmit = (...args) => {
-      console.log('SignInButton: handleOnSubmit called with: ', signInUrl);
-      if (signInUrl) {
-        router.push(signInUrl);
+    const [isLoading, setIsLoading] = useState(false);
 
-        return;
+    const handleOnClick = async (e: MouseEvent<HTMLButtonElement>): Promise<void> => {
+      try {
+        setIsLoading(true);
+
+        // If a custom `signInUrl` is provided, use it for navigation.
+        if (signInUrl) {
+          router.push(signInUrl);
+        } else {
+          await signIn();
+        }
+
+        if (onClick) {
+          onClick(e);
+        }
+      } catch (error) {
+        throw new AsgardeoRuntimeError(
+          `Sign in failed: ${error instanceof Error ? error.message : String(error)}`,
+          'SignInButton-handleSignIn-RuntimeError-001',
+          'next',
+          'Something went wrong while trying to sign in. Please try again later.',
+        );
+      } finally {
+        setIsLoading(false);
       }
-
-      signIn();
     };
 
     return (
@@ -78,8 +96,7 @@ const SignInButton = forwardRef<HTMLButtonElement, SignInButtonProps>(
         style={style}
         ref={ref}
         preferences={preferences}
-        type="submit"
-        onClick={handleOnSubmit}
+        onClick={handleOnClick}
         {...rest}
       >
         {children ?? t('elements.buttons.signIn')}

@@ -22,9 +22,9 @@ import {Context, createContext} from 'react';
  * Props interface of {@link AsgardeoContext}
  */
 export type AsgardeoContextProps = {
-  signInUrl: string;
-  afterSignInUrl: string;
-  baseUrl: string;
+  signInUrl: string | undefined;
+  afterSignInUrl: string | undefined;
+  baseUrl: string | undefined;
   isInitialized: boolean;
   /**
    * Flag indicating whether the SDK is working in the background.

@@ -87,9 +87,7 @@ export async function handlePostSignIn(req: NextRequest): Promise<NextResponse> 
         (afterSignInUrl: string) => null,
       );
 
-      const afterSignInUrl = await (await client.getStorageManager()).getConfigDataParameter('afterSignInUrl');
-      const afterSignInUrl = String(afterSignInUrl);
-      console.log('[AsgardeoNextClient] Sign-in successful, redirecting to:', afterSignInUrl);
+      const afterSignInUrl: string = await (await client.getStorageManager()).getConfigDataParameter('afterSignInUrl');
 
       return NextResponse.redirect(afterSignInUrl, 303);
     }

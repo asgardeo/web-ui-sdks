@@ -1,4 +1,3 @@
-import {asgardeoMiddleware} from '@asgardeo/nextjs/middleware';
 /**
  * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
@@ -77,73 +76,75 @@ const asgardeoMiddleware = (
 
     const asgardeoClient = AsgardeoNextClient.getInstance();
 
-    // Initialize client if not already done
-    if (!asgardeoClient.isInitialized && resolvedOptions) {
-      asgardeoClient.initialize(resolvedOptions);
-    }
+    // // Initialize client if not already done
+    // if (!asgardeoClient.isInitialized && resolvedOptions) {
+    //   asgardeoClient.initialize(resolvedOptions);
+    // }
 
-    // Debug logging
-    if (resolvedOptions.debug) {
-      console.log(`[Asgardeo Middleware] Processing request: ${request.nextUrl.pathname}`);
-    }
+    // // Debug logging
+    // if (resolvedOptions.debug) {
+    //   console.log(`[Asgardeo Middleware] Processing request: ${request.nextUrl.pathname}`);
+    // }
 
-    // Handle auth API routes automatically
-    if (request.nextUrl.pathname.startsWith('/api/auth/asgardeo')) {
-      if (resolvedOptions.debug) {
-        console.log(`[Asgardeo Middleware] Handling auth route: ${request.nextUrl.pathname}`);
-      }
-      return await asgardeoClient.handleAuthRequest(request);
-    }
+    // // Handle auth API routes automatically
+    // if (request.nextUrl.pathname.startsWith('/api/auth/asgardeo')) {
+    //   if (resolvedOptions.debug) {
+    //     console.log(`[Asgardeo Middleware] Handling auth route: ${request.nextUrl.pathname}`);
+    //   }
+    //   return await asgardeoClient.handleAuthRequest(request);
+    // }
 
-    // Create auth object for the handler
-    const auth: AsgardeoAuth = {
-      protect: async (options?: {redirect?: string}) => {
-        const isSignedIn = await asgardeoClient.isSignedIn(request);
-        if (!isSignedIn) {
-          const afterSignInUrl = options?.redirect || '/api/auth/asgardeo/signin';
-          return NextResponse.redirect(new URL(afterSignInUrl, request.url));
-        }
-      },
+    // // Create auth object for the handler
+    // const auth: AsgardeoAuth = {
+    //   protect: async (options?: {redirect?: string}) => {
+    //     const isSignedIn = await asgardeoClient.isSignedIn(request);
+    //     if (!isSignedIn) {
+    //       const afterSignInUrl = options?.redirect || '/api/auth/asgardeo/signin';
+    //       return NextResponse.redirect(new URL(afterSignInUrl, request.url));
+    //     }
+    //   },
 
-      isSignedIn: async () => {
-        return await asgardeoClient.isSignedIn(request);
-      },
+    //   isSignedIn: async () => {
+    //     return await asgardeoClient.isSignedIn(request);
+    //   },
 
-      getUser: async () => {
-        return await asgardeoClient.getUser(request);
-      },
+    //   getUser: async () => {
+    //     return await asgardeoClient.getUser(request);
+    //   },
 
-      redirectToSignIn: (afterSignInUrl?: string) => {
-        const signInUrl = afterSignInUrl || '/api/auth/asgardeo/signin';
-        return NextResponse.redirect(new URL(signInUrl, request.url));
-      },
-    };
+    //   redirectToSignIn: (afterSignInUrl?: string) => {
+    //     const signInUrl = afterSignInUrl || '/api/auth/asgardeo/signin';
+    //     return NextResponse.redirect(new URL(signInUrl, request.url));
+    //   },
+    // };
 
-    // Execute user-provided handler if present
-    let handlerResponse: NextResponse | void;
-    if (handler) {
-      handlerResponse = await handler(auth, request);
-    }
+    // // Execute user-provided handler if present
+    // let handlerResponse: NextResponse | void;
+    // if (handler) {
+    //   handlerResponse = await handler(auth, request);
+    // }
 
-    // If handler returned a response, use it
-    if (handlerResponse) {
-      return handlerResponse;
-    }
+    // // If handler returned a response, use it
+    // if (handlerResponse) {
+    //   return handlerResponse;
+    // }
 
-    // Otherwise, continue with default behavior
-    const response = NextResponse.next();
+    // // Otherwise, continue with default behavior
+    // const response = NextResponse.next();
 
-    // Add authentication context to response headers
-    const isSignedIn = await asgardeoClient.isSignedIn(request);
-    if (isSignedIn) {
-      response.headers.set('x-asgardeo-authenticated', 'true');
-      const user = await asgardeoClient.getUser(request);
-      if (user?.sub) {
-        response.headers.set('x-asgardeo-user-id', user.sub);
-      }
-    }
+    // // Add authentication context to response headers
+    // const isSignedIn = await asgardeoClient.isSignedIn(request);
+    // if (isSignedIn) {
+    //   response.headers.set('x-asgardeo-authenticated', 'true');
+    //   const user = await asgardeoClient.getUser(request);
+    //   if (user?.sub) {
+    //     response.headers.set('x-asgardeo-user-id', user.sub);
+    //   }
+    // }
 
-    return response;
+    // return response;
+
+    return NextResponse.next();
   };
 };
 

@@ -18,8 +18,9 @@
 
 'use client';
 
-import {FC, forwardRef, PropsWithChildren, ReactElement, Ref} from 'react';
-import {BaseSignOutButton, BaseSignOutButtonProps} from '@asgardeo/react';
+import {FC, forwardRef, PropsWithChildren, ReactElement, Ref, useState, MouseEvent} from 'react';
+import {BaseSignOutButton, BaseSignOutButtonProps, useTranslation} from '@asgardeo/react';
+import {AsgardeoRuntimeError} from '@asgardeo/node';
 import useAsgardeo from '../../../../client/contexts/Asgardeo/useAsgardeo';
 
 /**
@@ -45,21 +46,42 @@ export type SignOutButtonProps = BaseSignOutButtonProps;
  * ```
  */
 const SignOutButton = forwardRef<HTMLButtonElement, SignOutButtonProps>(
-  ({className, style, ...rest}: SignOutButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+  ({className, style, preferences, onClick, children, ...rest}: SignOutButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
     const {signOut} = useAsgardeo();
+    const {t} = useTranslation(preferences?.i18n);
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleOnClick = async (e: MouseEvent<HTMLButtonElement>): Promise<void> => {
+      try {
+        setIsLoading(true);
+        await signOut();
+
+        if (onClick) {
+          onClick(e);
+        }
+      } catch (error) {
+        throw new AsgardeoRuntimeError(
+          `Sign out failed: ${error instanceof Error ? error.message : String(error)}`,
+          'SignOutButton-handleOnClick-RuntimeError-001',
+          'next',
+          'Something went wrong while trying to sign out. Please try again later.',
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
     return (
       <BaseSignOutButton
-        className={className}
-        style={style}
         ref={ref}
-        type="submit"
-        onClick={() => {
-          console.log('[SignOutButton] signOut called');
-          signOut();
-        }}
+        onClick={handleOnClick}
+        isLoading={isLoading}
+        preferences={preferences}
         {...rest}
-      />
+      >
+        {children ?? t('elements.buttons.signOut')}
+      </BaseSignOutButton>
     );
   },
 );
