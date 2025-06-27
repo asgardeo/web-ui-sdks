@@ -18,9 +18,11 @@
 
 'use client';
 
-import {forwardRef, ForwardRefExoticComponent, ReactElement, Ref, RefAttributes} from 'react';
-import InternalAuthAPIRoutesConfig from '../../../../configs/InternalAuthAPIRoutesConfig';
-import {BaseSignInButton, BaseSignInButtonProps} from '@asgardeo/react';
+import {forwardRef, ForwardRefExoticComponent, ReactElement, Ref, RefAttributes, useState, MouseEvent} from 'react';
+import {AsgardeoRuntimeError} from '@asgardeo/node';
+import {BaseSignInButton, BaseSignInButtonProps, useTranslation} from '@asgardeo/react';
+import useAsgardeo from '../../../../client/contexts/Asgardeo/useAsgardeo';
+import {useRouter} from 'next/navigation';
 
 /**
  * Props interface of {@link SignInButton}
@@ -28,7 +30,7 @@ import {BaseSignInButton, BaseSignInButtonProps} from '@asgardeo/react';
 export type SignInButtonProps = BaseSignInButtonProps;
 
 /**
- * SignInButton component that supports both render props and traditional props patterns for Next.js.
+ * SignInButton component that uses server actions for authentication in Next.js.
  *
  * @example Using render props
  * ```tsx
@@ -47,16 +49,58 @@ export type SignInButtonProps = BaseSignInButtonProps;
  * ```
  *
  * @remarks
- * In Next.js with server actions, the sign-in is handled via form submission.
+ * In Next.js with server actions, the sign-in is handled via the server action.
  * When using render props, the custom button should use `type="submit"` instead of `onClick={signIn}`.
  * The `signIn` function in render props is provided for API consistency but should not be used directly.
  */
 const SignInButton = forwardRef<HTMLButtonElement, SignInButtonProps>(
-  ({className, style, ...rest}: SignInButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+  (
+    {className, style, children, preferences, onClick, ...rest}: SignInButtonProps,
+    ref: Ref<HTMLButtonElement>,
+  ): ReactElement => {
+    const {signIn, signInUrl} = useAsgardeo();
+    const router = useRouter();
+    const {t} = useTranslation(preferences?.i18n);
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleOnClick = async (e: MouseEvent<HTMLButtonElement>): Promise<void> => {
+      try {
+        setIsLoading(true);
+
+        // If a custom `signInUrl` is provided, use it for navigation.
+        if (signInUrl) {
+          router.push(signInUrl);
+        } else {
+          await signIn();
+        }
+
+        if (onClick) {
+          onClick(e);
+        }
+      } catch (error) {
+        throw new AsgardeoRuntimeError(
+          `Sign in failed: ${error instanceof Error ? error.message : String(error)}`,
+          'SignInButton-handleSignIn-RuntimeError-001',
+          'next',
+          'Something went wrong while trying to sign in. Please try again later.',
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     return (
-      <form action={InternalAuthAPIRoutesConfig.signIn}>
-        <BaseSignInButton className={className} style={style} ref={ref} type="submit" {...rest} />
-      </form>
+      <BaseSignInButton
+        className={className}
+        style={style}
+        ref={ref}
+        preferences={preferences}
+        onClick={handleOnClick}
+        {...rest}
+      >
+        {children ?? t('elements.buttons.signIn')}
+      </BaseSignInButton>
     );
   },
 );

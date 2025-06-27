@@ -72,13 +72,14 @@ export interface SignInProps {
  * ```
  */
 const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'outlined'}: SignInProps) => {
-  const {signIn, afterSignInUrl} = useAsgardeo();
+  const {signIn, afterSignInUrl, isInitialized, isLoading} = useAsgardeo();
 
   /**
    * Initialize the authentication flow.
    */
-  const handleInitialize = async (): Promise<EmbeddedSignInFlowInitiateResponse> =>
-    await signIn({response_mode: 'direct'});
+  const handleInitialize = async (): Promise<EmbeddedSignInFlowInitiateResponse> => {
+    return await signIn({response_mode: 'direct'});
+  };
 
   /**
    * Handle authentication steps.
@@ -86,7 +87,9 @@ const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'outline
   const handleOnSubmit = async (
     payload: EmbeddedSignInFlowHandleRequestPayload,
     request: Request,
-  ): Promise<EmbeddedSignInFlowHandleResponse> => await signIn(payload, request);
+  ): Promise<EmbeddedSignInFlowHandleResponse> => {
+    return await signIn(payload, request);
+  };
 
   /**
    * Handle successful authentication and redirect with query params.
@@ -107,6 +110,7 @@ const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'outline
 
   return (
     <BaseSignIn
+      isLoading={isLoading || !isInitialized}
       afterSignInUrl={afterSignInUrl}
       onInitialize={handleInitialize}
       onSubmit={handleOnSubmit}

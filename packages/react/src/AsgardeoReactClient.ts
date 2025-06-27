@@ -38,7 +38,7 @@ import {
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/scim2/getMeOrganizations';
-import getMeProfile from './api/scim2/getMeProfile';
+import getScim2Me from './api/getScim2Me';
 import getSchemas from './api/scim2/getSchemas';
 import {AsgardeoReactConfig} from './models/config';
 
@@ -67,7 +67,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       const configData = await this.asgardeo.getConfigData();
       const baseUrl = configData?.baseUrl;
 
-      const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
+      const profile = await getScim2Me({baseUrl});
       const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
 
       return generateUserProfile(profile, flattenUserSchema(schemas));
@@ -81,7 +81,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       const configData = await this.asgardeo.getConfigData();
       const baseUrl = configData?.baseUrl;
 
-      const profile = await getMeProfile({url: `${baseUrl}/scim2/Me`});
+      const profile = await getScim2Me({baseUrl});
       const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
 
       const processedSchemas = flattenUserSchema(schemas);
@@ -185,6 +185,10 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     return this.asgardeo.isSignedIn();
   }
 
+  override getConfiguration(): T {
+    return this.asgardeo.getConfigData() as unknown as T;
+  }
+
   override signIn(
     options?: SignInOptions,
     sessionId?: string,
@@ -210,11 +214,11 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     return this.asgardeo.signIn(arg1 as any) as unknown as Promise<User>;
   }
 
-  override signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
+  override signOut(options?: SignOutOptions, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;
   override signOut(
     options?: SignOutOptions,
     sessionId?: string,
-    afterSignOut?: (redirectUrl: string) => void,
+    afterSignOut?: (afterSignOutUrl: string) => void,
   ): Promise<string>;
   override async signOut(...args: any[]): Promise<string> {
     if (args[1] && typeof args[1] !== 'function') {

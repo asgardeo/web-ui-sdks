@@ -16,16 +16,23 @@
  * under the License.
  */
 
-import {AsgardeoJavaScriptClient} from '@asgardeo/javascript';
-import {AsgardeoNodeConfig} from './models/config';
-import {SignOutOptions} from '@asgardeo/javascript/dist/models/client';
+import {NextRequest, NextResponse} from 'next/server';
+import getIsSignedIn from './isSignedIn';
 
 /**
- * Base class for implementing Asgardeo in Node.js based applications.
- * This class provides the core functionality for managing user authentication and sessions.
- *getConfigData
- * @typeParam T - Configuration type that extends AsgardeoNodeConfig.
+ * Handles session status requests.
+ *
+ * @param req - The Next.js request object
+ * @returns NextResponse with session status
  */
-abstract class AsgardeoNodeClient<T = AsgardeoNodeConfig> extends AsgardeoJavaScriptClient<T> {}
+export async function handleSessionRequest(req: NextRequest): Promise<NextResponse> {
+  try {
+    const isSignedIn: boolean = await getIsSignedIn();
 
-export default AsgardeoNodeClient;
+    return NextResponse.json({isSignedIn});
+  } catch (error) {
+    return NextResponse.json({error: 'Failed to check session'}, {status: 500});
+  }
+}
+
+export default handleSessionRequest;

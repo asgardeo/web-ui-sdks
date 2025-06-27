@@ -46,6 +46,8 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
 
   abstract isSignedIn(): Promise<boolean>;
 
+  abstract getConfiguration(): T;
+
   abstract signIn(
     options?: SignInOptions,
     sessionId?: string,
@@ -58,11 +60,11 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
     onSignInSuccess?: (afterSignInUrl: string) => void,
   ): Promise<User>;
 
-  abstract signOut(options?: SignOutOptions, afterSignOut?: (redirectUrl: string) => void): Promise<string>;
+  abstract signOut(options?: SignOutOptions, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;
   abstract signOut(
     options?: SignOutOptions,
     sessionId?: string,
-    afterSignOut?: (redirectUrl: string) => void,
+    afterSignOut?: (afterSignOutUrl: string) => void,
   ): Promise<string>;
 
   abstract signUp(options?: SignUpOptions): Promise<void>;

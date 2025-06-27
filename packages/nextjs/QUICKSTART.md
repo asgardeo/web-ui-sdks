@@ -212,6 +212,51 @@ pnpm dev
 yarn dev
 ```
 
+## Step 10: Embedded Login Page (Optional)
+
+If you want to use an embedded login page instead of redirecting to Asgardeo, you can use the `SignIn` component:
+
+Configure the path of the sign-in page in the `middleware.ts` file:
+
+```diff
+import { AsgardeoNext } from '@asgardeo/nextjs';
+import { NextRequest } from 'next/server';
+
+const asgardeo = new AsgardeoNext();
+
+asgardeo.initialize({
+  baseUrl: process.env.NEXT_PUBLIC_ASGARDEO_BASE_URL,
+  clientId: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_ID,
+  clientSecret: process.env.ASGARDEO_CLIENT_SECRET,
++  signInUrl: '/signin',
+});
+
+export async function middleware(request: NextRequest) {
+  return await asgardeo.middleware(request);
+}
+
+export const config = {
+  matcher: [
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
+  ],
+};
+```
+
+Then, create a new page for the sign-in component in `app/signin/page.tsx`:
+
+```tsx
+'use client';
+
+import {SignIn} from '@asgardeo/nextjs';
+
+export default function SignInPage() {
+  return <SignIn />;
+}
+```
+
+Once you have set this up, clicking on the "Sign In" button will render the embedded login page instead of redirecting to Asgardeo.
+
 ## Next Steps
 
 🎉 **Congratulations!** You've successfully integrated Asgardeo authentication into your Next.js app.

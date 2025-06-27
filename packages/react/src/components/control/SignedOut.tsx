@@ -32,6 +32,8 @@ export interface SignedOutProps {
 /**
  * A component that only renders its children when the user is signed out.
  *
+ * @remarks This component is only supported in browser based React applications (CSR).
+ *
  * @example
  * ```tsx
  * import { SignedOut } from '@asgardeo/auth-react';

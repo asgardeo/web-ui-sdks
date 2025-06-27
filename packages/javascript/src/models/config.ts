@@ -76,6 +76,21 @@ export interface BaseConfig<T = unknown> extends WithPreferences {
    * scopes: ["openid", "profile", "email"]
    */
   scopes?: string | string[] | undefined;
+
+  /**
+   * Optional URL to redirect the user to sign-in.
+   * By default, this will be the sign-in page of Asgardeo.
+   * If you want to use a custom sign-in page, you can provide the URL here and use the `SignIn` component to render it.
+   */
+  signInUrl?: string | undefined;
+
+  /**
+   * Optional URL to redirect the user to sign-up.
+   * By default, this will be the sign-up page of Asgardeo.
+   * If you want to use a custom sign-up page, you can provide the URL here
+   * and use the `SignUp` component to render it.
+   */
+  signUpUrl?: string | undefined;
 }
 
 export interface WithPreferences {

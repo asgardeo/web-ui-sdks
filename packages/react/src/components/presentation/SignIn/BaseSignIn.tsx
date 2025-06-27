@@ -253,6 +253,11 @@ export interface BaseSignInProps {
   onFlowChange?: (response: EmbeddedSignInFlowInitiateResponse | EmbeddedSignInFlowHandleResponse) => void;
 
   /**
+   * Flag to determine the component is ready to be rendered.
+   */
+  isLoading?: boolean;
+
+  /**
    * Function to initialize authentication flow.
    * @returns Promise resolving to the initial authentication response.
    */
@@ -328,6 +333,7 @@ const BaseSignIn: FC<BaseSignInProps> = props => (
 const BaseSignInContent: FC<BaseSignInProps> = ({
   afterSignInUrl,
   onInitialize,
+  isLoading: externalIsLoading,
   onSubmit,
   onSuccess,
   onError,
@@ -343,15 +349,16 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   const {t} = useTranslation();
   const {subtitle: flowSubtitle, title: flowTitle, messages: flowMessages} = useFlow();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSignInInitializationRequestLoading, setIsSignInInitializationRequestLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentFlow, setCurrentFlow] = useState<EmbeddedSignInFlowInitiateResponse | null>(null);
   const [currentAuthenticator, setCurrentAuthenticator] = useState<EmbeddedSignInFlowAuthenticator | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Array<{message: string; type: string}>>([]);
 
-  // Ref to track if initialization has been attempted to prevent multiple calls
-  const initializationAttemptedRef = useRef(false);
+  const isLoading = externalIsLoading || isSignInInitializationRequestLoading;
+
+  const reRenderCheckRef = useRef(false);
 
   const formFields: FormField[] =
     currentAuthenticator?.metadata?.params?.map(param => ({
@@ -598,7 +605,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
       return;
     }
 
-    setIsLoading(true);
+    setIsSignInInitializationRequestLoading(true);
     setError(null);
     setMessages([]);
 
@@ -666,7 +673,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
       setError(errorMessage);
       onError?.(err as Error);
     } finally {
-      setIsLoading(false);
+      setIsSignInInitializationRequestLoading(false);
     }
   };
 
@@ -686,7 +693,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
       touchAllFields();
     }
 
-    setIsLoading(true);
+    setIsSignInInitializationRequestLoading(true);
     setError(null);
     setMessages([]);
 
@@ -955,7 +962,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
       setError(errorMessage);
       onError?.(err as Error);
     } finally {
-      setIsLoading(false);
+      setIsSignInInitializationRequestLoading(false);
     }
   };
 
@@ -1020,69 +1027,71 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
   const errorClasses = clsx([withVendorCSSClassPrefix('signin__error')], errorClassName);
 
-  const messageClasses = clsx([withVendorCSSClassPrefix('signin__messages')], messageClassName);
+  const messageClasses = clsx([withVendorCSSClassPrefix('signin__messages')], messageClassName); // Initialize the flow on component mount
 
-  // Initialize the flow on component mount
   useEffect(() => {
-    if (!isInitialized && !initializationAttemptedRef.current) {
-      initializationAttemptedRef.current = true;
-
-      // Inline initialization to avoid dependency issues
-      const performInitialization = async () => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-          const response = await onInitialize();
-
-          setCurrentFlow(response);
-          setIsInitialized(true);
-          onFlowChange?.(response);
-
-          if (response?.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
-            onSuccess?.((response as any).authData || {});
-            return;
-          }
-
-          if (response?.nextStep?.authenticators?.length > 0) {
-            if (
-              response.nextStep.stepType === EmbeddedSignInFlowStepType.MultiOptionsPrompt &&
-              response.nextStep.authenticators.length > 1
-            ) {
-              setCurrentAuthenticator(null);
-            } else {
-              const authenticator = response.nextStep.authenticators[0];
-              setCurrentAuthenticator(authenticator);
-              setupFormFields(authenticator);
-            }
-          }
-
-          if (response && 'nextStep' in response && response.nextStep && 'messages' in response.nextStep) {
-            const stepMessages = (response.nextStep as any).messages || [];
-            setMessages(
-              stepMessages.map((msg: any) => ({
-                type: msg.type || 'INFO',
-                message: msg.message || '',
-              })),
-            );
-          }
-        } catch (err) {
-          const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.sign.in.initialization');
-          setError(errorMessage);
-          onError?.(err as Error);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      performInitialization();
+    if (isLoading) {
+      return;
     }
 
-    // Cleanup function to reset initialization state on unmount
-    return () => {
-      initializationAttemptedRef.current = false;
-    };
-  }, [isInitialized]);
+    // React 18.x Strict.Mode has a new check for `Ensuring reusable state` to facilitate an upcoming react feature.
+    // https://reactjs.org/docs/strict-mode.html#ensuring-reusable-state
+    // This will remount all the useEffects to ensure that there are no unexpected side effects.
+    // When react remounts the SignIn, it will send two authorize requests.
+    // https://github.com/reactwg/react-18/discussions/18#discussioncomment-795623
+    if (reRenderCheckRef.current) {
+      return;
+    }
+
+    reRenderCheckRef.current = true;
+
+    (async () => {
+      setIsSignInInitializationRequestLoading(true);
+      setError(null);
+
+      try {
+        const response = await onInitialize();
+
+        setCurrentFlow(response);
+        setIsInitialized(true);
+        onFlowChange?.(response);
+
+        if (response?.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
+          onSuccess?.((response as any).authData || {});
+          return;
+        }
+
+        if (response?.nextStep?.authenticators?.length > 0) {
+          if (
+            response.nextStep.stepType === EmbeddedSignInFlowStepType.MultiOptionsPrompt &&
+            response.nextStep.authenticators.length > 1
+          ) {
+            setCurrentAuthenticator(null);
+          } else {
+            const authenticator = response.nextStep.authenticators[0];
+            setCurrentAuthenticator(authenticator);
+            setupFormFields(authenticator);
+          }
+        }
+
+        if (response && 'nextStep' in response && response.nextStep && 'messages' in response.nextStep) {
+          const stepMessages = (response.nextStep as any).messages || [];
+          setMessages(
+            stepMessages.map((msg: any) => ({
+              type: msg.type || 'INFO',
+              message: msg.message || '',
+            })),
+          );
+        }
+      } catch (err) {
+        const errorMessage = err instanceof AsgardeoAPIError ? err.message : t('errors.sign.in.initialization');
+        setError(errorMessage);
+        onError?.(err as Error);
+      } finally {
+        setIsSignInInitializationRequestLoading(false);
+      }
+    })();
+  }, [isLoading]);
 
   if (!isInitialized && isLoading) {
     return (

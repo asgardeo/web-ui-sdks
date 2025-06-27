@@ -16,16 +16,23 @@
  * under the License.
  */
 
-import {AsgardeoJavaScriptClient} from '@asgardeo/javascript';
-import {AsgardeoNodeConfig} from './models/config';
-import {SignOutOptions} from '@asgardeo/javascript/dist/models/client';
+'use server';
 
-/**
- * Base class for implementing Asgardeo in Node.js based applications.
- * This class provides the core functionality for managing user authentication and sessions.
- *getConfigData
- * @typeParam T - Configuration type that extends AsgardeoNodeConfig.
- */
-abstract class AsgardeoNodeClient<T = AsgardeoNodeConfig> extends AsgardeoJavaScriptClient<T> {}
+import {NextRequest, NextResponse} from 'next/server';
+import AsgardeoNextClient from '../../AsgardeoNextClient';
+import deleteSessionId from './deleteSessionId';
 
-export default AsgardeoNodeClient;
+const signOutAction = async (): Promise<{success: boolean; afterSignOutUrl?: string; error?: unknown}> => {
+  try {
+    const client = AsgardeoNextClient.getInstance();
+    const afterSignOutUrl: string = await client.signOut();
+
+    await deleteSessionId();
+
+    return {success: true, afterSignOutUrl};
+  } catch (error) {
+    return {success: false, error};
+  }
+};
+
+export default signOutAction;

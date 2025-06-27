@@ -18,9 +18,10 @@
 
 'use client';
 
-import {FC, forwardRef, PropsWithChildren, ReactElement, Ref} from 'react';
-import InternalAuthAPIRoutesConfig from '../../../../configs/InternalAuthAPIRoutesConfig';
-import {BaseSignOutButton, BaseSignOutButtonProps} from '@asgardeo/react';
+import {FC, forwardRef, PropsWithChildren, ReactElement, Ref, useState, MouseEvent} from 'react';
+import {BaseSignOutButton, BaseSignOutButtonProps, useTranslation} from '@asgardeo/react';
+import {AsgardeoRuntimeError} from '@asgardeo/node';
+import useAsgardeo from '../../../../client/contexts/Asgardeo/useAsgardeo';
 
 /**
  * Interface for SignInButton component props.
@@ -44,15 +45,45 @@ export type SignOutButtonProps = BaseSignOutButtonProps;
  * }
  * ```
  */
-const SignOutButton: FC<PropsWithChildren<SignOutButtonProps>> = forwardRef<
-  HTMLButtonElement,
-  PropsWithChildren<SignOutButtonProps>
->(
-  ({className, style, ...rest}: PropsWithChildren<SignOutButtonProps>, ref: Ref<HTMLButtonElement>): ReactElement => (
-    <form action={InternalAuthAPIRoutesConfig.signOut}>
-      <BaseSignOutButton className={className} style={style} ref={ref} type="submit" {...rest} />
-    </form>
-  ),
+const SignOutButton = forwardRef<HTMLButtonElement, SignOutButtonProps>(
+  ({className, style, preferences, onClick, children, ...rest}: SignOutButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+    const {signOut} = useAsgardeo();
+    const {t} = useTranslation(preferences?.i18n);
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleOnClick = async (e: MouseEvent<HTMLButtonElement>): Promise<void> => {
+      try {
+        setIsLoading(true);
+        await signOut();
+
+        if (onClick) {
+          onClick(e);
+        }
+      } catch (error) {
+        throw new AsgardeoRuntimeError(
+          `Sign out failed: ${error instanceof Error ? error.message : String(error)}`,
+          'SignOutButton-handleOnClick-RuntimeError-001',
+          'next',
+          'Something went wrong while trying to sign out. Please try again later.',
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    return (
+      <BaseSignOutButton
+        ref={ref}
+        onClick={handleOnClick}
+        isLoading={isLoading}
+        preferences={preferences}
+        {...rest}
+      >
+        {children ?? t('elements.buttons.signOut')}
+      </BaseSignOutButton>
+    );
+  },
 );
 
 export default SignOutButton;

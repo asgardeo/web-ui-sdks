@@ -1,9 +1,8 @@
-import {User} from '@asgardeo/react';
-import {useApp} from '../App';
+import {User, useAsgardeo} from '@asgardeo/react';
 import {Users, MessageSquare, Calendar, FileText, TrendingUp, Clock, CheckCircle2, AlertCircle} from 'lucide-react';
 
 export default function Dashboard() {
-  const {currentOrg} = useApp();
+  const {organization} = useAsgardeo();
 
   const stats = [
     {
@@ -15,7 +14,7 @@ export default function Dashboard() {
     },
     {
       name: 'Team Members',
-      value: currentOrg?.memberCount.toString() || '0',
+      value: '0',
       change: '+5.4%',
       changeType: 'positive',
       icon: Users,
@@ -108,7 +107,7 @@ export default function Dashboard() {
           !
         </h1>
 
-        <p className="text-gray-600 mt-2">Here's what's happening with {currentOrg?.name} today.</p>
+        <p className="text-gray-600 mt-2">Here's what's happening with @{organization?.orgHandle} today.</p>
       </div>
 
       {/* Stats Grid */}

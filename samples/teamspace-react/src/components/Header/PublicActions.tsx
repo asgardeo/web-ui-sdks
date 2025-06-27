@@ -16,21 +16,7 @@ export default function PublicActions({className = '', showMobileActions = false
     // Mobile menu actions
     return (
       <div className="pt-4 border-t border-gray-200 space-y-2">
-        <SignInButton>
-          {({isLoading}) => (
-            <Button
-              onClick={() => {
-                navigate('/signin');
-              }}
-              disabled={isLoading}
-              size="lg"
-              color="primary"
-              variant="secondary"
-            >
-              {isLoading ? 'Signing in...' : 'Sign In'}
-            </Button>
-          )}
-        </SignInButton>
+        <SignInButton />
       </div>
     );
   }
@@ -39,22 +25,7 @@ export default function PublicActions({className = '', showMobileActions = false
     <div className={`flex items-center space-x-4 ${className}`}>
       {/* Desktop CTA */}
       <div className="hidden md:flex items-center space-x-4">
-        <SignInButton>Sign In with Redirect</SignInButton>
-        <SignInButton>
-          {({isLoading}) => (
-            <Button
-              onClick={() => {
-                navigate('/signin');
-              }}
-              disabled={isLoading}
-              size="lg"
-              color="primary"
-              variant="secondary"
-            >
-              {isLoading ? 'Signing in...' : 'Sign In'}
-            </Button>
-          )}
-        </SignInButton>
+        <SignInButton />
         <SignUpButton>
           {({isLoading}) => (
             <Button

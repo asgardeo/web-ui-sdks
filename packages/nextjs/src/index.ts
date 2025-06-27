@@ -19,6 +19,9 @@
 export {default as AsgardeoProvider} from './server/AsgardeoProvider';
 export * from './server/AsgardeoProvider';
 
+export {default as useAsgardeo} from './client/contexts/Asgardeo/useAsgardeo';
+export * from './client/contexts/Asgardeo/useAsgardeo';
+
 export {default as isSignedIn} from './server/actions/isSignedIn';
 
 export {default as SignedIn} from './client/components/control/SignedIn/SignedIn';
@@ -40,3 +43,5 @@ export {default as User} from './client/components/presentation/User/User';
 export type {UserProps} from './client/components/presentation/User/User';
 
 export {default as AsgardeoNext} from './AsgardeoNextClient';
+
+export {default as asgardeoMiddleware} from './middleware/asgardeoMiddleware';

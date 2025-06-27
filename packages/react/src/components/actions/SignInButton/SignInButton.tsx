@@ -71,7 +71,7 @@ const SignInButton: ForwardRefExoticComponent<SignInButtonProps & RefAttributes<
   HTMLButtonElement,
   SignInButtonProps
 >(({children, onClick, preferences, ...rest}: SignInButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
-  const {signIn} = useAsgardeo();
+  const {signIn, signInUrl} = useAsgardeo();
   const {t} = useTranslation(preferences?.i18n);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -80,7 +80,14 @@ const SignInButton: ForwardRefExoticComponent<SignInButtonProps & RefAttributes<
     try {
       setIsLoading(true);
 
-      await signIn();
+      // If a custom `signInUrl` is provided, use it for navigation.
+      if (signInUrl) {
+        window.history.pushState(null, '', signInUrl);
+
+        window.dispatchEvent(new PopStateEvent('popstate', {state: null}));
+      } else {
+        await signIn();
+      }
 
       if (onClick) {
         onClick(e);
@@ -88,7 +95,7 @@ const SignInButton: ForwardRefExoticComponent<SignInButtonProps & RefAttributes<
     } catch (error) {
       throw new AsgardeoRuntimeError(
         `Sign in failed: ${error instanceof Error ? error.message : String(error)}`,
-        'handleSignIn-RuntimeError-001',
+        'SignInButton-handleSignIn-RuntimeError-001',
         'react',
         'Something went wrong while trying to sign in. Please try again later.',
       );

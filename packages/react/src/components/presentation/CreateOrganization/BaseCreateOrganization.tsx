@@ -19,11 +19,9 @@
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import {ChangeEvent, CSSProperties, FC, ReactElement, ReactNode, useMemo, useState} from 'react';
-
 import {CreateOrganizationPayload} from '../../../api/scim2/createOrganization';
 import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
-import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 import FormControl from '../../primitives/FormControl/FormControl';
@@ -181,8 +179,6 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
   const styles = useStyles();
   const {theme} = useTheme();
   const {t} = useTranslation();
-  const [avatarUrl, setAvatarUrl] = useState<string>('');
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<OrganizationFormData>({
     description: '',
     handle: '',
@@ -223,44 +219,6 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
       setFormErrors(prev => ({
         ...prev,
         [field]: undefined,
-      }));
-    }
-  };
-
-  const handleAvatarUpload = (event: ChangeEvent<HTMLInputElement>): void => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setFormErrors(prev => ({
-          ...prev,
-          avatar: 'Please select a valid image file',
-        }));
-        return;
-      }
-
-      // Validate file size (max 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        setFormErrors(prev => ({
-          ...prev,
-          avatar: 'Image size must be less than 2MB',
-        }));
-        return;
-      }
-
-      setAvatarFile(file);
-
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = e => {
-        setAvatarUrl(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      // Clear any previous avatar errors
-      setFormErrors(prev => ({
-        ...prev,
-        avatar: undefined,
       }));
     }
   };
@@ -309,14 +267,6 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
       console.error('Form submission error:', submitError);
     }
   };
-
-  const defaultRenderHeader = (): ReactElement => (
-    <div className={withVendorCSSClassPrefix('create-organization__header')} style={styles.header}>
-      <Typography variant="h6" component="h2">
-        {t('organization.create.title')}
-      </Typography>
-    </div>
-  );
 
   const containerStyle = {
     ...styles.root,
