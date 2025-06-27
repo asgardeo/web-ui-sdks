@@ -32,6 +32,8 @@ export interface AsgardeoLoadingProps {
 /**
  * A component that only renders its children when the Asgardeo is loading.
  *
+ * @remarks This component is only supported in browser based React applications (CSR).
+ *
  * @example
  * ```tsx
  * import { AsgardeoLoading } from '@asgardeo/auth-react';
@@ -58,6 +60,6 @@ const AsgardeoLoading: FC<PropsWithChildren<AsgardeoLoadingProps>> = ({
   return <>{children}</>;
 };
 
-AsgardeoLoading.displayName = 'Loading';
+AsgardeoLoading.displayName = 'AsgardeoLoading';
 
 export default AsgardeoLoading;

@@ -80,6 +80,7 @@ const SignUpButton: ForwardRefExoticComponent<SignUpButtonProps & RefAttributes<
   const handleSignUp = async (e?: MouseEvent<HTMLButtonElement>): Promise<void> => {
     try {
       setIsLoading(true);
+
       await signUp();
 
       if (onClick) {
@@ -88,7 +89,7 @@ const SignUpButton: ForwardRefExoticComponent<SignUpButtonProps & RefAttributes<
     } catch (error) {
       throw new AsgardeoRuntimeError(
         `Sign up failed: ${error instanceof Error ? error.message : String(error)}`,
-        'handleSignUp-RuntimeError-001',
+        'SignUpButton-handleSignUp-RuntimeError-001',
         'react',
         'Something went wrong while trying to sign up. Please try again later.',
       );

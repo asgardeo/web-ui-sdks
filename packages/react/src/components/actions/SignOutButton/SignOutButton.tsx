@@ -79,6 +79,7 @@ const SignOutButton: ForwardRefExoticComponent<SignOutButtonProps & RefAttribute
   const handleSignOut = async (e?: MouseEvent<HTMLButtonElement>): Promise<void> => {
     try {
       setIsLoading(true);
+
       await signOut();
 
       if (onClick) {
@@ -87,7 +88,7 @@ const SignOutButton: ForwardRefExoticComponent<SignOutButtonProps & RefAttribute
     } catch (error) {
       throw new AsgardeoRuntimeError(
         `Sign out failed: ${error instanceof Error ? error.message : String(error)}`,
-        'handleSignOut-RuntimeError-001',
+        'SignOutButton-handleSignOut-RuntimeError-001',
         'react',
         'Something went wrong while trying to sign out. Please try again later.',
       );

@@ -95,7 +95,7 @@ const SignInButton: ForwardRefExoticComponent<SignInButtonProps & RefAttributes<
     } catch (error) {
       throw new AsgardeoRuntimeError(
         `Sign in failed: ${error instanceof Error ? error.message : String(error)}`,
-        'handleSignIn-RuntimeError-001',
+        'SignInButton-handleSignIn-RuntimeError-001',
         'react',
         'Something went wrong while trying to sign in. Please try again later.',
       );

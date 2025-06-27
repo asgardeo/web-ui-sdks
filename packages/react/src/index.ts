@@ -239,8 +239,6 @@ export {default as LogOut} from './components/primitives/Icons/LogOut';
 export {
   createField,
   FieldFactory,
-  parseMultiValuedString,
-  formatMultiValuedString,
   validateFieldValue,
 } from './components/factories/FieldFactory';
 export * from './components/factories/FieldFactory';

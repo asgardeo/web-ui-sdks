@@ -30,9 +30,12 @@ import {FieldType} from '@asgardeo/browser';
  * Interface for field configuration.
  */
 export interface FieldConfig {
+  /**
+   * The name of the field.
+   */
   name: string;
   /**
-   * The field type based on EmbeddedSignInFlowAuthenticatorParamType.
+   * The field type.
    */
   type: FieldType;
   /**
@@ -78,24 +81,6 @@ export interface FieldConfig {
 }
 
 /**
- * Utility function to parse multi-valued string into array
- */
-export const parseMultiValuedString = (value: string): string[] => {
-  if (!value || value.trim() === '') return [];
-  return value
-    .split(',')
-    .map(item => item.trim())
-    .filter(item => item.length > 0);
-};
-
-/**
- * Utility function to format array into multi-valued string
- */
-export const formatMultiValuedString = (values: string[]): string => {
-  return values.join(', ');
-};
-
-/**
  * Utility function to validate field values based on type
  */
 export const validateFieldValue = (
@@ -104,12 +89,10 @@ export const validateFieldValue = (
   required: boolean = false,
   touched: boolean = false,
 ): string | null => {
-  // Only show required field errors if the field has been touched
   if (required && touched && (!value || value.trim() === '')) {
     return 'This field is required';
   }
 
-  // If not required and empty, no validation needed
   if (!value || value.trim() === '') {
     return null;
   }
@@ -161,7 +144,6 @@ export const createField = (config: FieldConfig): ReactElement => {
     placeholder,
   } = config;
 
-  // Auto-validate the field value
   const validationError = error || validateFieldValue(value, type, required, touched);
 
   const commonProps = {
@@ -237,7 +219,7 @@ export const createField = (config: FieldConfig): ReactElement => {
 /**
  * React component wrapper for the field factory.
  */
-export const FieldFactory: FC<FieldConfig> = props => {
+export const FieldFactory: FC<FieldConfig> = (props: FieldConfig): ReactElement => {
   return createField(props);
 };
 

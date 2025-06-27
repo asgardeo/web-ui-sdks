@@ -32,6 +32,8 @@ export interface SignedInProps {
 /**
  * A component that only renders its children when the user is signed in.
  *
+ * @remarks This component is only supported in browser based React applications (CSR).
+ *
  * @example
  * ```tsx
  * import { SignedIn } from '@asgardeo/auth-react';
