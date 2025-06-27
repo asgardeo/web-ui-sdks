@@ -254,3 +254,6 @@ export {default as createOrganization} from './api/scim2/createOrganization';
 export * from './api/scim2/createOrganization';
 
 export {default as getMeOrganizations} from './api/scim2/getMeOrganizations';
+
+export {default as getMeProfile} from './api/getScim2Me';
+export * from './api/getScim2Me';

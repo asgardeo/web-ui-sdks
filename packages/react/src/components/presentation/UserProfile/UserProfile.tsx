@@ -18,7 +18,6 @@
 
 import {FC, ReactElement} from 'react';
 import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
-import getMeProfile from '../../../api/scim2/getMeProfile';
 import updateMeProfile from '../../../api/scim2/updateMeProfile';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useUser from '../../../contexts/User/useUser';
