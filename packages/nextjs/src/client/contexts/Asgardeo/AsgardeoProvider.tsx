@@ -89,9 +89,11 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     try {
       const result = await signIn(payload, request);
 
-      if (result?.data?.afterSignInUrl) {
-        router.push(result.data.afterSignInUrl);
-        return {redirected: true, location: result.data.afterSignInUrl};
+      // Redirect based flow URL is sent as `signInUrl` in the response.
+      if (result?.data?.signInUrl) {
+        router.push(result.data.signInUrl);
+
+        return;
       }
 
       if (result?.error) {

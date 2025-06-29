@@ -39,7 +39,7 @@ import {
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/scim2/getMeOrganizations';
 import getScim2Me from './api/getScim2Me';
-import getSchemas from './api/scim2/getSchemas';
+import getSchemas from './api/getSchemas';
 import {AsgardeoReactConfig} from './models/config';
 
 /**
@@ -82,7 +82,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       const baseUrl = configData?.baseUrl;
 
       const profile = await getScim2Me({baseUrl});
-      const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
+      const schemas = await getSchemas({baseUrl});
 
       const processedSchemas = flattenUserSchema(schemas);
 

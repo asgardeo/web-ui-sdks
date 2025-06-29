@@ -26,6 +26,7 @@ export {default as executeEmbeddedSignInFlow} from './api/executeEmbeddedSignInF
 export {default as executeEmbeddedSignUpFlow} from './api/executeEmbeddedSignUpFlow';
 export {default as getUserInfo} from './api/getUserInfo';
 export {default as getScim2Me, GetScim2MeConfig} from './api/getScim2Me';
+export {default as getSchemas, GetSchemasConfig} from './api/getSchemas';
 
 export {default as ApplicationNativeAuthenticationConstants} from './constants/ApplicationNativeAuthenticationConstants';
 export {default as TokenConstants} from './constants/TokenConstants';

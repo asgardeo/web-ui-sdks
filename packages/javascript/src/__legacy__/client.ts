@@ -237,13 +237,14 @@ export class AsgardeoAuthClient<T> {
         await this._storageManager.setTemporaryDataParameter(pkceKey, codeVerifier, userId);
       }
 
-      console.log('[AsgardeoAuthClient] configData:', configData);
+      if (authRequestConfig['client_secret']) {
+        authRequestConfig['client_secret'] = configData.clientSecret;
+      }
 
       const authorizeRequestParams: Map<string, string> = getAuthorizeRequestUrlParams(
         {
           redirectUri: configData.afterSignInUrl,
           clientId: configData.clientId,
-          clientSecret: configData.clientSecret,
           scopes: processOpenIDScopes(configData.scopes),
           responseMode: configData.responseMode,
           codeChallengeMethod: PKCEConstants.DEFAULT_CODE_CHALLENGE_METHOD,
@@ -359,6 +360,8 @@ export class AsgardeoAuthClient<T> {
       }
 
       let tokenResponse: Response;
+
+      console.log('[AsgardeoAuthClient] Requesting access token from:', tokenEndpoint);
 
       try {
         tokenResponse = await fetch(tokenEndpoint, {
@@ -631,7 +634,9 @@ export class AsgardeoAuthClient<T> {
    * @preserve
    */
   public async getUser(userId?: string): Promise<User> {
+    console.log('[AsgardeoAuthClient] Getting user with userId:', userId);
     const sessionData: SessionData = await this._storageManager.getSessionData(userId);
+    console.log('[AsgardeoAuthClient] Session data:', sessionData);
     const authenticatedUser: User = this._authenticationHelper.getAuthenticatedUserInfo(sessionData?.id_token);
 
     Object.keys(authenticatedUser).forEach((key: string) => {

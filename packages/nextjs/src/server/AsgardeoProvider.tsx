@@ -70,6 +70,10 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     );
   }
 
+  if (!asgardeoClient.isInitialized) {
+    return <></>;
+  }
+
   return (
     <AsgardeoClientProvider
       baseUrl={config.baseUrl}

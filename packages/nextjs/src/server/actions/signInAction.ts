@@ -45,6 +45,7 @@ const signInAction = async (
   data?:
     | {
         afterSignInUrl?: string;
+        signInUrl?: string;
       }
     | EmbeddedSignInFlowInitiateResponse;
   error?: string;
@@ -70,8 +71,11 @@ const signInAction = async (
     if (!payload) {
       const defaultSignInUrl = await client.getAuthorizeRequestUrl({}, userId);
 
-      return {success: true, data: {afterSignInUrl: String(defaultSignInUrl)}};
+      return {success: true, data: {signInUrl: String(defaultSignInUrl)}};
     } else {
+      console.log('[signInAction] Handling embedded sign-in flow with payload:', payload);
+      console.log('[signInAction] Request config:', request);
+      console.log('[signInAction] User ID:', userId);
       const response: any = await client.signIn(payload, request!, userId);
 
       if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
@@ -94,6 +98,7 @@ const signInAction = async (
       return {success: true, data: response as EmbeddedSignInFlowInitiateResponse};
     }
   } catch (error) {
+    console.error('[signInAction] Error during sign-in:', error);
     return {success: false, error: String(error)};
   }
 };

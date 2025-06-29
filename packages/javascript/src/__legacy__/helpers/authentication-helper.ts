@@ -288,6 +288,7 @@ export class AuthenticationHelper<T> {
 
     await this._storageManager.setSessionData(parsedResponse, userId);
 
+    console.log('[AuthenticationHelper] Token response handled successfully:', userId, tokenResponse);
     return Promise.resolve(tokenResponse);
   }
 }

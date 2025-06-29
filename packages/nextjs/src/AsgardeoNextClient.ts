@@ -33,6 +33,9 @@ import {
   executeEmbeddedSignInFlow,
   EmbeddedFlowExecuteRequestConfig,
   ExtendedAuthorizeRequestUrlParams,
+  generateUserProfile,
+  flattenUserSchema,
+  getScim2Me,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
@@ -52,7 +55,7 @@ const removeTrailingSlash = (path: string): string => (path.endsWith('/') ? path
 class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> extends AsgardeoNodeClient<T> {
   private static instance: AsgardeoNextClient<any>;
   private asgardeo: LegacyAsgardeoNodeClient<T>;
-  private isInitialized: boolean = false;
+  public isInitialized: boolean = false;
 
   private constructor() {
     super();
@@ -123,7 +126,18 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
   override async getUser(userId?: string): Promise<User> {
     await this.ensureInitialized();
     const resolvedSessionId: string = userId || ((await getSessionId()) as string);
-    return this.asgardeo.getUser(resolvedSessionId);
+
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
+      const profile = await getScim2Me({baseUrl});
+      const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
+
+      return generateUserProfile(profile, flattenUserSchema(schemas));
+    } catch (error) {
+      return this.asgardeo.getUser(resolvedSessionId);
+    }
   }
 
   override async getOrganizations(): Promise<Organization[]> {
@@ -176,9 +190,11 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
         const defaultSignInUrl: URL = new URL(
           await this.getAuthorizeRequestUrl({
             response_mode: 'direct',
-            ...(arg3 ?? {}),
+            client_secret: '{{clientSecret}}',
           }),
         );
+
+        console.log('[AsgardeoNextClient] Redirecting to sign-in URL:', defaultSignInUrl);
 
         return initializeEmbeddedSignInFlow({
           url: `${defaultSignInUrl.origin}${defaultSignInUrl.pathname}`,
