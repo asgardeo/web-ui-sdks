@@ -212,7 +212,6 @@ export class AsgardeoNodeCore<T> {
   }
 
   public async getUser(userId: string): Promise<User> {
-    console.log(`[AsgardeoNodeCore] Getting user with userId: ${userId}`);
     return this._auth.getUser(userId);
   }
 

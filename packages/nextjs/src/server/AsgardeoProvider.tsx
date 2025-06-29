@@ -61,7 +61,6 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
 }: PropsWithChildren<AsgardeoServerProviderProps>): Promise<ReactElement> => {
   const asgardeoClient = AsgardeoNextClient.getInstance();
   let config: Partial<AsgardeoNextConfig> = {};
-  console.log('Initializing Asgardeo client with config:', config);
 
   try {
     await asgardeoClient.initialize(_config);

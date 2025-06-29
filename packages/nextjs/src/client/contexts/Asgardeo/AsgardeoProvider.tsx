@@ -87,11 +87,10 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
 
         // Handle OAuth callback if code and state are present
         if (code && state) {
-          console.log('[AsgardeoClientProvider] Handling OAuth callback');
           setIsLoading(true);
-          
+
           const result = await handleOAuthCallback(code, state, sessionState || undefined);
-          
+
           if (result.success) {
             // Redirect to the success URL
             if (result.redirectUrl) {
@@ -101,7 +100,6 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
               window.location.reload();
             }
           } else {
-            console.error('[AsgardeoClientProvider] OAuth callback failed:', result.error);
             router.push(`/signin?error=authentication_failed&error_description=${encodeURIComponent(result.error || 'Authentication failed')}`);
           }
         }
@@ -162,7 +160,6 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     payload: EmbeddedFlowExecuteRequestPayload,
     request: EmbeddedFlowExecuteRequestConfig,
   ) => {
-    console.log('[AsgardeoClientProvider] Executing sign-up action with payload', payload);
     try {
       const result = await signUp(payload, request);
 

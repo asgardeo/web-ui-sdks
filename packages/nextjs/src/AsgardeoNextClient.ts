@@ -260,8 +260,6 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
           }),
         );
 
-        console.log('[AsgardeoNextClient] Redirecting to sign-in URL:', defaultSignInUrl);
-
         return initializeEmbeddedSignInFlow({
           url: `${defaultSignInUrl.origin}${defaultSignInUrl.pathname}`,
           payload: Object.fromEntries(defaultSignInUrl.searchParams.entries()),

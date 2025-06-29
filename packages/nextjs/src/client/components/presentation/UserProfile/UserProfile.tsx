@@ -59,7 +59,6 @@ const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactEl
   const {profile, flattenedProfile, schemas, revalidateProfile} = useUser();
 
   const handleProfileUpdate = async (payload: any): Promise<void> => {
-    console.log('[UserProfile] handleProfileUpdate', baseUrl);
     await updateUserProfileAction(payload, (await getSessionId()) as string);
     await revalidateProfile();
   };

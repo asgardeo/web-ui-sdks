@@ -361,8 +361,6 @@ export class AsgardeoAuthClient<T> {
 
       let tokenResponse: Response;
 
-      console.log('[AsgardeoAuthClient] Requesting access token from:', tokenEndpoint);
-
       try {
         tokenResponse = await fetch(tokenEndpoint, {
           body: body,
@@ -634,9 +632,7 @@ export class AsgardeoAuthClient<T> {
    * @preserve
    */
   public async getUser(userId?: string): Promise<User> {
-    console.log('[AsgardeoAuthClient] Getting user with userId:', userId);
     const sessionData: SessionData = await this._storageManager.getSessionData(userId);
-    console.log('[AsgardeoAuthClient] Session data:', sessionData);
     const authenticatedUser: User = this._authenticationHelper.getAuthenticatedUserInfo(sessionData?.id_token);
 
     Object.keys(authenticatedUser).forEach((key: string) => {

@@ -50,8 +50,6 @@ const signUpAction = async (
   try {
     const client = AsgardeoNextClient.getInstance();
 
-    console.log('Executing sign-up action with payload:', payload);
-
     // If no payload provided, redirect to sign-in URL for redirect-based sign-in.
     // If there's a payload, handle the embedded sign-in flow.
     if (!payload) {

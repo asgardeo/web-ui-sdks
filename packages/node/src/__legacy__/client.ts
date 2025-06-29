@@ -202,7 +202,6 @@ export class AsgardeoNodeClient<T> {
    *
    */
   public async getUser(userId: string): Promise<User> {
-    console.log('[LegacyAsgardeoNodeClient] Getting user with userId:', this._authCore);
     return this._authCore.getUser(userId);
   }
 

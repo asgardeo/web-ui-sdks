@@ -127,12 +127,6 @@ const handleWebAuthnAuthentication = async (challengeData: string): Promise<stri
       }),
     };
 
-    console.log('WebAuthn authentication with options:', {
-      originalRpId: challengeRpId,
-      adjustedRpId: rpIdToUse,
-      currentDomain,
-    });
-
     // Convert challenge from base64url to ArrayBuffer
     const credential = (await navigator.credentials.get({
       publicKey: adjustedOptions,
