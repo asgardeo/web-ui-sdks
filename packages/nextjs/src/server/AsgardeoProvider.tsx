@@ -28,6 +28,7 @@ import getUserAction from './actions/getUserAction';
 import getSessionId from './actions/getSessionId';
 import getUserProfileAction from './actions/getUserProfileAction';
 import signUpAction from './actions/signUpAction';
+import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -100,6 +101,7 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
       signIn={signInAction}
       signOut={signOutAction}
       signUp={signUpAction}
+      handleOAuthCallback={handleOAuthCallbackAction}
       signInUrl={config.signInUrl}
       signUpUrl={config.signUpUrl}
       preferences={config.preferences}

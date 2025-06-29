@@ -73,9 +73,6 @@ const signInAction = async (
 
       return {success: true, data: {signInUrl: String(defaultSignInUrl)}};
     } else {
-      console.log('[signInAction] Handling embedded sign-in flow with payload:', payload);
-      console.log('[signInAction] Request config:', request);
-      console.log('[signInAction] User ID:', userId);
       const response: any = await client.signIn(payload, request!, userId);
 
       if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {

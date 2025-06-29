@@ -27,7 +27,7 @@ import {
 } from '@asgardeo/node';
 import {I18nProvider, FlowProvider, UserProvider, ThemeProvider, AsgardeoProviderProps} from '@asgardeo/react';
 import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
-import {useRouter} from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
 import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
 
 /**
@@ -38,6 +38,7 @@ export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'b
     signOut: AsgardeoContextProps['signOut'];
     signIn: AsgardeoContextProps['signIn'];
     signUp: AsgardeoContextProps['signUp'];
+    handleOAuthCallback: (code: string, state: string, sessionState?: string) => Promise<{success: boolean; error?: string; redirectUrl?: string}>;
     isSignedIn: boolean;
     userProfile: UserProfile;
     user: User | null;
@@ -49,6 +50,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   signIn,
   signOut,
   signUp,
+  handleOAuthCallback,
   preferences,
   isSignedIn,
   signInUrl,
@@ -57,9 +59,60 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   userProfile,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [_userProfile, setUserProfile] = useState<UserProfile | null>(userProfile);
+
+  // Handle OAuth callback automatically
+  useEffect(() => {
+    // Don't handle callback if already signed in
+    if (isSignedIn) return;
+
+    const processOAuthCallback = async () => {
+      try {
+        const code = searchParams.get('code');
+        const state = searchParams.get('state');
+        const sessionState = searchParams.get('session_state');
+        const error = searchParams.get('error');
+        const errorDescription = searchParams.get('error_description');
+
+        // Check for OAuth errors first
+        if (error) {
+          console.error('[AsgardeoClientProvider] OAuth error:', error, errorDescription);
+          // Redirect to sign-in page with error
+          router.push(`/signin?error=${encodeURIComponent(error)}&error_description=${encodeURIComponent(errorDescription || '')}`);
+          return;
+        }
+
+        // Handle OAuth callback if code and state are present
+        if (code && state) {
+          console.log('[AsgardeoClientProvider] Handling OAuth callback');
+          setIsLoading(true);
+          
+          const result = await handleOAuthCallback(code, state, sessionState || undefined);
+          
+          if (result.success) {
+            // Redirect to the success URL
+            if (result.redirectUrl) {
+              router.push(result.redirectUrl);
+            } else {
+              // Refresh the page to update authentication state
+              window.location.reload();
+            }
+          } else {
+            console.error('[AsgardeoClientProvider] OAuth callback failed:', result.error);
+            router.push(`/signin?error=authentication_failed&error_description=${encodeURIComponent(result.error || 'Authentication failed')}`);
+          }
+        }
+      } catch (error) {
+        console.error('[AsgardeoClientProvider] Failed to handle OAuth callback:', error);
+        router.push('/signin?error=authentication_failed');
+      }
+    };
+
+    processOAuthCallback();
+  }, [searchParams, router, isSignedIn, handleOAuthCallback]);
 
   useEffect(() => {
     if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {

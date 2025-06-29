@@ -24,6 +24,8 @@ export * from './client/contexts/Asgardeo/useAsgardeo';
 
 export {default as isSignedIn} from './server/actions/isSignedIn';
 
+export {default as handleOAuthCallback} from './server/actions/handleOAuthCallbackAction';
+
 export {default as SignedIn} from './client/components/control/SignedIn/SignedIn';
 export {SignedInProps} from './client/components/control/SignedIn/SignedIn';
 
