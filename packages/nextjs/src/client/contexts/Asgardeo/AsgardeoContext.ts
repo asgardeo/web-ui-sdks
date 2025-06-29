@@ -32,6 +32,7 @@ export type AsgardeoContextProps = Partial<AsgardeoReactContextProps>;
  */
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
   signInUrl: undefined,
+  signUpUrl: undefined,
   afterSignInUrl: undefined,
   baseUrl: undefined,
   isInitialized: false,

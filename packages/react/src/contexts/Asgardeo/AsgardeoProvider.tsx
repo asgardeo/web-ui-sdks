@@ -51,6 +51,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   scopes,
   preferences,
   signInUrl,
+  signUpUrl,
   ...rest
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
@@ -72,6 +73,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         baseUrl,
         clientId,
         scopes,
+        signUpUrl,
+        signInUrl,
         ...rest,
       });
     })();
@@ -232,6 +235,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     <AsgardeoContext.Provider
       value={{
         signInUrl,
+        signUpUrl,
         afterSignInUrl,
         baseUrl,
         isInitialized: isInitializedSync,

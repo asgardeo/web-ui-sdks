@@ -39,6 +39,7 @@ import {
   getSchemas,
   generateFlattenedUserProfile,
   updateMeProfile,
+  executeEmbeddedSignUpFlow,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
@@ -98,18 +99,6 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       decorateConfigWithNextEnv(config);
 
     this.isInitialized = true;
-
-    console.log('[AsgardeoNextClient] Initializing with decorateConfigWithNextEnv:', {
-      baseUrl,
-      clientId,
-      clientSecret,
-      signInUrl,
-      signUpUrl,
-      afterSignInUrl,
-      afterSignOutUrl,
-      enablePKCE: false,
-      ...rest,
-    });
 
     const origin: string = await getClientOrigin();
 
@@ -314,11 +303,31 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
   override async signUp(options?: SignUpOptions): Promise<void>;
   override async signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
   override async signUp(...args: any[]): Promise<void | EmbeddedFlowExecuteResponse> {
+    if (args.length === 0) {
+      throw new AsgardeoRuntimeError(
+        'No arguments provided for signUp method.',
+        'AsgardeoNextClient-ValidationError-001',
+        'nextjs',
+        'The signUp method requires at least one argument, either a SignUpOptions object or an EmbeddedFlowExecuteRequestPayload.',
+      );
+    }
+
+    const firstArg = args[0];
+
+    if (typeof firstArg === 'object' && 'flowType' in firstArg) {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
+      return executeEmbeddedSignUpFlow({
+        baseUrl,
+        payload: firstArg as EmbeddedFlowExecuteRequestPayload,
+      });
+    }
     throw new AsgardeoRuntimeError(
       'Not implemented',
-      'react-AsgardeoReactClient-ValidationError-002',
-      'react',
-      'The signUp method with SignUpOptions is not implemented in the React client.',
+      'AsgardeoNextClient-ValidationError-002',
+      'nextjs',
+      'The signUp method with SignUpOptions is not implemented in the Next.js client.',
     );
   }
 

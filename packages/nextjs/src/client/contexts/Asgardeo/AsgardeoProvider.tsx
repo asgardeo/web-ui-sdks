@@ -20,6 +20,7 @@
 
 import {
   EmbeddedFlowExecuteRequestConfig,
+  EmbeddedFlowExecuteRequestPayload,
   EmbeddedSignInFlowHandleRequestPayload,
   User,
   UserProfile,
@@ -36,6 +37,7 @@ export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'b
   Pick<AsgardeoProviderProps, 'baseUrl' | 'clientId'> & {
     signOut: AsgardeoContextProps['signOut'];
     signIn: AsgardeoContextProps['signIn'];
+    signUp: AsgardeoContextProps['signUp'];
     isSignedIn: boolean;
     userProfile: UserProfile;
     user: User | null;
@@ -46,9 +48,11 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   children,
   signIn,
   signOut,
+  signUp,
   preferences,
   isSignedIn,
   signInUrl,
+  signUpUrl,
   user,
   userProfile,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
@@ -101,6 +105,38 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     }
   };
 
+  const handleSignUp = async (
+    payload: EmbeddedFlowExecuteRequestPayload,
+    request: EmbeddedFlowExecuteRequestConfig,
+  ) => {
+    console.log('[AsgardeoClientProvider] Executing sign-up action with payload', payload);
+    try {
+      const result = await signUp(payload, request);
+
+      // Redirect based flow URL is sent as `signUpUrl` in the response.
+      if (result?.data?.signUpUrl) {
+        router.push(result.data.signUpUrl);
+
+        return;
+      }
+
+      // After the Embedded flow is successful, the URL to navigate next is sent as `afterSignUpUrl` in the response.
+      if (result?.data?.afterSignUpUrl) {
+        router.push(result.data.afterSignUpUrl);
+
+        return;
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      return result?.data ?? result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       const result = await signOut();
@@ -128,9 +164,11 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       isLoading,
       signIn: handleSignIn,
       signOut: handleSignOut,
+      signUp: handleSignUp,
       signInUrl,
+      signUpUrl,
     }),
-    [baseUrl, user, isSignedIn, isLoading, signInUrl],
+    [baseUrl, user, isSignedIn, isLoading, signInUrl, signUpUrl],
   );
 
   return (

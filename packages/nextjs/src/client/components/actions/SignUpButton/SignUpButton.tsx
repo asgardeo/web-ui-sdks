@@ -18,41 +18,108 @@
 
 'use client';
 
-import {FC, forwardRef, PropsWithChildren, ReactElement, Ref} from 'react';
-import InternalAuthAPIRoutesConfig from '../../../../configs/InternalAuthAPIRoutesConfig';
-import {BaseSignUpButton, BaseSignUpButtonProps} from '@asgardeo/react';
+import {AsgardeoRuntimeError} from '@asgardeo/node';
+import {forwardRef, ForwardRefExoticComponent, MouseEvent, ReactElement, Ref, RefAttributes, useState} from 'react';
+import {BaseSignUpButton, BaseSignUpButtonProps, useTranslation} from '@asgardeo/react';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
+import {useRouter} from 'next/navigation';
 
 /**
- * Interface for SignInButton component props.
+ * Props interface of {@link SignUpButton}
  */
 export type SignUpButtonProps = BaseSignUpButtonProps;
 
 /**
- * SignInButton component. This button initiates the sign-in process when clicked.
+ * SignUpButton component that supports both render props and traditional props patterns.
+ * It redirects the user to the Asgardeo sign-up page configured for the application.
  *
- * @example
+ * @remarks This component is only supported in browser based React applications (CSR).
+ *
+ * @example Using render props pattern
  * ```tsx
- * import { SignInButton } from '@asgardeo/auth-react';
+ * <SignUpButton>
+ *   {({ signUp, isLoading }) => (
+ *     <button onClick={signUp} disabled={isLoading}>
+ *       {isLoading ? 'Creating Account...' : 'Create Account'}
+ *     </button>
+ *   )}
+ * </SignUpButton>
+ * ```
  *
- * const App = () => {
- *   const buttonRef = useRef<HTMLButtonElement>(null);
- *   return (
- *     <SignInButton ref={buttonRef} className="custom-class" style={{ backgroundColor: 'blue' }}>
- *       Sign In
- *     </SignInButton>
- *   );
- * }
+ * @example Using traditional props pattern
+ * ```tsx
+ * <SignUpButton className="custom-button">Create Account</SignUpButton>
+ * ```
+ *
+ * @example Using component-level preferences
+ * ```tsx
+ * <SignUpButton
+ *   preferences={{
+ *     i18n: {
+ *       bundles: {
+ *         'en-US': {
+ *           translations: {
+ *             'buttons.signUp': 'Custom Sign Up Text'
+ *           }
+ *         }
+ *       }
+ *     }
+ *   }}
+ * >
+ *   Custom Sign Up
+ * </SignUpButton>
  * ```
  */
-const SignUpButton: FC<PropsWithChildren<SignUpButtonProps>> = forwardRef<
+const SignUpButton: ForwardRefExoticComponent<SignUpButtonProps & RefAttributes<HTMLButtonElement>> = forwardRef<
   HTMLButtonElement,
-  PropsWithChildren<SignUpButtonProps>
->(
-  ({className, style, ...rest}: PropsWithChildren<SignUpButtonProps>, ref: Ref<HTMLButtonElement>): ReactElement => (
-    <form action={InternalAuthAPIRoutesConfig.signUp}>
-      <BaseSignUpButton className={className} style={style} ref={ref} type="submit" {...rest} />
-    </form>
-  ),
-);
+  SignUpButtonProps
+>(({children, onClick, preferences, ...rest}: SignUpButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+  const {signUp, signUpUrl} = useAsgardeo();
+  const router = useRouter();
+  const {t} = useTranslation(preferences?.i18n);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignUp = async (e?: MouseEvent<HTMLButtonElement>): Promise<void> => {
+    try {
+      setIsLoading(true);
+
+      // If a custom `signUpUrl` is provided, use it for navigation.
+      if (signUpUrl) {
+        router.push(signUpUrl);
+      } else {
+        await signUp();
+      }
+
+      if (onClick) {
+        onClick(e as MouseEvent<HTMLButtonElement>);
+      }
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Sign up failed: ${error instanceof Error ? error.message : String(error)}`,
+        'SignUpButton-handleSignUp-RuntimeError-001',
+        'nextjs',
+        'Something went wrong while trying to sign up. Please try again later.',
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <BaseSignUpButton
+      ref={ref}
+      onClick={handleSignUp}
+      isLoading={isLoading}
+      signUp={handleSignUp}
+      preferences={preferences}
+      {...rest}
+    >
+      {children ?? t('elements.buttons.signUp')}
+    </BaseSignUpButton>
+  );
+});
+
+SignUpButton.displayName = 'SignUpButton';
 
 export default SignUpButton;

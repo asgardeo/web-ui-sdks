@@ -33,6 +33,9 @@ export {SignedOutProps} from './client/components/control/SignedOut/SignedOut';
 export {default as SignInButton} from './client/components/actions/SignInButton/SignInButton';
 export type {SignInButtonProps} from './client/components/actions/SignInButton/SignInButton';
 
+export {default as SignUpButton} from './client/components/actions/SignUpButton/SignUpButton';
+export type {SignUpButtonProps} from './client/components/actions/SignUpButton/SignUpButton';
+
 export {default as SignIn} from './client/components/presentation/SignIn/SignIn';
 export type {SignInProps} from './client/components/presentation/SignIn/SignIn';
 
@@ -41,6 +44,9 @@ export type {SignOutButtonProps} from './client/components/actions/SignOutButton
 
 export {default as User} from './client/components/presentation/User/User';
 export type {UserProps} from './client/components/presentation/User/User';
+
+export {default as SignUp} from './client/components/presentation/SignUp/SignUp';
+export type {SignUpProps} from './client/components/presentation/SignUp/SignUp';
 
 export {default as UserDropdown} from './client/components/presentation/UserDropdown/UserDropdown';
 export type {UserDropdownProps} from './client/components/presentation/UserDropdown/UserDropdown';
