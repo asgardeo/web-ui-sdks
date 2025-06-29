@@ -21,8 +21,7 @@
 import AsgardeoNextClient from '../../AsgardeoNextClient';
 import getSessionId from './getSessionId';
 
-const isSignedIn = async (): Promise<boolean> => {
-  const sessionId: string | undefined = await getSessionId();
+const isSignedIn = async (sessionId: string): Promise<boolean> => {
   const client = AsgardeoNextClient.getInstance();
   const accessToken: string | undefined = await client.getAccessToken(sessionId);
 

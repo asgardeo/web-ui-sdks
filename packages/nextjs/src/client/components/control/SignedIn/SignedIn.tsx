@@ -18,8 +18,8 @@
 
 'use client';
 
-import {FC, PropsWithChildren, ReactNode, useEffect, useState} from 'react';
-import isSignedIn from '../../../../server/actions/isSignedIn';
+import {FC, PropsWithChildren, ReactNode} from 'react';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 
 /**
  * Props interface of {@link SignedIn}
@@ -51,23 +51,9 @@ const SignedIn: FC<PropsWithChildren<SignedInProps>> = ({
   children,
   fallback = null,
 }: PropsWithChildren<SignedInProps>) => {
-  const [isSignedInSync, setIsSignedInSync] = useState<boolean | null>(null);
+  const {isSignedIn} = useAsgardeo();
 
-  useEffect(() => {
-    (async (): Promise<void> => {
-      try {
-        const result: boolean = await isSignedIn();
-
-        setIsSignedInSync(result);
-      } catch (error) {
-        setIsSignedInSync(false);
-      }
-    })();
-  }, []);
-
-  if (isSignedInSync === null) return null;
-
-  return <>{isSignedInSync ? children : fallback}</>;
+  return <>{isSignedIn ? children : fallback}</>;
 };
 
 export default SignedIn;

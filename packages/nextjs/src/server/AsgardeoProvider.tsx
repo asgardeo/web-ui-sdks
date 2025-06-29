@@ -79,7 +79,9 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     return <></>;
   }
 
-  const _isSignedIn: boolean = await isSignedIn();
+  const sessionId: string = await getSessionId() as string;
+  const _isSignedIn: boolean = await isSignedIn(sessionId);
+
   let user: User = {};
   let userProfile: UserProfile = {
     schemas: [],
@@ -88,8 +90,8 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
   };
 
   if (_isSignedIn) {
-    const userResponse = await getUserAction((await getSessionId()) as string);
-    const userProfileResponse = await getUserProfileAction((await getSessionId()) as string);
+    const userResponse = await getUserAction((sessionId));
+    const userProfileResponse = await getUserProfileAction((sessionId));
 
     user = userResponse.data?.user || {};
     userProfile = userProfileResponse.data?.userProfile;
