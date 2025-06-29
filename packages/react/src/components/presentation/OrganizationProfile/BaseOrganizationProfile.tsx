@@ -16,10 +16,9 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, OrganizationDetails} from '@asgardeo/browser';
 import clsx from 'clsx';
 import {FC, ReactElement, useMemo, CSSProperties, useState, useCallback, useRef} from 'react';
-import {OrganizationDetails} from '../../../api/scim2/getOrganization';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';

@@ -37,7 +37,7 @@ import {
   EmbeddedFlowExecuteRequestConfig,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
-import getMeOrganizations from './api/scim2/getMeOrganizations';
+import getMeOrganizations from './api/getMeOrganizations';
 import getScim2Me from './api/getScim2Me';
 import getSchemas from './api/getSchemas';
 import {AsgardeoReactConfig} from './models/config';

@@ -16,12 +16,12 @@
  * under the License.
  */
 
-import {AsgardeoRuntimeError, Organization} from '@asgardeo/browser';
+import {AsgardeoRuntimeError, Organization, PaginatedOrganizationsResponse} from '@asgardeo/browser';
 import {FC, PropsWithChildren, ReactElement, useCallback, useEffect, useMemo, useState} from 'react';
 import OrganizationContext, {OrganizationContextProps, OrganizationWithSwitchAccess} from './OrganizationContext';
 import useAsgardeo from '../Asgardeo/useAsgardeo';
-import getAllOrganizations, {PaginatedOrganizationsResponse} from '../../api/scim2/getAllOrganizations';
-import getMeOrganizations from '../../api/scim2/getMeOrganizations';
+import getAllOrganizations from '../../api/getAllOrganizations';
+import getMeOrganizations from '../../api/getMeOrganizations';
 
 /**
  * Props interface of {@link OrganizationProvider}

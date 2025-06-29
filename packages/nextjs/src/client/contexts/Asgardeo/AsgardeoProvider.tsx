@@ -42,7 +42,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   preferences,
   isSignedIn,
   signInUrl,
-  user
+  user,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useState(false);

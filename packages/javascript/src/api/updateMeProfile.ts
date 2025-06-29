@@ -16,13 +16,13 @@
  * under the License.
  */
 
-import {Schema} from '../models/scim2-schema';
+import {User} from '../models/user';
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
 
 /**
- * Configuration for the getSchemas request
+ * Configuration for the updateMeProfile request
  */
-export interface GetSchemasConfig extends Omit<RequestInit, 'method'> {
+export interface UpdateMeProfileConfig extends Omit<RequestInit, 'method' | 'body'> {
   /**
    * The absolute API endpoint.
    */
@@ -32,6 +32,10 @@ export interface GetSchemasConfig extends Omit<RequestInit, 'method'> {
    */
   baseUrl?: string;
   /**
+   * The value object to patch (SCIM2 PATCH value)
+   */
+  payload: any;
+  /**
    * Optional custom fetcher function.
    * If not provided, native fetch will be used
    */
@@ -39,79 +43,85 @@ export interface GetSchemasConfig extends Omit<RequestInit, 'method'> {
 }
 
 /**
- * Retrieves the SCIM2 schemas from the specified endpoint.
+ * Updates the user profile information at the specified SCIM2 Me endpoint.
  *
- * @param config - Request configuration object.
- * @returns A promise that resolves with the SCIM2 schemas information.
+ * @param config - Configuration object with URL, payload and optional request config.
+ * @returns A promise that resolves with the updated user profile information.
  * @example
  * ```typescript
  * // Using default fetch
- * try {
- *   const schemas = await getSchemas({
- *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/scim2/Schemas",
- *   });
- *   console.log(schemas);
- * } catch (error) {
- *   if (error instanceof AsgardeoAPIError) {
- *     console.error('Failed to get schemas:', error.message);
- *   }
- * }
+ * await updateMeProfile({
+ *   url: "https://api.asgardeo.io/t/<ORG>/scim2/Me",
+ *   payload: { "urn:scim:wso2:schema": { mobileNumbers: ["0777933830"] } }
+ * });
  * ```
  *
  * @example
  * ```typescript
  * // Using custom fetcher (e.g., axios-based httpClient)
- * try {
- *   const schemas = await getSchemas({
- *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/scim2/Schemas",
- *     fetcher: async (url, config) => {
- *       const response = await httpClient({
- *         url,
- *         method: config.method,
- *         headers: config.headers,
- *         ...config
- *       });
- *       // Convert axios-like response to fetch-like Response
- *       return {
- *         ok: response.status >= 200 && response.status < 300,
- *         status: response.status,
- *         statusText: response.statusText,
- *         json: () => Promise.resolve(response.data),
- *         text: () => Promise.resolve(typeof response.data === 'string' ? response.data : JSON.stringify(response.data))
- *       } as Response;
- *     }
- *   });
- *   console.log(schemas);
- * } catch (error) {
- *   if (error instanceof AsgardeoAPIError) {
- *     console.error('Failed to get schemas:', error.message);
+ * await updateMeProfile({
+ *   url: "https://api.asgardeo.io/t/<ORG>/scim2/Me",
+ *   payload: { "urn:scim:wso2:schema": { mobileNumbers: ["0777933830"] } },
+ *   fetcher: async (url, config) => {
+ *     const response = await httpClient({
+ *       url,
+ *       method: config.method,
+ *       headers: config.headers,
+ *       data: config.body,
+ *       ...config
+ *     });
+ *     // Convert axios-like response to fetch-like Response
+ *     return {
+ *       ok: response.status >= 200 && response.status < 300,
+ *       status: response.status,
+ *       statusText: response.statusText,
+ *       json: () => Promise.resolve(response.data),
+ *       text: () => Promise.resolve(typeof response.data === 'string' ? response.data : JSON.stringify(response.data))
+ *     } as Response;
  *   }
- * }
+ * });
  * ```
  */
-const getSchemas = async ({url, baseUrl, fetcher, ...requestConfig}: GetSchemasConfig): Promise<Schema[]> => {
+const updateMeProfile = async ({
+  url,
+  baseUrl,
+  payload,
+  fetcher,
+  ...requestConfig
+}: UpdateMeProfileConfig): Promise<User> => {
   try {
     new URL(url ?? baseUrl);
   } catch (error) {
     throw new AsgardeoAPIError(
       `Invalid URL provided. ${error?.toString()}`,
-      'getSchemas-ValidationError-001',
+      'updateMeProfile-ValidationError-001',
       'javascript',
       400,
       'The provided `url` or `baseUrl` path does not adhere to the URL schema.',
     );
   }
 
+  const data = {
+    Operations: [
+      {
+        op: 'replace',
+        value: payload,
+      },
+    ],
+    schemas: ['urn:ietf:params:scim:api:messages:2.0:PatchOp'],
+  };
+
   const fetchFn = fetcher || fetch;
-  const resolvedUrl: string = url ?? `${baseUrl}/scim2/Schemas`;
+  const resolvedUrl: string = url ?? `${baseUrl}/scim2/Me`;
 
   const requestInit: RequestInit = {
-    method: 'GET',
+    method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/scim+json',
       Accept: 'application/json',
       ...requestConfig.headers,
     },
+    body: JSON.stringify(data),
     ...requestConfig,
   };
 
@@ -122,15 +132,15 @@ const getSchemas = async ({url, baseUrl, fetcher, ...requestConfig}: GetSchemasC
       const errorText = await response.text();
 
       throw new AsgardeoAPIError(
-        `Failed to fetch SCIM2 schemas: ${errorText}`,
-        'getSchemas-ResponseError-001',
+        `Failed to update user profile: ${errorText}`,
+        'updateMeProfile-ResponseError-001',
         'javascript',
         response.status,
         response.statusText,
       );
     }
 
-    return (await response.json()) as Schema[];
+    return (await response.json()) as User;
   } catch (error) {
     if (error instanceof AsgardeoAPIError) {
       throw error;
@@ -138,7 +148,7 @@ const getSchemas = async ({url, baseUrl, fetcher, ...requestConfig}: GetSchemasC
 
     throw new AsgardeoAPIError(
       `Network or parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      'getSchemas-NetworkError-001',
+      'updateMeProfile-NetworkError-001',
       'javascript',
       0,
       'Network Error',
@@ -146,4 +156,4 @@ const getSchemas = async ({url, baseUrl, fetcher, ...requestConfig}: GetSchemasC
   }
 };
 
-export default getSchemas;
+export default updateMeProfile;

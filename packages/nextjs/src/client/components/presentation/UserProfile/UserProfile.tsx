@@ -17,8 +17,8 @@
  */
 
 import {FC, ReactElement} from 'react';
-import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
-import updateMeProfile from '../../../api/updateMeProfile';
+import {BaseUserProfile, BaseUserProfileProps} from '@asgardeo/react';
+import updateMeProfile from '../../../api/scim2/updateMeProfile';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useUser from '../../../contexts/User/useUser';
 

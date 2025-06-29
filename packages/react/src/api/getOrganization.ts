@@ -17,20 +17,20 @@
  */
 
 import {
-  Schema,
   HttpInstance,
   AsgardeoSPAClient,
   HttpRequestConfig,
-  getSchemas as baseGetSchemas,
-  GetSchemasConfig as BaseGetSchemasConfig,
+  getOrganization as baseGetOrganization,
+  GetOrganizationConfig as BaseGetOrganizationConfig,
+  OrganizationDetails,
 } from '@asgardeo/browser';
 
 const httpClient: HttpInstance = AsgardeoSPAClient.getInstance().httpRequest.bind(AsgardeoSPAClient.getInstance());
 
 /**
- * Configuration for the getSchemas request (React-specific)
+ * Configuration for the getOrganization request (React-specific)
  */
-export interface GetSchemasConfig extends Omit<BaseGetSchemasConfig, 'fetcher'> {
+export interface GetOrganizationConfig extends Omit<BaseGetOrganizationConfig, 'fetcher'> {
   /**
    * Optional custom fetcher function. If not provided, the Asgardeo SPA client's httpClient will be used
    * which is a wrapper around axios http.request
@@ -39,22 +39,23 @@ export interface GetSchemasConfig extends Omit<BaseGetSchemasConfig, 'fetcher'> 
 }
 
 /**
- * Retrieves the SCIM2 schemas from the specified endpoint.
+ * Retrieves detailed information for a specific organization.
  * This function uses the Asgardeo SPA client's httpClient by default, but allows for custom fetchers.
  *
- * @param config - Request configuration object.
- * @returns A promise that resolves with the SCIM2 schemas information.
+ * @param config - Configuration object containing baseUrl, organizationId, and request config.
+ * @returns A promise that resolves with the organization details.
  * @example
  * ```typescript
  * // Using default Asgardeo SPA client httpClient
  * try {
- *   const schemas = await getSchemas({
- *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/scim2/Schemas",
+ *   const organization = await getOrganization({
+ *     baseUrl: "https://api.asgardeo.io/t/dxlab",
+ *     organizationId: "0d5e071b-d3d3-475d-b3c6-1a20ee2fa9b1"
  *   });
- *   console.log(schemas);
+ *   console.log(organization);
  * } catch (error) {
  *   if (error instanceof AsgardeoAPIError) {
- *     console.error('Failed to get schemas:', error.message);
+ *     console.error('Failed to get organization:', error.message);
  *   }
  * }
  * ```
@@ -63,19 +64,20 @@ export interface GetSchemasConfig extends Omit<BaseGetSchemasConfig, 'fetcher'> 
  * ```typescript
  * // Using custom fetcher
  * try {
- *   const schemas = await getSchemas({
- *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/scim2/Schemas",
+ *   const organization = await getOrganization({
+ *     baseUrl: "https://api.asgardeo.io/t/dxlab",
+ *     organizationId: "0d5e071b-d3d3-475d-b3c6-1a20ee2fa9b1",
  *     fetcher: customFetchFunction
  *   });
- *   console.log(schemas);
+ *   console.log(organization);
  * } catch (error) {
  *   if (error instanceof AsgardeoAPIError) {
- *     console.error('Failed to get schemas:', error.message);
+ *     console.error('Failed to get organization:', error.message);
  *   }
  * }
  * ```
  */
-const getSchemas = async ({fetcher, ...requestConfig}: GetSchemasConfig): Promise<Schema[]> => {
+const getOrganization = async ({fetcher, ...requestConfig}: GetOrganizationConfig): Promise<OrganizationDetails> => {
   const defaultFetcher = async (url: string, config: RequestInit): Promise<Response> => {
     const response = await httpClient({
       url,
@@ -92,10 +94,10 @@ const getSchemas = async ({fetcher, ...requestConfig}: GetSchemasConfig): Promis
     } as Response;
   };
 
-  return baseGetSchemas({
+  return baseGetOrganization({
     ...requestConfig,
     fetcher: fetcher || defaultFetcher,
   });
 };
 
-export default getSchemas;
+export default getOrganization;

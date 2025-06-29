@@ -18,8 +18,9 @@
 
 import {FC, ReactElement, useEffect, useState} from 'react';
 import BaseOrganizationProfile, {BaseOrganizationProfileProps} from './BaseOrganizationProfile';
-import getOrganization, {OrganizationDetails} from '../../../api/scim2/getOrganization';
-import updateOrganization, {createPatchOperations} from '../../../api/scim2/updateOrganization';
+import {OrganizationDetails} from '@asgardeo/browser';
+import getOrganization from '../../../api/getOrganization';
+import updateOrganization, {createPatchOperations} from '../../../api/updateOrganization';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useTranslation from '../../../hooks/useTranslation';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';

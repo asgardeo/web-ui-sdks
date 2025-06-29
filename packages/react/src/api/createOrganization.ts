@@ -17,20 +17,21 @@
  */
 
 import {
-  Schema,
+  Organization,
   HttpInstance,
   AsgardeoSPAClient,
   HttpRequestConfig,
-  getSchemas as baseGetSchemas,
-  GetSchemasConfig as BaseGetSchemasConfig,
+  createOrganization as baseCreateOrganization,
+  CreateOrganizationConfig as BaseCreateOrganizationConfig,
+  CreateOrganizationPayload,
 } from '@asgardeo/browser';
 
 const httpClient: HttpInstance = AsgardeoSPAClient.getInstance().httpRequest.bind(AsgardeoSPAClient.getInstance());
 
 /**
- * Configuration for the getSchemas request (React-specific)
+ * Configuration for the createOrganization request (React-specific)
  */
-export interface GetSchemasConfig extends Omit<BaseGetSchemasConfig, 'fetcher'> {
+export interface CreateOrganizationConfig extends Omit<BaseCreateOrganizationConfig, 'fetcher'> {
   /**
    * Optional custom fetcher function. If not provided, the Asgardeo SPA client's httpClient will be used
    * which is a wrapper around axios http.request
@@ -39,22 +40,29 @@ export interface GetSchemasConfig extends Omit<BaseGetSchemasConfig, 'fetcher'> 
 }
 
 /**
- * Retrieves the SCIM2 schemas from the specified endpoint.
+ * Creates a new organization.
  * This function uses the Asgardeo SPA client's httpClient by default, but allows for custom fetchers.
  *
- * @param config - Request configuration object.
- * @returns A promise that resolves with the SCIM2 schemas information.
+ * @param config - Configuration object containing baseUrl, payload and optional request config.
+ * @returns A promise that resolves with the created organization information.
  * @example
  * ```typescript
  * // Using default Asgardeo SPA client httpClient
  * try {
- *   const schemas = await getSchemas({
- *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/scim2/Schemas",
+ *   const organization = await createOrganization({
+ *     baseUrl: "https://api.asgardeo.io/t/<ORGANIZATION>",
+ *     payload: {
+ *       description: "Share your screens",
+ *       name: "Team Viewer",
+ *       orgHandle: "team-viewer",
+ *       parentId: "f4825104-4948-40d9-ab65-a960eee3e3d5",
+ *       type: "TENANT"
+ *     }
  *   });
- *   console.log(schemas);
+ *   console.log(organization);
  * } catch (error) {
  *   if (error instanceof AsgardeoAPIError) {
- *     console.error('Failed to get schemas:', error.message);
+ *     console.error('Failed to create organization:', error.message);
  *   }
  * }
  * ```
@@ -63,24 +71,32 @@ export interface GetSchemasConfig extends Omit<BaseGetSchemasConfig, 'fetcher'> 
  * ```typescript
  * // Using custom fetcher
  * try {
- *   const schemas = await getSchemas({
- *     url: "https://api.asgardeo.io/t/<ORGANIZATION>/scim2/Schemas",
+ *   const organization = await createOrganization({
+ *     baseUrl: "https://api.asgardeo.io/t/<ORGANIZATION>",
+ *     payload: {
+ *       description: "Share your screens",
+ *       name: "Team Viewer",
+ *       orgHandle: "team-viewer",
+ *       parentId: "f4825104-4948-40d9-ab65-a960eee3e3d5",
+ *       type: "TENANT"
+ *     },
  *     fetcher: customFetchFunction
  *   });
- *   console.log(schemas);
+ *   console.log(organization);
  * } catch (error) {
  *   if (error instanceof AsgardeoAPIError) {
- *     console.error('Failed to get schemas:', error.message);
+ *     console.error('Failed to create organization:', error.message);
  *   }
  * }
  * ```
  */
-const getSchemas = async ({fetcher, ...requestConfig}: GetSchemasConfig): Promise<Schema[]> => {
+const createOrganization = async ({fetcher, ...requestConfig}: CreateOrganizationConfig): Promise<Organization> => {
   const defaultFetcher = async (url: string, config: RequestInit): Promise<Response> => {
     const response = await httpClient({
       url,
-      method: config.method || 'GET',
+      method: config.method || 'POST',
       headers: config.headers as Record<string, string>,
+      data: config.body ? JSON.parse(config.body as string) : undefined,
     } as HttpRequestConfig);
 
     return {
@@ -92,10 +108,10 @@ const getSchemas = async ({fetcher, ...requestConfig}: GetSchemasConfig): Promis
     } as Response;
   };
 
-  return baseGetSchemas({
+  return baseCreateOrganization({
     ...requestConfig,
     fetcher: fetcher || defaultFetcher,
   });
 };
 
-export default getSchemas;
+export default createOrganization;
