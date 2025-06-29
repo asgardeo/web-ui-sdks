@@ -22,14 +22,14 @@ import {NextRequest, NextResponse} from 'next/server';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
 import deleteSessionId from './deleteSessionId';
 
-const signOutAction = async (): Promise<{success: boolean; afterSignOutUrl?: string; error?: unknown}> => {
+const signOutAction = async (): Promise<{success: boolean; data?: {afterSignOutUrl?: string}; error?: unknown}> => {
   try {
     const client = AsgardeoNextClient.getInstance();
     const afterSignOutUrl: string = await client.signOut();
 
     await deleteSessionId();
 
-    return {success: true, afterSignOutUrl};
+    return {success: true, data: {afterSignOutUrl}};
   } catch (error) {
     return {success: false, error};
   }

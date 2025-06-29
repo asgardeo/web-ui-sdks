@@ -22,29 +22,15 @@ import {
   EmbeddedSignInFlowHandleRequestPayload,
 } from '@asgardeo/browser';
 import {FC} from 'react';
-import BaseSignIn from './BaseSignIn';
+import BaseSignIn, {BaseSignInProps} from './BaseSignIn';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import {CardProps} from '../../primitives/Card/Card';
 
 /**
  * Props for the SignIn component.
+ * Extends BaseSignInProps for full compatibility with the React BaseSignIn component
  */
-export interface SignInProps {
-  /**
-   * Additional CSS class names for customization.
-   */
-  className?: string;
-
-  /**
-   * Size variant for the component.
-   */
-  size?: 'small' | 'medium' | 'large';
-
-  /**
-   * Theme variant for the component.
-   */
-  variant?: CardProps['variant'];
-}
+export type SignInProps = Pick<BaseSignInProps, 'className' | 'onSuccess' | 'onError' | 'variant' | 'size'>;
 
 /**
  * A styled SignIn component that provides native authentication flow with pre-built styling.

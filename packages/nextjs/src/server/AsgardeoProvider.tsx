@@ -20,10 +20,10 @@ import {FC, PropsWithChildren, ReactElement} from 'react';
 import {AsgardeoRuntimeError} from '@asgardeo/node';
 import AsgardeoClientProvider, {AsgardeoClientProviderProps} from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
-import {AsgardeoNextConfig} from '../models/config';
-import {signInAction, getUserAction, getIsSignedInAction} from './actions/authActions';
-import gerClientOrigin from './actions/gerClientOrigin';
+import signInAction from './actions/signInAction';
 import signOutAction from './actions/signOutAction';
+import {AsgardeoNextConfig} from '../models/config';
+import isSignedIn from './actions/isSignedIn';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -55,16 +55,12 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
   ...config
 }: PropsWithChildren<AsgardeoServerProviderProps>): Promise<ReactElement> => {
   const asgardeoClient = AsgardeoNextClient.getInstance();
+  let configuration: Partial<AsgardeoNextConfig> = {};
   console.log('Initializing Asgardeo client with config:', config);
 
-  const origin = await gerClientOrigin();
-
   try {
-    asgardeoClient.initialize({
-      afterSignInUrl: afterSignInUrl ?? origin,
-      afterSignOutUrl: afterSignOutUrl ?? origin,
-      ...config,
-    });
+    await asgardeoClient.initialize(config);
+    configuration = await asgardeoClient.getConfiguration();
   } catch (error) {
     throw new AsgardeoRuntimeError(
       `Failed to initialize Asgardeo client: ${error?.toString()}`,
@@ -74,17 +70,15 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     );
   }
 
-  const configuration = await asgardeoClient.getConfiguration();
-  console.log('Asgardeo client initialized with configuration:', configuration);
-
   return (
     <AsgardeoClientProvider
       baseUrl={config.baseUrl}
       signIn={signInAction}
       signOut={signOutAction}
-      signInUrl={configuration.signInUrl}
+      signInUrl={configuration?.signInUrl}
       preferences={config.preferences}
       clientId={config.clientId}
+      isSignedIn={await isSignedIn()}
     >
       {children}
     </AsgardeoClientProvider>

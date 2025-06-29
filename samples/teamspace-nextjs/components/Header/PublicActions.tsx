@@ -25,9 +25,6 @@ export default function PublicActions({className = '', showMobileActions = false
   return (
     <div className={`hidden md:flex items-center space-x-4 ${className}`}>
       <SignInButton />
-      <Button variant="ghost" asChild>
-        <Link href="/signin">Sign In</Link>
-      </Button>
       <Button asChild>
         <Link href="/signup">Get Started</Link>
       </Button>

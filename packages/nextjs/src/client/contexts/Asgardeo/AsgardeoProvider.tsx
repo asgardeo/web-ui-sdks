@@ -23,28 +23,30 @@ import {I18nProvider, FlowProvider, UserProvider, ThemeProvider, AsgardeoProvide
 import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
-import {getIsSignedInAction, getUserAction} from '../../../server/actions/authActions';
+import {getUserAction} from '../../../server/actions/authActions';
 
 /**
  * Props interface of {@link AsgardeoClientProvider}
  */
-export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'baseUrl' | 'clientId'>> & Pick<AsgardeoProviderProps, 'baseUrl' | 'clientId'> & {
-  signOut: AsgardeoContextProps['signOut'];
-  signIn: AsgardeoContextProps['signIn'];
-};
+export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'baseUrl' | 'clientId'>> &
+  Pick<AsgardeoProviderProps, 'baseUrl' | 'clientId'> & {
+    signOut: AsgardeoContextProps['signOut'];
+    signIn: AsgardeoContextProps['signIn'];
+    isSignedIn: boolean;
+  };
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
   children,
   signIn,
   signOut,
   preferences,
+  isSignedIn,
   signInUrl,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
     if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {
@@ -55,33 +57,30 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   }, [preferences?.theme?.mode]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    if (!isSignedIn) {
+      return;
+    }
+
+    (async () => {
       try {
         setIsLoading(true);
 
-        const sessionResult = await getIsSignedInAction();
-
-        setIsSignedIn(sessionResult.isSignedIn);
-
-        if (sessionResult.isSignedIn) {
+        if (isSignedIn) {
+          console.log('[AsgardeoClientProvider] Fetching user data...');
           const userResult = await getUserAction();
 
-          if (userResult.user) {
-            setUser(userResult.user);
-          }
+          console.log('[AsgardeoClientProvider] User fetched:', userResult);
+          setUser(userResult?.data?.user);
         } else {
           setUser(null);
         }
       } catch (error) {
         setUser(null);
-        setIsSignedIn(false);
       } finally {
         setIsLoading(false);
       }
-    };
-
-    fetchUserData();
-  }, []);
+    })();
+  }, [isSignedIn]);
 
   const handleSignIn = async (
     payload: EmbeddedSignInFlowHandleRequestPayload,
@@ -90,16 +89,16 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     try {
       const result = await signIn(payload, request);
 
-      if (result?.afterSignInUrl) {
-        router.push(result.afterSignInUrl);
-        return {redirected: true, location: result.afterSignInUrl};
+      if (result?.data?.afterSignInUrl) {
+        router.push(result.data.afterSignInUrl);
+        return {redirected: true, location: result.data.afterSignInUrl};
       }
 
       if (result?.error) {
         throw new Error(result.error);
       }
 
-      return result;
+      return result?.data ?? result;
     } catch (error) {
       throw error;
     }
@@ -109,16 +108,16 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     try {
       const result = await signOut();
 
-      if (result?.afterSignOutUrl) {
-        router.push(result.afterSignOutUrl);
-        return {redirected: true, location: result.afterSignOutUrl};
+      if (result?.data?.afterSignOutUrl) {
+        router.push(result.data.afterSignOutUrl);
+        return {redirected: true, location: result.data.afterSignOutUrl};
       }
 
       if (result?.error) {
         throw new Error(result.error);
       }
 
-      return result;
+      return result?.data ?? result;
     } catch (error) {
       throw error;
     }
