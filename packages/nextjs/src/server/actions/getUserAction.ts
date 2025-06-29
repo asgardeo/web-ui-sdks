@@ -35,12 +35,14 @@ import deleteSessionId from './deleteSessionId';
  * Server action to get the current user.
  * Returns the user profile if signed in.
  */
-export async function getUserAction() {
+const getUserAction = async (sessionId: string) => {
   try {
     const client = AsgardeoNextClient.getInstance();
-    const user = await client.getUser();
-    return {data: {user}, error: null};
+    const user = await client.getUser(sessionId);
+    return {success: true, data: {user}, error: null};
   } catch (error) {
-    return {data: {user: null}, error: 'Failed to get user'};
+    return {success: false, data: {user: null}, error: 'Failed to get user'};
   }
-}
+};
+
+export default getUserAction;

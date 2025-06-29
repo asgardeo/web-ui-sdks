@@ -23,7 +23,6 @@ import {I18nProvider, FlowProvider, UserProvider, ThemeProvider, AsgardeoProvide
 import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
-import {getUserAction} from '../../../server/actions/authActions';
 
 /**
  * Props interface of {@link AsgardeoClientProvider}
@@ -33,6 +32,7 @@ export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'b
     signOut: AsgardeoContextProps['signOut'];
     signIn: AsgardeoContextProps['signIn'];
     isSignedIn: boolean;
+    user: User | null;
   };
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
@@ -42,10 +42,10 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   preferences,
   isSignedIn,
   signInUrl,
+  user
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -57,30 +57,9 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   }, [preferences?.theme?.mode]);
 
   useEffect(() => {
-    if (!isSignedIn) {
-      return;
-    }
-
-    (async () => {
-      try {
-        setIsLoading(true);
-
-        if (isSignedIn) {
-          console.log('[AsgardeoClientProvider] Fetching user data...');
-          const userResult = await getUserAction();
-
-          console.log('[AsgardeoClientProvider] User fetched:', userResult);
-          setUser(userResult?.data?.user);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [isSignedIn]);
+    // Set loading to false when server has resolved authentication state
+    setIsLoading(false);
+  }, [isSignedIn, user]);
 
   const handleSignIn = async (
     payload: EmbeddedSignInFlowHandleRequestPayload,
@@ -92,6 +71,13 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       // Redirect based flow URL is sent as `signInUrl` in the response.
       if (result?.data?.signInUrl) {
         router.push(result.data.signInUrl);
+
+        return;
+      }
+
+      // After the Embedded flow is successful, the URL to navigate next is sent as `afterSignInUrl` in the response.
+      if (result?.data?.afterSignInUrl) {
+        router.push(result.data.afterSignInUrl);
 
         return;
       }
@@ -134,7 +120,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       signOut: handleSignOut,
       signInUrl,
     }),
-    [user, isSignedIn, isLoading],
+    [user, isSignedIn, isLoading, signInUrl],
   );
 
   return (

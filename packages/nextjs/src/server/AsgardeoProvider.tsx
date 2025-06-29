@@ -17,13 +17,15 @@
  */
 
 import {FC, PropsWithChildren, ReactElement} from 'react';
-import {AsgardeoRuntimeError} from '@asgardeo/node';
+import {AsgardeoRuntimeError, User} from '@asgardeo/node';
 import AsgardeoClientProvider, {AsgardeoClientProviderProps} from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
 import signInAction from './actions/signInAction';
 import signOutAction from './actions/signOutAction';
 import {AsgardeoNextConfig} from '../models/config';
 import isSignedIn from './actions/isSignedIn';
+import getUserAction from './actions/getUserAction';
+import getSessionId from './actions/getSessionId';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -74,6 +76,15 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     return <></>;
   }
 
+  const _isSignedIn: boolean = await isSignedIn();
+  let user: User = {};
+
+  if (_isSignedIn) {
+    const response = await getUserAction((await getSessionId()) as string);
+
+    user = response.data?.user || {};
+  }
+
   return (
     <AsgardeoClientProvider
       baseUrl={config.baseUrl}
@@ -82,7 +93,8 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
       signInUrl={configuration?.signInUrl}
       preferences={config.preferences}
       clientId={config.clientId}
-      isSignedIn={await isSignedIn()}
+      user={user}
+      isSignedIn={_isSignedIn}
     >
       {children}
     </AsgardeoClientProvider>

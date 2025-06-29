@@ -36,6 +36,7 @@ import {
   generateUserProfile,
   flattenUserSchema,
   getScim2Me,
+  getSchemas,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
@@ -131,8 +132,19 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       const configData = await this.asgardeo.getConfigData();
       const baseUrl = configData?.baseUrl;
 
-      const profile = await getScim2Me({baseUrl});
-      const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
+      const profile = await getScim2Me({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+
+      const schemas = await getSchemas({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
 
       return generateUserProfile(profile, flattenUserSchema(schemas));
     } catch (error) {
@@ -162,6 +174,10 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
   override isSignedIn(sessionId?: string): Promise<boolean> {
     return this.asgardeo.isSignedIn(sessionId as string);
+  }
+
+  getAccessToken(sessionId?: string): Promise<string> {
+    return this.asgardeo.getAccessToken(sessionId as string);
   }
 
   override getConfiguration(): T {

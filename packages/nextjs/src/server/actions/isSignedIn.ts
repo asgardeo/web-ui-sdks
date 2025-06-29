@@ -18,14 +18,15 @@
 
 'use server';
 
-import {CookieConfig} from '@asgardeo/node';
-import {ReadonlyRequestCookies} from 'next/dist/server/web/spec-extension/adapters/request-cookies';
-import {cookies} from 'next/headers';
+import AsgardeoNextClient from '../../AsgardeoNextClient';
+import getSessionId from './getSessionId';
 
 const isSignedIn = async (): Promise<boolean> => {
-  const cookieStore: ReadonlyRequestCookies = await cookies();
+  const sessionId: string | undefined = await getSessionId();
+  const client = AsgardeoNextClient.getInstance();
+  const accessToken: string | undefined = await client.getAccessToken(sessionId);
 
-  return !!cookieStore.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+  return !!accessToken;
 };
 
 export default isSignedIn;
