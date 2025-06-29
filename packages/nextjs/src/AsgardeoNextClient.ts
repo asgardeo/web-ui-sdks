@@ -37,6 +37,8 @@ import {
   flattenUserSchema,
   getScim2Me,
   getSchemas,
+  generateFlattenedUserProfile,
+  updateMeProfile,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
@@ -152,11 +154,70 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     }
   }
 
-  override async getOrganizations(): Promise<Organization[]> {
-    throw new Error('Method not implemented.');
+  override async getUserProfile(userId?: string): Promise<UserProfile> {
+    await this.ensureInitialized();
+
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
+      const profile = await getScim2Me({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+
+      const schemas = await getSchemas({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+
+      const processedSchemas = flattenUserSchema(schemas);
+
+      const output = {
+        schemas: processedSchemas,
+        flattenedProfile: generateFlattenedUserProfile(profile, processedSchemas),
+        profile,
+      };
+
+      return output;
+    } catch (error) {
+      return {
+        schemas: [],
+        flattenedProfile: await this.asgardeo.getDecodedIdToken(),
+        profile: await this.asgardeo.getDecodedIdToken(),
+      };
+    }
   }
 
-  override getUserProfile(): Promise<UserProfile> {
+  async updateUserProfile(payload: any, userId?: string) {
+    await this.ensureInitialized();
+
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
+      return await updateMeProfile({
+        baseUrl,
+        payload,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to update user profile: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'AsgardeoNextClient-UpdateProfileError-001',
+        'react',
+        'An error occurred while updating the user profile. Please check your configuration and network connection.',
+      );
+    }
+  }
+
+  override async getOrganizations(): Promise<Organization[]> {
     throw new Error('Method not implemented.');
   }
 

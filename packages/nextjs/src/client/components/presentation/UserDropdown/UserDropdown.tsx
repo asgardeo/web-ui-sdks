@@ -125,7 +125,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
 
   const handleSignOut = () => {
     signOut();
-    onSignOut();
+    onSignOut && onSignOut();
   };
 
   const closeProfile = () => {
@@ -135,7 +135,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
   // Prepare render props data
   const renderProps: UserDropdownRenderProps = {
     user,
-    isLoading,
+    isLoading: isLoading as boolean,
     openProfile: handleManageProfile,
     signOut: handleSignOut,
     isProfileOpen,

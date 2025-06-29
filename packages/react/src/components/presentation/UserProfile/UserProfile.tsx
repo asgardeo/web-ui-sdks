@@ -56,7 +56,7 @@ const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactEl
   const {profile, flattenedProfile, schemas, revalidateProfile} = useUser();
 
   const handleProfileUpdate = async (payload: any): Promise<void> => {
-    await updateMeProfile({url: `${baseUrl}/scim2/Me`, payload});
+    await updateMeProfile({baseUrl, payload});
     await revalidateProfile();
   };
 

@@ -68,7 +68,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       const baseUrl = configData?.baseUrl;
 
       const profile = await getScim2Me({baseUrl});
-      const schemas = await getSchemas({url: `${baseUrl}/scim2/Schemas`});
+      const schemas = await getSchemas({baseUrl});
 
       return generateUserProfile(profile, flattenUserSchema(schemas));
     } catch (error) {

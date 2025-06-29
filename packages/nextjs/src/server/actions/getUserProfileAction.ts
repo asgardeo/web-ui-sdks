@@ -18,20 +18,31 @@
 
 'use server';
 
+import {UserProfile} from '@asgardeo/node';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
 
 /**
  * Server action to get the current user.
  * Returns the user profile if signed in.
  */
-const getUserAction = async (sessionId: string) => {
+const getUserProfileAction = async (sessionId: string) => {
   try {
     const client = AsgardeoNextClient.getInstance();
-    const user = await client.getUser(sessionId);
-    return {success: true, data: {user}, error: null};
+    const updatedProfile: UserProfile = await client.getUserProfile(sessionId);
+    return {success: true, data: {userProfile: updatedProfile}, error: null};
   } catch (error) {
-    return {success: false, data: {user: null}, error: 'Failed to get user'};
+    return {
+      success: false,
+      data: {
+        userProfile: {
+          schemas: [],
+          profile: {},
+          flattenedProfile: {},
+        },
+      },
+      error: 'Failed to get user profile',
+    };
   }
 };
 
-export default getUserAction;
+export default getUserProfileAction;

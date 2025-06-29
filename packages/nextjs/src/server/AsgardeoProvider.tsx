@@ -17,7 +17,7 @@
  */
 
 import {FC, PropsWithChildren, ReactElement} from 'react';
-import {AsgardeoRuntimeError, User} from '@asgardeo/node';
+import {AsgardeoRuntimeError, User, UserProfile} from '@asgardeo/node';
 import AsgardeoClientProvider, {AsgardeoClientProviderProps} from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
 import signInAction from './actions/signInAction';
@@ -26,6 +26,7 @@ import {AsgardeoNextConfig} from '../models/config';
 import isSignedIn from './actions/isSignedIn';
 import getUserAction from './actions/getUserAction';
 import getSessionId from './actions/getSessionId';
+import getUserProfileAction from './actions/getUserProfileAction';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -54,15 +55,15 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
   children,
   afterSignInUrl,
   afterSignOutUrl,
-  ...config
+  ..._config
 }: PropsWithChildren<AsgardeoServerProviderProps>): Promise<ReactElement> => {
   const asgardeoClient = AsgardeoNextClient.getInstance();
-  let configuration: Partial<AsgardeoNextConfig> = {};
+  let config: Partial<AsgardeoNextConfig> = {};
   console.log('Initializing Asgardeo client with config:', config);
 
   try {
-    await asgardeoClient.initialize(config);
-    configuration = await asgardeoClient.getConfiguration();
+    await asgardeoClient.initialize(_config);
+    config = await asgardeoClient.getConfiguration();
   } catch (error) {
     throw new AsgardeoRuntimeError(
       `Failed to initialize Asgardeo client: ${error?.toString()}`,
@@ -78,11 +79,18 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
 
   const _isSignedIn: boolean = await isSignedIn();
   let user: User = {};
+  let userProfile: UserProfile = {
+    schemas: [],
+    profile: {},
+    flattenedProfile: {},
+  };
 
   if (_isSignedIn) {
-    const response = await getUserAction((await getSessionId()) as string);
+    const userResponse = await getUserAction((await getSessionId()) as string);
+    const userProfileResponse = await getUserProfileAction((await getSessionId()) as string);
 
-    user = response.data?.user || {};
+    user = userResponse.data?.user || {};
+    userProfile = userProfileResponse.data?.userProfile;
   }
 
   return (
@@ -90,10 +98,11 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
       baseUrl={config.baseUrl}
       signIn={signInAction}
       signOut={signOutAction}
-      signInUrl={configuration?.signInUrl}
+      signInUrl={config.signInUrl}
       preferences={config.preferences}
       clientId={config.clientId}
       user={user}
+      userProfile={userProfile}
       isSignedIn={_isSignedIn}
     >
       {children}

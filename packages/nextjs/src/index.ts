@@ -42,6 +42,12 @@ export type {SignOutButtonProps} from './client/components/actions/SignOutButton
 export {default as User} from './client/components/presentation/User/User';
 export type {UserProps} from './client/components/presentation/User/User';
 
+export {default as UserDropdown} from './client/components/presentation/UserDropdown/UserDropdown';
+export type {UserDropdownProps} from './client/components/presentation/UserDropdown/UserDropdown';
+
+export {default as UserProfile} from './client/components/presentation/UserProfile/UserProfile';
+export type {UserProfileProps} from './client/components/presentation/UserProfile/UserProfile';
+
 export {default as AsgardeoNext} from './AsgardeoNextClient';
 
 export {default as asgardeoMiddleware} from './middleware/asgardeoMiddleware';

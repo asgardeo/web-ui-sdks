@@ -18,7 +18,12 @@
 
 'use client';
 
-import {EmbeddedFlowExecuteRequestConfig, EmbeddedSignInFlowHandleRequestPayload, User} from '@asgardeo/node';
+import {
+  EmbeddedFlowExecuteRequestConfig,
+  EmbeddedSignInFlowHandleRequestPayload,
+  User,
+  UserProfile,
+} from '@asgardeo/node';
 import {I18nProvider, FlowProvider, UserProvider, ThemeProvider, AsgardeoProviderProps} from '@asgardeo/react';
 import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
@@ -32,10 +37,12 @@ export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'b
     signOut: AsgardeoContextProps['signOut'];
     signIn: AsgardeoContextProps['signIn'];
     isSignedIn: boolean;
+    userProfile: UserProfile;
     user: User | null;
   };
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
+  baseUrl,
   children,
   signIn,
   signOut,
@@ -43,10 +50,12 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   isSignedIn,
   signInUrl,
   user,
+  userProfile,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [_userProfile, setUserProfile] = useState<UserProfile | null>(userProfile);
 
   useEffect(() => {
     if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {
@@ -113,6 +122,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
 
   const contextValue = useMemo(
     () => ({
+      baseUrl,
       user,
       isSignedIn,
       isLoading,
@@ -120,7 +130,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       signOut: handleSignOut,
       signInUrl,
     }),
-    [user, isSignedIn, isLoading, signInUrl],
+    [baseUrl, user, isSignedIn, isLoading, signInUrl],
   );
 
   return (
@@ -128,15 +138,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       <I18nProvider preferences={preferences?.i18n}>
         <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
-            <UserProvider
-              profile={{
-                schemas: [],
-                profile: user || {},
-                flattenedProfile: user || {},
-              }}
-            >
-              {children}
-            </UserProvider>
+            <UserProvider profile={userProfile}>{children}</UserProvider>
           </FlowProvider>
         </ThemeProvider>
       </I18nProvider>
