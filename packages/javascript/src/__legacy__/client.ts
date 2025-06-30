@@ -237,13 +237,14 @@ export class AsgardeoAuthClient<T> {
         await this._storageManager.setTemporaryDataParameter(pkceKey, codeVerifier, userId);
       }
 
-      console.log('[AsgardeoAuthClient] configData:', configData);
+      if (authRequestConfig['client_secret']) {
+        authRequestConfig['client_secret'] = configData.clientSecret;
+      }
 
       const authorizeRequestParams: Map<string, string> = getAuthorizeRequestUrlParams(
         {
           redirectUri: configData.afterSignInUrl,
           clientId: configData.clientId,
-          clientSecret: configData.clientSecret,
           scopes: processOpenIDScopes(configData.scopes),
           responseMode: configData.responseMode,
           codeChallengeMethod: PKCEConstants.DEFAULT_CODE_CHALLENGE_METHOD,

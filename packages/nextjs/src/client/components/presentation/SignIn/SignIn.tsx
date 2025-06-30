@@ -32,7 +32,7 @@ import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
  * Props for the SignIn component.
  * Extends BaseSignInProps for full compatibility with the React BaseSignIn component
  */
-export type SignInProps = BaseSignInProps;
+export type SignInProps = Pick<BaseSignInProps, 'className' | 'onSuccess' | 'onError' | 'variant' | 'size'>;
 
 /**
  * A SignIn component for Next.js that provides native authentication flow.
@@ -77,19 +77,8 @@ export type SignInProps = BaseSignInProps;
  * };
  * ```
  */
-const SignIn: FC<SignInProps> = ({
-  afterSignInUrl,
-  className,
-  onError,
-  onFlowChange,
-  onInitialize,
-  onSubmit,
-  onSuccess,
-  size = 'medium',
-  variant = 'outlined',
-  ...rest
-}: SignInProps) => {
-  const {signIn} = useAsgardeo();
+const SignIn: FC<SignInProps> = ({size = 'medium', variant = 'outlined', ...rest}: SignInProps) => {
+  const {signIn, afterSignInUrl} = useAsgardeo();
 
   const handleInitialize = async (): Promise<EmbeddedSignInFlowInitiateResponse> =>
     await signIn({
@@ -103,21 +92,16 @@ const SignIn: FC<SignInProps> = ({
   const handleOnSubmit = async (
     payload: EmbeddedSignInFlowHandleRequestPayload,
     request: EmbeddedFlowExecuteRequestConfig,
-  ): Promise<EmbeddedSignInFlowHandleResponse> => await signIn(payload, request);
-
-  const handleError = (error: Error): void => {
-    onError?.(error);
+  ): Promise<EmbeddedSignInFlowHandleResponse> => {
+    return await signIn(payload, request);
   };
 
   return (
     <BaseSignIn
+      // isLoading={isLoading || !isInitialized}
       afterSignInUrl={afterSignInUrl}
       onInitialize={handleInitialize}
       onSubmit={handleOnSubmit}
-      onSuccess={onSuccess}
-      onError={handleError}
-      onFlowChange={onFlowChange}
-      className={className}
       size={size}
       variant={variant}
       {...rest}

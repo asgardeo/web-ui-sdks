@@ -16,23 +16,22 @@
  * under the License.
  */
 
-import {NextRequest, NextResponse} from 'next/server';
-import getIsSignedIn from './isSignedIn';
+'use server';
+
+import AsgardeoNextClient from '../../AsgardeoNextClient';
 
 /**
- * Handles session status requests.
- *
- * @param req - The Next.js request object
- * @returns NextResponse with session status
+ * Server action to get the current user.
+ * Returns the user profile if signed in.
  */
-export async function handleSessionRequest(req: NextRequest): Promise<NextResponse> {
+const getUserAction = async (sessionId: string) => {
   try {
-    const isSignedIn: boolean = await getIsSignedIn();
-
-    return NextResponse.json({isSignedIn});
+    const client = AsgardeoNextClient.getInstance();
+    const user = await client.getUser(sessionId);
+    return {success: true, data: {user}, error: null};
   } catch (error) {
-    return NextResponse.json({error: 'Failed to check session'}, {status: 500});
+    return {success: false, data: {user: null}, error: 'Failed to get user'};
   }
-}
+};
 
-export default handleSessionRequest;
+export default getUserAction;

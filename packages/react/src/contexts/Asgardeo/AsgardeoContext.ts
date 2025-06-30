@@ -24,6 +24,7 @@ import {Organization} from '@asgardeo/browser';
  */
 export type AsgardeoContextProps = {
   signInUrl: string | undefined;
+  signUpUrl: string | undefined;
   afterSignInUrl: string | undefined;
   baseUrl: string | undefined;
   isInitialized: boolean;
@@ -62,6 +63,7 @@ export type AsgardeoContextProps = {
  */
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
   signInUrl: undefined,
+  signUpUrl: undefined,
   afterSignInUrl: undefined,
   baseUrl: undefined,
   isInitialized: false,

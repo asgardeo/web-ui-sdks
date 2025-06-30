@@ -16,11 +16,14 @@
  * under the License.
  */
 
+'use client';
+
 import {FC, ReactElement} from 'react';
-import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
-import updateMeProfile from '../../../api/updateMeProfile';
+import {BaseUserProfile, BaseUserProfileProps, useUser} from '@asgardeo/react';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
-import useUser from '../../../contexts/User/useUser';
+import getSessionId from '../../../../server/actions/getSessionId';
+import updateUserProfileAction from '../../../../server/actions/updateUserProfileAction';
+import { Schema, User } from '@asgardeo/node';
 
 /**
  * Props for the UserProfile component.
@@ -56,15 +59,15 @@ const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactEl
   const {profile, flattenedProfile, schemas, revalidateProfile} = useUser();
 
   const handleProfileUpdate = async (payload: any): Promise<void> => {
-    await updateMeProfile({baseUrl, payload});
+    await updateUserProfileAction(payload, (await getSessionId()) as string);
     await revalidateProfile();
   };
 
   return (
     <BaseUserProfile
-      profile={profile}
-      flattenedProfile={flattenedProfile}
-      schemas={schemas}
+      profile={profile as User}
+      flattenedProfile={flattenedProfile as User}
+      schemas={schemas as Schema[]}
       onUpdate={handleProfileUpdate}
       {...rest}
     />

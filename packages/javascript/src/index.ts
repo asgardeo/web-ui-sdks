@@ -26,6 +26,19 @@ export {default as executeEmbeddedSignInFlow} from './api/executeEmbeddedSignInF
 export {default as executeEmbeddedSignUpFlow} from './api/executeEmbeddedSignUpFlow';
 export {default as getUserInfo} from './api/getUserInfo';
 export {default as getScim2Me, GetScim2MeConfig} from './api/getScim2Me';
+export {default as getSchemas, GetSchemasConfig} from './api/getSchemas';
+export {default as getAllOrganizations} from './api/getAllOrganizations';
+export {default as createOrganization} from './api/createOrganization';
+export {default as getMeOrganizations} from './api/getMeOrganizations';
+export {default as getOrganization} from './api/getOrganization';
+export {default as updateOrganization, createPatchOperations} from './api/updateOrganization';
+export {default as updateMeProfile} from './api/updateMeProfile';
+export type {PaginatedOrganizationsResponse, GetAllOrganizationsConfig} from './api/getAllOrganizations';
+export type {CreateOrganizationPayload, CreateOrganizationConfig} from './api/createOrganization';
+export type {GetMeOrganizationsConfig} from './api/getMeOrganizations';
+export type {OrganizationDetails, GetOrganizationConfig} from './api/getOrganization';
+export type {UpdateOrganizationConfig} from './api/updateOrganization';
+export type {UpdateMeProfileConfig} from './api/updateMeProfile';
 
 export {default as ApplicationNativeAuthenticationConstants} from './constants/ApplicationNativeAuthenticationConstants';
 export {default as TokenConstants} from './constants/TokenConstants';

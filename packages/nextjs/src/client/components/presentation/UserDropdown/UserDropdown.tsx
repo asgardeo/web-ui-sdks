@@ -16,8 +16,10 @@
  * under the License.
  */
 
+'use client';
+
 import {FC, ReactElement, ReactNode, useState} from 'react';
-import BaseUserDropdown, {BaseUserDropdownProps} from './BaseUserDropdown';
+import {BaseUserDropdown, BaseUserDropdownProps} from '@asgardeo/react';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import UserProfile from '../UserProfile/UserProfile';
 

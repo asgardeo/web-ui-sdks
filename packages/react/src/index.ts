@@ -236,22 +236,27 @@ export {default as Info} from './components/primitives/Icons/Info';
 export {default as UserIcon} from './components/primitives/Icons/User';
 export {default as LogOut} from './components/primitives/Icons/LogOut';
 
-export {
-  createField,
-  FieldFactory,
-  validateFieldValue,
-} from './components/factories/FieldFactory';
+export {createField, FieldFactory, validateFieldValue} from './components/factories/FieldFactory';
 export * from './components/factories/FieldFactory';
 
 export type {FlowStep, FlowMessage, FlowContextValue} from './contexts/Flow/FlowContext';
 
 export type {FlowProviderProps} from './contexts/Flow/FlowProvider';
 
-// API Functions
-export {default as createOrganization} from './api/scim2/createOrganization';
-export * from './api/scim2/createOrganization';
 
-export {default as getMeOrganizations} from './api/scim2/getMeOrganizations';
-
+export {default as getAllOrganizations} from './api/getAllOrganizations';
+export {default as createOrganization} from './api/createOrganization';
+export {default as getMeOrganizations} from './api/getMeOrganizations';
+export {default as getOrganization} from './api/getOrganization';
+export {default as updateOrganization, createPatchOperations} from './api/updateOrganization';
+export {default as getSchemas} from './api/getSchemas';
+export {default as updateMeProfile} from './api/updateMeProfile';
+export type {GetAllOrganizationsConfig} from './api/getAllOrganizations';
+export type {CreateOrganizationConfig} from './api/createOrganization';
+export type {GetMeOrganizationsConfig} from './api/getMeOrganizations';
+export type {GetOrganizationConfig} from './api/getOrganization';
+export type {UpdateOrganizationConfig} from './api/updateOrganization';
+export type {GetSchemasConfig} from './api/getSchemas';
+export type {UpdateMeProfileConfig} from './api/updateMeProfile';
 export {default as getMeProfile} from './api/getScim2Me';
 export * from './api/getScim2Me';

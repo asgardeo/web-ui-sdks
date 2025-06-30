@@ -18,7 +18,6 @@
 
 'use server';
 
-import {redirect} from 'next/navigation';
 import {cookies} from 'next/headers';
 import {
   CookieConfig,
@@ -26,9 +25,9 @@ import {
   EmbeddedSignInFlowStatus,
   EmbeddedSignInFlowHandleRequestPayload,
   EmbeddedFlowExecuteRequestConfig,
+  EmbeddedSignInFlowInitiateResponse,
 } from '@asgardeo/node';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
-import deleteSessionId from './deleteSessionId';
 
 /**
  * Server action for signing in a user.
@@ -38,16 +37,23 @@ import deleteSessionId from './deleteSessionId';
  * @param request - The embedded flow execute request config
  * @returns Promise that resolves when sign-in is complete
  */
-export async function signInAction(
+const signInAction = async (
   payload?: EmbeddedSignInFlowHandleRequestPayload,
   request?: EmbeddedFlowExecuteRequestConfig,
-): Promise<{success: boolean; afterSignInUrl?: string; error?: string}> {
-  console.log('[AsgardeoNextClient] signInAction called with payload:', payload);
+): Promise<{
+  success: boolean;
+  data?:
+    | {
+        afterSignInUrl?: string;
+        signInUrl?: string;
+      }
+    | EmbeddedSignInFlowInitiateResponse;
+  error?: string;
+}> => {
   try {
     const client = AsgardeoNextClient.getInstance();
     const cookieStore = await cookies();
 
-    // Get or generate session ID
     let userId: string | undefined = cookieStore.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
 
     if (!userId) {
@@ -60,13 +66,13 @@ export async function signInAction(
       });
     }
 
-    // If no payload provided, redirect to sign-in URL
+    // If no payload provided, redirect to sign-in URL for redirect-based sign-in.
+    // If there's a payload, handle the embedded sign-in flow.
     if (!payload) {
-      const afterSignInUrl = await client.getSignInUrl(userId);
+      const defaultSignInUrl = await client.getAuthorizeRequestUrl({}, userId);
 
-      return {success: true, afterSignInUrl: String(afterSignInUrl)};
+      return {success: true, data: {signInUrl: String(defaultSignInUrl)}};
     } else {
-      // Handle embedded sign-in flow
       const response: any = await client.signIn(payload, request!, userId);
 
       if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
@@ -83,41 +89,15 @@ export async function signInAction(
 
         const afterSignInUrl = await (await client.getStorageManager()).getConfigDataParameter('afterSignInUrl');
 
-        return {success: true, afterSignInUrl: String(afterSignInUrl)};
+        return {success: true, data: {afterSignInUrl: String(afterSignInUrl)}};
       }
 
-      return {success: true};
+      return {success: true, data: response as EmbeddedSignInFlowInitiateResponse};
     }
   } catch (error) {
-    return {success: false, error: 'Sign-in failed'};
+    console.error('[signInAction] Error during sign-in:', error);
+    return {success: false, error: String(error)};
   }
-}
+};
 
-/**
- * Server action to get the current user.
- * Returns the user profile if signed in.
- */
-export async function getUserAction() {
-  try {
-    const client = AsgardeoNextClient.getInstance();
-    const user = await client.getUser();
-    return {user, error: null};
-  } catch (error) {
-    console.error('[AsgardeoNextClient] Failed to get user:', error);
-    return {user: null, error: 'Failed to get user'};
-  }
-}
-
-/**
- * Server action to check if user is signed in.
- */
-export async function getIsSignedInAction() {
-  try {
-    const cookieStore = await cookies();
-    const sessionId = cookieStore.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
-    return {isSignedIn: !!sessionId, error: null};
-  } catch (error) {
-    console.error('[AsgardeoNextClient] Failed to check session:', error);
-    return {isSignedIn: false, error: 'Failed to check session'};
-  }
-}
+export default signInAction;

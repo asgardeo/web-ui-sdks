@@ -1,6 +1,6 @@
 import OrganizationSwitcher from './OrganizationSwitcher';
-import UserDropdown from './UserDropdown';
-import {SignOutButton} from '@asgardeo/nextjs';
+// import UserDropdown from './UserDropdown';
+import {SignOutButton, UserDropdown} from '@asgardeo/nextjs';
 
 interface AuthenticatedActionsProps {
   className?: string;

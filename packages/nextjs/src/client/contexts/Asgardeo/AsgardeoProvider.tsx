@@ -18,33 +18,99 @@
 
 'use client';
 
-import {EmbeddedFlowExecuteRequestConfig, EmbeddedSignInFlowHandleRequestPayload, User} from '@asgardeo/node';
+import {
+  EmbeddedFlowExecuteRequestConfig,
+  EmbeddedFlowExecuteRequestPayload,
+  EmbeddedSignInFlowHandleRequestPayload,
+  User,
+  UserProfile,
+} from '@asgardeo/node';
 import {I18nProvider, FlowProvider, UserProvider, ThemeProvider, AsgardeoProviderProps} from '@asgardeo/react';
 import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
-import {useRouter} from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
 import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
-import {getIsSignedInAction, getUserAction} from '../../../server/actions/authActions';
 
 /**
  * Props interface of {@link AsgardeoClientProvider}
  */
-export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'baseUrl' | 'clientId'>> & Pick<AsgardeoProviderProps, 'baseUrl' | 'clientId'> & {
-  signOut: AsgardeoContextProps['signOut'];
-  signIn: AsgardeoContextProps['signIn'];
-};
+export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'baseUrl' | 'clientId'>> &
+  Pick<AsgardeoProviderProps, 'baseUrl' | 'clientId'> & {
+    signOut: AsgardeoContextProps['signOut'];
+    signIn: AsgardeoContextProps['signIn'];
+    signUp: AsgardeoContextProps['signUp'];
+    handleOAuthCallback: (code: string, state: string, sessionState?: string) => Promise<{success: boolean; error?: string; redirectUrl?: string}>;
+    isSignedIn: boolean;
+    userProfile: UserProfile;
+    user: User | null;
+  };
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
+  baseUrl,
   children,
   signIn,
   signOut,
+  signUp,
+  handleOAuthCallback,
   preferences,
+  isSignedIn,
   signInUrl,
+  signUpUrl,
+  user,
+  userProfile,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [_userProfile, setUserProfile] = useState<UserProfile | null>(userProfile);
+
+  // Handle OAuth callback automatically
+  useEffect(() => {
+    // Don't handle callback if already signed in
+    if (isSignedIn) return;
+
+    const processOAuthCallback = async () => {
+      try {
+        const code = searchParams.get('code');
+        const state = searchParams.get('state');
+        const sessionState = searchParams.get('session_state');
+        const error = searchParams.get('error');
+        const errorDescription = searchParams.get('error_description');
+
+        // Check for OAuth errors first
+        if (error) {
+          console.error('[AsgardeoClientProvider] OAuth error:', error, errorDescription);
+          // Redirect to sign-in page with error
+          router.push(`/signin?error=${encodeURIComponent(error)}&error_description=${encodeURIComponent(errorDescription || '')}`);
+          return;
+        }
+
+        // Handle OAuth callback if code and state are present
+        if (code && state) {
+          setIsLoading(true);
+
+          const result = await handleOAuthCallback(code, state, sessionState || undefined);
+
+          if (result.success) {
+            // Redirect to the success URL
+            if (result.redirectUrl) {
+              router.push(result.redirectUrl);
+            } else {
+              // Refresh the page to update authentication state
+              window.location.reload();
+            }
+          } else {
+            router.push(`/signin?error=authentication_failed&error_description=${encodeURIComponent(result.error || 'Authentication failed')}`);
+          }
+        }
+      } catch (error) {
+        console.error('[AsgardeoClientProvider] Failed to handle OAuth callback:', error);
+        router.push('/signin?error=authentication_failed');
+      }
+    };
+
+    processOAuthCallback();
+  }, [searchParams, router, isSignedIn, handleOAuthCallback]);
 
   useEffect(() => {
     if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {
@@ -55,33 +121,9 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   }, [preferences?.theme?.mode]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setIsLoading(true);
-
-        const sessionResult = await getIsSignedInAction();
-
-        setIsSignedIn(sessionResult.isSignedIn);
-
-        if (sessionResult.isSignedIn) {
-          const userResult = await getUserAction();
-
-          if (userResult.user) {
-            setUser(userResult.user);
-          }
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        setUser(null);
-        setIsSignedIn(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
+    // Set loading to false when server has resolved authentication state
+    setIsLoading(false);
+  }, [isSignedIn, user]);
 
   const handleSignIn = async (
     payload: EmbeddedSignInFlowHandleRequestPayload,
@@ -90,16 +132,56 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     try {
       const result = await signIn(payload, request);
 
-      if (result?.afterSignInUrl) {
-        router.push(result.afterSignInUrl);
-        return {redirected: true, location: result.afterSignInUrl};
+      // Redirect based flow URL is sent as `signInUrl` in the response.
+      if (result?.data?.signInUrl) {
+        router.push(result.data.signInUrl);
+
+        return;
+      }
+
+      // After the Embedded flow is successful, the URL to navigate next is sent as `afterSignInUrl` in the response.
+      if (result?.data?.afterSignInUrl) {
+        router.push(result.data.afterSignInUrl);
+
+        return;
       }
 
       if (result?.error) {
         throw new Error(result.error);
       }
 
-      return result;
+      return result?.data ?? result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleSignUp = async (
+    payload: EmbeddedFlowExecuteRequestPayload,
+    request: EmbeddedFlowExecuteRequestConfig,
+  ) => {
+    try {
+      const result = await signUp(payload, request);
+
+      // Redirect based flow URL is sent as `signUpUrl` in the response.
+      if (result?.data?.signUpUrl) {
+        router.push(result.data.signUpUrl);
+
+        return;
+      }
+
+      // After the Embedded flow is successful, the URL to navigate next is sent as `afterSignUpUrl` in the response.
+      if (result?.data?.afterSignUpUrl) {
+        router.push(result.data.afterSignUpUrl);
+
+        return;
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      return result?.data ?? result;
     } catch (error) {
       throw error;
     }
@@ -109,16 +191,16 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     try {
       const result = await signOut();
 
-      if (result?.afterSignOutUrl) {
-        router.push(result.afterSignOutUrl);
-        return {redirected: true, location: result.afterSignOutUrl};
+      if (result?.data?.afterSignOutUrl) {
+        router.push(result.data.afterSignOutUrl);
+        return {redirected: true, location: result.data.afterSignOutUrl};
       }
 
       if (result?.error) {
         throw new Error(result.error);
       }
 
-      return result;
+      return result?.data ?? result;
     } catch (error) {
       throw error;
     }
@@ -126,14 +208,17 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
 
   const contextValue = useMemo(
     () => ({
+      baseUrl,
       user,
       isSignedIn,
       isLoading,
       signIn: handleSignIn,
       signOut: handleSignOut,
+      signUp: handleSignUp,
       signInUrl,
+      signUpUrl,
     }),
-    [user, isSignedIn, isLoading],
+    [baseUrl, user, isSignedIn, isLoading, signInUrl, signUpUrl],
   );
 
   return (
@@ -141,15 +226,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       <I18nProvider preferences={preferences?.i18n}>
         <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
-            <UserProvider
-              profile={{
-                schemas: [],
-                profile: user || {},
-                flattenedProfile: user || {},
-              }}
-            >
-              {children}
-            </UserProvider>
+            <UserProvider profile={userProfile}>{children}</UserProvider>
           </FlowProvider>
         </ThemeProvider>
       </I18nProvider>

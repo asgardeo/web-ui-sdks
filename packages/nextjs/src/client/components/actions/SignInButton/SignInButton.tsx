@@ -82,7 +82,7 @@ const SignInButton = forwardRef<HTMLButtonElement, SignInButtonProps>(
         throw new AsgardeoRuntimeError(
           `Sign in failed: ${error instanceof Error ? error.message : String(error)}`,
           'SignInButton-handleSignIn-RuntimeError-001',
-          'next',
+          'nextjs',
           'Something went wrong while trying to sign in. Please try again later.',
         );
       } finally {

@@ -24,6 +24,8 @@ export * from './client/contexts/Asgardeo/useAsgardeo';
 
 export {default as isSignedIn} from './server/actions/isSignedIn';
 
+export {default as handleOAuthCallback} from './server/actions/handleOAuthCallbackAction';
+
 export {default as SignedIn} from './client/components/control/SignedIn/SignedIn';
 export {SignedInProps} from './client/components/control/SignedIn/SignedIn';
 
@@ -33,6 +35,9 @@ export {SignedOutProps} from './client/components/control/SignedOut/SignedOut';
 export {default as SignInButton} from './client/components/actions/SignInButton/SignInButton';
 export type {SignInButtonProps} from './client/components/actions/SignInButton/SignInButton';
 
+export {default as SignUpButton} from './client/components/actions/SignUpButton/SignUpButton';
+export type {SignUpButtonProps} from './client/components/actions/SignUpButton/SignUpButton';
+
 export {default as SignIn} from './client/components/presentation/SignIn/SignIn';
 export type {SignInProps} from './client/components/presentation/SignIn/SignIn';
 
@@ -41,6 +46,15 @@ export type {SignOutButtonProps} from './client/components/actions/SignOutButton
 
 export {default as User} from './client/components/presentation/User/User';
 export type {UserProps} from './client/components/presentation/User/User';
+
+export {default as SignUp} from './client/components/presentation/SignUp/SignUp';
+export type {SignUpProps} from './client/components/presentation/SignUp/SignUp';
+
+export {default as UserDropdown} from './client/components/presentation/UserDropdown/UserDropdown';
+export type {UserDropdownProps} from './client/components/presentation/UserDropdown/UserDropdown';
+
+export {default as UserProfile} from './client/components/presentation/UserProfile/UserProfile';
+export type {UserProfileProps} from './client/components/presentation/UserProfile/UserProfile';
 
 export {default as AsgardeoNext} from './AsgardeoNextClient';
 

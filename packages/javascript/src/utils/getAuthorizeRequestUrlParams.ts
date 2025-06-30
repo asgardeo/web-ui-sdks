@@ -55,7 +55,6 @@ const getAuthorizeRequestUrlParams = (
   options: {
     redirectUri: string;
     clientId: string;
-    clientSecret?: string;
     scopes?: string;
     responseMode?: string;
     codeChallenge?: string;
@@ -77,10 +76,6 @@ const getAuthorizeRequestUrlParams = (
 
   if (responseMode) {
     authorizeRequestParams.set('response_mode', responseMode as string);
-  }
-
-  if (clientSecret) {
-    authorizeRequestParams.set('client_secret', clientSecret as string);
   }
 
   const pkceKey: string = pkceOptions?.key;

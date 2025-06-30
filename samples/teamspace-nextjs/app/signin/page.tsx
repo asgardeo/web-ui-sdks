@@ -17,8 +17,6 @@ export default function SignInPage() {
             </div>
             <span className="ml-2 text-2xl font-bold">Teamspace</span>
           </Link>
-          <h1 className="text-2xl font-bold">Welcome back</h1>
-          <p className="text-muted-foreground mt-2">Sign in to your account to continue</p>
         </div>
 
         <SignIn />

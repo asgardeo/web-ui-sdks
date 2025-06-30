@@ -16,28 +16,33 @@
  * under the License.
  */
 
-import {NextRequest, NextResponse} from 'next/server';
-import {User} from '@asgardeo/node';
+'use server';
+
+import {UserProfile} from '@asgardeo/node';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
 
 /**
- * Handles user profile requests.
- *
- * @param req - The Next.js request object
- * @returns NextResponse with user profile data
+ * Server action to get the current user.
+ * Returns the user profile if signed in.
  */
-export async function handleUserRequest(req: NextRequest): Promise<NextResponse> {
+const getUserProfileAction = async (sessionId: string) => {
   try {
     const client = AsgardeoNextClient.getInstance();
-    const user: User = await client.getUser();
-
-    console.log('[AsgardeoNextClient] User fetched successfully:', user);
-
-    return NextResponse.json({user});
+    const updatedProfile: UserProfile = await client.getUserProfile(sessionId);
+    return {success: true, data: {userProfile: updatedProfile}, error: null};
   } catch (error) {
-    console.error('[AsgardeoNextClient] Failed to get user:', error);
-    return NextResponse.json({error: 'Failed to get user'}, {status: 500});
+    return {
+      success: false,
+      data: {
+        userProfile: {
+          schemas: [],
+          profile: {},
+          flattenedProfile: {},
+        },
+      },
+      error: 'Failed to get user profile',
+    };
   }
-}
+};
 
-export default handleUserRequest;
+export default getUserProfileAction;

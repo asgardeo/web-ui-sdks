@@ -73,8 +73,6 @@ const initializeEmbeddedSignInFlow = async ({
     }
   });
 
-  console.log('Executing embedded sign-in flow with payload:', url, searchParams.toString());
-
   const {headers: customHeaders, ...otherConfig} = requestConfig;
   const response: Response = await fetch(url ?? `${baseUrl}/oauth2/authorize`, {
     method: requestConfig.method || 'POST',

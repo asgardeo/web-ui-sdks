@@ -72,7 +72,7 @@ const SignUpButton: ForwardRefExoticComponent<SignUpButtonProps & RefAttributes<
   HTMLButtonElement,
   SignUpButtonProps
 >(({children, onClick, preferences, ...rest}: SignUpButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
-  const {signUp} = useAsgardeo();
+  const {signUp, signUpUrl} = useAsgardeo();
   const {t} = useTranslation(preferences?.i18n);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -81,7 +81,14 @@ const SignUpButton: ForwardRefExoticComponent<SignUpButtonProps & RefAttributes<
     try {
       setIsLoading(true);
 
-      await signUp();
+      // If a custom `signUpUrl` is provided, use it for navigation.
+      if (signUpUrl) {
+        window.history.pushState(null, '', signUpUrl);
+
+        window.dispatchEvent(new PopStateEvent('popstate', {state: null}));
+      } else {
+        await signUp();
+      }
 
       if (onClick) {
         onClick(e);

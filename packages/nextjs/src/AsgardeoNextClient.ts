@@ -32,14 +32,20 @@ import {
   EmbeddedSignInFlowHandleRequestPayload,
   executeEmbeddedSignInFlow,
   EmbeddedFlowExecuteRequestConfig,
-  CookieConfig,
-  generateSessionId,
-  EmbeddedSignInFlowStatus,
+  ExtendedAuthorizeRequestUrlParams,
+  generateUserProfile,
+  flattenUserSchema,
+  getScim2Me,
+  getSchemas,
+  generateFlattenedUserProfile,
+  updateMeProfile,
+  executeEmbeddedSignUpFlow,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
 import getSessionId from './server/actions/getSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
+import getClientOrigin from './server/actions/getClientOrigin';
 
 const removeTrailingSlash = (path: string): string => (path.endsWith('/') ? path.slice(0, -1) : path);
 /**
@@ -53,7 +59,7 @@ const removeTrailingSlash = (path: string): string => (path.endsWith('/') ? path
 class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> extends AsgardeoNodeClient<T> {
   private static instance: AsgardeoNextClient<any>;
   private asgardeo: LegacyAsgardeoNodeClient<T>;
-  private isInitialized: boolean = false;
+  public isInitialized: boolean = false;
 
   private constructor() {
     super();
@@ -83,7 +89,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     }
   }
 
-  override initialize(config: T): Promise<boolean> {
+  override async initialize(config: T): Promise<boolean> {
     if (this.isInitialized) {
       console.warn('[AsgardeoNextClient] Client is already initialized');
       return Promise.resolve(true);
@@ -94,17 +100,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
     this.isInitialized = true;
 
-    console.log('[AsgardeoNextClient] Initializing with decorateConfigWithNextEnv:', {
-      baseUrl,
-      clientId,
-      clientSecret,
-      signInUrl,
-      signUpUrl,
-      afterSignInUrl,
-      afterSignOutUrl,
-      enablePKCE: false,
-      ...rest,
-    });
+    const origin: string = await getClientOrigin();
 
     return this.asgardeo.initialize({
       baseUrl,
@@ -112,24 +108,105 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       clientSecret,
       signInUrl,
       signUpUrl,
-      afterSignInUrl,
-      afterSignOutUrl,
+      afterSignInUrl: afterSignInUrl ?? origin,
+      afterSignOutUrl: afterSignOutUrl ?? origin,
       enablePKCE: false,
       ...rest,
     } as any);
   }
 
   override async getUser(userId?: string): Promise<User> {
+    await this.ensureInitialized();
     const resolvedSessionId: string = userId || ((await getSessionId()) as string);
 
-    return this.asgardeo.getUser(resolvedSessionId);
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
+      const profile = await getScim2Me({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+
+      const schemas = await getSchemas({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+
+      return generateUserProfile(profile, flattenUserSchema(schemas));
+    } catch (error) {
+      return this.asgardeo.getUser(resolvedSessionId);
+    }
+  }
+
+  override async getUserProfile(userId?: string): Promise<UserProfile> {
+    await this.ensureInitialized();
+
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
+      const profile = await getScim2Me({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+
+      const schemas = await getSchemas({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+
+      const processedSchemas = flattenUserSchema(schemas);
+
+      const output = {
+        schemas: processedSchemas,
+        flattenedProfile: generateFlattenedUserProfile(profile, processedSchemas),
+        profile,
+      };
+
+      return output;
+    } catch (error) {
+      return {
+        schemas: [],
+        flattenedProfile: await this.asgardeo.getDecodedIdToken(),
+        profile: await this.asgardeo.getDecodedIdToken(),
+      };
+    }
+  }
+
+  async updateUserProfile(payload: any, userId?: string) {
+    await this.ensureInitialized();
+
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
+      return await updateMeProfile({
+        baseUrl,
+        payload,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to update user profile: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'AsgardeoNextClient-UpdateProfileError-001',
+        'react',
+        'An error occurred while updating the user profile. Please check your configuration and network connection.',
+      );
+    }
   }
 
   override async getOrganizations(): Promise<Organization[]> {
-    throw new Error('Method not implemented.');
-  }
-
-  override getUserProfile(): Promise<UserProfile> {
     throw new Error('Method not implemented.');
   }
 
@@ -147,6 +224,10 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
   override isSignedIn(sessionId?: string): Promise<boolean> {
     return this.asgardeo.isSignedIn(sessionId as string);
+  }
+
+  getAccessToken(sessionId?: string): Promise<string> {
+    return this.asgardeo.getAccessToken(sessionId as string);
   }
 
   override getConfiguration(): T {
@@ -170,11 +251,18 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     const arg3 = args[2];
     const arg4 = args[3];
 
-    if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg1 === 'object' && 'url' in arg2) {
+    if (typeof arg1 === 'object' && 'flowId' in arg1) {
       if (arg1.flowId === '') {
+        const defaultSignInUrl: URL = new URL(
+          await this.getAuthorizeRequestUrl({
+            response_mode: 'direct',
+            client_secret: '{{clientSecret}}',
+          }),
+        );
+
         return initializeEmbeddedSignInFlow({
-          payload: arg2.payload,
-          url: arg2.url,
+          url: `${defaultSignInUrl.origin}${defaultSignInUrl.pathname}`,
+          payload: Object.fromEntries(defaultSignInUrl.searchParams.entries()),
         });
       }
 
@@ -213,11 +301,31 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
   override async signUp(options?: SignUpOptions): Promise<void>;
   override async signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
   override async signUp(...args: any[]): Promise<void | EmbeddedFlowExecuteResponse> {
+    if (args.length === 0) {
+      throw new AsgardeoRuntimeError(
+        'No arguments provided for signUp method.',
+        'AsgardeoNextClient-ValidationError-001',
+        'nextjs',
+        'The signUp method requires at least one argument, either a SignUpOptions object or an EmbeddedFlowExecuteRequestPayload.',
+      );
+    }
+
+    const firstArg = args[0];
+
+    if (typeof firstArg === 'object' && 'flowType' in firstArg) {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl = configData?.baseUrl;
+
+      return executeEmbeddedSignUpFlow({
+        baseUrl,
+        payload: firstArg as EmbeddedFlowExecuteRequestPayload,
+      });
+    }
     throw new AsgardeoRuntimeError(
       'Not implemented',
-      'react-AsgardeoReactClient-ValidationError-002',
-      'react',
-      'The signUp method with SignUpOptions is not implemented in the React client.',
+      'AsgardeoNextClient-ValidationError-002',
+      'nextjs',
+      'The signUp method with SignUpOptions is not implemented in the Next.js client.',
     );
   }
 
@@ -225,25 +333,16 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
    * Gets the sign-in URL for authentication.
    * Ensures the client is initialized before making the call.
    *
+   * @param customParams - Custom parameters to include in the sign-in URL.
    * @param userId - The user ID
    * @returns Promise that resolves to the sign-in URL
    */
-  public async getSignInUrl(userId?: string): Promise<string> {
+  public async getAuthorizeRequestUrl(
+    customParams: ExtendedAuthorizeRequestUrlParams,
+    userId?: string,
+  ): Promise<string> {
     await this.ensureInitialized();
-    return this.asgardeo.getSignInUrl(undefined, userId);
-  }
-
-  /**
-   * Gets the sign-in URL for authentication with custom request config.
-   * Ensures the client is initialized before making the call.
-   *
-   * @param requestConfig - Custom request configuration
-   * @param userId - The user ID
-   * @returns Promise that resolves to the sign-in URL
-   */
-  public async getSignInUrlWithConfig(requestConfig?: any, userId?: string): Promise<string> {
-    await this.ensureInitialized();
-    return this.asgardeo.getSignInUrl(requestConfig, userId);
+    return this.asgardeo.getSignInUrl(customParams, userId);
   }
 
   /**

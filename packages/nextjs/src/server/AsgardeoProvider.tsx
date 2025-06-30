@@ -17,18 +17,24 @@
  */
 
 import {FC, PropsWithChildren, ReactElement} from 'react';
-import {AsgardeoRuntimeError} from '@asgardeo/node';
+import {AsgardeoRuntimeError, User, UserProfile} from '@asgardeo/node';
 import AsgardeoClientProvider, {AsgardeoClientProviderProps} from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
-import {AsgardeoNextConfig} from '../models/config';
-import {signInAction, getUserAction, getIsSignedInAction} from './actions/authActions';
-import gerClientOrigin from './actions/gerClientOrigin';
+import signInAction from './actions/signInAction';
 import signOutAction from './actions/signOutAction';
+import {AsgardeoNextConfig} from '../models/config';
+import isSignedIn from './actions/isSignedIn';
+import getUserAction from './actions/getUserAction';
+import getSessionId from './actions/getSessionId';
+import getUserProfileAction from './actions/getUserProfileAction';
+import signUpAction from './actions/signUpAction';
+import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
+import {AsgardeoProviderProps} from '@asgardeo/react';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
  */
-export type AsgardeoServerProviderProps = AsgardeoClientProviderProps & {
+export type AsgardeoServerProviderProps = Partial<AsgardeoProviderProps> & {
   clientSecret?: string;
 };
 
@@ -52,19 +58,14 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
   children,
   afterSignInUrl,
   afterSignOutUrl,
-  ...config
+  ..._config
 }: PropsWithChildren<AsgardeoServerProviderProps>): Promise<ReactElement> => {
   const asgardeoClient = AsgardeoNextClient.getInstance();
-  console.log('Initializing Asgardeo client with config:', config);
-
-  const origin = await gerClientOrigin();
+  let config: Partial<AsgardeoNextConfig> = {};
 
   try {
-    asgardeoClient.initialize({
-      afterSignInUrl: afterSignInUrl ?? origin,
-      afterSignOutUrl: afterSignOutUrl ?? origin,
-      ...config,
-    });
+    await asgardeoClient.initialize(_config as AsgardeoNextConfig);
+    config = await asgardeoClient.getConfiguration();
   } catch (error) {
     throw new AsgardeoRuntimeError(
       `Failed to initialize Asgardeo client: ${error?.toString()}`,
@@ -74,17 +75,42 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     );
   }
 
-  const configuration = await asgardeoClient.getConfiguration();
-  console.log('Asgardeo client initialized with configuration:', configuration);
+  if (!asgardeoClient.isInitialized) {
+    return <></>;
+  }
+
+  const sessionId: string = (await getSessionId()) as string;
+  const _isSignedIn: boolean = await isSignedIn(sessionId);
+
+  let user: User = {};
+  let userProfile: UserProfile = {
+    schemas: [],
+    profile: {},
+    flattenedProfile: {},
+  };
+
+  if (_isSignedIn) {
+    const userResponse = await getUserAction(sessionId);
+    const userProfileResponse = await getUserProfileAction(sessionId);
+
+    user = userResponse.data?.user || {};
+    userProfile = userProfileResponse.data?.userProfile;
+  }
 
   return (
     <AsgardeoClientProvider
       baseUrl={config.baseUrl}
       signIn={signInAction}
       signOut={signOutAction}
-      signInUrl={configuration.signInUrl}
+      signUp={signUpAction}
+      handleOAuthCallback={handleOAuthCallbackAction}
+      signInUrl={config.signInUrl}
+      signUpUrl={config.signUpUrl}
       preferences={config.preferences}
       clientId={config.clientId}
+      user={user}
+      userProfile={userProfile}
+      isSignedIn={_isSignedIn}
     >
       {children}
     </AsgardeoClientProvider>

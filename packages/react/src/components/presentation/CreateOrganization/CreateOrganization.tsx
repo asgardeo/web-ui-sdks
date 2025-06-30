@@ -19,7 +19,8 @@
 import {FC, ReactElement, useState} from 'react';
 
 import {BaseCreateOrganization, BaseCreateOrganizationProps} from './BaseCreateOrganization';
-import createOrganization, {CreateOrganizationPayload} from '../../../api/scim2/createOrganization';
+import {CreateOrganizationPayload} from '@asgardeo/browser';
+import createOrganization from '../../../api/createOrganization';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useOrganization from '../../../contexts/Organization/useOrganization';
 

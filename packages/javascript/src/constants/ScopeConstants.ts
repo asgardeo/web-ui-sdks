@@ -38,6 +38,7 @@
 const ScopeConstants: {
   INTERNAL_LOGIN: string;
   OPENID: string;
+  PROFILE: string;
 } = {
   /**
    * The scope for accessing the user's profile information from SCIM.
@@ -52,6 +53,13 @@ const ScopeConstants: {
    * is initiating an OpenID Connect authentication request.
    */
   OPENID: 'openid',
+
+  /**
+   * The OpenID Connect profile scope.
+   * This scope allows the client to access the user's profile information.
+   * It includes details such as the user's name, email, and other profile attributes.
+   */
+  PROFILE: 'profile',
 } as const;
 
 export default ScopeConstants;
