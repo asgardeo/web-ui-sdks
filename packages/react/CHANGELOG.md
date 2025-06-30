@@ -1,5 +1,13 @@
 # @asgardeo/react
 
+## 0.5.1
+
+### Patch Changes
+
+- [#75](https://github.com/asgardeo/web-ui-sdks/pull/75)
+  [`9d5eca7`](https://github.com/asgardeo/web-ui-sdks/commit/9d5eca748006654ff415d86501281f00b8a3800a) Thanks
+  [@brionmario](https://github.com/brionmario)! - Stabilize the SDK
+
 ## 0.5.0
 
 ### Minor Changes
