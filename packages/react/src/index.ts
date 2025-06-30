@@ -243,20 +243,12 @@ export type {FlowStep, FlowMessage, FlowContextValue} from './contexts/Flow/Flow
 
 export type {FlowProviderProps} from './contexts/Flow/FlowProvider';
 
-
-export {default as getAllOrganizations} from './api/getAllOrganizations';
-export {default as createOrganization} from './api/createOrganization';
-export {default as getMeOrganizations} from './api/getMeOrganizations';
-export {default as getOrganization} from './api/getOrganization';
-export {default as updateOrganization, createPatchOperations} from './api/updateOrganization';
-export {default as getSchemas} from './api/getSchemas';
-export {default as updateMeProfile} from './api/updateMeProfile';
-export type {GetAllOrganizationsConfig} from './api/getAllOrganizations';
-export type {CreateOrganizationConfig} from './api/createOrganization';
-export type {GetMeOrganizationsConfig} from './api/getMeOrganizations';
-export type {GetOrganizationConfig} from './api/getOrganization';
-export type {UpdateOrganizationConfig} from './api/updateOrganization';
-export type {GetSchemasConfig} from './api/getSchemas';
-export type {UpdateMeProfileConfig} from './api/updateMeProfile';
+export {default as getAllOrganizations, GetAllOrganizationsConfig} from './api/getAllOrganizations';
+export {default as createOrganization, CreateOrganizationConfig} from './api/createOrganization';
+export {default as getMeOrganizations, GetMeOrganizationsConfig} from './api/getMeOrganizations';
+export {default as getOrganization, GetOrganizationConfig} from './api/getOrganization';
+export {default as updateOrganization, createPatchOperations, UpdateOrganizationConfig} from './api/updateOrganization';
+export {default as getSchemas, GetSchemasConfig} from './api/getSchemas';
+export {default as updateMeProfile, UpdateMeProfileConfig} from './api/updateMeProfile';
 export {default as getMeProfile} from './api/getScim2Me';
 export * from './api/getScim2Me';

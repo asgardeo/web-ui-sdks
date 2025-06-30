@@ -49,4 +49,5 @@ export {default as hasAuthParamsInUrl} from './utils/hasAuthParamsInUrl';
 
 export {default as AsgardeoBrowserClient} from './AsgardeoBrowserClient';
 
+// Re-export everything from the JavaScript package
 export * from '@asgardeo/javascript';
