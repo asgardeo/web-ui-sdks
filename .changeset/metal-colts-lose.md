@@ -1,6 +1,6 @@
 ---
 '@asgardeo/nextjs': minor
-'@asgardeo/react': minor
+'@asgardeo/react': patch
 ---
 
 Stabilize the SDK
