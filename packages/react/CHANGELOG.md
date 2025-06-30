@@ -1,5 +1,13 @@
 # @asgardeo/react
 
+## 0.5.2
+
+### Patch Changes
+
+- [#80](https://github.com/asgardeo/web-ui-sdks/pull/80)
+  [`3851019`](https://github.com/asgardeo/web-ui-sdks/commit/3851019dfb8b2cd1e77ae40943f393de4d799c41) Thanks
+  [@brionmario](https://github.com/brionmario)! - Fix NPEs
+
 ## 0.5.1
 
 ### Patch Changes
