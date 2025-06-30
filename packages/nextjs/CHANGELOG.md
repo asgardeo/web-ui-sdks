@@ -1,5 +1,19 @@
 # @asgardeo/nextjs
 
+## 0.1.0
+
+### Minor Changes
+
+- [#75](https://github.com/asgardeo/web-ui-sdks/pull/75)
+  [`9d5eca7`](https://github.com/asgardeo/web-ui-sdks/commit/9d5eca748006654ff415d86501281f00b8a3800a) Thanks
+  [@brionmario](https://github.com/brionmario)! - Stabilize the SDK
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9d5eca7`](https://github.com/asgardeo/web-ui-sdks/commit/9d5eca748006654ff415d86501281f00b8a3800a)]:
+  - @asgardeo/react@0.5.1
+
 ## 0.0.3
 
 ### Patch Changes
