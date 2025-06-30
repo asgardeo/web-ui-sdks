@@ -424,7 +424,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
    */
   const handleRedirectionIfNeeded = (response: EmbeddedSignInFlowHandleResponse): boolean => {
     if (
-      'nextStep' in response &&
+      response && 'nextStep' in response &&
       response.nextStep &&
       (response.nextStep as any).stepType === EmbeddedSignInFlowStepType.AuthenticatorPrompt &&
       (response.nextStep as any).authenticators &&
@@ -563,7 +563,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
                   onFlowChange?.(response);
 
-                  if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
+                  if (response?.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
                     onSuccess?.(response.authData);
                   }
                 }
@@ -618,14 +618,14 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
       });
       onFlowChange?.(response);
 
-      if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
+      if (response?.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
         onSuccess?.(response.authData);
         return;
       }
 
       if (
-        response.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
-        response.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
+        response?.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
+        response?.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
       ) {
         setError(t('errors.sign.in.flow.completion.failure'));
         return;
@@ -636,7 +636,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         return;
       }
 
-      if ('flowId' in response && 'nextStep' in response) {
+      if (response && 'flowId' in response && 'nextStep' in response) {
         const nextStepResponse = response as any;
         setCurrentFlow(nextStepResponse);
 
@@ -718,21 +718,21 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           });
           onFlowChange?.(response);
 
-          if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
+          if (response?.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
             onSuccess?.(response.authData);
             return;
           }
 
           if (
-            response.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
-            response.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
+            response?.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
+            response?.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
           ) {
             setError(t('errors.sign.in.flow.passkeys.completion.failure'));
             return;
           }
 
           // Handle next step if authentication is not complete
-          if ('flowId' in response && 'nextStep' in response) {
+          if (response && 'flowId' in response && 'nextStep' in response) {
             const nextStepResponse = response as any;
             setCurrentFlow(nextStepResponse);
 
@@ -795,7 +795,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         });
         onFlowChange?.(response);
 
-        if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
+        if (response?.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
           onSuccess?.(response.authData);
           return;
         }
@@ -823,14 +823,14 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         });
         onFlowChange?.(response);
 
-        if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
+        if (response?.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
           onSuccess?.(response.authData);
           return;
         }
 
         if (
-          response.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
-          response.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
+          response?.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
+          response?.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
         ) {
           setError('Authentication failed. Please check your credentials and try again.');
           return;
@@ -841,7 +841,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           return;
         }
 
-        if ('flowId' in response && 'nextStep' in response) {
+        if (response && 'flowId' in response && 'nextStep' in response) {
           const nextStepResponse = response as any;
           setCurrentFlow(nextStepResponse);
 
@@ -894,14 +894,14 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           });
           onFlowChange?.(response);
 
-          if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
+          if (response?.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
             onSuccess?.(response.authData);
             return;
           }
 
           if (
-            response.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
-            response.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
+            response?.flowStatus === EmbeddedSignInFlowStatus.FailCompleted ||
+            response?.flowStatus === EmbeddedSignInFlowStatus.FailIncomplete
           ) {
             setError('Authentication failed. Please try again.');
             return;
@@ -912,7 +912,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             return;
           }
 
-          if ('flowId' in response && 'nextStep' in response) {
+          if (response && 'flowId' in response && 'nextStep' in response) {
             const nextStepResponse = response as any;
             setCurrentFlow(nextStepResponse);
 
@@ -952,7 +952,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         }
       }
     } catch (err) {
-      const errorMessage = err instanceof AsgardeoAPIError ? err.message : 'Authenticator selection failed';
+      const errorMessage = err instanceof AsgardeoAPIError ? err?.message : 'Authenticator selection failed';
       setError(errorMessage);
       onError?.(err as Error);
     } finally {
