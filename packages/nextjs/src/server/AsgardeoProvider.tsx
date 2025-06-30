@@ -29,11 +29,12 @@ import getSessionId from './actions/getSessionId';
 import getUserProfileAction from './actions/getUserProfileAction';
 import signUpAction from './actions/signUpAction';
 import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
+import {AsgardeoProviderProps} from '@asgardeo/react';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
  */
-export type AsgardeoServerProviderProps = AsgardeoClientProviderProps & {
+export type AsgardeoServerProviderProps = Partial<AsgardeoProviderProps> & {
   clientSecret?: string;
 };
 
@@ -63,7 +64,7 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
   let config: Partial<AsgardeoNextConfig> = {};
 
   try {
-    await asgardeoClient.initialize(_config);
+    await asgardeoClient.initialize(_config as AsgardeoNextConfig);
     config = await asgardeoClient.getConfiguration();
   } catch (error) {
     throw new AsgardeoRuntimeError(
@@ -78,7 +79,7 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     return <></>;
   }
 
-  const sessionId: string = await getSessionId() as string;
+  const sessionId: string = (await getSessionId()) as string;
   const _isSignedIn: boolean = await isSignedIn(sessionId);
 
   let user: User = {};
@@ -89,8 +90,8 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
   };
 
   if (_isSignedIn) {
-    const userResponse = await getUserAction((sessionId));
-    const userProfileResponse = await getUserProfileAction((sessionId));
+    const userResponse = await getUserAction(sessionId);
+    const userProfileResponse = await getUserProfileAction(sessionId);
 
     user = userResponse.data?.user || {};
     userProfile = userProfileResponse.data?.userProfile;
