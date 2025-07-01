@@ -20,9 +20,12 @@ createRoot(document.getElementById('root')!).render(
         'user:email',
         'read:user',
         'internal_organization_create',
+        'internal_org_organization_create',
         'internal_organization_view',
+        'internal_org_organization_view',
         'internal_organization_update',
         'internal_organization_delete',
+        'internal_org_organization_delete',
       ]}
       preferences={{
         theme: {
