@@ -97,43 +97,52 @@ export interface MultiInputProps {
 const useStyles = () => {
   const {theme} = useTheme();
 
-  return useMemo(() => ({
-    container: {
-      display: 'flex',
-      flexDirection: 'column' as const,
-      gap: `${theme.spacing.unit}px`,
-    },
-    inputRow: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: `${theme.spacing.unit}px`,
-      position: 'relative' as const,
-    },
-    inputWrapper: {
-      flex: 1,
-    },
-    listContainer: {
-      display: 'flex',
-      flexDirection: 'column' as const,
-      gap: `${theme.spacing.unit / 2}px`,
-    },
-    listItem: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
-      backgroundColor: theme.colors.background.surface,
-      border: `1px solid ${theme.colors.border}`,
-      borderRadius: theme.borderRadius.medium,
-      fontSize: '1rem',
-      color: theme.colors.text.primary,
-    },
-    removeButton: {
-      padding: `${theme.spacing.unit / 2}px`,
-      minWidth: 'auto',
-      color: theme.colors.error.main,
-    },
-  }), [theme]);
+  return useMemo(
+    () => ({
+      container: {
+        display: 'flex',
+        flexDirection: 'column' as const,
+        gap: `${theme.spacing.unit}px`,
+      },
+      inputRow: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: `${theme.spacing.unit}px`,
+        position: 'relative' as const,
+      },
+      inputWrapper: {
+        flex: 1,
+      },
+      plusIcon: {
+        background: 'var(--asgardeo-color-secondary-main)',
+        borderRadius: '50%',
+        outline: '4px var(--asgardeo-color-secondary-main) auto',
+        color: 'var(--asgardeo-color-secondary-contrastText)',
+      },
+      listContainer: {
+        display: 'flex',
+        flexDirection: 'column' as const,
+        gap: `${theme.spacing.unit / 2}px`,
+      },
+      listItem: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
+        backgroundColor: theme.colors.background.surface,
+        border: `1px solid ${theme.colors.border}`,
+        borderRadius: theme.borderRadius.medium,
+        fontSize: '1rem',
+        color: theme.colors.text.primary,
+      },
+      removeButton: {
+        padding: `${theme.spacing.unit / 2}px`,
+        minWidth: 'auto',
+        color: theme.colors.error.main,
+      },
+    }),
+    [theme],
+  );
 };
 
 const MultiInput: FC<MultiInputProps> = ({
@@ -156,7 +165,7 @@ const MultiInput: FC<MultiInputProps> = ({
 }) => {
   const styles = useStyles();
 
-  const PlusIcon = () => (
+  const PlusIcon = ({style}) => (
     <svg
       width="16"
       height="16"
@@ -166,6 +175,7 @@ const MultiInput: FC<MultiInputProps> = ({
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      style={style}
     >
       <path d="M12 5v14M5 12h14" />
     </svg>
@@ -288,7 +298,7 @@ const MultiInput: FC<MultiInputProps> = ({
             {renderInputField(
               currentInputValue,
               setCurrentInputValue,
-              canAddMore ? <PlusIcon /> : undefined,
+              canAddMore ? <PlusIcon style={styles.plusIcon} /> : undefined,
               canAddMore ? handleInputSubmit : undefined,
             )}
           </div>
