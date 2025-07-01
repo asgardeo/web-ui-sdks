@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactNode, useCallback, useState} from 'react';
+import {CSSProperties, FC, ReactNode, useCallback, useState, useMemo} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
 import FormControl from '../FormControl/FormControl';
@@ -94,6 +94,48 @@ export interface MultiInputProps {
   maxFields?: number;
 }
 
+const useStyles = () => {
+  const {theme} = useTheme();
+
+  return useMemo(() => ({
+    container: {
+      display: 'flex',
+      flexDirection: 'column' as const,
+      gap: `${theme.spacing.unit}px`,
+    },
+    inputRow: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: `${theme.spacing.unit}px`,
+      position: 'relative' as const,
+    },
+    inputWrapper: {
+      flex: 1,
+    },
+    listContainer: {
+      display: 'flex',
+      flexDirection: 'column' as const,
+      gap: `${theme.spacing.unit / 2}px`,
+    },
+    listItem: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
+      backgroundColor: theme.colors.background.surface,
+      border: `1px solid ${theme.colors.border}`,
+      borderRadius: theme.borderRadius.medium,
+      fontSize: '1rem',
+      color: theme.colors.text.primary,
+    },
+    removeButton: {
+      padding: `${theme.spacing.unit / 2}px`,
+      minWidth: 'auto',
+      color: theme.colors.error.main,
+    },
+  }), [theme]);
+};
+
 const MultiInput: FC<MultiInputProps> = ({
   label,
   error,
@@ -112,7 +154,7 @@ const MultiInput: FC<MultiInputProps> = ({
   minFields = 1,
   maxFields,
 }) => {
-  const {theme} = useTheme();
+  const styles = useStyles();
 
   const PlusIcon = () => (
     <svg
@@ -144,11 +186,14 @@ const MultiInput: FC<MultiInputProps> = ({
     </svg>
   );
 
-  const handleAddValue = useCallback((newValue: string) => {
-    if (newValue.trim() !== '' && (!maxFields || values.length < maxFields)) {
-      onChange([...values, newValue.trim()]);
-    }
-  }, [values, onChange, maxFields]);
+  const handleAddValue = useCallback(
+    (newValue: string) => {
+      if (newValue.trim() !== '' && (!maxFields || values.length < maxFields)) {
+        onChange([...values, newValue.trim()]);
+      }
+    },
+    [values, onChange, maxFields],
+  );
 
   const handleRemoveValue = useCallback(
     (index: number) => {
@@ -161,7 +206,12 @@ const MultiInput: FC<MultiInputProps> = ({
   );
 
   const renderInputField = useCallback(
-    (value: string, onValueChange: (value: string) => void, attachedEndIcon?: ReactNode, onEndIconClick?: () => void) => {
+    (
+      value: string,
+      onValueChange: (value: string) => void,
+      attachedEndIcon?: ReactNode,
+      onEndIconClick?: () => void,
+    ) => {
       const handleInputChange = (e: any) => {
         const newValue = e.target ? e.target.value : e;
         onValueChange(newValue);
@@ -206,37 +256,6 @@ const MultiInput: FC<MultiInputProps> = ({
     [placeholder, disabled, startIcon, endIcon, error, fieldType, type],
   );
 
-  const containerStyle: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: `${theme.spacing.unit}px`,
-  };
-
-  const inputRowStyle: CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: `${theme.spacing.unit}px`,
-    position: 'relative',
-  };
-
-  const listItemStyle: CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
-    backgroundColor: theme.colors.background.surface,
-    border: `1px solid ${theme.colors.border}`,
-    borderRadius: theme.borderRadius.medium,
-    fontSize: '1rem',
-    color: theme.colors.text.primary,
-  };
-
-  const listContainerStyle: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: `${theme.spacing.unit / 2}px`,
-  };
-
   const canAddMore = !maxFields || values.length < maxFields;
   const canRemove = values.length > minFields;
 
@@ -262,10 +281,10 @@ const MultiInput: FC<MultiInputProps> = ({
           {label}
         </InputLabel>
       )}
-      <div style={containerStyle}>
+      <div style={styles.container}>
         {/* Input field at the top */}
-        <div style={inputRowStyle}>
-          <div style={{flex: 1}}>
+        <div style={styles.inputRow}>
+          <div style={styles.inputWrapper}>
             {renderInputField(
               currentInputValue,
               setCurrentInputValue,
@@ -277,9 +296,9 @@ const MultiInput: FC<MultiInputProps> = ({
 
         {/* List of added items */}
         {values.length > 0 && (
-          <div style={listContainerStyle}>
+          <div style={styles.listContainer}>
             {values.map((value, index) => (
-              <div key={index} style={listItemStyle}>
+              <div key={index} style={styles.listItem}>
                 <span>{value}</span>
                 {canRemove && (
                   <Button
@@ -289,11 +308,7 @@ const MultiInput: FC<MultiInputProps> = ({
                     onClick={() => handleRemoveValue(index)}
                     disabled={disabled}
                     title="Remove value"
-                    style={{
-                      padding: `${theme.spacing.unit / 2}px`,
-                      minWidth: 'auto',
-                      color: theme.colors.error.main,
-                    }}
+                    style={styles.removeButton}
                   >
                     <BinIcon />
                   </Button>
