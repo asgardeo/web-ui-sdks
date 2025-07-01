@@ -27,6 +27,7 @@ import Checkbox from '../../primitives/Checkbox/Checkbox';
 import DatePicker from '../../primitives/DatePicker/DatePicker';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 import TextField from '../../primitives/TextField/TextField';
+import MultiInput from '../../primitives/MultiInput/MultiInput';
 import Card from '../../primitives/Card/Card';
 
 interface ExtendedFlatSchema {
@@ -78,6 +79,20 @@ export interface BaseUserProfileProps {
 
 // Fields to skip based on schema.name
 const fieldsToSkip: string[] = [
+  'roles.default',
+  'active',
+  'groups',
+  'profileUrl',
+  'accountLocked',
+  'accountDisabled',
+  'oneTimePassword',
+  'userSourceId',
+  'idpType',
+  'localCredentialExists',
+  'active',
+  'ResourceType',
+  'ExternalID',
+  'MetaData',
   'verifiedMobileNumbers',
   'verifiedEmailAddresses',
   'phoneNumbers.mobile',
@@ -199,12 +214,17 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       if (!onUpdate || !schema.name) return;
 
       const fieldName: string = schema.name;
-      const fieldValue: any =
+      let fieldValue: any =
         editedUser && fieldName && editedUser[fieldName] !== undefined
           ? editedUser[fieldName]
           : flattenedProfile && flattenedProfile[fieldName] !== undefined
           ? flattenedProfile[fieldName]
           : '';
+
+      // Filter out empty values for arrays when saving
+      if (Array.isArray(fieldValue)) {
+        fieldValue = fieldValue.filter(v => v !== undefined && v !== null && v !== '');
+      }
 
       let payload: Record<string, any> = {};
 
@@ -304,7 +324,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     onStartEdit?: () => void,
   ): ReactElement | null => {
     if (!schema) return null;
-    const {value, displayName, description, name, type, required, mutability, subAttributes} = schema;
+    const {value, displayName, description, name, type, required, mutability, subAttributes, multiValued} = schema;
     const label = displayName || description || name || '';
 
     // If complex or subAttributes, fallback to original renderSchemaValue
@@ -328,13 +348,68 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         </>
       );
     }
-    if (Array.isArray(value)) {
-      const hasValues = value.length > 0;
+
+    // Handle multi-valued fields (either array values or multiValued property)
+    if (Array.isArray(value) || multiValued) {
+      const hasValues = Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && value !== '';
       const isEditable = editable && mutability !== 'READ_ONLY' && !readonlyFields.includes(name || '');
 
+      // If editing, show multi-valued input
+      if (isEditing && onEditValue && isEditable) {
+        // Use editedUser value if available, then flattenedProfile, then schema value
+        const currentValue =
+          editedUser && name && editedUser[name] !== undefined
+            ? editedUser[name]
+            : flattenedProfile && name && flattenedProfile[name] !== undefined
+            ? flattenedProfile[name]
+            : value;
+
+        let fieldValues: string[];
+        if (Array.isArray(currentValue)) {
+          fieldValues = currentValue.map(String);
+        } else if (currentValue !== undefined && currentValue !== null && currentValue !== '') {
+          fieldValues = [String(currentValue)];
+        } else {
+          fieldValues = [];
+        }
+
+        return (
+          <>
+            <span style={styles.label}>{label}</span>
+            <div style={styles.value}>
+              <MultiInput
+                values={fieldValues}
+                onChange={newValues => {
+                  // Don't filter out empty values during editing - only when saving
+                  // This allows users to type and keeps empty fields for adding new values
+                  if (multiValued || Array.isArray(currentValue)) {
+                    onEditValue(newValues);
+                  } else {
+                    // Single value field, just take the first value (including empty for typing)
+                    onEditValue(newValues[0] || '');
+                  }
+                }}
+                placeholder={getFieldPlaceholder(schema)}
+                fieldType={type as 'STRING' | 'DATE_TIME' | 'BOOLEAN'}
+                type={type === 'DATE_TIME' ? 'date' : type === 'STRING' ? 'text' : 'text'}
+                required={required}
+                style={{
+                  marginBottom: 0,
+                }}
+              />
+            </div>
+          </>
+        );
+      }
+
+      // View mode for multi-valued fields
       let displayValue: string;
       if (hasValues) {
-        displayValue = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item))).join(', ');
+        if (Array.isArray(value)) {
+          displayValue = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item))).join(', ');
+        } else {
+          displayValue = String(value);
+        }
       } else if (isEditable) {
         displayValue = getFieldPlaceholder(schema);
       } else {
