@@ -270,7 +270,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   return (
     <AsgardeoContext.Provider value={contextValue}>
       <I18nProvider preferences={preferences?.i18n}>
-        <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
+        <ThemeProvider theme={preferences?.theme?.overrides} mode={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
             <UserProvider profile={userProfile}>
               <OrganizationProvider
