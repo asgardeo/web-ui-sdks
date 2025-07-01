@@ -119,6 +119,7 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
     limit?: number;
     recursive?: boolean;
   }>({});
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   /**
    * Fetches organizations from the API
@@ -211,9 +212,11 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
     async (config = {}): Promise<void> => {
       const {filter = '', limit = 10, recursive = false, reset = false} = config;
 
-      if (!isSignedIn || !baseUrl) {
+      if (!isSignedIn || !baseUrl || isFetching) {
         return;
       }
+
+      setIsFetching(true);
 
       try {
         if (reset) {
@@ -250,6 +253,22 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
           limit,
           recursive,
           ...(reset ? {} : {startIndex: (currentPage - 1) * limit}),
+          fetcher: async (url: string, config: RequestInit): Promise<Response> => {
+            try {
+              const response = await fetch(url, config);
+              if (response.status === 401 || response.status === 403) {
+                const error = new Error('Insufficient permissions');
+                (error as any).status = response.status;
+                throw error;
+              }
+              return response;
+            } catch (error: any) {
+              if (error.status === 401 || error.status === 403) {
+                error.noRetry = true;
+              }
+              throw error;
+            }
+          },
         });
 
         // Combine organization data with switch access information
@@ -273,14 +292,30 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
         setHasMore(response.hasMore || false);
         setTotalCount(response.totalCount || organizationsWithAccess.length);
       } catch (fetchError: any) {
-        const errorMessage: string = fetchError.message || 'Failed to fetch paginated organizations';
+        // If authorization/scope error, prevent retry loops.
+        const isAuthError = fetchError.status === 403 || fetchError.status === 401 || fetchError.noRetry === true;
+
+        const errorMessage: string = isAuthError
+          ? 'Insufficient permissions to fetch organizations'
+          : fetchError.message || 'Failed to fetch paginated organizations';
+
         setError(errorMessage);
+
+        if (isAuthError) {
+          setHasMore(false);
+          setIsLoadingMore(false);
+          setIsLoading(false);
+
+          return;
+        }
+
         if (onError) {
           onError(errorMessage);
         }
       } finally {
         setIsLoading(false);
         setIsLoadingMore(false);
+        setIsFetching(false);
       }
     },
     [baseUrl, isSignedIn, onError, switchableOrgIds, currentPage],
