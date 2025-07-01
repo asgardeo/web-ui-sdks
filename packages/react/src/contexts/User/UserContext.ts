@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {User, Schema, FlattenedSchema} from '@asgardeo/browser';
+import {User, Schema, UpdateMeProfileConfig, OrganizationDetails} from '@asgardeo/browser';
 import {Context, createContext} from 'react';
 
 /**
@@ -27,6 +27,11 @@ export type UserContextProps = {
   profile: User | null;
   revalidateProfile: () => Promise<void>;
   schemas: Schema[] | null;
+  updateProfile: (
+    requestConfig: UpdateMeProfileConfig,
+    sessionId?: string,
+  ) => Promise<{success: boolean; data: {user: User}; error: string}>;
+  onUpdateProfile: (payload: User) => void;
 };
 
 /**
@@ -37,6 +42,8 @@ const UserContext: Context<UserContextProps | null> = createContext<null | UserC
   schemas: null,
   flattenedProfile: null,
   revalidateProfile: () => null,
+  updateProfile: () => null,
+  onUpdateProfile: () => null,
 });
 
 UserContext.displayName = 'UserContext';

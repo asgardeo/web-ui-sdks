@@ -188,7 +188,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     }
   }
 
-  async updateUserProfile(payload: any, userId?: string) {
+  override async updateUserProfile(payload: any, userId?: string): Promise<User> {
     await this.ensureInitialized();
 
     try {
@@ -204,7 +204,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       });
     } catch (error) {
       throw new AsgardeoRuntimeError(
-        `Failed to update user profile: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to update user profile: ${error instanceof Error ? error.message : String(error)}`,
         'AsgardeoNextClient-UpdateProfileError-001',
         'react',
         'An error occurred while updating the user profile. Please check your configuration and network connection.',
@@ -226,7 +226,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       });
     } catch (error) {
       throw new AsgardeoRuntimeError(
-        'Failed to create organization.',
+        `Failed to create organization: ${error instanceof Error ? error.message : String(error)}`,
         'AsgardeoReactClient-createOrganization-RuntimeError-001',
         'nextjs',
         'An error occurred while creating the organization. Please check your configuration and network connection.',

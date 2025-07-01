@@ -62,6 +62,10 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     return this.asgardeo.init(config as any);
   }
 
+  override async updateUserProfile(payload: any, userId?: string): Promise<User> {
+    throw new Error('Not implemented');
+  }
+
   override async getUser(): Promise<User> {
     try {
       const configData = await this.asgardeo.getConfigData();

@@ -31,6 +31,7 @@ import signUpAction from './actions/signUpAction';
 import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
 import {AsgardeoProviderProps} from '@asgardeo/react';
 import getCurrentOrganizationAction from './actions/getCurrentOrganizationAction';
+import updateUserProfileAction from './actions/updateUserProfileAction';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -119,6 +120,7 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
       user={user}
       currentOrganization={currentOrganization}
       userProfile={userProfile}
+      updateProfile={updateUserProfileAction}
       isSignedIn={_isSignedIn}
     >
       {children}

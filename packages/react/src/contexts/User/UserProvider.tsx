@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {UserProfile} from '@asgardeo/browser';
+import {UpdateMeProfileConfig, User, UserProfile} from '@asgardeo/browser';
 import {FC, PropsWithChildren, ReactElement, useEffect, useState, useCallback, useMemo} from 'react';
 import UserContext from './UserContext';
 
@@ -26,6 +26,11 @@ import UserContext from './UserContext';
 export interface UserProviderProps {
   profile: UserProfile;
   revalidateProfile?: () => Promise<void>;
+  updateProfile?: (
+    requestConfig: UpdateMeProfileConfig,
+    sessionId?: string,
+  ) => Promise<{success: boolean; data: {user: User}; error: string}>;
+  onUpdateProfile?: (payload: User) => void;
 }
 
 /**
@@ -60,6 +65,8 @@ const UserProvider: FC<PropsWithChildren<UserProviderProps>> = ({
   children,
   profile,
   revalidateProfile,
+  onUpdateProfile,
+  updateProfile,
 }: PropsWithChildren<UserProviderProps>): ReactElement => {
   const contextValue = useMemo(
     () => ({
@@ -67,8 +74,10 @@ const UserProvider: FC<PropsWithChildren<UserProviderProps>> = ({
       profile: profile?.profile,
       flattenedProfile: profile?.flattenedProfile,
       revalidateProfile,
+      updateProfile,
+      onUpdateProfile,
     }),
-    [profile],
+    [profile, onUpdateProfile, revalidateProfile, updateProfile],
   );
 
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>;

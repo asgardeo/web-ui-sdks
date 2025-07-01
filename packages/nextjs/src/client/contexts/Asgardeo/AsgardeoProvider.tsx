@@ -23,7 +23,9 @@ import {
   EmbeddedFlowExecuteRequestConfig,
   EmbeddedFlowExecuteRequestPayload,
   EmbeddedSignInFlowHandleRequestPayload,
+  generateFlattenedUserProfile,
   Organization,
+  UpdateMeProfileConfig,
   User,
   UserProfile,
 } from '@asgardeo/node';
@@ -59,6 +61,10 @@ export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'b
     userProfile: UserProfile;
     currentOrganization: Organization;
     user: User | null;
+    updateProfile: (
+      requestConfig: UpdateMeProfileConfig,
+      sessionId?: string,
+    ) => Promise<{success: boolean; data: {user: User}; error: string}>;
   };
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
@@ -72,16 +78,26 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   isSignedIn,
   signInUrl,
   signUpUrl,
-  user,
-  userProfile,
+  user: _user,
+  userProfile: _userProfile,
   currentOrganization,
+  updateProfile,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [_userProfile, setUserProfile] = useState<UserProfile | null>(userProfile);
+  const [user, setUser] = useState<User | null>(_user);
+  const [userProfile, setUserProfile] = useState<UserProfile>(_userProfile);
+
+  useEffect(() => {
+    setUserProfile(_userProfile);
+  }, [_userProfile]);
+
+  useEffect(() => {
+    setUser(_user);
+  }, [_user]);
 
   // Handle OAuth callback automatically
   useEffect(() => {
@@ -267,12 +283,21 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     [baseUrl, user, isSignedIn, isLoading, signInUrl, signUpUrl],
   );
 
+  const handleProfileUpdate = (payload: User): void => {
+    setUser(payload);
+    setUserProfile(prev => ({
+      ...prev,
+      profile: payload,
+      flattenedProfile: generateFlattenedUserProfile(payload, prev?.schemas),
+    }));
+  };
+
   return (
     <AsgardeoContext.Provider value={contextValue}>
       <I18nProvider preferences={preferences?.i18n}>
         <ThemeProvider theme={preferences?.theme?.overrides} mode={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
-            <UserProvider profile={userProfile}>
+            <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate} updateProfile={updateProfile}>
               <OrganizationProvider
                 getOrganizations={async () => {
                   const result = await getOrganizationsAction((await getSessionId()) as string);

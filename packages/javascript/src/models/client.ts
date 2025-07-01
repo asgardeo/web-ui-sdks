@@ -59,6 +59,8 @@ export interface AsgardeoClient<T> {
 
   getConfiguration(): T;
 
+  updateUserProfile(payload: any, userId?: string): Promise<User>;
+
   /**
    * Gets user information from the session.
    *
