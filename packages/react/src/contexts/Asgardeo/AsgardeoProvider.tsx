@@ -45,7 +45,7 @@ export type AsgardeoProviderProps = AsgardeoReactConfig;
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   afterSignInUrl = window.location.origin,
   afterSignOutUrl = window.location.origin,
-  baseUrl,
+  baseUrl: _baseUrl,
   clientId,
   children,
   scopes,
@@ -64,6 +64,11 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const [isInitializedSync, setIsInitializedSync] = useState<boolean>(false);
 
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [baseUrl, setBaseUrl] = useState<string>(_baseUrl);
+
+  useEffect(() => {
+    setBaseUrl(_baseUrl);
+  }, [_baseUrl]);
 
   useEffect(() => {
     (async (): Promise<void> => {
@@ -99,9 +104,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     (async (): Promise<void> => {
       // User is already authenticated. Skip...
       if (await asgardeo.isSignedIn()) {
-        setUser(await asgardeo.getUser());
-        setUserProfile(await asgardeo.getUserProfile());
-        setCurrentOrganization(await asgardeo.getCurrentOrganization());
+        await updateSession();
 
         return;
       }
@@ -173,14 +176,24 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     })();
   }, [asgardeo]);
 
+  const updateSession = async (): Promise<void> => {
+    setUser(await asgardeo.getUser());
+    setUserProfile(await asgardeo.getUserProfile());
+    setCurrentOrganization(await asgardeo.getCurrentOrganization());
+
+    // If there's a `user_org` claim in the ID token,
+    // Treat this login as a organization login.
+    if ((await asgardeo.getDecodedIdToken())?.['user_org']) {
+      setBaseUrl(`${(await asgardeo.getConfiguration()).baseUrl}/o`);
+    }
+  };
+
   const signIn = async (...args: any): Promise<User> => {
     try {
       const response: User = await asgardeo.signIn(...args);
 
       if (await asgardeo.isSignedIn()) {
-        setUser(await asgardeo.getUser());
-        setUserProfile(await asgardeo.getUserProfile());
-        setCurrentOrganization(await asgardeo.getCurrentOrganization());
+        await updateSession();
       }
 
       return response;
@@ -210,9 +223,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       await asgardeo.switchOrganization(organization);
 
       if (await asgardeo.isSignedIn()) {
-        setUser(await asgardeo.getUser());
-        setUserProfile(await asgardeo.getUserProfile());
-        setCurrentOrganization(await asgardeo.getCurrentOrganization());
+        await updateSession();
       }
     } catch (error) {
       throw new AsgardeoRuntimeError(

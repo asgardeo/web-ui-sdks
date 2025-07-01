@@ -80,6 +80,10 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     }
   }
 
+  async getDecodedIdToken(sessionId?: string): Promise<IdToken> {
+    return this.asgardeo.getDecodedIdToken(sessionId);
+  }
+
   async getUserProfile(): Promise<UserProfile> {
     try {
       const configData = await this.asgardeo.getConfigData();
@@ -215,7 +219,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       });
     }
 
-    return this.asgardeo.signIn(arg1 as any) as unknown as Promise<User>;
+    return (await this.asgardeo.signIn(arg1 as any)) as unknown as Promise<User>;
   }
 
   override signOut(options?: SignOutOptions, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;
