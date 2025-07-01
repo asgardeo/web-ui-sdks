@@ -20,6 +20,7 @@ import {
   AsgardeoRuntimeError,
   EmbeddedFlowExecuteRequestPayload,
   EmbeddedFlowExecuteResponse,
+  generateFlattenedUserProfile,
   Organization,
   SignInOptions,
   SignOutOptions,
@@ -242,6 +243,15 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     return preferences.theme.mode === 'dark';
   }, [preferences?.theme?.mode]);
 
+  const handleProfileUpdate = (payload: User): void => {
+    setUser(payload);
+    setUserProfile(prev => ({
+      ...prev,
+      profile: payload,
+      flattenedProfile: generateFlattenedUserProfile(payload, prev?.schemas),
+    }));
+  };
+
   return (
     <AsgardeoContext.Provider
       value={{
@@ -262,10 +272,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       <I18nProvider preferences={preferences?.i18n}>
         <ThemeProvider theme={preferences?.theme?.overrides} mode={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
-            <UserProvider
-              profile={userProfile}
-              revalidateProfile={async () => setUserProfile(await asgardeo.getUserProfile())}
-            >
+            <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate}>
               <OrganizationProvider
                 getOrganizations={async () => asgardeo.getOrganizations()}
                 currentOrganization={currentOrganization}
