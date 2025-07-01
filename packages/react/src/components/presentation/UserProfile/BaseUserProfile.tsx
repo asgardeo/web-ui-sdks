@@ -76,6 +76,17 @@ export interface BaseUserProfileProps {
   title?: string;
 }
 
+// Fields to skip based on schema.name
+const fieldsToSkip: string[] = [
+  'verifiedMobileNumbers',
+  'verifiedEmailAddresses',
+  'phoneNumbers.mobile',
+  'emailAddresses',
+];
+
+// Fields that should be readonly
+const readonlyFields: string[] = ['username', 'userName', 'user_name'];
+
 const BaseUserProfile: FC<BaseUserProfileProps> = ({
   fallback = null,
   className = '',
@@ -319,7 +330,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     }
     if (Array.isArray(value)) {
       const hasValues = value.length > 0;
-      const isEditable = editable && mutability !== 'READ_ONLY';
+      const isEditable = editable && mutability !== 'READ_ONLY' && !readonlyFields.includes(name || '');
 
       let displayValue: string;
       if (hasValues) {
@@ -363,7 +374,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       return <ObjectDisplay data={value} />;
     }
     // If editing, show field instead of value
-    if (isEditing && onEditValue && mutability !== 'READ_ONLY') {
+    if (isEditing && onEditValue && mutability !== 'READ_ONLY' && !readonlyFields.includes(name || '')) {
       // Use editedUser value if available, then flattenedProfile, then schema value
       const fieldValue =
         editedUser && name && editedUser[name] !== undefined
@@ -425,7 +436,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     }
     // Default: view mode
     const hasValue = value !== undefined && value !== null && value !== '';
-    const isEditable = editable && mutability !== 'READ_ONLY';
+    const isEditable = editable && mutability !== 'READ_ONLY' && !readonlyFields.includes(name || '');
 
     let displayValue: string;
     if (hasValue) {
@@ -472,6 +483,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     // Skip fields with undefined or empty values unless editing or editable
     const hasValue = schema.value !== undefined && schema.value !== '' && schema.value !== null;
     const isFieldEditing = editingFields[schema.name];
+    const isReadonlyField = readonlyFields.includes(schema.name);
 
     // Show field if: has value, currently editing, or is editable and READ_WRITE
     const shouldShow = hasValue || isFieldEditing || (editable && schema.mutability === 'READ_WRITE');
@@ -501,7 +513,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
             () => toggleFieldEdit(schema.name!),
           )}
         </div>
-        {editable && schema.mutability !== 'READ_ONLY' && (
+        {editable && schema.mutability !== 'READ_ONLY' && !isReadonlyField && (
           <div
             style={{
               display: 'flex',
@@ -570,9 +582,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const avatarAttributes = ['picture'];
   const excludedProps = avatarAttributes.map(attr => mergedMappings[attr] || attr);
 
-  // Fields to skip based on schema.name
-  const fieldsToSkip: string[] = ['verifiedMobileNumbers', 'verifiedEmailAddresses'];
-
   const profileContent = (
     <Card style={containerStyle} className={clsx(withVendorCSSClassPrefix('user-profile'), className)}>
       <div style={styles.header}>
@@ -612,6 +621,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
               ...schema,
               value,
             };
+
             return <div key={schema.name || index}>{renderUserInfo(schemaWithValue)}</div>;
           })}
       </div>
