@@ -217,7 +217,7 @@ export interface BrandingLayout {
 /**
  * Interface for organization details configuration.
  */
-export interface OrganizationDetails {
+export interface BrandingOrganizationDetails {
   displayName?: string;
   supportEmail?: string;
 }
@@ -251,7 +251,7 @@ export interface BrandingPreferenceConfig {
     selfSignUpEnabled?: boolean;
   };
   layout?: BrandingLayout;
-  organizationDetails?: OrganizationDetails;
+  organizationDetails?: BrandingOrganizationDetails;
   theme?: BrandingTheme;
   urls?: UrlsConfig;
 }

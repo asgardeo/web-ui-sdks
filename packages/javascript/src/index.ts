@@ -102,7 +102,7 @@ export {
   ButtonsConfig,
   ColorsConfig,
   ColorVariants,
-  OrganizationDetails,
+  BrandingOrganizationDetails,
   UrlsConfig,
 } from './models/branding-preference';
 export {Schema, SchemaAttribute, WellKnownSchemaIds, FlattenedSchema} from './models/scim2-schema';
