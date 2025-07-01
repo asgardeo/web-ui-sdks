@@ -116,13 +116,13 @@ const updateMeProfile = async ({
 
   const requestInit: RequestInit = {
     method: 'PATCH',
+    ...requestConfig,
     headers: {
+      ...requestConfig.headers,
       'Content-Type': 'application/scim+json',
       Accept: 'application/json',
-      ...requestConfig.headers,
     },
     body: JSON.stringify(data),
-    ...requestConfig,
   };
 
   try {

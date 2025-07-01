@@ -150,6 +150,7 @@ const updateOrganization = async ({
   const resolvedUrl = `${baseUrl}/api/server/v1/organizations/${organizationId}`;
 
   const requestInit: RequestInit = {
+    ...requestConfig,
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -157,7 +158,6 @@ const updateOrganization = async ({
       ...requestConfig.headers,
     },
     body: JSON.stringify(operations),
-    ...requestConfig,
   };
 
   try {

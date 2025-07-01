@@ -159,13 +159,13 @@ const getMeOrganizations = async ({
   const resolvedUrl = `${baseUrl}/api/users/v1/me/organizations?${queryParams.toString()}`;
 
   const requestInit: RequestInit = {
+    ...requestConfig,
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
       ...requestConfig.headers,
     },
-    ...requestConfig,
   };
 
   try {

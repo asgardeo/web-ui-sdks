@@ -73,16 +73,15 @@ const initializeEmbeddedSignInFlow = async ({
     }
   });
 
-  const {headers: customHeaders, ...otherConfig} = requestConfig;
   const response: Response = await fetch(url ?? `${baseUrl}/oauth2/authorize`, {
+    ...requestConfig,
     method: requestConfig.method || 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept: 'application/json',
-      ...customHeaders,
+      ...requestConfig.headers,
     },
     body: searchParams.toString(),
-    ...otherConfig,
   });
 
   if (!response.ok) {

@@ -50,12 +50,13 @@ const getUserInfo = async ({url, ...requestConfig}: Partial<Request>): Promise<U
   }
 
   const response: Response = await fetch(url, {
+    ...requestConfig,
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
+      ...requestConfig.headers,
     },
-    ...requestConfig,
   });
 
   if (!response.ok) {

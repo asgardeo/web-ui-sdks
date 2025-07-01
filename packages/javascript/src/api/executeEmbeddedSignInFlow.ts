@@ -36,16 +36,15 @@ const executeEmbeddedSignInFlow = async ({
     );
   }
 
-  const {headers: customHeaders, ...otherConfig} = requestConfig;
   const response: Response = await fetch(url ?? `${baseUrl}/oauth2/authn`, {
+    ...requestConfig,
     method: requestConfig.method || 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      ...customHeaders,
+      ...requestConfig.headers,
     },
     body: JSON.stringify(payload),
-    ...otherConfig,
   });
 
   if (!response.ok) {

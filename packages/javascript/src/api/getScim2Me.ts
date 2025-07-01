@@ -106,13 +106,13 @@ const getScim2Me = async ({url, baseUrl, fetcher, ...requestConfig}: GetScim2MeC
   const resolvedUrl: string = url ?? `${baseUrl}/scim2/Me`
 
   const requestInit: RequestInit = {
+    ...requestConfig,
     method: 'GET',
     headers: {
       'Content-Type': 'application/scim+json',
       Accept: 'application/json',
       ...requestConfig.headers,
     },
-    ...requestConfig,
   };
 
   try {

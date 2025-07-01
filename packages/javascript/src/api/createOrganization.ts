@@ -168,6 +168,7 @@ const createOrganization = async ({
   const resolvedUrl = `${baseUrl}/api/server/v1/organizations`;
 
   const requestInit: RequestInit = {
+    ...requestConfig,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -175,7 +176,6 @@ const createOrganization = async ({
       ...requestConfig.headers,
     },
     body: JSON.stringify(organizationPayload),
-    ...requestConfig,
   };
 
   try {
@@ -195,6 +195,7 @@ const createOrganization = async ({
 
     return (await response.json()) as Organization;
   } catch (error) {
+    console.log('[JS][createOrganization] Error creating organization:', error);
     if (error instanceof AsgardeoAPIError) {
       throw error;
     }
