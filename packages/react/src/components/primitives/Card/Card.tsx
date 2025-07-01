@@ -115,7 +115,6 @@ const useCardStyles = (variant: CardVariant, clickable: boolean) => {
       outlined: {
         ...baseStyles,
         border: `1px solid ${theme.colors.border}`,
-        backgroundColor: 'transparent',
       },
       elevated: {
         ...baseStyles,

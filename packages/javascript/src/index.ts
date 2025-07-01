@@ -100,7 +100,7 @@ export {I18nBundle, I18nTranslations, I18nMetadata} from './models/i18n';
 export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 
 export {default as createTheme} from './theme/createTheme';
-export {ThemeColors, ThemeConfig, Theme, ThemeMode} from './theme/types';
+export {ThemeColors, ThemeConfig, Theme, ThemeMode, ThemeDetection} from './theme/types';
 
 export {default as deepMerge} from './utils/deepMerge';
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';

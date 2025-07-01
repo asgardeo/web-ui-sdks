@@ -26,7 +26,19 @@ createRoot(document.getElementById('root')!).render(
       ]}
       preferences={{
         theme: {
-          mode: 'light',
+          mode: 'light', // This will detect theme based on CSS classes
+          // You can also use other modes:
+          // mode: 'system', // Follows system preference (prefers-color-scheme)
+          // mode: 'light',  // Always light
+          // mode: 'dark',   // Always dark
+
+          // For class-based detection, you can customize the class names:
+          // detection: {
+          //   darkClass: 'dark',  // CSS class for dark theme (default)
+          //   lightClass: 'light', // CSS class for light theme (default)
+          //   targetElement: document.documentElement, // Element to observe (default: <html>)
+          // },
+
           // overrides: {
           //   colors: {
           //     primary: {

@@ -64,11 +64,11 @@ export type SignUpProps = BaseSignUpProps;
 const SignUp: FC<SignUpProps> = ({
   className,
   size = 'medium',
-  variant = 'outlined',
   afterSignUpUrl,
   onError,
   onComplete,
   shouldRedirectAfterSignUp = true,
+  ...rest
 }) => {
   const {signUp, isInitialized} = useAsgardeo();
 
@@ -121,8 +121,8 @@ const SignUp: FC<SignUpProps> = ({
       onComplete={handleComplete}
       className={className}
       size={size}
-      variant={variant}
       isInitialized={isInitialized}
+      {...rest}
     />
   );
 };
