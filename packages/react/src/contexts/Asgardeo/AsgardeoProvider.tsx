@@ -27,7 +27,7 @@ import {
   User,
   UserProfile,
 } from '@asgardeo/browser';
-import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, use} from 'react';
+import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState} from 'react';
 import AsgardeoContext from './AsgardeoContext';
 import AsgardeoReactClient from '../../AsgardeoReactClient';
 import useBrowserUrl from '../../hooks/useBrowserUrl';
@@ -178,15 +178,18 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   }, [asgardeo]);
 
   const updateSession = async (): Promise<void> => {
-    setUser(await asgardeo.getUser());
-    setUserProfile(await asgardeo.getUserProfile());
-    setCurrentOrganization(await asgardeo.getCurrentOrganization());
+    let _baseUrl: string = baseUrl;
 
     // If there's a `user_org` claim in the ID token,
     // Treat this login as a organization login.
     if ((await asgardeo.getDecodedIdToken())?.['user_org']) {
-      setBaseUrl(`${(await asgardeo.getConfiguration()).baseUrl}/o`);
+      _baseUrl = `${(await asgardeo.getConfiguration()).baseUrl}/o`;
+      setBaseUrl(_baseUrl);
     }
+
+    setUser(await asgardeo.getUser({baseUrl: _baseUrl}));
+    setUserProfile(await asgardeo.getUserProfile({baseUrl: _baseUrl}));
+    setCurrentOrganization(await asgardeo.getCurrentOrganization());
   };
 
   const signIn = async (...args: any): Promise<User> => {

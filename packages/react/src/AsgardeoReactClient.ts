@@ -66,10 +66,14 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     throw new Error('Not implemented');
   }
 
-  override async getUser(): Promise<User> {
+  override async getUser(options?: any): Promise<User> {
     try {
-      const configData = await this.asgardeo.getConfigData();
-      const baseUrl = configData?.baseUrl;
+      let baseUrl = options?.baseUrl;
+
+      if (!baseUrl) {
+        const configData = await this.asgardeo.getConfigData();
+        baseUrl = configData?.baseUrl;
+      }
 
       const profile = await getScim2Me({baseUrl});
       const schemas = await getSchemas({baseUrl});
@@ -84,10 +88,14 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     return this.asgardeo.getDecodedIdToken(sessionId);
   }
 
-  async getUserProfile(): Promise<UserProfile> {
+  async getUserProfile(options?: any): Promise<UserProfile> {
     try {
-      const configData = await this.asgardeo.getConfigData();
-      const baseUrl = configData?.baseUrl;
+      let baseUrl = options?.baseUrl;
+
+      if (!baseUrl) {
+        const configData = await this.asgardeo.getConfigData();
+        baseUrl = configData?.baseUrl;
+      }
 
       const profile = await getScim2Me({baseUrl});
       const schemas = await getSchemas({baseUrl});
@@ -110,10 +118,14 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     }
   }
 
-  override async getOrganizations(): Promise<Organization[]> {
+  override async getOrganizations(options?: any): Promise<Organization[]> {
     try {
-      const configData = await this.asgardeo.getConfigData();
-      const baseUrl = configData?.baseUrl;
+      let baseUrl = options?.baseUrl;
+
+      if (!baseUrl) {
+        const configData = await this.asgardeo.getConfigData();
+        baseUrl = configData?.baseUrl;
+      }
 
       const organizations = await getMeOrganizations({baseUrl});
 

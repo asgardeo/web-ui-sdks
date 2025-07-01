@@ -41,14 +41,14 @@ export interface AsgardeoClient<T> {
    *
    * @returns Associated organizations.
    */
-  getOrganizations(): Promise<Organization[]>;
+  getOrganizations(options?: any): Promise<Organization[]>;
 
   /**
    * Gets the current organization of the user.
    *
    * @returns The current organization if available, otherwise null.
    */
-  getCurrentOrganization(): Promise<Organization | null>;
+  getCurrentOrganization(sessionId?: string): Promise<Organization | null>;
 
   /**
    * Switches the current organization to the specified one.
@@ -66,14 +66,14 @@ export interface AsgardeoClient<T> {
    *
    * @returns User object containing user details.
    */
-  getUser(): Promise<User>;
+  getUser(options?: any): Promise<User>;
 
   /**
    * Fetches the user profile along with its schemas and a flattened version of the profile.
    *
    * @returns A promise resolving to a UserProfile object containing the user's profile information.
    */
-  getUserProfile(): Promise<UserProfile>;
+  getUserProfile(options?: any): Promise<UserProfile>;
 
   /**
    * Initializes the authentication client with provided configuration.

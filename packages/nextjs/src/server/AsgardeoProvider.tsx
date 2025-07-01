@@ -16,9 +16,11 @@
  * under the License.
  */
 
+'use server';
+
 import {FC, PropsWithChildren, ReactElement} from 'react';
 import {AsgardeoRuntimeError, Organization, User, UserProfile} from '@asgardeo/node';
-import AsgardeoClientProvider, {AsgardeoClientProviderProps} from '../client/contexts/Asgardeo/AsgardeoProvider';
+import AsgardeoClientProvider from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
 import signInAction from './actions/signInAction';
 import signOutAction from './actions/signOutAction';
