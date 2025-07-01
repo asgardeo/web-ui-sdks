@@ -239,6 +239,8 @@ export {default as LogOut} from './components/primitives/Icons/LogOut';
 export {createField, FieldFactory, validateFieldValue} from './components/factories/FieldFactory';
 export * from './components/factories/FieldFactory';
 
+export {default as BuildingAlt} from './components/primitives/Icons/BuildingAlt';
+
 export type {FlowStep, FlowMessage, FlowContextValue} from './contexts/Flow/FlowContext';
 
 export type {FlowProviderProps} from './contexts/Flow/FlowProvider';

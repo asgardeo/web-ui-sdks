@@ -17,7 +17,7 @@
  */
 
 import {FC, PropsWithChildren, ReactElement} from 'react';
-import {AsgardeoRuntimeError, User, UserProfile} from '@asgardeo/node';
+import {AsgardeoRuntimeError, Organization, User, UserProfile} from '@asgardeo/node';
 import AsgardeoClientProvider, {AsgardeoClientProviderProps} from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
 import signInAction from './actions/signInAction';
@@ -30,6 +30,7 @@ import getUserProfileAction from './actions/getUserProfileAction';
 import signUpAction from './actions/signUpAction';
 import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
 import {AsgardeoProviderProps} from '@asgardeo/react';
+import getCurrentOrganizationAction from './actions/getCurrentOrganizationAction';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -88,13 +89,20 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     profile: {},
     flattenedProfile: {},
   };
+  let currentOrganization: Organization = {
+    id: '',
+    name: '',
+    orgHandle: '',
+  };
 
   if (_isSignedIn) {
     const userResponse = await getUserAction(sessionId);
     const userProfileResponse = await getUserProfileAction(sessionId);
+    const currentOrganizationResponse = await getCurrentOrganizationAction(sessionId);
 
     user = userResponse.data?.user || {};
     userProfile = userProfileResponse.data?.userProfile;
+    currentOrganization = currentOrganizationResponse?.data?.organization as Organization;
   }
 
   return (
@@ -109,6 +117,7 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
       preferences={config.preferences}
       clientId={config.clientId}
       user={user}
+      currentOrganization={currentOrganization}
       userProfile={userProfile}
       isSignedIn={_isSignedIn}
     >

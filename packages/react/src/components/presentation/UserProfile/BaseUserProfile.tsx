@@ -692,7 +692,7 @@ const useStyles = () => {
         gap: `${theme.spacing.unit}px`,
         overflow: 'hidden',
         minHeight: '32px',
-        '& input, & .MuiInputBase-root': {
+        '& input': {
           height: '32px',
           margin: 0,
         },

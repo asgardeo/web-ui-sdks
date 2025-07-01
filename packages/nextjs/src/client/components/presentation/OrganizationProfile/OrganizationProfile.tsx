@@ -16,13 +16,14 @@
  * under the License.
  */
 
+'use client';
+
 import {FC, ReactElement, useEffect, useState} from 'react';
-import BaseOrganizationProfile, {BaseOrganizationProfileProps} from './BaseOrganizationProfile';
-import {OrganizationDetails} from '@asgardeo/browser';
-import getOrganization from '../../../api/getOrganization';
-import updateOrganization, {createPatchOperations} from '../../../api/updateOrganization';
+import {BaseOrganizationProfile, BaseOrganizationProfileProps, useTranslation} from '@asgardeo/react';
+import {OrganizationDetails, getOrganization, updateOrganization, createPatchOperations} from '@asgardeo/node';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
-import useTranslation from '../../../hooks/useTranslation';
+import getOrganizationAction from '../../../../server/actions/getOrganizationAction';
+import getSessionId from '../../../../server/actions/getSessionId';
 
 /**
  * Props for the OrganizationProfile component.
@@ -157,11 +158,15 @@ const OrganizationProfile: FC<OrganizationProfileProps> = ({
     try {
       setLoading(true);
       setError(false);
-      const orgData = await getOrganization({
-        baseUrl,
-        organizationId,
-      });
-      setOrganization(orgData);
+      const result = await getOrganizationAction(organizationId, (await getSessionId()) as string);
+
+      if (result.data?.organization) {
+        setOrganization(result.data.organization);
+
+        return;
+      }
+
+      setError(true);
     } catch (err) {
       console.error('Failed to fetch organization:', err);
       setError(true);
