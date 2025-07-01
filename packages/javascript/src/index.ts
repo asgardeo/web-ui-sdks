@@ -41,6 +41,7 @@ export {default as getMeOrganizations, GetMeOrganizationsConfig} from './api/get
 export {default as getOrganization, OrganizationDetails, GetOrganizationConfig} from './api/getOrganization';
 export {default as updateOrganization, createPatchOperations, UpdateOrganizationConfig} from './api/updateOrganization';
 export {default as updateMeProfile, UpdateMeProfileConfig} from './api/updateMeProfile';
+export {default as getBrandingPreference, GetBrandingPreferenceConfig} from './api/getBrandingPreference';
 
 export {default as ApplicationNativeAuthenticationConstants} from './constants/ApplicationNativeAuthenticationConstants';
 export {default as TokenConstants} from './constants/TokenConstants';
@@ -92,6 +93,18 @@ export {Storage, TemporaryStore} from './models/store';
 export {User, UserProfile} from './models/user';
 export {SessionData} from './models/session';
 export {Organization} from './models/organization';
+export {
+  BrandingPreference,
+  BrandingPreferenceConfig,
+  BrandingLayout,
+  BrandingTheme,
+  ThemeVariant,
+  ButtonsConfig,
+  ColorsConfig,
+  ColorVariants,
+  OrganizationDetails,
+  UrlsConfig,
+} from './models/branding-preference';
 export {Schema, SchemaAttribute, WellKnownSchemaIds, FlattenedSchema} from './models/scim2-schema';
 export {RecursivePartial} from './models/utility-types';
 export {FieldType} from './models/field';
