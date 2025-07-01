@@ -659,8 +659,8 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     return this._authenticationClient.getUser();
   }
 
-  public async getDecodedIdToken(): Promise<IdToken> {
-    return this._authenticationClient.getDecodedIdToken();
+  public async getDecodedIdToken(sessionId?: string): Promise<IdToken> {
+    return this._authenticationClient.getDecodedIdToken(sessionId);
   }
 
   public async getDecodedIDPIDToken(): Promise<IdToken> {

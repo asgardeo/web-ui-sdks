@@ -706,7 +706,7 @@ export const WebWorkerClient = async (
       });
   };
 
-  const getDecodedIdToken = (): Promise<IdToken> => {
+  const getDecodedIdToken = (sessionId?: string): Promise<IdToken> => {
     const message: Message<null> = {
       type: GET_DECODED_ID_TOKEN,
     };

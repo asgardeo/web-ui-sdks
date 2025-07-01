@@ -96,7 +96,7 @@ export interface AuthContextInterface {
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getHttpClient(): Promise<HttpClientInstance>;
   getDecodedIDPIDToken(): Promise<IdToken>;
-  getDecodedIdToken(): Promise<IdToken>;
+  getDecodedIdToken(sessionId?: string): Promise<IdToken>;
   getIdToken(): Promise<string>;
   getAccessToken(): Promise<string>;
   refreshAccessToken(): Promise<User>;

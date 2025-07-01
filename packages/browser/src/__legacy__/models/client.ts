@@ -59,7 +59,7 @@ export interface MainThreadClientInterface {
   refreshAccessToken(): Promise<User>;
   revokeAccessToken(): Promise<boolean>;
   getUser(): Promise<User>;
-  getDecodedIdToken(): Promise<IdToken>;
+  getDecodedIdToken(sessionId?: string): Promise<IdToken>;
   getCrypto(): Promise<IsomorphicCrypto>;
   getConfigData(): Promise<AuthClientConfig<MainThreadClientConfig>>;
   getIdToken(): Promise<string>;
@@ -96,7 +96,7 @@ export interface WebWorkerClientInterface {
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
   getUser(): Promise<User>;
   getConfigData(): Promise<AuthClientConfig<WebWorkerClientConfig>>;
-  getDecodedIdToken(): Promise<IdToken>;
+  getDecodedIdToken(sessionId?: string): Promise<IdToken>;
   getDecodedIDPIDToken(): Promise<IdToken>;
   getCrypto(): Promise<IsomorphicCrypto>;
   getIdToken(): Promise<string>;

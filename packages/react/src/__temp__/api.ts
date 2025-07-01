@@ -296,8 +296,8 @@ class AuthAPI {
    * @return {Promise<DecodedIDTokenPayloadInterface>} - A Promise that resolves with
    * the decoded payload of the id token.
    */
-  public async getDecodedIdToken(): Promise<IdToken> {
-    return this._client.getDecodedIdToken();
+  public async getDecodedIdToken(sessionId?: string): Promise<IdToken> {
+    return this._client.getDecodedIdToken(sessionId);
   }
 
   /**

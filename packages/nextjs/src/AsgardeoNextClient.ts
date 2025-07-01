@@ -182,8 +182,8 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     } catch (error) {
       return {
         schemas: [],
-        flattenedProfile: await this.asgardeo.getDecodedIdToken(),
-        profile: await this.asgardeo.getDecodedIdToken(),
+        flattenedProfile: await this.asgardeo.getDecodedIdToken(userId),
+        profile: await this.asgardeo.getDecodedIdToken(userId),
       };
     }
   }

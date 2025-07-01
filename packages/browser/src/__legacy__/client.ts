@@ -51,7 +51,7 @@ import {SPAUtils} from './utils';
  * Default configurations.
  */
 const DefaultConfig: Partial<AuthClientConfig<Config>> = {
-  autoLogoutOnTokenRefreshError: true,
+  autoLogoutOnTokenRefreshError: false,
   checkSessionInterval: 3,
   enableOIDCSessionManagement: false,
   periodicTokenRefresh: false,
@@ -737,10 +737,10 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getDecodedIdToken(): Promise<IdToken | undefined> {
+  public async getDecodedIdToken(sessionId?: string): Promise<IdToken | undefined> {
     await this._validateMethod();
 
-    return this._client?.getDecodedIdToken();
+    return this._client?.getDecodedIdToken(sessionId);
   }
 
   /**

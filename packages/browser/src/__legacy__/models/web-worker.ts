@@ -53,7 +53,7 @@ export interface WebWorkerCoreInterface {
   refreshAccessToken(): Promise<User>;
   revokeAccessToken(): Promise<boolean>;
   getUser(): Promise<User>;
-  getDecodedIdToken(): Promise<IdToken>;
+  getDecodedIdToken(sessionId?: string): Promise<IdToken>;
   getDecodedIDPIDToken(): Promise<IdToken>;
   getCrypto(): Promise<IsomorphicCrypto>;
   getIdToken(): Promise<string>;
