@@ -281,7 +281,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       }}
     >
       <I18nProvider preferences={preferences?.i18n}>
-        <ThemeProvider theme={preferences?.theme?.overrides} mode={isDarkMode ? 'dark' : 'light'}>
+        <ThemeProvider inheritFromBranding={preferences?.theme?.inheritFromBranding} theme={preferences?.theme?.overrides} mode={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
             <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate}>
               <OrganizationProvider

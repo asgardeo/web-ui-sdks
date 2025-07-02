@@ -1,6 +1,6 @@
 'use client';
 
-import {ChevronDown, CogIcon, LogOut, Settings, UserIcon} from 'lucide-react';
+import {ChevronDown, CogIcon, LogOut, Settings, UserIcon, Workflow, LayoutDashboard} from 'lucide-react';
 import {UserDropdown as _UserDropdown, SignOutButton, UserProfile} from '@asgardeo/react';
 import {PoundSterling} from 'lucide-react';
 import {useState, useRef} from 'react';
@@ -98,8 +98,8 @@ export default function UserDropdown({mode = 'default'}: UserDropdownProps) {
         {
           label: (
             <span className="flex items-center">
-              <PoundSterling className="h-4 w-4 mr-3" />
-              Billing
+              <Workflow className="h-4 w-4 mr-3" />
+              Workflows
             </span>
           ),
           onClick: () => null,
@@ -107,7 +107,16 @@ export default function UserDropdown({mode = 'default'}: UserDropdownProps) {
         {
           label: (
             <span className="flex items-center">
-              <CogIcon className="h-4 w-4 mr-3" />
+              <LayoutDashboard className="h-4 w-4 mr-3" />
+              Dashboard
+            </span>
+          ),
+          href: '/dashboard',
+        },
+        {
+          label: (
+            <span className="flex items-center">
+              <Settings className="h-4 w-4 mr-3" />
               Settings
             </span>
           ),

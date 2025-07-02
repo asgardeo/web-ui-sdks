@@ -82,7 +82,6 @@ const fieldsToSkip: string[] = [
   'roles.default',
   'active',
   'groups',
-  'profileUrl',
   'accountLocked',
   'accountDisabled',
   'oneTimePassword',
@@ -670,9 +669,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       <div style={styles.infoContainer}>
         {schemas
           .filter(schema => {
-            // Filter out avatar-related fields and fields we don't want to show
-            if (!schema.name || schema.name === 'profileUrl') return false;
-
             // Skip fields that are in the fieldsToSkip array
             if (fieldsToSkip.includes(schema.name)) return false;
 

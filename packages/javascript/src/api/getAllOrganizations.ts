@@ -150,9 +150,9 @@ const getAllOrganizations = async ({
     ...requestConfig,
     method: 'GET',
     headers: {
+      ...requestConfig.headers,
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      ...requestConfig.headers,
     },
   };
 
