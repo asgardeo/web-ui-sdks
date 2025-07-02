@@ -132,5 +132,6 @@ export {default as resolveFieldType} from './utils/resolveFieldType';
 export {default as resolveFieldName} from './utils/resolveFieldName';
 export {default as processOpenIDScopes} from './utils/processOpenIDScopes';
 export {default as withVendorCSSClassPrefix} from './utils/withVendorCSSClassPrefix';
+export {default as transformBrandingPreferenceToTheme} from './utils/transformBrandingPreferenceToTheme';
 
 export {default as StorageManager} from './StorageManager';
