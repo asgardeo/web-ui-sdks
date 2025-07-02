@@ -21,6 +21,7 @@ import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
 import updateMeProfile from '../../../api/updateMeProfile';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useUser from '../../../contexts/User/useUser';
+import {User} from '@asgardeo/browser';
 
 /**
  * Props for the UserProfile component.
@@ -53,11 +54,12 @@ export type UserProfileProps = Omit<BaseUserProfileProps, 'user' | 'profile' | '
  */
 const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactElement => {
   const {baseUrl} = useAsgardeo();
-  const {profile, flattenedProfile, schemas, revalidateProfile} = useUser();
+  const {profile, flattenedProfile, schemas, onUpdateProfile} = useUser();
 
   const handleProfileUpdate = async (payload: any): Promise<void> => {
-    await updateMeProfile({baseUrl, payload});
-    await revalidateProfile();
+    const response: User = await updateMeProfile({baseUrl, payload});
+
+    onUpdateProfile(response);
   };
 
   return (

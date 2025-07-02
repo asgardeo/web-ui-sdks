@@ -72,4 +72,17 @@ export interface Theme extends ThemeConfig {
   cssVariables: Record<string, string>;
 }
 
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeMode = 'light' | 'dark' | 'system' | 'class';
+
+export interface ThemeDetection {
+  /**
+   * The CSS class name to detect for dark mode (without the dot)
+   * @default 'dark'
+   */
+  darkClass?: string;
+  /**
+   * The CSS class name to detect for light mode (without the dot)
+   * @default 'light'
+   */
+  lightClass?: string;
+}

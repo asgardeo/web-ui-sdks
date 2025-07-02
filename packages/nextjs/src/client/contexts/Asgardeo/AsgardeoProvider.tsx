@@ -19,16 +19,30 @@
 'use client';
 
 import {
+  AsgardeoRuntimeError,
   EmbeddedFlowExecuteRequestConfig,
   EmbeddedFlowExecuteRequestPayload,
   EmbeddedSignInFlowHandleRequestPayload,
+  generateFlattenedUserProfile,
+  Organization,
+  UpdateMeProfileConfig,
   User,
   UserProfile,
 } from '@asgardeo/node';
-import {I18nProvider, FlowProvider, UserProvider, ThemeProvider, AsgardeoProviderProps} from '@asgardeo/react';
-import {FC, PropsWithChildren, useEffect, useMemo, useState} from 'react';
+import {
+  I18nProvider,
+  FlowProvider,
+  UserProvider,
+  ThemeProvider,
+  AsgardeoProviderProps,
+  OrganizationProvider,
+} from '@asgardeo/react';
+import {FC, PropsWithChildren, RefObject, useEffect, useMemo, useRef, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
+import getOrganizationsAction from '../../../server/actions/getOrganizationsAction';
+import getSessionId from '../../../server/actions/getSessionId';
+import switchOrganizationAction from '../../../server/actions/switchOrganizationAction';
 
 /**
  * Props interface of {@link AsgardeoClientProvider}
@@ -38,10 +52,21 @@ export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'b
     signOut: AsgardeoContextProps['signOut'];
     signIn: AsgardeoContextProps['signIn'];
     signUp: AsgardeoContextProps['signUp'];
-    handleOAuthCallback: (code: string, state: string, sessionState?: string) => Promise<{success: boolean; error?: string; redirectUrl?: string}>;
+    applicationId: AsgardeoContextProps['applicationId'];
+    organizationHandle: AsgardeoContextProps['organizationHandle'];
+    handleOAuthCallback: (
+      code: string,
+      state: string,
+      sessionState?: string,
+    ) => Promise<{success: boolean; error?: string; redirectUrl?: string}>;
     isSignedIn: boolean;
     userProfile: UserProfile;
+    currentOrganization: Organization;
     user: User | null;
+    updateProfile: (
+      requestConfig: UpdateMeProfileConfig,
+      sessionId?: string,
+    ) => Promise<{success: boolean; data: {user: User}; error: string}>;
   };
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
@@ -55,14 +80,28 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   isSignedIn,
   signInUrl,
   signUpUrl,
-  user,
-  userProfile,
+  user: _user,
+  userProfile: _userProfile,
+  currentOrganization,
+  updateProfile,
+  applicationId,
+  organizationHandle,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
+  const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [_userProfile, setUserProfile] = useState<UserProfile | null>(userProfile);
+  const [user, setUser] = useState<User | null>(_user);
+  const [userProfile, setUserProfile] = useState<UserProfile>(_userProfile);
+
+  useEffect(() => {
+    setUserProfile(_userProfile);
+  }, [_userProfile]);
+
+  useEffect(() => {
+    setUser(_user);
+  }, [_user]);
 
   // Handle OAuth callback automatically
   useEffect(() => {
@@ -81,7 +120,11 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
         if (error) {
           console.error('[AsgardeoClientProvider] OAuth error:', error, errorDescription);
           // Redirect to sign-in page with error
-          router.push(`/signin?error=${encodeURIComponent(error)}&error_description=${encodeURIComponent(errorDescription || '')}`);
+          router.push(
+            `/signin?error=${encodeURIComponent(error)}&error_description=${encodeURIComponent(
+              errorDescription || '',
+            )}`,
+          );
           return;
         }
 
@@ -100,7 +143,11 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
               window.location.reload();
             }
           } else {
-            router.push(`/signin?error=authentication_failed&error_description=${encodeURIComponent(result.error || 'Authentication failed')}`);
+            router.push(
+              `/signin?error=authentication_failed&error_description=${encodeURIComponent(
+                result.error || 'Authentication failed',
+              )}`,
+            );
           }
         }
       } catch (error) {
@@ -206,6 +253,25 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
     }
   };
 
+  const switchOrganization = async (organization: Organization): Promise<void> => {
+    try {
+      await switchOrganizationAction(organization, (await getSessionId()) as string);
+
+      // if (await asgardeo.isSignedIn()) {
+      //   setUser(await asgardeo.getUser());
+      //   setUserProfile(await asgardeo.getUserProfile());
+      //   setCurrentOrganization(await asgardeo.getCurrentOrganization());
+      // }
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to switch organization: ${error instanceof Error ? error.message : String(error)}`,
+        'AsgardeoClientProvider-switchOrganization-RuntimeError-001',
+        'nextjs',
+        'An error occurred while switching to the specified organization.',
+      );
+    }
+  };
+
   const contextValue = useMemo(
     () => ({
       baseUrl,
@@ -217,16 +283,39 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       signUp: handleSignUp,
       signInUrl,
       signUpUrl,
+      applicationId,
+      organizationHandle,
     }),
-    [baseUrl, user, isSignedIn, isLoading, signInUrl, signUpUrl],
+    [baseUrl, user, isSignedIn, isLoading, signInUrl, signUpUrl, applicationId, organizationHandle],
   );
+
+  const handleProfileUpdate = (payload: User): void => {
+    setUser(payload);
+    setUserProfile(prev => ({
+      ...prev,
+      profile: payload,
+      flattenedProfile: generateFlattenedUserProfile(payload, prev?.schemas),
+    }));
+  };
 
   return (
     <AsgardeoContext.Provider value={contextValue}>
       <I18nProvider preferences={preferences?.i18n}>
-        <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
+        <ThemeProvider theme={preferences?.theme?.overrides} mode={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
-            <UserProvider profile={userProfile}>{children}</UserProvider>
+            <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate} updateProfile={updateProfile}>
+              <OrganizationProvider
+                getOrganizations={async () => {
+                  const result = await getOrganizationsAction((await getSessionId()) as string);
+
+                  return result?.data?.organizations || [];
+                }}
+                currentOrganization={currentOrganization}
+                onOrganizationSwitch={switchOrganization}
+              >
+                {children}
+              </OrganizationProvider>
+            </UserProvider>
           </FlowProvider>
         </ThemeProvider>
       </I18nProvider>

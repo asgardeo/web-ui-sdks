@@ -45,6 +45,22 @@ export interface BaseConfig<T = unknown> extends WithPreferences {
   afterSignOutUrl?: string | undefined;
 
   /**
+   * Optional organization handle for the Organization in Asgardeo.
+   * This is used to identify the organization in the Asgardeo identity server in cases like Branding, etc.
+   * If not provided, the framework layer will try to use the `baseUrl` to determine the organization handle.
+   * @remarks This is mandatory if a custom domain is configured for the Asgardeo organization.
+   */
+  organizationHandle?: string | undefined;
+
+  /**
+   * Optional UUID of the Asgardeo application.
+   * This is used to identify the application in the Asgardeo identity server for Application Branding,
+   * obtaining the access URL in the sign-up flow, etc.
+   * If not provided, the framework layer will use the default application ID based on the application.
+   */
+  applicationId?: string | undefined;
+
+  /**
    * The base URL of the Asgardeo identity server.
    * Example: "https://api.asgardeo.io/t/{org_name}"
    */
@@ -103,6 +119,10 @@ export interface WithPreferences {
 export type Config<T = unknown> = BaseConfig<T>;
 
 export interface ThemePreferences {
+  /**
+   * Inherit from Branding from WSO2 Identity Server or Asgardeo.
+   */
+  inheritFromBranding?: boolean;
   /**
    * The theme mode to use. Defaults to 'system'.
    */

@@ -49,8 +49,6 @@ export default function ProfilePage() {
   }
 
   const handleSave = () => {
-    // In a real app, you'd save to your backend
-    console.log('Saving profile:', formData);
     setIsEditing(false);
   };
 

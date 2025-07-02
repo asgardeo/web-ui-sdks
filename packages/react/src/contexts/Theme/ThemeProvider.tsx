@@ -16,13 +16,34 @@
  * under the License.
  */
 
-import {FC, PropsWithChildren, ReactElement, useEffect, useMemo, useState} from 'react';
-import {createTheme, Theme, ThemeConfig, RecursivePartial} from '@asgardeo/browser';
+import {FC, PropsWithChildren, ReactElement, useEffect, useMemo, useState, useCallback} from 'react';
+import {
+  createTheme,
+  Theme,
+  ThemeConfig,
+  ThemeMode,
+  RecursivePartial,
+  detectThemeMode,
+  createClassObserver,
+  createMediaQueryListener,
+  BrowserThemeDetection,
+} from '@asgardeo/browser';
 import ThemeContext from './ThemeContext';
 
 export interface ThemeProviderProps {
   theme?: RecursivePartial<ThemeConfig>;
-  defaultColorScheme?: 'light' | 'dark';
+  /**
+   * The theme mode to use for automatic detection
+   * - 'light': Always use light theme
+   * - 'dark': Always use dark theme
+   * - 'system': Use system preference (prefers-color-scheme media query)
+   * - 'class': Detect theme based on CSS classes on HTML element
+   */
+  mode?: ThemeMode;
+  /**
+   * Configuration for theme detection when using 'class' or 'system' mode
+   */
+  detection?: BrowserThemeDetection;
 }
 
 const applyThemeToDOM = (theme: Theme) => {
@@ -34,15 +55,55 @@ const applyThemeToDOM = (theme: Theme) => {
 const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
   theme: themeConfig,
-  defaultColorScheme = 'light',
+  mode = 'system',
+  detection = {},
 }: PropsWithChildren<ThemeProviderProps>): ReactElement => {
-  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>(defaultColorScheme);
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>(() => {
+    // Initialize with detected theme mode or fallback to defaultMode
+    if (mode === 'light' || mode === 'dark') {
+      return mode;
+    }
+    return detectThemeMode(mode, detection);
+  });
 
   const theme = useMemo(() => createTheme(themeConfig, colorScheme === 'dark'), [themeConfig, colorScheme]);
 
-  const toggleTheme = () => {
+  const handleThemeChange = useCallback((isDark: boolean) => {
+    setColorScheme(isDark ? 'dark' : 'light');
+  }, []);
+
+  const toggleTheme = useCallback(() => {
     setColorScheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
+  }, []);
+
+  useEffect(() => {
+    let observer: MutationObserver | null = null;
+    let mediaQuery: MediaQueryList | null = null;
+
+    if (mode === 'class') {
+      const targetElement = detection.targetElement || document.documentElement;
+      if (targetElement) {
+        observer = createClassObserver(targetElement, handleThemeChange, detection);
+      }
+    } else if (mode === 'system') {
+      mediaQuery = createMediaQueryListener(handleThemeChange);
+    }
+
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+      if (mediaQuery) {
+        // Clean up media query listener
+        if (mediaQuery.removeEventListener) {
+          mediaQuery.removeEventListener('change', handleThemeChange as any);
+        } else {
+          // Fallback for older browsers
+          mediaQuery.removeListener(handleThemeChange as any);
+        }
+      }
+    };
+  }, [mode, detection, handleThemeChange]);
 
   useEffect(() => {
     applyThemeToDOM(theme);

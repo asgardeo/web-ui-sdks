@@ -166,8 +166,8 @@ export const WebWorkerCore = async (
     return _authenticationHelper.getUser();
   };
 
-  const getDecodedIdToken = async (): Promise<IdToken> => {
-    return _authenticationHelper.getDecodedIdToken();
+  const getDecodedIdToken = async (sessionId?: string): Promise<IdToken> => {
+    return _authenticationHelper.getDecodedIdToken(sessionId);
   };
 
   const getCrypto = async (): Promise<IsomorphicCrypto> => {

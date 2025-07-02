@@ -23,7 +23,6 @@ import getOrganization from '../../../api/getOrganization';
 import updateOrganization, {createPatchOperations} from '../../../api/updateOrganization';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useTranslation from '../../../hooks/useTranslation';
-import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 
 /**
  * Props for the OrganizationProfile component.
@@ -201,33 +200,7 @@ const OrganizationProfile: FC<OrganizationProfileProps> = ({
     }
   };
 
-  if (loading) {
-    return mode === 'popup' ? (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeading>{popupTitle || t('organization.profile.title')}</DialogHeading>
-          <div style={{padding: '1rem'}}>{loadingFallback}</div>
-        </DialogContent>
-      </Dialog>
-    ) : (
-      loadingFallback
-    );
-  }
-
-  if (error) {
-    return mode === 'popup' ? (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeading>{popupTitle || t('organization.profile.title')}</DialogHeading>
-          <div style={{padding: '1rem'}}>{errorFallback}</div>
-        </DialogContent>
-      </Dialog>
-    ) : (
-      errorFallback
-    );
-  }
-
-  const profileContent = (
+  return (
     <BaseOrganizationProfile
       organization={organization}
       onUpdate={handleOrganizationUpdate}
@@ -238,8 +211,6 @@ const OrganizationProfile: FC<OrganizationProfileProps> = ({
       {...rest}
     />
   );
-
-  return profileContent;
 };
 
 export default OrganizationProfile;

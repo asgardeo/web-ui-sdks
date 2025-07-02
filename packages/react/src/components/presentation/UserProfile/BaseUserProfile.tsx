@@ -27,6 +27,7 @@ import Checkbox from '../../primitives/Checkbox/Checkbox';
 import DatePicker from '../../primitives/DatePicker/DatePicker';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 import TextField from '../../primitives/TextField/TextField';
+import MultiInput from '../../primitives/MultiInput/MultiInput';
 import Card from '../../primitives/Card/Card';
 
 interface ExtendedFlatSchema {
@@ -75,6 +76,31 @@ export interface BaseUserProfileProps {
   schemas?: Schema[];
   title?: string;
 }
+
+// Fields to skip based on schema.name
+const fieldsToSkip: string[] = [
+  'roles.default',
+  'active',
+  'groups',
+  'profileUrl',
+  'accountLocked',
+  'accountDisabled',
+  'oneTimePassword',
+  'userSourceId',
+  'idpType',
+  'localCredentialExists',
+  'active',
+  'ResourceType',
+  'ExternalID',
+  'MetaData',
+  'verifiedMobileNumbers',
+  'verifiedEmailAddresses',
+  'phoneNumbers.mobile',
+  'emailAddresses',
+];
+
+// Fields that should be readonly
+const readonlyFields: string[] = ['username', 'userName', 'user_name'];
 
 const BaseUserProfile: FC<BaseUserProfileProps> = ({
   fallback = null,
@@ -188,12 +214,17 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       if (!onUpdate || !schema.name) return;
 
       const fieldName: string = schema.name;
-      const fieldValue: any =
+      let fieldValue: any =
         editedUser && fieldName && editedUser[fieldName] !== undefined
           ? editedUser[fieldName]
           : flattenedProfile && flattenedProfile[fieldName] !== undefined
           ? flattenedProfile[fieldName]
           : '';
+
+      // Filter out empty values for arrays when saving
+      if (Array.isArray(fieldValue)) {
+        fieldValue = fieldValue.filter(v => v !== undefined && v !== null && v !== '');
+      }
 
       let payload: Record<string, any> = {};
 
@@ -293,7 +324,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     onStartEdit?: () => void,
   ): ReactElement | null => {
     if (!schema) return null;
-    const {value, displayName, description, name, type, required, mutability, subAttributes} = schema;
+    const {value, displayName, description, name, type, required, mutability, subAttributes, multiValued} = schema;
     const label = displayName || description || name || '';
 
     // If complex or subAttributes, fallback to original renderSchemaValue
@@ -317,13 +348,68 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         </>
       );
     }
-    if (Array.isArray(value)) {
-      const hasValues = value.length > 0;
-      const isEditable = editable && mutability !== 'READ_ONLY';
 
+    // Handle multi-valued fields (either array values or multiValued property)
+    if (Array.isArray(value) || multiValued) {
+      const hasValues = Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && value !== '';
+      const isEditable = editable && mutability !== 'READ_ONLY' && !readonlyFields.includes(name || '');
+
+      // If editing, show multi-valued input
+      if (isEditing && onEditValue && isEditable) {
+        // Use editedUser value if available, then flattenedProfile, then schema value
+        const currentValue =
+          editedUser && name && editedUser[name] !== undefined
+            ? editedUser[name]
+            : flattenedProfile && name && flattenedProfile[name] !== undefined
+            ? flattenedProfile[name]
+            : value;
+
+        let fieldValues: string[];
+        if (Array.isArray(currentValue)) {
+          fieldValues = currentValue.map(String);
+        } else if (currentValue !== undefined && currentValue !== null && currentValue !== '') {
+          fieldValues = [String(currentValue)];
+        } else {
+          fieldValues = [];
+        }
+
+        return (
+          <>
+            <span style={styles.label}>{label}</span>
+            <div style={styles.value}>
+              <MultiInput
+                values={fieldValues}
+                onChange={newValues => {
+                  // Don't filter out empty values during editing - only when saving
+                  // This allows users to type and keeps empty fields for adding new values
+                  if (multiValued || Array.isArray(currentValue)) {
+                    onEditValue(newValues);
+                  } else {
+                    // Single value field, just take the first value (including empty for typing)
+                    onEditValue(newValues[0] || '');
+                  }
+                }}
+                placeholder={getFieldPlaceholder(schema)}
+                fieldType={type as 'STRING' | 'DATE_TIME' | 'BOOLEAN'}
+                type={type === 'DATE_TIME' ? 'date' : type === 'STRING' ? 'text' : 'text'}
+                required={required}
+                style={{
+                  marginBottom: 0,
+                }}
+              />
+            </div>
+          </>
+        );
+      }
+
+      // View mode for multi-valued fields
       let displayValue: string;
       if (hasValues) {
-        displayValue = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item))).join(', ');
+        if (Array.isArray(value)) {
+          displayValue = value.map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item))).join(', ');
+        } else {
+          displayValue = String(value);
+        }
       } else if (isEditable) {
         displayValue = getFieldPlaceholder(schema);
       } else {
@@ -363,7 +449,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       return <ObjectDisplay data={value} />;
     }
     // If editing, show field instead of value
-    if (isEditing && onEditValue && mutability !== 'READ_ONLY') {
+    if (isEditing && onEditValue && mutability !== 'READ_ONLY' && !readonlyFields.includes(name || '')) {
       // Use editedUser value if available, then flattenedProfile, then schema value
       const fieldValue =
         editedUser && name && editedUser[name] !== undefined
@@ -425,7 +511,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     }
     // Default: view mode
     const hasValue = value !== undefined && value !== null && value !== '';
-    const isEditable = editable && mutability !== 'READ_ONLY';
+    const isEditable = editable && mutability !== 'READ_ONLY' && !readonlyFields.includes(name || '');
 
     let displayValue: string;
     if (hasValue) {
@@ -472,6 +558,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     // Skip fields with undefined or empty values unless editing or editable
     const hasValue = schema.value !== undefined && schema.value !== '' && schema.value !== null;
     const isFieldEditing = editingFields[schema.name];
+    const isReadonlyField = readonlyFields.includes(schema.name);
 
     // Show field if: has value, currently editing, or is editable and READ_WRITE
     const shouldShow = hasValue || isFieldEditing || (editable && schema.mutability === 'READ_WRITE');
@@ -501,7 +588,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
             () => toggleFieldEdit(schema.name!),
           )}
         </div>
-        {editable && schema.mutability !== 'READ_ONLY' && (
+        {editable && schema.mutability !== 'READ_ONLY' && !isReadonlyField && (
           <div
             style={{
               display: 'flex',
@@ -570,9 +657,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const avatarAttributes = ['picture'];
   const excludedProps = avatarAttributes.map(attr => mergedMappings[attr] || attr);
 
-  // Fields to skip based on schema.name
-  const fieldsToSkip: string[] = ['verifiedMobileNumbers', 'verifiedEmailAddresses'];
-
   const profileContent = (
     <Card style={containerStyle} className={clsx(withVendorCSSClassPrefix('user-profile'), className)}>
       <div style={styles.header}>
@@ -612,6 +696,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
               ...schema,
               value,
             };
+
             return <div key={schema.name || index}>{renderUserInfo(schemaWithValue)}</div>;
           })}
       </div>
@@ -692,7 +777,7 @@ const useStyles = () => {
         gap: `${theme.spacing.unit}px`,
         overflow: 'hidden',
         minHeight: '32px',
-        '& input, & .MuiInputBase-root': {
+        '& input': {
           height: '32px',
           margin: 0,
         },

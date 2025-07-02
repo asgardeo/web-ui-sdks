@@ -51,3 +51,10 @@ export {default as AsgardeoBrowserClient} from './AsgardeoBrowserClient';
 
 // Re-export everything from the JavaScript package
 export * from '@asgardeo/javascript';
+
+export {
+  detectThemeMode,
+  createClassObserver,
+  createMediaQueryListener,
+  BrowserThemeDetection,
+} from './theme/themeDetection';

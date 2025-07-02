@@ -57,7 +57,7 @@ export type SignInProps = Pick<BaseSignInProps, 'className' | 'onSuccess' | 'onE
  * };
  * ```
  */
-const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'outlined'}: SignInProps) => {
+const SignIn: FC<SignInProps> = ({className, size = 'medium', ...rest}: SignInProps) => {
   const {signIn, afterSignInUrl, isInitialized, isLoading} = useAsgardeo();
 
   /**
@@ -103,7 +103,7 @@ const SignIn: FC<SignInProps> = ({className, size = 'medium', variant = 'outline
       onSuccess={handleSuccess}
       className={className}
       size={size}
-      variant={variant}
+      {...rest}
     />
   );
 };

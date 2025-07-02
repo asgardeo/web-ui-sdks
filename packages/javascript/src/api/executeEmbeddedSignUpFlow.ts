@@ -59,19 +59,18 @@ const executeEmbeddedSignUpFlow = async ({
     );
   }
 
-  const {headers: customHeaders, ...otherConfig} = requestConfig;
   const response: Response = await fetch(url ?? `${baseUrl}/api/server/v1/flow/execute`, {
+    ...requestConfig,
     method: requestConfig.method || 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      ...customHeaders,
+      ...requestConfig.headers,
     },
     body: JSON.stringify({
       ...(payload ?? {}),
       flowType: EmbeddedFlowType.Registration,
     }),
-    ...otherConfig,
   });
 
   if (!response.ok) {

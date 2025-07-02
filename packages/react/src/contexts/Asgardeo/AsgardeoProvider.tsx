@@ -20,13 +20,14 @@ import {
   AsgardeoRuntimeError,
   EmbeddedFlowExecuteRequestPayload,
   EmbeddedFlowExecuteResponse,
+  generateFlattenedUserProfile,
   Organization,
   SignInOptions,
   SignOutOptions,
   User,
   UserProfile,
 } from '@asgardeo/browser';
-import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, use} from 'react';
+import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState} from 'react';
 import AsgardeoContext from './AsgardeoContext';
 import AsgardeoReactClient from '../../AsgardeoReactClient';
 import useBrowserUrl from '../../hooks/useBrowserUrl';
@@ -45,13 +46,15 @@ export type AsgardeoProviderProps = AsgardeoReactConfig;
 const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   afterSignInUrl = window.location.origin,
   afterSignOutUrl = window.location.origin,
-  baseUrl,
+  baseUrl: _baseUrl,
   clientId,
   children,
   scopes,
   preferences,
   signInUrl,
   signUpUrl,
+  organizationHandle,
+  applicationId,
   ...rest
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
@@ -64,19 +67,28 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const [isInitializedSync, setIsInitializedSync] = useState<boolean>(false);
 
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [baseUrl, setBaseUrl] = useState<string>(_baseUrl);
+  const [config, setConfig] = useState<AsgardeoReactConfig>({
+    applicationId,
+    organizationHandle,
+    afterSignInUrl,
+    afterSignOutUrl,
+    baseUrl,
+    clientId,
+    scopes,
+    signUpUrl,
+    signInUrl,
+    ...rest,
+  });
+
+  useEffect(() => {
+    setBaseUrl(_baseUrl);
+  }, [_baseUrl]);
 
   useEffect(() => {
     (async (): Promise<void> => {
-      await asgardeo.initialize({
-        afterSignInUrl,
-        afterSignOutUrl,
-        baseUrl,
-        clientId,
-        scopes,
-        signUpUrl,
-        signInUrl,
-        ...rest,
-      });
+      await asgardeo.initialize(config);
+      setConfig(await asgardeo.getConfiguration());
     })();
   }, []);
 
@@ -99,9 +111,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     (async (): Promise<void> => {
       // User is already authenticated. Skip...
       if (await asgardeo.isSignedIn()) {
-        setUser(await asgardeo.getUser());
-        setUserProfile(await asgardeo.getUserProfile());
-        setCurrentOrganization(await asgardeo.getCurrentOrganization());
+        await updateSession();
 
         return;
       }
@@ -173,14 +183,27 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     })();
   }, [asgardeo]);
 
+  const updateSession = async (): Promise<void> => {
+    let _baseUrl: string = baseUrl;
+
+    // If there's a `user_org` claim in the ID token,
+    // Treat this login as a organization login.
+    if ((await asgardeo.getDecodedIdToken())?.['user_org']) {
+      _baseUrl = `${(await asgardeo.getConfiguration()).baseUrl}/o`;
+      setBaseUrl(_baseUrl);
+    }
+
+    setUser(await asgardeo.getUser({baseUrl: _baseUrl}));
+    setUserProfile(await asgardeo.getUserProfile({baseUrl: _baseUrl}));
+    setCurrentOrganization(await asgardeo.getCurrentOrganization());
+  };
+
   const signIn = async (...args: any): Promise<User> => {
     try {
       const response: User = await asgardeo.signIn(...args);
 
       if (await asgardeo.isSignedIn()) {
-        setUser(await asgardeo.getUser());
-        setUserProfile(await asgardeo.getUserProfile());
-        setCurrentOrganization(await asgardeo.getCurrentOrganization());
+        await updateSession();
       }
 
       return response;
@@ -210,9 +233,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       await asgardeo.switchOrganization(organization);
 
       if (await asgardeo.isSignedIn()) {
-        setUser(await asgardeo.getUser());
-        setUserProfile(await asgardeo.getUserProfile());
-        setCurrentOrganization(await asgardeo.getCurrentOrganization());
+        await updateSession();
       }
     } catch (error) {
       throw new AsgardeoRuntimeError(
@@ -231,9 +252,20 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     return preferences.theme.mode === 'dark';
   }, [preferences?.theme?.mode]);
 
+  const handleProfileUpdate = (payload: User): void => {
+    setUser(payload);
+    setUserProfile(prev => ({
+      ...prev,
+      profile: payload,
+      flattenedProfile: generateFlattenedUserProfile(payload, prev?.schemas),
+    }));
+  };
+
   return (
     <AsgardeoContext.Provider
       value={{
+        applicationId,
+        organizationHandle: config?.organizationHandle,
         signInUrl,
         signUpUrl,
         afterSignInUrl,
@@ -249,12 +281,9 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       }}
     >
       <I18nProvider preferences={preferences?.i18n}>
-        <ThemeProvider theme={preferences?.theme?.overrides} defaultColorScheme={isDarkMode ? 'dark' : 'light'}>
+        <ThemeProvider theme={preferences?.theme?.overrides} mode={isDarkMode ? 'dark' : 'light'}>
           <FlowProvider>
-            <UserProvider
-              profile={userProfile}
-              revalidateProfile={async () => setUserProfile(await asgardeo.getUserProfile())}
-            >
+            <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate}>
               <OrganizationProvider
                 getOrganizations={async () => asgardeo.getOrganizations()}
                 currentOrganization={currentOrganization}

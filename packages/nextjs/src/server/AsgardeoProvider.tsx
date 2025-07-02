@@ -16,9 +16,11 @@
  * under the License.
  */
 
+'use server';
+
 import {FC, PropsWithChildren, ReactElement} from 'react';
-import {AsgardeoRuntimeError, User, UserProfile} from '@asgardeo/node';
-import AsgardeoClientProvider, {AsgardeoClientProviderProps} from '../client/contexts/Asgardeo/AsgardeoProvider';
+import {AsgardeoRuntimeError, Organization, User, UserProfile} from '@asgardeo/node';
+import AsgardeoClientProvider from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
 import signInAction from './actions/signInAction';
 import signOutAction from './actions/signOutAction';
@@ -30,6 +32,8 @@ import getUserProfileAction from './actions/getUserProfileAction';
 import signUpAction from './actions/signUpAction';
 import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
 import {AsgardeoProviderProps} from '@asgardeo/react';
+import getCurrentOrganizationAction from './actions/getCurrentOrganizationAction';
+import updateUserProfileAction from './actions/updateUserProfileAction';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -88,28 +92,39 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     profile: {},
     flattenedProfile: {},
   };
+  let currentOrganization: Organization = {
+    id: '',
+    name: '',
+    orgHandle: '',
+  };
 
   if (_isSignedIn) {
     const userResponse = await getUserAction(sessionId);
     const userProfileResponse = await getUserProfileAction(sessionId);
+    const currentOrganizationResponse = await getCurrentOrganizationAction(sessionId);
 
     user = userResponse.data?.user || {};
     userProfile = userProfileResponse.data?.userProfile;
+    currentOrganization = currentOrganizationResponse?.data?.organization as Organization;
   }
 
   return (
     <AsgardeoClientProvider
-      baseUrl={config.baseUrl}
+      organizationHandle={config?.organizationHandle}
+      applicationId={config?.applicationId}
+      baseUrl={config?.baseUrl}
       signIn={signInAction}
       signOut={signOutAction}
       signUp={signUpAction}
       handleOAuthCallback={handleOAuthCallbackAction}
-      signInUrl={config.signInUrl}
-      signUpUrl={config.signUpUrl}
-      preferences={config.preferences}
-      clientId={config.clientId}
+      signInUrl={config?.signInUrl}
+      signUpUrl={config?.signUpUrl}
+      preferences={config?.preferences}
+      clientId={config?.clientId}
       user={user}
+      currentOrganization={currentOrganization}
       userProfile={userProfile}
+      updateProfile={updateUserProfileAction}
       isSignedIn={_isSignedIn}
     >
       {children}

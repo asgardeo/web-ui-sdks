@@ -147,13 +147,13 @@ const getAllOrganizations = async ({
   const resolvedUrl = `${baseUrl}/api/server/v1/organizations?${queryParams.toString()}`;
 
   const requestInit: RequestInit = {
+    ...requestConfig,
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
       ...requestConfig.headers,
     },
-    ...requestConfig,
   };
 
   try {

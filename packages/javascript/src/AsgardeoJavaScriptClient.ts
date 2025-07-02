@@ -34,17 +34,19 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
 
   abstract initialize(config: T): Promise<boolean>;
 
-  abstract getUser(): Promise<User>;
+  abstract getUser(options?: any): Promise<User>;
 
-  abstract getOrganizations(): Promise<Organization[]>;
+  abstract getOrganizations(options?: any): Promise<Organization[]>;
 
-  abstract getCurrentOrganization(): Promise<Organization | null>;
+  abstract getCurrentOrganization(sessionId?: string): Promise<Organization | null>;
 
-  abstract getUserProfile(): Promise<UserProfile>;
+  abstract getUserProfile(options?: any): Promise<UserProfile>;
 
   abstract isLoading(): boolean;
 
   abstract isSignedIn(): Promise<boolean>;
+
+  abstract updateUserProfile(payload: any, userId?: string): Promise<User>;
 
   abstract getConfiguration(): T;
 

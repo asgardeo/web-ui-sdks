@@ -31,6 +31,8 @@ export type AsgardeoContextProps = Partial<AsgardeoReactContextProps>;
  * Context object for managing the Authentication flow builder core context.
  */
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
+  organizationHandle: undefined,
+  applicationId: undefined,
   signInUrl: undefined,
   signUpUrl: undefined,
   afterSignInUrl: undefined,

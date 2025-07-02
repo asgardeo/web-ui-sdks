@@ -197,6 +197,9 @@ export * from './components/primitives/OtpField/OtpField';
 export {default as TextField} from './components/primitives/TextField/TextField';
 export * from './components/primitives/TextField/TextField';
 
+export {default as MultiInput} from './components/primitives/MultiInput/MultiInput';
+export * from './components/primitives/MultiInput/MultiInput';
+
 export {default as PasswordField} from './components/primitives/PasswordField/PasswordField';
 export * from './components/primitives/PasswordField/PasswordField';
 
@@ -238,6 +241,8 @@ export {default as LogOut} from './components/primitives/Icons/LogOut';
 
 export {createField, FieldFactory, validateFieldValue} from './components/factories/FieldFactory';
 export * from './components/factories/FieldFactory';
+
+export {default as BuildingAlt} from './components/primitives/Icons/BuildingAlt';
 
 export type {FlowStep, FlowMessage, FlowContextValue} from './contexts/Flow/FlowContext';
 

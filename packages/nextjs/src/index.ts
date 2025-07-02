@@ -26,6 +26,15 @@ export {default as isSignedIn} from './server/actions/isSignedIn';
 
 export {default as handleOAuthCallback} from './server/actions/handleOAuthCallbackAction';
 
+export {default as CreateOrganization} from './client/components/presentation/CreateOrganization/CreateOrganization';
+export {CreateOrganizationProps} from './client/components/presentation/CreateOrganization/CreateOrganization';
+
+export {default as OrganizationProfile} from './client/components/presentation/OrganizationProfile/OrganizationProfile';
+export {OrganizationProfileProps} from './client/components/presentation/OrganizationProfile/OrganizationProfile';
+
+export {default as OrganizationSwitcher} from './client/components/presentation/OrganizationSwitcher/OrganizationSwitcher';
+export {OrganizationSwitcherProps} from './client/components/presentation/OrganizationSwitcher/OrganizationSwitcher';
+
 export {default as SignedIn} from './client/components/control/SignedIn/SignedIn';
 export {SignedInProps} from './client/components/control/SignedIn/SignedIn';
 

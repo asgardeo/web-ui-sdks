@@ -35,6 +35,7 @@ import {
   Organization,
   IdToken,
   EmbeddedFlowExecuteRequestConfig,
+  deriveOrganizationHandleFromBaseUrl,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/getMeOrganizations';
@@ -59,13 +60,27 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
   }
 
   override initialize(config: AsgardeoReactConfig): Promise<boolean> {
-    return this.asgardeo.init(config as any);
+    let resolvedOrganizationHandle: string | undefined = config?.organizationHandle;
+
+    if (!resolvedOrganizationHandle) {
+      resolvedOrganizationHandle = deriveOrganizationHandleFromBaseUrl(config?.baseUrl);
+    }
+
+    return this.asgardeo.init({...config, organizationHandle: resolvedOrganizationHandle} as any);
   }
 
-  override async getUser(): Promise<User> {
+  override async updateUserProfile(payload: any, userId?: string): Promise<User> {
+    throw new Error('Not implemented');
+  }
+
+  override async getUser(options?: any): Promise<User> {
     try {
-      const configData = await this.asgardeo.getConfigData();
-      const baseUrl = configData?.baseUrl;
+      let baseUrl = options?.baseUrl;
+
+      if (!baseUrl) {
+        const configData = await this.asgardeo.getConfigData();
+        baseUrl = configData?.baseUrl;
+      }
 
       const profile = await getScim2Me({baseUrl});
       const schemas = await getSchemas({baseUrl});
@@ -76,10 +91,18 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     }
   }
 
-  async getUserProfile(): Promise<UserProfile> {
+  async getDecodedIdToken(sessionId?: string): Promise<IdToken> {
+    return this.asgardeo.getDecodedIdToken(sessionId);
+  }
+
+  async getUserProfile(options?: any): Promise<UserProfile> {
     try {
-      const configData = await this.asgardeo.getConfigData();
-      const baseUrl = configData?.baseUrl;
+      let baseUrl = options?.baseUrl;
+
+      if (!baseUrl) {
+        const configData = await this.asgardeo.getConfigData();
+        baseUrl = configData?.baseUrl;
+      }
 
       const profile = await getScim2Me({baseUrl});
       const schemas = await getSchemas({baseUrl});
@@ -102,10 +125,14 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     }
   }
 
-  override async getOrganizations(): Promise<Organization[]> {
+  override async getOrganizations(options?: any): Promise<Organization[]> {
     try {
-      const configData = await this.asgardeo.getConfigData();
-      const baseUrl = configData?.baseUrl;
+      let baseUrl = options?.baseUrl;
+
+      if (!baseUrl) {
+        const configData = await this.asgardeo.getConfigData();
+        baseUrl = configData?.baseUrl;
+      }
 
       const organizations = await getMeOrganizations({baseUrl});
 
@@ -211,7 +238,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       });
     }
 
-    return this.asgardeo.signIn(arg1 as any) as unknown as Promise<User>;
+    return (await this.asgardeo.signIn(arg1 as any)) as unknown as Promise<User>;
   }
 
   override signOut(options?: SignOutOptions, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;

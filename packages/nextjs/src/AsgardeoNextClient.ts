@@ -40,6 +40,13 @@ import {
   generateFlattenedUserProfile,
   updateMeProfile,
   executeEmbeddedSignUpFlow,
+  getMeOrganizations,
+  IdToken,
+  createOrganization,
+  CreateOrganizationPayload,
+  getOrganization,
+  OrganizationDetails,
+  deriveOrganizationHandleFromBaseUrl
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
@@ -91,18 +98,24 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
   override async initialize(config: T): Promise<boolean> {
     if (this.isInitialized) {
-      console.warn('[AsgardeoNextClient] Client is already initialized');
       return Promise.resolve(true);
     }
 
-    const {baseUrl, clientId, clientSecret, signInUrl, afterSignInUrl, afterSignOutUrl, signUpUrl, ...rest} =
+    const {baseUrl, organizationHandle, clientId, clientSecret, signInUrl, afterSignInUrl, afterSignOutUrl, signUpUrl, ...rest} =
       decorateConfigWithNextEnv(config);
 
     this.isInitialized = true;
 
+    let resolvedOrganizationHandle: string | undefined = organizationHandle;
+
+    if (!resolvedOrganizationHandle) {
+      resolvedOrganizationHandle = deriveOrganizationHandleFromBaseUrl(baseUrl);
+    }
+
     const origin: string = await getClientOrigin();
 
     return this.asgardeo.initialize({
+      organizationHandle: resolvedOrganizationHandle,
       baseUrl,
       clientId,
       clientSecret,
@@ -176,13 +189,13 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     } catch (error) {
       return {
         schemas: [],
-        flattenedProfile: await this.asgardeo.getDecodedIdToken(),
-        profile: await this.asgardeo.getDecodedIdToken(),
+        flattenedProfile: await this.asgardeo.getDecodedIdToken(userId),
+        profile: await this.asgardeo.getDecodedIdToken(userId),
       };
     }
   }
 
-  async updateUserProfile(payload: any, userId?: string) {
+  override async updateUserProfile(payload: any, userId?: string): Promise<User> {
     await this.ensureInitialized();
 
     try {
@@ -198,7 +211,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       });
     } catch (error) {
       throw new AsgardeoRuntimeError(
-        `Failed to update user profile: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to update user profile: ${error instanceof Error ? error.message : String(error)}`,
         'AsgardeoNextClient-UpdateProfileError-001',
         'react',
         'An error occurred while updating the user profile. Please check your configuration and network connection.',
@@ -206,16 +219,120 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     }
   }
 
-  override async getOrganizations(): Promise<Organization[]> {
-    throw new Error('Method not implemented.');
+  async createOrganization(payload: CreateOrganizationPayload, userId?: string): Promise<Organization> {
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl: string = configData?.baseUrl as string;
+
+      return await createOrganization({
+        payload,
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to create organization: ${error instanceof Error ? error.message : String(error)}`,
+        'AsgardeoReactClient-createOrganization-RuntimeError-001',
+        'nextjs',
+        'An error occurred while creating the organization. Please check your configuration and network connection.',
+      );
+    }
   }
 
-  override switchOrganization(organization: Organization): Promise<void> {
-    throw new Error('Method not implemented.');
+  async getOrganization(organizationId: string, userId?: string): Promise<OrganizationDetails> {
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl: string = configData?.baseUrl as string;
+
+      return await getOrganization({
+        baseUrl,
+        organizationId,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to fetch the organization details of ${organizationId}: ${String(error)}`,
+        'AsgardeoReactClient-getOrganization-RuntimeError-001',
+        'nextjs',
+        `An error occurred while fetching the organization with the id: ${organizationId}.`,
+      );
+    }
   }
 
-  override getCurrentOrganization(): Promise<Organization | null> {
-    throw new Error('Method not implemented.');
+  override async getOrganizations(userId?: string): Promise<Organization[]> {
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl: string = configData?.baseUrl as string;
+
+      const organizations = await getMeOrganizations({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+
+      return organizations;
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        'Failed to fetch organizations.',
+        'react-AsgardeoReactClient-GetOrganizationsError-001',
+        'react',
+        'An error occurred while fetching the organizations associated with the user.',
+      );
+    }
+  }
+
+  override async getCurrentOrganization(userId?: string): Promise<Organization | null> {
+    const idToken: IdToken = await this.asgardeo.getDecodedIdToken(userId);
+
+    return {
+      orgHandle: idToken?.org_handle as string,
+      name: idToken?.org_name as string,
+      id: idToken?.org_id as string,
+    };
+  }
+
+  override async switchOrganization(organization: Organization, userId?: string): Promise<void> {
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const scopes = configData?.scopes;
+
+      if (!organization.id) {
+        throw new AsgardeoRuntimeError(
+          'Organization ID is required for switching organizations',
+          'react-AsgardeoReactClient-ValidationError-001',
+          'react',
+          'The organization object must contain a valid ID to perform the organization switch.',
+        );
+      }
+
+      const exchangeConfig = {
+        attachToken: false,
+        data: {
+          client_id: '{{clientId}}',
+          grant_type: 'organization_switch',
+          scope: '{{scopes}}',
+          switching_organization: organization.id,
+          token: '{{accessToken}}',
+        },
+        id: 'organization-switch',
+        returnsSession: true,
+        signInRequired: true,
+      };
+
+      await this.asgardeo.exchangeToken(exchangeConfig, userId);
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to switch organization: ${error instanceof Error ? error.message : String(error)}`,
+        'AsgardeoReactClient-RuntimeError-003',
+        'nextjs',
+        'An error occurred while switching to the specified organization. Please try again.',
+      );
+    }
   }
 
   override isLoading(): boolean {

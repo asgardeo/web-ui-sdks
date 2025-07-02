@@ -106,13 +106,13 @@ const getSchemas = async ({url, baseUrl, fetcher, ...requestConfig}: GetSchemasC
   const resolvedUrl: string = url ?? `${baseUrl}/scim2/Schemas`;
 
   const requestInit: RequestInit = {
+    ...requestConfig,
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
       ...requestConfig.headers,
     },
-    ...requestConfig,
   };
 
   try {

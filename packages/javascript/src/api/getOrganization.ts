@@ -142,13 +142,13 @@ const getOrganization = async ({
   const resolvedUrl = `${baseUrl}/api/server/v1/organizations/${organizationId}`;
 
   const requestInit: RequestInit = {
+    ...requestConfig,
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
       ...requestConfig.headers,
     },
-    ...requestConfig,
   };
 
   try {
