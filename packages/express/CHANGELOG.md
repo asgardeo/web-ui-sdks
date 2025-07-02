@@ -1,5 +1,17 @@
 # @asgardeo/express
 
+## 0.0.3
+
+### Patch Changes
+
+- [#85](https://github.com/asgardeo/web-ui-sdks/pull/85)
+  [`1066fef`](https://github.com/asgardeo/web-ui-sdks/commit/1066fefa855aa646b3026f6e682657e3980ca99b) Thanks
+  [@brionmario](https://github.com/brionmario)! - Fix issues with profile
+
+- Updated dependencies
+  [[`1066fef`](https://github.com/asgardeo/web-ui-sdks/commit/1066fefa855aa646b3026f6e682657e3980ca99b)]:
+  - @asgardeo/node@0.0.4
+
 ## 0.0.2
 
 ### Patch Changes
