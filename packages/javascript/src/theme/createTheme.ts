@@ -16,8 +16,9 @@
  * under the License.
  */
 
-import {Theme, ThemeConfig} from './types';
+import {Theme, ThemeConfig, ThemeVars} from './types';
 import {RecursivePartial} from '../models/utility-types';
+import VendorConstants from '../constants/VendorConstants';
 
 const lightTheme: ThemeConfig = {
   colors: {
@@ -119,41 +120,156 @@ const darkTheme: ThemeConfig = {
   },
 };
 
-const toCssVariables = (theme: RecursivePartial<ThemeConfig>): Record<string, string> => {
+const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
   const cssVars: Record<string, string> = {};
+  const prefix = theme.cssVarPrefix || VendorConstants.VENDOR_PREFIX;
 
-  // Colors
-  cssVars['--asgardeo-color-primary-main'] = theme.colors.primary.main;
-  cssVars['--asgardeo-color-primary-contrastText'] = theme.colors.primary.contrastText;
-  cssVars['--asgardeo-color-secondary-main'] = theme.colors.secondary.main;
-  cssVars['--asgardeo-color-secondary-contrastText'] = theme.colors.secondary.contrastText;
-  cssVars['--asgardeo-color-background-surface'] = theme.colors.background.surface;
-  cssVars['--asgardeo-color-background-disabled'] = theme.colors.background.disabled;
-  cssVars['--asgardeo-color-background-body-main'] = theme.colors.background.body.main;
-  cssVars['--asgardeo-color-error-main'] = theme.colors.error.main;
-  cssVars['--asgardeo-color-error-contrastText'] = theme.colors.error.contrastText;
-  cssVars['--asgardeo-color-success-main'] = theme.colors.success.main;
-  cssVars['--asgardeo-color-success-contrastText'] = theme.colors.success.contrastText;
-  cssVars['--asgardeo-color-warning-main'] = theme.colors.warning.main;
-  cssVars['--asgardeo-color-warning-contrastText'] = theme.colors.warning.contrastText;
-  cssVars['--asgardeo-color-text-primary'] = theme.colors.text.primary;
-  cssVars['--asgardeo-color-text-secondary'] = theme.colors.text.secondary;
-  cssVars['--asgardeo-color-border'] = theme.colors.border;
+  // Colors - Primary
+  if (theme.colors?.primary?.main) {
+    cssVars[`--${prefix}-color-primary-main`] = theme.colors.primary.main;
+  }
+  if (theme.colors?.primary?.contrastText) {
+    cssVars[`--${prefix}-color-primary-contrastText`] = theme.colors.primary.contrastText;
+  }
+
+  // Colors - Secondary
+  if (theme.colors?.secondary?.main) {
+    cssVars[`--${prefix}-color-secondary-main`] = theme.colors.secondary.main;
+  }
+  if (theme.colors?.secondary?.contrastText) {
+    cssVars[`--${prefix}-color-secondary-contrastText`] = theme.colors.secondary.contrastText;
+  }
+
+  // Colors - Background
+  if (theme.colors?.background?.surface) {
+    cssVars[`--${prefix}-color-background-surface`] = theme.colors.background.surface;
+  }
+  if (theme.colors?.background?.disabled) {
+    cssVars[`--${prefix}-color-background-disabled`] = theme.colors.background.disabled;
+  }
+  if (theme.colors?.background?.body?.main) {
+    cssVars[`--${prefix}-color-background-body-main`] = theme.colors.background.body.main;
+  }
+
+  // Colors - Error
+  if (theme.colors?.error?.main) {
+    cssVars[`--${prefix}-color-error-main`] = theme.colors.error.main;
+  }
+  if (theme.colors?.error?.contrastText) {
+    cssVars[`--${prefix}-color-error-contrastText`] = theme.colors.error.contrastText;
+  }
+
+  // Colors - Success
+  if (theme.colors?.success?.main) {
+    cssVars[`--${prefix}-color-success-main`] = theme.colors.success.main;
+  }
+  if (theme.colors?.success?.contrastText) {
+    cssVars[`--${prefix}-color-success-contrastText`] = theme.colors.success.contrastText;
+  }
+
+  // Colors - Warning
+  if (theme.colors?.warning?.main) {
+    cssVars[`--${prefix}-color-warning-main`] = theme.colors.warning.main;
+  }
+  if (theme.colors?.warning?.contrastText) {
+    cssVars[`--${prefix}-color-warning-contrastText`] = theme.colors.warning.contrastText;
+  }
+
+  // Colors - Text
+  if (theme.colors?.text?.primary) {
+    cssVars[`--${prefix}-color-text-primary`] = theme.colors.text.primary;
+  }
+  if (theme.colors?.text?.secondary) {
+    cssVars[`--${prefix}-color-text-secondary`] = theme.colors.text.secondary;
+  }
+
+  // Colors - Border
+  if (theme.colors?.border) {
+    cssVars[`--${prefix}-color-border`] = theme.colors.border;
+  }
 
   // Spacing
-  cssVars['--asgardeo-spacing-unit'] = `${theme.spacing.unit}px`;
+  if (theme.spacing?.unit !== undefined) {
+    cssVars[`--${prefix}-spacing-unit`] = `${theme.spacing.unit}px`;
+  }
 
   // Border Radius
-  cssVars['--asgardeo-border-radius-small'] = theme.borderRadius.small;
-  cssVars['--asgardeo-border-radius-medium'] = theme.borderRadius.medium;
-  cssVars['--asgardeo-border-radius-large'] = theme.borderRadius.large;
+  if (theme.borderRadius?.small) {
+    cssVars[`--${prefix}-border-radius-small`] = theme.borderRadius.small;
+  }
+  if (theme.borderRadius?.medium) {
+    cssVars[`--${prefix}-border-radius-medium`] = theme.borderRadius.medium;
+  }
+  if (theme.borderRadius?.large) {
+    cssVars[`--${prefix}-border-radius-large`] = theme.borderRadius.large;
+  }
 
   // Shadows
-  cssVars['--asgardeo-shadow-small'] = theme.shadows.small;
-  cssVars['--asgardeo-shadow-medium'] = theme.shadows.medium;
-  cssVars['--asgardeo-shadow-large'] = theme.shadows.large;
+  if (theme.shadows?.small) {
+    cssVars[`--${prefix}-shadow-small`] = theme.shadows.small;
+  }
+  if (theme.shadows?.medium) {
+    cssVars[`--${prefix}-shadow-medium`] = theme.shadows.medium;
+  }
+  if (theme.shadows?.large) {
+    cssVars[`--${prefix}-shadow-large`] = theme.shadows.large;
+  }
 
   return cssVars;
+};
+
+const toThemeVars = (theme: ThemeConfig): ThemeVars => {
+  const prefix = theme.cssVarPrefix || VendorConstants.VENDOR_PREFIX;
+  
+  return {
+    colors: {
+      primary: {
+        main: `var(--${prefix}-color-primary-main)`,
+        contrastText: `var(--${prefix}-color-primary-contrastText)`,
+      },
+      secondary: {
+        main: `var(--${prefix}-color-secondary-main)`,
+        contrastText: `var(--${prefix}-color-secondary-contrastText)`,
+      },
+      background: {
+        surface: `var(--${prefix}-color-background-surface)`,
+        disabled: `var(--${prefix}-color-background-disabled)`,
+        body: {
+          main: `var(--${prefix}-color-background-body-main)`,
+        },
+      },
+      error: {
+        main: `var(--${prefix}-color-error-main)`,
+        contrastText: `var(--${prefix}-color-error-contrastText)`,
+      },
+      success: {
+        main: `var(--${prefix}-color-success-main)`,
+        contrastText: `var(--${prefix}-color-success-contrastText)`,
+      },
+      warning: {
+        main: `var(--${prefix}-color-warning-main)`,
+        contrastText: `var(--${prefix}-color-warning-contrastText)`,
+      },
+      text: {
+        primary: `var(--${prefix}-color-text-primary)`,
+        secondary: `var(--${prefix}-color-text-secondary)`,
+      },
+      border: `var(--${prefix}-color-border)`,
+    },
+    spacing: {
+      unit: `var(--${prefix}-spacing-unit)`,
+    },
+    borderRadius: {
+      small: `var(--${prefix}-border-radius-small)`,
+      medium: `var(--${prefix}-border-radius-medium)`,
+      large: `var(--${prefix}-border-radius-large)`,
+    },
+    shadows: {
+      small: `var(--${prefix}-shadow-small)`,
+      medium: `var(--${prefix}-shadow-medium)`,
+      large: `var(--${prefix}-shadow-large)`,
+    },
+  };
 };
 
 const createTheme = (config: RecursivePartial<ThemeConfig> = {}, isDark = false): Theme => {
@@ -186,6 +302,7 @@ const createTheme = (config: RecursivePartial<ThemeConfig> = {}, isDark = false)
   return {
     ...mergedConfig,
     cssVariables: toCssVariables(mergedConfig),
+    vars: toThemeVars(mergedConfig),
   };
 };
 

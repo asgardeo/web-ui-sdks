@@ -66,10 +66,66 @@ export interface ThemeConfig {
   spacing: {
     unit: number;
   };
+  /**
+   * The prefix used for CSS variables.
+   * @default 'asgardeo' (from VendorConstants.VENDOR_PREFIX)
+   */
+  cssVarPrefix?: string;
+}
+
+export interface ThemeVars {
+  colors: {
+    primary: {
+      main: string;
+      contrastText: string;
+    };
+    secondary: {
+      main: string;
+      contrastText: string;
+    };
+    background: {
+      surface: string;
+      disabled: string;
+      body: {
+        main: string;
+      };
+    };
+    error: {
+      main: string;
+      contrastText: string;
+    };
+    success: {
+      main: string;
+      contrastText: string;
+    };
+    warning: {
+      main: string;
+      contrastText: string;
+    };
+    text: {
+      primary: string;
+      secondary: string;
+    };
+    border: string;
+  };
+  spacing: {
+    unit: string;
+  };
+  borderRadius: {
+    small: string;
+    medium: string;
+    large: string;
+  };
+  shadows: {
+    small: string;
+    medium: string;
+    large: string;
+  };
 }
 
 export interface Theme extends ThemeConfig {
   cssVariables: Record<string, string>;
+  vars: ThemeVars;
 }
 
 export type ThemeMode = 'light' | 'dark' | 'system' | 'class';
