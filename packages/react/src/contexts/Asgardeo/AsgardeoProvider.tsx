@@ -68,6 +68,18 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [baseUrl, setBaseUrl] = useState<string>(_baseUrl);
+  const [config, setConfig] = useState<AsgardeoReactConfig>({
+    applicationId,
+    organizationHandle,
+    afterSignInUrl,
+    afterSignOutUrl,
+    baseUrl,
+    clientId,
+    scopes,
+    signUpUrl,
+    signInUrl,
+    ...rest,
+  });
 
   useEffect(() => {
     setBaseUrl(_baseUrl);
@@ -75,18 +87,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
   useEffect(() => {
     (async (): Promise<void> => {
-      await asgardeo.initialize({
-        applicationId,
-        organizationHandle,
-        afterSignInUrl,
-        afterSignOutUrl,
-        baseUrl,
-        clientId,
-        scopes,
-        signUpUrl,
-        signInUrl,
-        ...rest,
-      });
+      await asgardeo.initialize(config);
+      setConfig(await asgardeo.getConfiguration());
     })();
   }, []);
 
@@ -263,7 +265,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     <AsgardeoContext.Provider
       value={{
         applicationId,
-        organizationHandle,
+        organizationHandle: config?.organizationHandle,
         signInUrl,
         signUpUrl,
         afterSignInUrl,

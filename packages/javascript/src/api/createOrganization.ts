@@ -195,7 +195,6 @@ const createOrganization = async ({
 
     return (await response.json()) as Organization;
   } catch (error) {
-    console.log('[JS][createOrganization] Error creating organization:', error);
     if (error instanceof AsgardeoAPIError) {
       throw error;
     }

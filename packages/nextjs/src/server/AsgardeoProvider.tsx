@@ -110,17 +110,17 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
 
   return (
     <AsgardeoClientProvider
-      organizationHandle={config.organizationHandle}
-      applicationId={config.applicationId}
-      baseUrl={config.baseUrl}
+      organizationHandle={config?.organizationHandle}
+      applicationId={config?.applicationId}
+      baseUrl={config?.baseUrl}
       signIn={signInAction}
       signOut={signOutAction}
       signUp={signUpAction}
       handleOAuthCallback={handleOAuthCallbackAction}
-      signInUrl={config.signInUrl}
-      signUpUrl={config.signUpUrl}
-      preferences={config.preferences}
-      clientId={config.clientId}
+      signInUrl={config?.signInUrl}
+      signUpUrl={config?.signUpUrl}
+      preferences={config?.preferences}
+      clientId={config?.clientId}
       user={user}
       currentOrganization={currentOrganization}
       userProfile={userProfile}

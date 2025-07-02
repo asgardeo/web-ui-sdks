@@ -109,7 +109,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     let resolvedOrganizationHandle: string | undefined = organizationHandle;
 
     if (!resolvedOrganizationHandle) {
-      resolvedOrganizationHandle = deriveOrganizationHandleFromBaseUrl(config?.baseUrl);
+      resolvedOrganizationHandle = deriveOrganizationHandleFromBaseUrl(baseUrl);
     }
 
     const origin: string = await getClientOrigin();

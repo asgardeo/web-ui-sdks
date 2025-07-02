@@ -62,7 +62,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
   override initialize(config: AsgardeoReactConfig): Promise<boolean> {
     let resolvedOrganizationHandle: string | undefined = config?.organizationHandle;
 
-    if (!config?.organizationHandle) {
+    if (!resolvedOrganizationHandle) {
       resolvedOrganizationHandle = deriveOrganizationHandleFromBaseUrl(config?.baseUrl);
     }
 
