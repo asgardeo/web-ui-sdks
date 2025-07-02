@@ -18,6 +18,7 @@
 
 import {User} from '../models/user';
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
+import processUserUsername from '../utils/processUsername';
 
 /**
  * Configuration for the getScim2Me request
@@ -103,7 +104,7 @@ const getScim2Me = async ({url, baseUrl, fetcher, ...requestConfig}: GetScim2MeC
   }
 
   const fetchFn = fetcher || fetch;
-  const resolvedUrl: string = url ?? `${baseUrl}/scim2/Me`
+  const resolvedUrl: string = url ?? `${baseUrl}/scim2/Me`;
 
   const requestInit: RequestInit = {
     ...requestConfig,
@@ -130,7 +131,9 @@ const getScim2Me = async ({url, baseUrl, fetcher, ...requestConfig}: GetScim2MeC
       );
     }
 
-    return (await response.json()) as User;
+    const user = (await response.json()) as User;
+
+    return processUserUsername(user);
   } catch (error) {
     if (error instanceof AsgardeoAPIError) {
       throw error;
