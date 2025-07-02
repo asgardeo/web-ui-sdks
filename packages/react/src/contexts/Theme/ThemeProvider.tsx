@@ -145,11 +145,11 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   });
 
   // Use branding theme if inheritFromBranding is enabled
-  const { 
-    theme: brandingTheme, 
+  const {
+    theme: brandingTheme,
     activeTheme: brandingActiveTheme,
-    isLoading: isBrandingLoading, 
-    error: brandingError 
+    isLoading: isBrandingLoading,
+    error: brandingError
   } = useBranding({
     autoFetch: inheritFromBranding,
     // Don't pass forceTheme initially, let branding determine the active theme
@@ -224,7 +224,7 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
 
     // Don't set up automatic theme detection for branding mode
     if (mode === 'branding') {
-      return;
+      return null;
     }
 
     if (mode === 'class') {

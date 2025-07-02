@@ -632,15 +632,14 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   };
 
   const getDisplayName = () => {
-    const currentUser = flattenedProfile || profile;
-    const firstName = getMappedUserProfileValue('firstName', mergedMappings, currentUser);
-    const lastName = getMappedUserProfileValue('lastName', mergedMappings, currentUser);
+    const firstName = getMappedUserProfileValue('firstName', mergedMappings, profile);
+    const lastName = getMappedUserProfileValue('lastName', mergedMappings, profile);
 
     if (firstName && lastName) {
       return `${firstName} ${lastName}`;
     }
 
-    return getMappedUserProfileValue('username', mergedMappings, currentUser) || '';
+    return getMappedUserProfileValue('username', mergedMappings, profile) || '';
   };
 
   if (!profile && !flattenedProfile) {

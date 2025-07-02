@@ -253,22 +253,6 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
           limit,
           recursive,
           ...(reset ? {} : {startIndex: (currentPage - 1) * limit}),
-          fetcher: async (url: string, config: RequestInit): Promise<Response> => {
-            try {
-              const response = await fetch(url, config);
-              if (response.status === 401 || response.status === 403) {
-                const error = new Error('Insufficient permissions');
-                (error as any).status = response.status;
-                throw error;
-              }
-              return response;
-            } catch (error: any) {
-              if (error.status === 401 || error.status === 403) {
-                error.noRetry = true;
-              }
-              throw error;
-            }
-          },
         });
 
         // Combine organization data with switch access information

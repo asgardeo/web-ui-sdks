@@ -88,6 +88,16 @@ export interface I18nTranslations {
   'organization.switcher.create.organization': string;
   'organization.switcher.manage.organizations': string;
   'organization.switcher.manage.button': string;
+  'organization.switcher.organizations.title': string;
+  'organization.switcher.switch.button': string;
+  'organization.switcher.no.access': string;
+  'organization.switcher.status.label': string;
+  'organization.switcher.showing.count': string;
+  'organization.switcher.refresh.button': string;
+  'organization.switcher.load.more': string;
+  'organization.switcher.loading.more': string;
+  'organization.switcher.no.organizations': string;
+  'organization.switcher.error.prefix': string;
   'organization.profile.title': string;
   'organization.profile.loading': string;
   'organization.profile.error': string;

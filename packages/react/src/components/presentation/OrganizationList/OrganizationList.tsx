@@ -134,75 +134,6 @@ export const OrganizationList: FC<OrganizationListProps> = ({
     }
   }, [autoFetch, filter, limit, recursive, fetchPaginatedOrganizations]);
 
-  // Enhanced organization renderer that includes selection handler
-  const enhancedRenderOrganization = baseProps.renderOrganization
-    ? baseProps.renderOrganization
-    : onOrganizationSelect
-    ? (organization: OrganizationWithSwitchAccess, index: number) => (
-        <div
-          key={organization.id}
-          onClick={() => onOrganizationSelect(organization)}
-          style={{
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '16px',
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.backgroundColor = '#f9fafb';
-            e.currentTarget.style.borderColor = '#d1d5db';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.borderColor = '#e5e7eb';
-          }}
-        >
-          <div>
-            <h3 style={{fontSize: '18px', fontWeight: 'bold', margin: '0 0 8px 0'}}>{organization.name}</h3>
-            <p style={{color: '#6b7280', fontSize: '14px', margin: '0'}}>Handle: {organization.orgHandle}</p>
-            <p style={{color: '#6b7280', fontSize: '14px', margin: '4px 0 0 0'}}>
-              Status:{' '}
-              <span style={{color: organization.status === 'ACTIVE' ? '#10b981' : '#ef4444'}}>
-                {organization.status}
-              </span>
-            </p>
-          </div>
-          <div style={{alignItems: 'center', display: 'flex'}}>
-            {organization.canSwitch ? (
-              <span
-                style={{
-                  backgroundColor: '#dcfce7',
-                  borderRadius: '16px',
-                  color: '#16a34a',
-                  fontSize: '12px',
-                  fontWeight: 'medium',
-                  padding: '4px 12px',
-                }}
-              >
-                Can Switch
-              </span>
-            ) : (
-              <span
-                style={{
-                  backgroundColor: '#fee2e2',
-                  borderRadius: '16px',
-                  color: '#dc2626',
-                  fontSize: '12px',
-                  fontWeight: 'medium',
-                  padding: '4px 12px',
-                }}
-              >
-                No Access
-              </span>
-            )}
-          </div>
-        </div>
-      )
-    : undefined;
-
   const refreshHandler = async () => {
     await fetchPaginatedOrganizations({
       filter,
@@ -220,8 +151,8 @@ export const OrganizationList: FC<OrganizationListProps> = ({
       hasMore={hasMore}
       isLoading={isLoading}
       isLoadingMore={isLoadingMore}
+      onOrganizationSelect={onOrganizationSelect}
       onRefresh={refreshHandler}
-      renderOrganization={enhancedRenderOrganization}
       totalCount={totalCount}
       {...baseProps}
     />

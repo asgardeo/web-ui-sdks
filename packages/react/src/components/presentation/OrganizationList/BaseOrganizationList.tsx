@@ -21,8 +21,12 @@ import clsx from 'clsx';
 import {FC, ReactElement, ReactNode, useMemo, CSSProperties} from 'react';
 import {OrganizationWithSwitchAccess} from '../../../contexts/Organization/OrganizationContext';
 import useTheme from '../../../contexts/Theme/useTheme';
+import useTranslation from '../../../hooks/useTranslation';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
-import {Avatar} from '../../primitives/Avatar/Avatar';
+import Avatar from '../../primitives/Avatar/Avatar';
+import Button from '../../primitives/Button/Button';
+import Typography from '../../primitives/Typography/Typography';
+import Spinner from '../../primitives/Spinner/Spinner';
 
 /**
  * Props interface for the BaseOrganizationList component.
@@ -81,6 +85,10 @@ export interface BaseOrganizationListProps {
    */
   renderOrganization?: (organization: OrganizationWithSwitchAccess, index: number) => ReactNode;
   /**
+   * Function called when an organization is selected/clicked
+   */
+  onOrganizationSelect?: (organization: OrganizationWithSwitchAccess) => void;
+  /**
    * Inline styles to apply to the container
    */
   style?: React.CSSProperties;
@@ -104,12 +112,22 @@ export interface BaseOrganizationListProps {
    * Title for the popup dialog (only used in popup mode)
    */
   title?: string;
+  /**
+   * Whether to show the organization status in the list
+   */
+  showStatus?: boolean;
 }
 
 /**
  * Default organization item renderer
  */
-const defaultRenderOrganization = (organization: OrganizationWithSwitchAccess, styles: any): ReactNode => {
+const defaultRenderOrganization = (
+  organization: OrganizationWithSwitchAccess,
+  styles: any,
+  t: (key: string, params?: Record<string, string | number>) => string,
+  onOrganizationSelect?: (organization: OrganizationWithSwitchAccess) => void,
+  showStatus?: boolean,
+): ReactNode => {
   const getOrgInitials = (name?: string): string => {
     if (!name) return 'ORG';
     return name
@@ -121,30 +139,55 @@ const defaultRenderOrganization = (organization: OrganizationWithSwitchAccess, s
   };
 
   return (
-    <div key={organization.id} style={styles.organizationItem}>
+    <div
+      key={organization.id}
+      style={{
+        ...styles.organizationItem,
+        ...(onOrganizationSelect ? {cursor: 'pointer'} : {}),
+      }}
+      onClick={onOrganizationSelect ? () => onOrganizationSelect(organization) : undefined}
+    >
       <div style={styles.organizationContent}>
-        <Avatar name={getOrgInitials(organization.name)} size={48} alt={`${organization.name} logo`} />
+        <Avatar variant="square" name={organization.name} size={48} alt={`${organization.name} logo`} />
         <div style={styles.organizationInfo}>
-          <h3 style={styles.organizationName}>{organization.name}</h3>
-          <p style={styles.organizationHandle}>@{organization.orgHandle}</p>
-          <p style={styles.organizationStatus}>
-            Status:{' '}
-            <span
-              style={{
-                ...styles.statusText,
-                color: organization.status === 'ACTIVE' ? styles.activeColor : styles.inactiveColor,
-              }}
-            >
-              {organization.status}
-            </span>
-          </p>
+          <Typography variant="h6" style={styles.organizationName}>
+            {organization.name}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" style={styles.organizationHandle}>
+            @{organization.orgHandle}
+          </Typography>
+          {showStatus && (
+            <Typography variant="body2" color="textSecondary" style={styles.organizationStatus}>
+              {t('organization.switcher.status.label')}{' '}
+              <span
+                style={{
+                  ...styles.statusText,
+                  color: organization.status === 'ACTIVE' ? styles.activeColor : styles.inactiveColor,
+                }}
+              >
+                {organization.status}
+              </span>
+            </Typography>
+          )}
         </div>
       </div>
       <div style={styles.organizationActions}>
         {organization.canSwitch ? (
-          <span style={{...styles.badge, ...styles.successBadge}}>Can Switch</span>
+          <Button
+            onClick={e => {
+              e.stopPropagation();
+              // TODO: Implement organization switch logic
+              console.log('Switching to organization:', organization.name);
+            }}
+            type="button"
+            size="small"
+          >
+            {t('organization.switcher.switch.button')}
+          </Button>
         ) : (
-          <span style={{...styles.badge, ...styles.errorBadge}}>No Access</span>
+          <Typography variant="caption" color="error" style={{...styles.badge, ...styles.errorBadge}}>
+            {t('organization.switcher.no.access')}
+          </Typography>
         )}
       </div>
     </div>
@@ -154,26 +197,43 @@ const defaultRenderOrganization = (organization: OrganizationWithSwitchAccess, s
 /**
  * Default loading renderer
  */
-const defaultRenderLoading = (styles: any): ReactNode => (
+const defaultRenderLoading = (
+  t: (key: string, params?: Record<string, string | number>) => string,
+  styles: any,
+): ReactNode => (
   <div style={styles.loadingContainer}>
-    <div style={styles.loadingText}>Loading organizations...</div>
+    <Spinner size="medium" />
+    <Typography variant="body1" color="textSecondary" style={styles.loadingText}>
+      {t('organization.switcher.loading.organizations')}
+    </Typography>
   </div>
 );
 
 /**
  * Default error renderer
  */
-const defaultRenderError = (error: string, styles: any): ReactNode => (
+const defaultRenderError = (
+  error: string,
+  t: (key: string, params?: Record<string, string | number>) => string,
+  styles: any,
+): ReactNode => (
   <div style={styles.errorContainer}>
-    <strong>Error:</strong> {error}
+    <Typography variant="body1" color="error">
+      <strong>{t('organization.switcher.error.prefix')}</strong> {error}
+    </Typography>
   </div>
 );
 
 /**
  * Default load more button renderer
  */
-const defaultRenderLoadMore = (onLoadMore: () => Promise<void>, isLoading: boolean, styles: any): ReactNode => (
-  <button
+const defaultRenderLoadMore = (
+  onLoadMore: () => Promise<void>,
+  isLoading: boolean,
+  t: (key: string, params?: Record<string, string | number>) => string,
+  styles: any,
+): ReactNode => (
+  <Button
     onClick={onLoadMore}
     disabled={isLoading}
     style={{
@@ -181,17 +241,23 @@ const defaultRenderLoadMore = (onLoadMore: () => Promise<void>, isLoading: boole
       ...(isLoading ? styles.loadMoreButtonDisabled : {}),
     }}
     type="button"
+    fullWidth
   >
-    {isLoading ? 'Loading...' : 'Load More Organizations'}
-  </button>
+    {isLoading ? t('organization.switcher.loading.more') : t('organization.switcher.load.more')}
+  </Button>
 );
 
 /**
  * Default empty state renderer
  */
-const defaultRenderEmpty = (styles: any): ReactNode => (
+const defaultRenderEmpty = (
+  t: (key: string, params?: Record<string, string | number>) => string,
+  styles: any,
+): ReactNode => (
   <div style={styles.emptyContainer}>
-    <div style={styles.emptyText}>No organizations found</div>
+    <Typography variant="body1" color="textSecondary" style={styles.emptyText}>
+      {t('organization.switcher.no.organizations')}
+    </Typography>
   </div>
 );
 
@@ -220,6 +286,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   isLoadingMore = false,
   mode = 'inline',
   onOpenChange,
+  onOrganizationSelect,
   onRefresh,
   open = false,
   renderEmpty,
@@ -230,18 +297,22 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   style,
   title = 'Organizations',
   totalCount,
+  showStatus,
 }): ReactElement => {
   const styles = useStyles();
+  const {t} = useTranslation();
 
-  // Use custom renderers or defaults with styles
-  const renderLoadingWithStyles = renderLoading || (() => defaultRenderLoading(styles));
-  const renderErrorWithStyles = renderError || ((error: string) => defaultRenderError(error, styles));
-  const renderEmptyWithStyles = renderEmpty || (() => defaultRenderEmpty(styles));
+  // Use custom renderers or defaults with styles and translations
+  const renderLoadingWithStyles = renderLoading || (() => defaultRenderLoading(t, styles));
+  const renderErrorWithStyles = renderError || ((error: string) => defaultRenderError(error, t, styles));
+  const renderEmptyWithStyles = renderEmpty || (() => defaultRenderEmpty(t, styles));
   const renderLoadMoreWithStyles =
     renderLoadMore ||
-    ((onLoadMore: () => Promise<void>, isLoading: boolean) => defaultRenderLoadMore(onLoadMore, isLoading, styles));
+    ((onLoadMore: () => Promise<void>, isLoading: boolean) => defaultRenderLoadMore(onLoadMore, isLoading, t, styles));
   const renderOrganizationWithStyles =
-    renderOrganization || ((org: OrganizationWithSwitchAccess) => defaultRenderOrganization(org, styles));
+    renderOrganization ||
+    ((org: OrganizationWithSwitchAccess) =>
+      defaultRenderOrganization(org, styles, t, onOrganizationSelect, showStatus));
 
   // Show loading state
   if (isLoading && data.length === 0) {
@@ -323,17 +394,16 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
       {/* Header with total count and refresh button */}
       <div style={styles.header}>
         <div style={styles.headerInfo}>
-          <h2 style={styles.title}>Organizations</h2>
           {totalCount !== undefined && (
-            <p style={styles.subtitle}>
-              Showing {data.length} of {totalCount} organizations
-            </p>
+            <Typography variant="body2" color="textSecondary" style={styles.subtitle}>
+              {t('organization.switcher.showing.count', {showing: data.length, total: totalCount})}
+            </Typography>
           )}
         </div>
         {onRefresh && (
-          <button onClick={onRefresh} style={styles.refreshButton} type="button">
-            Refresh
-          </button>
+          <Button onClick={onRefresh} style={styles.refreshButton} type="button" variant="outline" size="small">
+            {t('organization.switcher.refresh.button')}
+          </Button>
         )}
       </div>
 
@@ -379,7 +449,6 @@ const useStyles = () => {
         margin: '0 auto',
         background: theme.colors.background.surface,
         borderRadius: theme.borderRadius.large,
-        boxShadow: theme.shadows.small,
       } as CSSProperties,
       header: {
         display: 'flex',
@@ -482,10 +551,13 @@ const useStyles = () => {
       loadingContainer: {
         padding: `${theme.spacing.unit * 4}px`,
         textAlign: 'center' as const,
+        display: 'flex',
+        flexDirection: 'column' as const,
+        alignItems: 'center',
+        gap: `${theme.spacing.unit * 2}px`,
       } as CSSProperties,
       loadingText: {
-        color: theme.colors.text.secondary,
-        fontSize: '1rem',
+        marginTop: `${theme.spacing.unit}px`,
       } as CSSProperties,
       errorContainer: {
         backgroundColor: `${theme.colors.error.main}20`,
