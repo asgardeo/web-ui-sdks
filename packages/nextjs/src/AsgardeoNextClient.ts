@@ -46,7 +46,9 @@ import {
   CreateOrganizationPayload,
   getOrganization,
   OrganizationDetails,
-  deriveOrganizationHandleFromBaseUrl
+  deriveOrganizationHandleFromBaseUrl,
+  getAllOrganizations,
+  AllOrganizationsApiResponse,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
@@ -101,8 +103,17 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       return Promise.resolve(true);
     }
 
-    const {baseUrl, organizationHandle, clientId, clientSecret, signInUrl, afterSignInUrl, afterSignOutUrl, signUpUrl, ...rest} =
-      decorateConfigWithNextEnv(config);
+    const {
+      baseUrl,
+      organizationHandle,
+      clientId,
+      clientSecret,
+      signInUrl,
+      afterSignInUrl,
+      afterSignOutUrl,
+      signUpUrl,
+      ...rest
+    } = decorateConfigWithNextEnv(config);
 
     this.isInitialized = true;
 
@@ -263,25 +274,46 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     }
   }
 
-  override async getOrganizations(userId?: string): Promise<Organization[]> {
+  override async getMyOrganizations(options?: any, userId?: string): Promise<Organization[]> {
     try {
       const configData = await this.asgardeo.getConfigData();
       const baseUrl: string = configData?.baseUrl as string;
 
-      const organizations = await getMeOrganizations({
+      return await getMeOrganizations({
         baseUrl,
         headers: {
           Authorization: `Bearer ${await this.getAccessToken(userId)}`,
         },
       });
-
-      return organizations;
     } catch (error) {
       throw new AsgardeoRuntimeError(
-        'Failed to fetch organizations.',
-        'react-AsgardeoReactClient-GetOrganizationsError-001',
-        'react',
-        'An error occurred while fetching the organizations associated with the user.',
+        `Failed to fetch the user's associated organizations: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        'AsgardeoNextClient-getMyOrganizations-RuntimeError-001',
+        'nextjs',
+        'An error occurred while fetching associated organizations of the signed-in user.',
+      );
+    }
+  }
+
+  override async getAllOrganizations(options?: any, userId?: string): Promise<AllOrganizationsApiResponse> {
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl: string = configData?.baseUrl as string;
+
+      return getAllOrganizations({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to fetch all organizations: ${error instanceof Error ? error.message : String(error)}`,
+        'AsgardeoNextClient-getAllOrganizations-RuntimeError-001',
+        'nextjs',
+        'An error occurred while fetching all the organizations associated with the user.',
       );
     }
   }
@@ -304,8 +336,8 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       if (!organization.id) {
         throw new AsgardeoRuntimeError(
           'Organization ID is required for switching organizations',
-          'react-AsgardeoReactClient-ValidationError-001',
-          'react',
+          'AsgardeoNextClient-switchOrganization-ValidationError-001',
+          'nextjs',
           'The organization object must contain a valid ID to perform the organization switch.',
         );
       }

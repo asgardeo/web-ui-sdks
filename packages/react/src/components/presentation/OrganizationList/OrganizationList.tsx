@@ -16,14 +16,11 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import {FC, ReactElement, useEffect, useMemo, CSSProperties} from 'react';
-import {BaseOrganizationListProps} from './BaseOrganizationList';
+import {AllOrganizationsApiResponse, Organization} from '@asgardeo/browser';
+import {FC, ReactElement, useEffect, useState} from 'react';
+import {BaseOrganizationListProps, OrganizationWithSwitchAccess} from './BaseOrganizationList';
 import BaseOrganizationList from './BaseOrganizationList';
 import useOrganization from '../../../contexts/Organization/useOrganization';
-import useTheme from '../../../contexts/Theme/useTheme';
-import {OrganizationWithSwitchAccess} from '../../../contexts/Organization/OrganizationContext';
-import {Avatar} from '../../primitives/Avatar/Avatar';
 
 /**
  * Configuration options for the OrganizationList component.
@@ -54,7 +51,14 @@ export interface OrganizationListConfig {
 export interface OrganizationListProps
   extends Omit<
       BaseOrganizationListProps,
-      'data' | 'error' | 'fetchMore' | 'hasMore' | 'isLoading' | 'isLoadingMore' | 'totalCount'
+      | 'myOrganizations'
+      | 'allOrganizations'
+      | 'error'
+      | 'fetchMore'
+      | 'hasMore'
+      | 'isLoading'
+      | 'isLoadingMore'
+      | 'myOrganizations'
     >,
     OrganizationListConfig {
   /**
@@ -111,49 +115,25 @@ export const OrganizationList: FC<OrganizationListProps> = ({
   recursive = false,
   ...baseProps
 }: OrganizationListProps): ReactElement => {
-  const {
-    paginatedOrganizations,
-    error,
-    fetchMore,
-    hasMore,
-    isLoading,
-    isLoadingMore,
-    totalCount,
-    fetchPaginatedOrganizations,
-  } = useOrganization();
+  const {getAllOrganizations, error, isLoading, myOrganizations} = useOrganization();
 
-  // Auto-fetch organizations on mount or when parameters change
+  const [allOrganizations, setAllOrganizations] = useState<AllOrganizationsApiResponse>({
+    organizations: [],
+  });
+
   useEffect(() => {
-    if (autoFetch) {
-      fetchPaginatedOrganizations({
-        filter,
-        limit,
-        recursive,
-        reset: true,
-      });
-    }
-  }, [autoFetch, filter, limit, recursive, fetchPaginatedOrganizations]);
-
-  const refreshHandler = async () => {
-    await fetchPaginatedOrganizations({
-      filter,
-      limit,
-      recursive,
-      reset: true,
-    });
-  };
+    (async () => {
+      setAllOrganizations(await getAllOrganizations());
+    })();
+  }, []);
 
   return (
     <BaseOrganizationList
-      data={paginatedOrganizations}
+      allOrganizations={allOrganizations}
+      myOrganizations={myOrganizations}
       error={error}
-      fetchMore={fetchMore}
-      hasMore={hasMore}
       isLoading={isLoading}
-      isLoadingMore={isLoadingMore}
       onOrganizationSelect={onOrganizationSelect}
-      onRefresh={refreshHandler}
-      totalCount={totalCount}
       {...baseProps}
     />
   );

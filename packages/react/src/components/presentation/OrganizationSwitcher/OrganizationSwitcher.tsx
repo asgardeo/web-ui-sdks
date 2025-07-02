@@ -88,7 +88,7 @@ export const OrganizationSwitcher: FC<OrganizationSwitcherProps> = ({
   const {isSignedIn} = useAsgardeo();
   const {
     currentOrganization: contextCurrentOrganization,
-    organizations: contextOrganizations,
+    myOrganizations: contextOrganizations,
     switchOrganization,
     isLoading,
     error,

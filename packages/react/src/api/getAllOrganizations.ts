@@ -22,7 +22,7 @@ import {
   HttpRequestConfig,
   getAllOrganizations as baseGetAllOrganizations,
   GetAllOrganizationsConfig as BaseGetAllOrganizationsConfig,
-  PaginatedOrganizationsResponse,
+  AllOrganizationsApiResponse,
 } from '@asgardeo/browser';
 
 const httpClient: HttpInstance = AsgardeoSPAClient.getInstance().httpRequest.bind(AsgardeoSPAClient.getInstance());
@@ -84,7 +84,7 @@ export interface GetAllOrganizationsConfig extends Omit<BaseGetAllOrganizationsC
 const getAllOrganizations = async ({
   fetcher,
   ...requestConfig
-}: GetAllOrganizationsConfig): Promise<PaginatedOrganizationsResponse> => {
+}: GetAllOrganizationsConfig): Promise<AllOrganizationsApiResponse> => {
   const defaultFetcher = async (url: string, config: RequestInit): Promise<Response> => {
     const response = await httpClient({
       url,

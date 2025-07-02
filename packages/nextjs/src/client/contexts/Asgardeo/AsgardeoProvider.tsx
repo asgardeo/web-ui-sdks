@@ -19,6 +19,7 @@
 'use client';
 
 import {
+  AllOrganizationsApiResponse,
   AsgardeoRuntimeError,
   EmbeddedFlowExecuteRequestConfig,
   EmbeddedFlowExecuteRequestPayload,
@@ -40,7 +41,6 @@ import {
 import {FC, PropsWithChildren, RefObject, useEffect, useMemo, useRef, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
-import getOrganizationsAction from '../../../server/actions/getOrganizationsAction';
 import getSessionId from '../../../server/actions/getSessionId';
 import switchOrganizationAction from '../../../server/actions/switchOrganizationAction';
 
@@ -67,6 +67,9 @@ export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'b
       requestConfig: UpdateMeProfileConfig,
       sessionId?: string,
     ) => Promise<{success: boolean; data: {user: User}; error: string}>;
+    getAllOrganizations: (options?: any, sessionId?: string) => Promise<AllOrganizationsApiResponse>;
+    myOrganizations: Organization[];
+    revalidateMyOrganizations?: (sessionId?: string) => Promise<Organization[]>;
   };
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
@@ -86,6 +89,9 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   updateProfile,
   applicationId,
   organizationHandle,
+  myOrganizations,
+  revalidateMyOrganizations,
+  getAllOrganizations,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const router = useRouter();
@@ -305,13 +311,11 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
           <FlowProvider>
             <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate} updateProfile={updateProfile}>
               <OrganizationProvider
-                getOrganizations={async () => {
-                  const result = await getOrganizationsAction((await getSessionId()) as string);
-
-                  return result?.data?.organizations || [];
-                }}
+                getAllOrganizations={getAllOrganizations}
+                myOrganizations={myOrganizations}
                 currentOrganization={currentOrganization}
                 onOrganizationSwitch={switchOrganization}
+                revalidateMyOrganizations={revalidateMyOrganizations as any}
               >
                 {children}
               </OrganizationProvider>

@@ -16,12 +16,9 @@
  * under the License.
  */
 
-import {AsgardeoRuntimeError, Organization, PaginatedOrganizationsResponse} from '@asgardeo/browser';
-import {FC, PropsWithChildren, ReactElement, useCallback, useEffect, useMemo, useState} from 'react';
-import OrganizationContext, {OrganizationContextProps, OrganizationWithSwitchAccess} from './OrganizationContext';
-import useAsgardeo from '../Asgardeo/useAsgardeo';
-import getAllOrganizations from '../../api/getAllOrganizations';
-import getMeOrganizations from '../../api/getMeOrganizations';
+import {AsgardeoRuntimeError, Organization, AllOrganizationsApiResponse} from '@asgardeo/browser';
+import {FC, PropsWithChildren, ReactElement, useCallback, useMemo, useState} from 'react';
+import OrganizationContext, {OrganizationContextProps} from './OrganizationContext';
 
 /**
  * Props interface of {@link OrganizationProvider}
@@ -36,9 +33,9 @@ export interface OrganizationProviderProps {
    */
   currentOrganization?: Organization | null;
   /**
-   * Function to fetch organizations
+   * List of organizations the signed-in user belongs to.
    */
-  getOrganizations: () => Promise<Organization[]>;
+  myOrganizations?: Organization[];
   /**
    * Callback function called when an error occurs
    */
@@ -50,7 +47,12 @@ export interface OrganizationProviderProps {
   /**
    * Initial list of organizations
    */
-  organizations?: Organization[] | null;
+  getAllOrganizations?: () => Promise<AllOrganizationsApiResponse>;
+  /**
+   * Refetch the my organizations list.
+   * @returns
+   */
+  revalidateMyOrganizations: () => Promise<Organization[]>;
 }
 
 /**
@@ -61,17 +63,11 @@ export interface OrganizationProviderProps {
  * - Manages current organization state
  * - Provides functions for switching organizations and refreshing data
  * - Handles loading states and errors
- * - Accepts a custom getOrganizations function for flexible data fetching
  *
  * @example
  * ```tsx
  * // Basic usage with auto-fetch (uses internal API)
  * <OrganizationProvider>
- *   <App />
- * </OrganizationProvider>
- *
- * // With custom getOrganizations function
- * <OrganizationProvider getOrganizations={async () => asgardeo.getOrganizations()}>
  *   <App />
  * </OrganizationProvider>
  *
@@ -87,83 +83,23 @@ export interface OrganizationProviderProps {
  *   <App />
  * </OrganizationProvider>
  *
- * // Disable auto-fetch (fetch manually using revalidateOrganizations)
+ * // Disable auto-fetch (fetch manually using revalidateMyOrganizations)
  * <OrganizationProvider autoFetch={false}>
  *   <App />
  * </OrganizationProvider>
  * ```
  */
 const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = ({
-  autoFetch = true,
   children,
   currentOrganization,
-  getOrganizations,
   onError,
+  myOrganizations,
   onOrganizationSwitch,
-  organizations: initialOrganizations = null,
+  revalidateMyOrganizations,
+  getAllOrganizations,
 }: PropsWithChildren<OrganizationProviderProps>): ReactElement => {
-  const {baseUrl, isSignedIn} = useAsgardeo();
-  const [organizations, setOrganizations] = useState<Organization[] | null>(initialOrganizations);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Enhanced state for paginated organizations with switch access
-  const [paginatedOrganizations, setPaginatedOrganizations] = useState<OrganizationWithSwitchAccess[]>([]);
-  const [hasMore, setHasMore] = useState<boolean>(false);
-  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const [switchableOrgIds, setSwitchableOrgIds] = useState<Set<string>>(new Set());
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [currentFilter, setCurrentFilter] = useState<{
-    filter?: string;
-    limit?: number;
-    recursive?: boolean;
-  }>({});
-  const [isFetching, setIsFetching] = useState<boolean>(false);
-
-  /**
-   * Fetches organizations from the API
-   */
-  const fetchOrganizations: () => Promise<void> = useCallback(async (): Promise<void> => {
-    if (!isSignedIn) {
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      let organizationsData: Organization[];
-
-      if (getOrganizations) {
-        organizationsData = await getOrganizations();
-      } else {
-        throw new AsgardeoRuntimeError(
-          'getOrganizations function is required',
-          'OrganizationProvider-ValidationError-001',
-          'react',
-          'The getOrganizations function must be provided to fetch organization data.',
-        );
-      }
-
-      setOrganizations(organizationsData);
-    } catch (fetchError) {
-      const errorMessage: string = fetchError instanceof Error ? fetchError.message : 'Failed to fetch organizations';
-      setError(errorMessage);
-      if (onError) {
-        onError(errorMessage);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [baseUrl, getOrganizations, isSignedIn, onError]);
-
-  /**
-   * Revalidates organizations by fetching fresh data
-   */
-  const revalidateOrganizations: () => Promise<void> = useCallback(async (): Promise<void> => {
-    await fetchOrganizations();
-  }, [fetchOrganizations]);
 
   /**
    * Switches to a different organization
@@ -200,160 +136,24 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
     [onOrganizationSwitch, onError],
   );
 
-  /**
-   * Fetches paginated organizations with switch access information
-   */
-  const fetchPaginatedOrganizations: (config?: {
-    filter?: string;
-    limit?: number;
-    recursive?: boolean;
-    reset?: boolean;
-  }) => Promise<void> = useCallback(
-    async (config = {}): Promise<void> => {
-      const {filter = '', limit = 10, recursive = false, reset = false} = config;
-
-      if (!isSignedIn || !baseUrl || isFetching) {
-        return;
-      }
-
-      setIsFetching(true);
-
-      try {
-        if (reset) {
-          setIsLoading(true);
-          setError(null);
-          setCurrentPage(1);
-          setPaginatedOrganizations([]);
-          setCurrentFilter({filter, limit, recursive});
-        } else {
-          setIsLoadingMore(true);
-        }
-
-        // Fetch user's switchable organizations first (only once per session)
-        let switchableIds: Set<string> = switchableOrgIds;
-        if (switchableIds.size === 0) {
-          try {
-            const userOrgs: Organization[] = await getMeOrganizations({
-              authorizedAppName: 'Console',
-              baseUrl,
-              limit: 100, // Get all user organizations
-              recursive,
-            });
-            switchableIds = new Set(userOrgs.map((org: Organization) => org.id));
-            setSwitchableOrgIds(switchableIds);
-          } catch {
-            // Continue with empty switchable set if user organizations fetch fails
-          }
-        }
-
-        // Fetch all organizations with pagination
-        const response: PaginatedOrganizationsResponse = await getAllOrganizations({
-          baseUrl,
-          filter,
-          limit,
-          recursive,
-          ...(reset ? {} : {startIndex: (currentPage - 1) * limit}),
-        });
-
-        // Combine organization data with switch access information
-        const organizationsWithAccess: OrganizationWithSwitchAccess[] = response.organizations.map(
-          (org: Organization) => ({
-            ...org,
-            canSwitch: switchableIds.has(org.id),
-          }),
-        );
-
-        if (reset) {
-          setPaginatedOrganizations(organizationsWithAccess);
-        } else {
-          setPaginatedOrganizations((prevData: OrganizationWithSwitchAccess[]) => [
-            ...prevData,
-            ...organizationsWithAccess,
-          ]);
-          setCurrentPage(prev => prev + 1);
-        }
-
-        setHasMore(response.hasMore || false);
-        setTotalCount(response.totalCount || organizationsWithAccess.length);
-      } catch (fetchError: any) {
-        // If authorization/scope error, prevent retry loops.
-        const isAuthError = fetchError.status === 403 || fetchError.status === 401 || fetchError.noRetry === true;
-
-        const errorMessage: string = isAuthError
-          ? 'Insufficient permissions to fetch organizations'
-          : fetchError.message || 'Failed to fetch paginated organizations';
-
-        setError(errorMessage);
-
-        if (isAuthError) {
-          setHasMore(false);
-          setIsLoadingMore(false);
-          setIsLoading(false);
-
-          return;
-        }
-
-        if (onError) {
-          onError(errorMessage);
-        }
-      } finally {
-        setIsLoading(false);
-        setIsLoadingMore(false);
-        setIsFetching(false);
-      }
-    },
-    [baseUrl, isSignedIn, onError, switchableOrgIds, currentPage],
-  );
-
-  /**
-   * Fetch more organizations for pagination
-   */
-  const fetchMore: () => Promise<void> = useCallback(async (): Promise<void> => {
-    if (!hasMore || isLoadingMore) {
-      return;
-    }
-    await fetchPaginatedOrganizations(currentFilter);
-  }, [fetchPaginatedOrganizations, hasMore, isLoadingMore, currentFilter]);
-
-  // Auto-fetch organizations when component mounts or dependencies change
-  useEffect(() => {
-    if (autoFetch && isSignedIn) {
-      fetchOrganizations();
-    }
-  }, [autoFetch, fetchOrganizations, isSignedIn]);
-
   const contextValue: OrganizationContextProps = useMemo(
     () => ({
       currentOrganization,
       error,
-      getOrganizations,
       isLoading,
-      organizations,
-      revalidateOrganizations,
+      myOrganizations,
       switchOrganization,
-
-      // Enhanced features
-      paginatedOrganizations,
-      hasMore,
-      isLoadingMore,
-      totalCount,
-      fetchMore,
-      fetchPaginatedOrganizations,
+      revalidateMyOrganizations,
+      getAllOrganizations,
     }),
     [
       currentOrganization,
       error,
-      getOrganizations,
       isLoading,
-      organizations,
-      revalidateOrganizations,
+      myOrganizations,
       switchOrganization,
-      paginatedOrganizations,
-      hasMore,
-      isLoadingMore,
-      totalCount,
-      fetchMore,
-      fetchPaginatedOrganizations,
+      revalidateMyOrganizations,
+      getAllOrganizations,
     ],
   );
 

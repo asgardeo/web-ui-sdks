@@ -19,7 +19,7 @@
 'use server';
 
 import {FC, PropsWithChildren, ReactElement} from 'react';
-import {AsgardeoRuntimeError, Organization, User, UserProfile} from '@asgardeo/node';
+import {AllOrganizationsApiResponse, AsgardeoRuntimeError, Organization, User, UserProfile} from '@asgardeo/node';
 import AsgardeoClientProvider from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
 import signInAction from './actions/signInAction';
@@ -34,6 +34,8 @@ import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
 import {AsgardeoProviderProps} from '@asgardeo/react';
 import getCurrentOrganizationAction from './actions/getCurrentOrganizationAction';
 import updateUserProfileAction from './actions/updateUserProfileAction';
+import getMyOrganizations from './actions/getMyOrganizations';
+import getAllOrganizations from './actions/getAllOrganizations';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -97,16 +99,26 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     name: '',
     orgHandle: '',
   };
+  let myOrganizations: Organization[] = [];
 
   if (_isSignedIn) {
     const userResponse = await getUserAction(sessionId);
     const userProfileResponse = await getUserProfileAction(sessionId);
     const currentOrganizationResponse = await getCurrentOrganizationAction(sessionId);
+    myOrganizations = await getMyOrganizations({}, sessionId);
 
     user = userResponse.data?.user || {};
     userProfile = userProfileResponse.data?.userProfile;
     currentOrganization = currentOrganizationResponse?.data?.organization as Organization;
   }
+
+  const handleGetAllOrganizations = async (
+    options?: any,
+    _sessionId?: string,
+  ): Promise<AllOrganizationsApiResponse> => {
+    'use server';
+    return await getAllOrganizations(options, sessionId);
+  };
 
   return (
     <AsgardeoClientProvider
@@ -126,6 +138,8 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
       userProfile={userProfile}
       updateProfile={updateUserProfileAction}
       isSignedIn={_isSignedIn}
+      myOrganizations={myOrganizations}
+      getAllOrganizations={handleGetAllOrganizations}
     >
       {children}
     </AsgardeoClientProvider>

@@ -66,6 +66,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
   const [isInitializedSync, setIsInitializedSync] = useState<boolean>(false);
 
+  const [myOrganizations, setMyOrganizations] = useState<Organization[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [baseUrl, setBaseUrl] = useState<string>(_baseUrl);
   const [config, setConfig] = useState<AsgardeoReactConfig>({
@@ -196,6 +197,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     setUser(await asgardeo.getUser({baseUrl: _baseUrl}));
     setUserProfile(await asgardeo.getUserProfile({baseUrl: _baseUrl}));
     setCurrentOrganization(await asgardeo.getCurrentOrganization());
+    setMyOrganizations(await asgardeo.getMyOrganizations());
   };
 
   const signIn = async (...args: any): Promise<User> => {
@@ -281,13 +283,19 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       }}
     >
       <I18nProvider preferences={preferences?.i18n}>
-        <ThemeProvider inheritFromBranding={preferences?.theme?.inheritFromBranding} theme={preferences?.theme?.overrides} mode={isDarkMode ? 'dark' : 'light'}>
+        <ThemeProvider
+          inheritFromBranding={preferences?.theme?.inheritFromBranding}
+          theme={preferences?.theme?.overrides}
+          mode={isDarkMode ? 'dark' : 'light'}
+        >
           <FlowProvider>
             <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate}>
               <OrganizationProvider
-                getOrganizations={async () => asgardeo.getOrganizations()}
+                getAllOrganizations={async () => await asgardeo.getAllOrganizations()}
+                myOrganizations={myOrganizations}
                 currentOrganization={currentOrganization}
                 onOrganizationSwitch={switchOrganization}
+                revalidateMyOrganizations={async () => await asgardeo.getMyOrganizations()}
               >
                 {children}
               </OrganizationProvider>

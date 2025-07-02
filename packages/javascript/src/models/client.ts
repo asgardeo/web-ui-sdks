@@ -16,7 +16,12 @@
  * under the License.
  */
 
-import {EmbeddedFlowExecuteRequestConfig, EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './embedded-flow';
+import {AllOrganizationsApiResponse} from '../models/organization';
+import {
+  EmbeddedFlowExecuteRequestConfig,
+  EmbeddedFlowExecuteRequestPayload,
+  EmbeddedFlowExecuteResponse,
+} from './embedded-flow';
 import {EmbeddedSignInFlowHandleRequestPayload} from './embedded-signin-flow';
 import {Organization} from './organization';
 import {User, UserProfile} from './user';
@@ -37,11 +42,13 @@ export type SignUpOptions = Record<string, unknown>;
  */
 export interface AsgardeoClient<T> {
   /**
-   * Gets the users associated organizations.
+   * Gets the current signed-in user's associated organizations.
    *
    * @returns Associated organizations.
    */
-  getOrganizations(options?: any): Promise<Organization[]>;
+  getMyOrganizations(options?: any, sessionId?: string): Promise<Organization[]>;
+
+  getAllOrganizations(options?: any, sessionId?: string): Promise<AllOrganizationsApiResponse>;
 
   /**
    * Gets the current organization of the user.
@@ -147,7 +154,11 @@ export interface AsgardeoClient<T> {
    * @param afterSignOut - Callback function to be executed after sign-out is complete.
    * @returns A promise that resolves to true if sign-out is successful
    */
-  signOut(options?: SignOutOptions, sessionId?: string, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;
+  signOut(
+    options?: SignOutOptions,
+    sessionId?: string,
+    afterSignOut?: (afterSignOutUrl: string) => void,
+  ): Promise<string>;
 
   /**
    * Initiates a redirection-based sign-up process for the user.

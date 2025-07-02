@@ -16,6 +16,7 @@
  * under the License.
  */
 
+import {AllOrganizationsApiResponse} from './models/organization';
 import {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './models/client';
 import {Config} from './models/config';
 import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './models/embedded-flow';
@@ -36,7 +37,9 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
 
   abstract getUser(options?: any): Promise<User>;
 
-  abstract getOrganizations(options?: any): Promise<Organization[]>;
+  abstract getAllOrganizations(options?: any, sessionId?: string): Promise<AllOrganizationsApiResponse>;
+
+  abstract getMyOrganizations(options?: any, sessionId?: string): Promise<Organization[]>;
 
   abstract getCurrentOrganization(sessionId?: string): Promise<Organization | null>;
 

@@ -27,11 +27,7 @@ export {default as executeEmbeddedSignUpFlow} from './api/executeEmbeddedSignUpF
 export {default as getUserInfo} from './api/getUserInfo';
 export {default as getScim2Me, GetScim2MeConfig} from './api/getScim2Me';
 export {default as getSchemas, GetSchemasConfig} from './api/getSchemas';
-export {
-  default as getAllOrganizations,
-  PaginatedOrganizationsResponse,
-  GetAllOrganizationsConfig,
-} from './api/getAllOrganizations';
+export {default as getAllOrganizations, GetAllOrganizationsConfig} from './api/getAllOrganizations';
 export {
   default as createOrganization,
   CreateOrganizationPayload,
@@ -53,6 +49,7 @@ export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';
 export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
 export {AsgardeoAuthException} from './errors/exception';
 
+export {AllOrganizationsApiResponse} from './models/organization';
 export {
   EmbeddedSignInFlowInitiateResponse,
   EmbeddedSignInFlowStatus,

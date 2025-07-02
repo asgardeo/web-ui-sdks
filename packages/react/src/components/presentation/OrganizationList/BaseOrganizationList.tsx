@@ -16,10 +16,9 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {AllOrganizationsApiResponse, Organization, withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import {FC, ReactElement, ReactNode, useMemo, CSSProperties} from 'react';
-import {OrganizationWithSwitchAccess} from '../../../contexts/Organization/OrganizationContext';
 import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
@@ -27,6 +26,10 @@ import Avatar from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
 import Typography from '../../primitives/Typography/Typography';
 import Spinner from '../../primitives/Spinner/Spinner';
+
+export interface OrganizationWithSwitchAccess extends Organization {
+  canSwitch: boolean;
+}
 
 /**
  * Props interface for the BaseOrganizationList component.
@@ -37,9 +40,13 @@ export interface BaseOrganizationListProps {
    */
   className?: string;
   /**
-   * List of organizations with switch access information
+   * List of organizations discoverable to the signed-in user.
    */
-  data: OrganizationWithSwitchAccess[];
+  allOrganizations: AllOrganizationsApiResponse;
+  /**
+   * List of organizations associated to the signed-in user.
+   */
+  myOrganizations: Organization[];
   /**
    * Error message to display
    */
@@ -93,10 +100,6 @@ export interface BaseOrganizationListProps {
    */
   style?: React.CSSProperties;
   /**
-   * Total number of organizations
-   */
-  totalCount?: number;
-  /**
    * Display mode: 'inline' for normal display, 'popup' for modal dialog
    */
   mode?: 'inline' | 'popup';
@@ -128,24 +131,12 @@ const defaultRenderOrganization = (
   onOrganizationSelect?: (organization: OrganizationWithSwitchAccess) => void,
   showStatus?: boolean,
 ): ReactNode => {
-  const getOrgInitials = (name?: string): string => {
-    if (!name) return 'ORG';
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
     <div
       key={organization.id}
       style={{
         ...styles.organizationItem,
-        ...(onOrganizationSelect ? {cursor: 'pointer'} : {}),
       }}
-      onClick={onOrganizationSelect ? () => onOrganizationSelect(organization) : undefined}
     >
       <div style={styles.organizationContent}>
         <Avatar variant="square" name={organization.name} size={48} alt={`${organization.name} logo`} />
@@ -171,25 +162,20 @@ const defaultRenderOrganization = (
           )}
         </div>
       </div>
-      <div style={styles.organizationActions}>
-        {organization.canSwitch ? (
+      {organization.canSwitch && (
+        <div style={styles.organizationActions}>
           <Button
             onClick={e => {
               e.stopPropagation();
-              // TODO: Implement organization switch logic
-              console.log('Switching to organization:', organization.name);
+              onOrganizationSelect(organization);
             }}
             type="button"
             size="small"
           >
             {t('organization.switcher.switch.button')}
           </Button>
-        ) : (
-          <Typography variant="caption" color="error" style={{...styles.badge, ...styles.errorBadge}}>
-            {t('organization.switcher.no.access')}
-          </Typography>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -278,7 +264,8 @@ const defaultRenderEmpty = (
  */
 export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   className = '',
-  data,
+  allOrganizations,
+  myOrganizations,
   error,
   fetchMore,
   hasMore = false,
@@ -296,11 +283,25 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   renderOrganization,
   style,
   title = 'Organizations',
-  totalCount,
   showStatus,
 }): ReactElement => {
   const styles = useStyles();
   const {t} = useTranslation();
+
+  // Combine allOrganizations with myOrganizations to determine which orgs can be switched to
+  const organizationsWithSwitchAccess: OrganizationWithSwitchAccess[] = useMemo(() => {
+    if (!allOrganizations?.organizations) {
+      return [];
+    }
+
+    // Create a Set of IDs from myOrganizations for faster lookup
+    const myOrgIds = new Set(myOrganizations?.map(org => org.id) || []);
+
+    return allOrganizations.organizations.map(org => ({
+      ...org,
+      canSwitch: myOrgIds.has(org.id),
+    }));
+  }, [allOrganizations?.organizations, myOrganizations]);
 
   // Use custom renderers or defaults with styles and translations
   const renderLoadingWithStyles = renderLoading || (() => defaultRenderLoading(t, styles));
@@ -315,7 +316,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
       defaultRenderOrganization(org, styles, t, onOrganizationSelect, showStatus));
 
   // Show loading state
-  if (isLoading && data.length === 0) {
+  if (isLoading && organizationsWithSwitchAccess?.length === 0) {
     const loadingContent = (
       <div
         className={clsx(withVendorCSSClassPrefix('organization-list'), className)}
@@ -340,7 +341,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   }
 
   // Show error state
-  if (error && data.length === 0) {
+  if (error && organizationsWithSwitchAccess?.length === 0) {
     const errorContent = (
       <div
         className={clsx(withVendorCSSClassPrefix('organization-list'), className)}
@@ -365,7 +366,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   }
 
   // Show empty state
-  if (!isLoading && data.length === 0) {
+  if (!isLoading && organizationsWithSwitchAccess?.length === 0) {
     const emptyContent = (
       <div
         className={clsx(withVendorCSSClassPrefix('organization-list'), className)}
@@ -394,11 +395,12 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
       {/* Header with total count and refresh button */}
       <div style={styles.header}>
         <div style={styles.headerInfo}>
-          {totalCount !== undefined && (
-            <Typography variant="body2" color="textSecondary" style={styles.subtitle}>
-              {t('organization.switcher.showing.count', {showing: data.length, total: totalCount})}
-            </Typography>
-          )}
+          <Typography variant="body2" color="textSecondary" style={styles.subtitle}>
+            {t('organization.switcher.showing.count', {
+              showing: organizationsWithSwitchAccess?.length,
+              total: allOrganizations?.organizations?.length || 0,
+            })}
+          </Typography>
         </div>
         {onRefresh && (
           <Button onClick={onRefresh} style={styles.refreshButton} type="button" variant="outline" size="small">
@@ -409,13 +411,15 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
 
       {/* Organizations list */}
       <div style={styles.listContainer}>
-        {data.map((organization: OrganizationWithSwitchAccess, index: number) =>
+        {organizationsWithSwitchAccess?.map((organization: OrganizationWithSwitchAccess, index: number) =>
           renderOrganizationWithStyles(organization, index),
         )}
       </div>
 
       {/* Error message for additional data */}
-      {error && data.length > 0 && <div style={styles.errorMargin}>{renderErrorWithStyles(error)}</div>}
+      {error && organizationsWithSwitchAccess?.length > 0 && (
+        <div style={styles.errorMargin}>{renderErrorWithStyles(error)}</div>
+      )}
 
       {/* Load more button */}
       {hasMore && fetchMore && (
@@ -494,7 +498,6 @@ const useStyles = () => {
         justifyContent: 'space-between',
         padding: `${theme.spacing.unit * 2}px`,
         transition: 'all 0.2s',
-        cursor: 'pointer',
         backgroundColor: theme.colors.background.surface,
       } as CSSProperties,
       organizationContent: {

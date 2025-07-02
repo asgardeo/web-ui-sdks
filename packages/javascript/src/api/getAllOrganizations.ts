@@ -16,18 +16,8 @@
  * under the License.
  */
 
-import {Organization} from '../models/organization';
+import {AllOrganizationsApiResponse} from '../models/organization';
 import AsgardeoAPIError from '../errors/AsgardeoAPIError';
-
-/**
- * Interface for paginated organization response.
- */
-export interface PaginatedOrganizationsResponse {
-  hasMore?: boolean;
-  nextCursor?: string;
-  organizations: Organization[];
-  totalCount?: number;
-}
 
 /**
  * Configuration for the getAllOrganizations request
@@ -120,7 +110,7 @@ const getAllOrganizations = async ({
   recursive = false,
   fetcher,
   ...requestConfig
-}: GetAllOrganizationsConfig): Promise<PaginatedOrganizationsResponse> => {
+}: GetAllOrganizationsConfig): Promise<AllOrganizationsApiResponse> => {
   try {
     new URL(baseUrl);
   } catch (error) {
