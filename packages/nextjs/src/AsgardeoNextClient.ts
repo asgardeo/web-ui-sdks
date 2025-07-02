@@ -46,6 +46,7 @@ import {
   CreateOrganizationPayload,
   getOrganization,
   OrganizationDetails,
+  deriveOrganizationHandleFromBaseUrl
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
@@ -97,18 +98,24 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
   override async initialize(config: T): Promise<boolean> {
     if (this.isInitialized) {
-      console.warn('[AsgardeoNextClient] Client is already initialized');
       return Promise.resolve(true);
     }
 
-    const {baseUrl, clientId, clientSecret, signInUrl, afterSignInUrl, afterSignOutUrl, signUpUrl, ...rest} =
+    const {baseUrl, organizationHandle, clientId, clientSecret, signInUrl, afterSignInUrl, afterSignOutUrl, signUpUrl, ...rest} =
       decorateConfigWithNextEnv(config);
 
     this.isInitialized = true;
 
+    let resolvedOrganizationHandle: string | undefined = organizationHandle;
+
+    if (!resolvedOrganizationHandle) {
+      resolvedOrganizationHandle = deriveOrganizationHandleFromBaseUrl(config?.baseUrl);
+    }
+
     const origin: string = await getClientOrigin();
 
     return this.asgardeo.initialize({
+      organizationHandle: resolvedOrganizationHandle,
       baseUrl,
       clientId,
       clientSecret,

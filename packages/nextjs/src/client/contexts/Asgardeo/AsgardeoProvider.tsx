@@ -52,6 +52,8 @@ export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'b
     signOut: AsgardeoContextProps['signOut'];
     signIn: AsgardeoContextProps['signIn'];
     signUp: AsgardeoContextProps['signUp'];
+    applicationId: AsgardeoContextProps['applicationId'];
+    organizationHandle: AsgardeoContextProps['organizationHandle'];
     handleOAuthCallback: (
       code: string,
       state: string,
@@ -82,6 +84,8 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   userProfile: _userProfile,
   currentOrganization,
   updateProfile,
+  applicationId,
+  organizationHandle,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const router = useRouter();
@@ -279,8 +283,10 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       signUp: handleSignUp,
       signInUrl,
       signUpUrl,
+      applicationId,
+      organizationHandle,
     }),
-    [baseUrl, user, isSignedIn, isLoading, signInUrl, signUpUrl],
+    [baseUrl, user, isSignedIn, isLoading, signInUrl, signUpUrl, applicationId, organizationHandle],
   );
 
   const handleProfileUpdate = (payload: User): void => {

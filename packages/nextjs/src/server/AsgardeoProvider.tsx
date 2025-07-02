@@ -110,6 +110,8 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
 
   return (
     <AsgardeoClientProvider
+      organizationHandle={config.organizationHandle}
+      applicationId={config.applicationId}
       baseUrl={config.baseUrl}
       signIn={signInAction}
       signOut={signOutAction}

@@ -116,6 +116,7 @@ export {default as createTheme} from './theme/createTheme';
 export {ThemeColors, ThemeConfig, Theme, ThemeMode, ThemeDetection} from './theme/types';
 
 export {default as deepMerge} from './utils/deepMerge';
+export {default as deriveOrganizationHandleFromBaseUrl} from './utils/deriveOrganizationHandleFromBaseUrl';
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
 export {default as extractPkceStorageKeyFromState} from './utils/extractPkceStorageKeyFromState';
 export {default as flattenUserSchema} from './utils/flattenUserSchema';

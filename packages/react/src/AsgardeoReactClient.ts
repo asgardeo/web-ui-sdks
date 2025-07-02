@@ -35,6 +35,7 @@ import {
   Organization,
   IdToken,
   EmbeddedFlowExecuteRequestConfig,
+  deriveOrganizationHandleFromBaseUrl,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/getMeOrganizations';
@@ -59,7 +60,13 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
   }
 
   override initialize(config: AsgardeoReactConfig): Promise<boolean> {
-    return this.asgardeo.init(config as any);
+    let resolvedOrganizationHandle: string | undefined = config?.organizationHandle;
+
+    if (!config?.organizationHandle) {
+      resolvedOrganizationHandle = deriveOrganizationHandleFromBaseUrl(config?.baseUrl);
+    }
+
+    return this.asgardeo.init({...config, organizationHandle: resolvedOrganizationHandle} as any);
   }
 
   override async updateUserProfile(payload: any, userId?: string): Promise<User> {

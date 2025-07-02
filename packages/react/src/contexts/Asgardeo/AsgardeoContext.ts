@@ -23,6 +23,8 @@ import {Organization} from '@asgardeo/browser';
  * Props interface of {@link AsgardeoContext}
  */
 export type AsgardeoContextProps = {
+  organizationHandle: string | undefined;
+  applicationId: string | undefined;
   signInUrl: string | undefined;
   signUpUrl: string | undefined;
   afterSignInUrl: string | undefined;
@@ -62,6 +64,8 @@ export type AsgardeoContextProps = {
  * Context object for managing the Authentication flow builder core context.
  */
 const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null | AsgardeoContextProps>({
+  organizationHandle: undefined,
+  applicationId: undefined,
   signInUrl: undefined,
   signUpUrl: undefined,
   afterSignInUrl: undefined,
