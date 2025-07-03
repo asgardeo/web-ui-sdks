@@ -29,6 +29,7 @@ import {
   UpdateMeProfileConfig,
   User,
   UserProfile,
+  BrandingPreference,
 } from '@asgardeo/node';
 import {
   I18nProvider,
@@ -37,6 +38,7 @@ import {
   ThemeProvider,
   AsgardeoProviderProps,
   OrganizationProvider,
+  BrandingProvider,
 } from '@asgardeo/react';
 import {FC, PropsWithChildren, RefObject, useEffect, useMemo, useRef, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
@@ -70,6 +72,7 @@ export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'b
     getAllOrganizations: (options?: any, sessionId?: string) => Promise<AllOrganizationsApiResponse>;
     myOrganizations: Organization[];
     revalidateMyOrganizations?: (sessionId?: string) => Promise<Organization[]>;
+    brandingPreference?: BrandingPreference | null;
   };
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
@@ -92,6 +95,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   myOrganizations,
   revalidateMyOrganizations,
   getAllOrganizations,
+  brandingPreference,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
   const router = useRouter();
@@ -307,21 +311,23 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   return (
     <AsgardeoContext.Provider value={contextValue}>
       <I18nProvider preferences={preferences?.i18n}>
-        <ThemeProvider theme={preferences?.theme?.overrides} mode={isDarkMode ? 'dark' : 'light'}>
-          <FlowProvider>
-            <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate} updateProfile={updateProfile}>
-              <OrganizationProvider
-                getAllOrganizations={getAllOrganizations}
-                myOrganizations={myOrganizations}
-                currentOrganization={currentOrganization}
-                onOrganizationSwitch={switchOrganization}
-                revalidateMyOrganizations={revalidateMyOrganizations as any}
-              >
-                {children}
-              </OrganizationProvider>
-            </UserProvider>
-          </FlowProvider>
-        </ThemeProvider>
+        <BrandingProvider brandingPreference={brandingPreference}>
+          <ThemeProvider theme={preferences?.theme?.overrides} mode={isDarkMode ? 'dark' : 'light'}>
+            <FlowProvider>
+              <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate} updateProfile={updateProfile}>
+                <OrganizationProvider
+                  getAllOrganizations={getAllOrganizations}
+                  myOrganizations={myOrganizations}
+                  currentOrganization={currentOrganization}
+                  onOrganizationSwitch={switchOrganization}
+                  revalidateMyOrganizations={revalidateMyOrganizations as any}
+                >
+                  {children}
+                </OrganizationProvider>
+              </UserProvider>
+            </FlowProvider>
+          </ThemeProvider>
+        </BrandingProvider>
       </I18nProvider>
     </AsgardeoContext.Provider>
   );

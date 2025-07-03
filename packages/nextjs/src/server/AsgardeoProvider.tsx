@@ -19,7 +19,14 @@
 'use server';
 
 import {FC, PropsWithChildren, ReactElement} from 'react';
-import {AllOrganizationsApiResponse, AsgardeoRuntimeError, Organization, User, UserProfile} from '@asgardeo/node';
+import {
+  BrandingPreference,
+  AllOrganizationsApiResponse,
+  AsgardeoRuntimeError,
+  Organization,
+  User,
+  UserProfile,
+} from '@asgardeo/node';
 import AsgardeoClientProvider from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
 import signInAction from './actions/signInAction';
@@ -36,6 +43,7 @@ import getCurrentOrganizationAction from './actions/getCurrentOrganizationAction
 import updateUserProfileAction from './actions/updateUserProfileAction';
 import getMyOrganizations from './actions/getMyOrganizations';
 import getAllOrganizations from './actions/getAllOrganizations';
+import getBrandingPreference from './actions/getBrandingPreference';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -100,6 +108,7 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     orgHandle: '',
   };
   let myOrganizations: Organization[] = [];
+  let brandingPreference: BrandingPreference | null = null;
 
   if (_isSignedIn) {
     const userResponse = await getUserAction(sessionId);
@@ -110,6 +119,23 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     user = userResponse.data?.user || {};
     userProfile = userProfileResponse.data?.userProfile;
     currentOrganization = currentOrganizationResponse?.data?.organization as Organization;
+  }
+
+  // Fetch branding preference if branding is enabled in config
+  if (config?.preferences?.theme?.inheritFromBranding !== false) {
+    try {
+      brandingPreference = await getBrandingPreference(
+        {
+          baseUrl: config?.baseUrl,
+          locale: 'en-US',
+          name: config.applicationId || config.organizationHandle,
+          type: config.applicationId ? 'APP' : 'ORG',
+        },
+        sessionId,
+      );
+    } catch (error) {
+      console.warn('[AsgardeoServerProvider] Failed to fetch branding preference:', error);
+    }
   }
 
   const handleGetAllOrganizations = async (
@@ -140,6 +166,7 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
       isSignedIn={_isSignedIn}
       myOrganizations={myOrganizations}
       getAllOrganizations={handleGetAllOrganizations}
+      brandingPreference={brandingPreference}
     >
       {children}
     </AsgardeoClientProvider>
