@@ -153,8 +153,8 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
 
     // After switching organization, we need to refresh the page to get updated session data
     // This is because server components don't maintain state between function calls
-    const { revalidatePath } = await import('next/cache');
-    const { redirect } = await import('next/navigation');
+    const {revalidatePath} = await import('next/cache');
+    const {redirect} = await import('next/navigation');
 
     // Revalidate the current path to refresh the component with new data
     revalidatePath('/');
