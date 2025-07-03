@@ -341,36 +341,6 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
   };
 
   const styles = useStyles();
-  const buttonStyle = useMemo(
-    () => ({
-      padding: `${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 2)`,
-      margin: theme.vars.spacing.unit,
-      borderRadius: theme.vars.borderRadius.medium,
-      border: 'none',
-      cursor: 'pointer',
-      fontSize: '0.875rem',
-      fontWeight: 500,
-    }),
-    [theme],
-  );
-
-  const saveButtonStyle = useMemo(
-    () => ({
-      ...buttonStyle,
-      backgroundColor: theme.vars.colors.primary.main,
-      color: theme.vars.colors.primary.contrastText,
-    }),
-    [theme, buttonStyle],
-  );
-
-  const cancelButtonStyle = useMemo(
-    () => ({
-      ...buttonStyle,
-      backgroundColor: theme.vars.colors.secondary.main,
-      border: `1px solid ${theme.vars.colors.border}`,
-    }),
-    [theme, buttonStyle],
-  );
 
   // Renders individual field in view or edit mode
   const renderField = (
@@ -486,23 +456,22 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
           }}
         >
           {!hasValue && isFieldEditable && onStartEdit ? (
-            <button
+            <Button
               onClick={onStartEdit}
+              variant="text"
+              color="secondary"
+              size="small"
+              title="Click to edit"
               style={{
-                background: 'none',
-                border: 'none',
-                color: 'inherit',
-                cursor: 'pointer',
-                padding: 0,
-                font: 'inherit',
                 fontStyle: 'italic',
                 textDecoration: 'underline',
                 opacity: 0.7,
+                padding: 0,
+                minHeight: 'auto',
               }}
-              title="Click to edit"
             >
               {displayValue}
-            </button>
+            </Button>
           ) : (
             displayValue
           )}
@@ -553,33 +522,42 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
           <div style={{display: 'flex', alignItems: 'center', gap: `calc(${theme.vars.spacing.unit} / 2)`}}>
             {isFieldEditing ? (
               <>
-                <button onClick={() => handleFieldSave(field.key)} style={saveButtonStyle} title="Save changes">
+                <Button 
+                  onClick={() => handleFieldSave(field.key)} 
+                  color="primary" 
+                  variant="solid" 
+                  size="small"
+                  title="Save changes"
+                >
                   {saveButtonText}
-                </button>
-                <button onClick={() => handleFieldCancel(field.key)} style={cancelButtonStyle} title="Cancel editing">
+                </Button>
+                <Button 
+                  onClick={() => handleFieldCancel(field.key)} 
+                  color="secondary" 
+                  variant="outline" 
+                  size="small"
+                  title="Cancel editing"
+                >
                   {cancelButtonText}
-                </button>
+                </Button>
               </>
             ) : (
               // Only show pencil icon when there's a value
               hasValue && (
-                <button
+                <Button
                   onClick={() => toggleFieldEdit(field.key)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: `calc(${theme.vars.spacing.unit} / 2)`,
-                    borderRadius: theme.vars.borderRadius.small,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: theme.vars.colors.text.secondary,
-                  }}
+                  variant="text"
+                  color="secondary"
+                  size="small"
                   title="Edit field"
+                  style={{
+                    minWidth: 'auto',
+                    padding: `calc(${theme.vars.spacing.unit} / 2)`,
+                    minHeight: 'auto',
+                  }}
                 >
                   <PencilIcon />
-                </button>
+                </Button>
               )
             )}
           </div>
