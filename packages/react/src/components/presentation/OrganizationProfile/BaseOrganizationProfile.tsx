@@ -522,19 +522,19 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
           <div style={{display: 'flex', alignItems: 'center', gap: `calc(${theme.vars.spacing.unit} / 2)`}}>
             {isFieldEditing ? (
               <>
-                <Button 
-                  onClick={() => handleFieldSave(field.key)} 
-                  color="primary" 
-                  variant="solid" 
+                <Button
+                  onClick={() => handleFieldSave(field.key)}
+                  color="primary"
+                  variant="solid"
                   size="small"
                   title="Save changes"
                 >
                   {saveButtonText}
                 </Button>
-                <Button 
-                  onClick={() => handleFieldCancel(field.key)} 
-                  color="secondary" 
-                  variant="outline" 
+                <Button
+                  onClick={() => handleFieldCancel(field.key)}
+                  color="secondary"
+                  variant="solid"
                   size="small"
                   title="Cancel editing"
                 >

@@ -274,36 +274,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   );
 
   const styles = useStyles();
-  const buttonStyle = useMemo(
-    () => ({
-      padding: `calc(${theme.vars.spacing.unit} * 1) calc(${theme.vars.spacing.unit} * 2)`,
-      margin: theme.vars.spacing.unit,
-      borderRadius: theme.vars.borderRadius.medium,
-      border: 'none',
-      cursor: 'pointer',
-      fontSize: '0.875rem',
-      fontWeight: 500,
-    }),
-    [theme],
-  );
-
-  const saveButtonStyle = useMemo(
-    () => ({
-      ...buttonStyle,
-      backgroundColor: theme.vars.colors.primary.main,
-      color: theme.vars.colors.primary.contrastText,
-    }),
-    [theme, buttonStyle],
-  );
-
-  const cancelButtonStyle = useMemo(
-    () => ({
-      ...buttonStyle,
-      backgroundColor: theme.vars.colors.secondary.main,
-      border: `1px solid ${theme.vars.colors.border}`,
-    }),
-    [theme, buttonStyle],
-  );
 
   const defaultAttributeMappings = {
     picture: ['profile', 'profileUrl', 'picture', 'URL'],
@@ -420,23 +390,22 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           <span style={styles.label}>{label}</span>
           <div style={{...styles.value, fontStyle: hasValues ? 'normal' : 'italic', opacity: hasValues ? 1 : 0.7}}>
             {!hasValues && isEditable && onStartEdit ? (
-              <button
+              <Button
                 onClick={onStartEdit}
+                variant="text"
+                color="secondary"
+                size="small"
+                title="Click to edit"
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'inherit',
-                  cursor: 'pointer',
-                  padding: 0,
-                  font: 'inherit',
                   fontStyle: 'italic',
                   textDecoration: 'underline',
                   opacity: 0.7,
+                  padding: 0,
+                  minHeight: 'auto',
                 }}
-                title="Click to edit"
               >
                 {displayValue}
-              </button>
+              </Button>
             ) : (
               displayValue
             )}
@@ -526,23 +495,22 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         <span style={styles.label}>{label}</span>
         <div style={{...styles.value, fontStyle: hasValue ? 'normal' : 'italic', opacity: hasValue ? 1 : 0.7}}>
           {!hasValue && isEditable && onStartEdit ? (
-            <button
+            <Button
               onClick={onStartEdit}
+              variant="text"
+              color="secondary"
+              size="small"
+              title="Click to edit"
               style={{
-                background: 'none',
-                border: 'none',
-                color: 'inherit',
-                cursor: 'pointer',
-                padding: 0,
-                font: 'inherit',
                 fontStyle: 'italic',
                 textDecoration: 'underline',
                 opacity: 0.7,
+                padding: 0,
+                minHeight: 'auto',
               }}
-              title="Click to edit"
             >
               {displayValue}
-            </button>
+            </Button>
           ) : (
             displayValue
           )}
@@ -601,12 +569,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 <Button size="small" color="primary" variant="solid" onClick={() => handleFieldSave(schema)}>
                   Save
                 </Button>
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="outline"
-                  onClick={() => handleFieldCancel(schema.name!)}
-                >
+                <Button size="small" color="secondary" variant="solid" onClick={() => handleFieldCancel(schema.name!)}>
                   Cancel
                 </Button>
               </>
@@ -748,10 +711,10 @@ const useStyles = () => {
       } as CSSProperties,
       field: {
         display: 'flex',
-        alignItems: 'center',
-        padding: `${theme.vars.spacing.unit} 0`,
+        alignItems: 'flex-start',
+        padding: `calc(${theme.vars.spacing.unit} / 2) 0`,
         borderBottom: `1px solid ${theme.vars.colors.border}`,
-        minHeight: '32px',
+        minHeight: '28px',
       } as CSSProperties,
       lastField: {
         borderBottom: 'none',
@@ -762,7 +725,7 @@ const useStyles = () => {
         color: theme.vars.colors.text.secondary,
         width: '120px',
         flexShrink: 0,
-        lineHeight: '32px',
+        lineHeight: '28px',
       } as CSSProperties,
       value: {
         color: theme.vars.colors.text.primary,
@@ -771,12 +734,13 @@ const useStyles = () => {
         alignItems: 'center',
         gap: theme.vars.spacing.unit,
         overflow: 'hidden',
-        minHeight: '32px',
+        minHeight: '28px',
         '& input': {
           height: '32px',
           margin: 0,
         },
-        lineHeight: '32px',
+        lineHeight: '28px',
+        wordBreak: 'break-word' as const,
         '& table': {
           backgroundColor: theme.vars.colors.background.surface,
           borderRadius: theme.vars.borderRadius.medium,
