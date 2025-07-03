@@ -26,6 +26,7 @@ import {
   Organization,
   User,
   UserProfile,
+  IdToken,
 } from '@asgardeo/node';
 import AsgardeoClientProvider from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
@@ -112,6 +113,16 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
   let brandingPreference: BrandingPreference | null = null;
 
   if (_isSignedIn) {
+    // Check if there's a `user_org` claim in the ID token to determine if this is an organization login
+    const idToken = await asgardeoClient.getDecodedIdToken(sessionId);
+    let updatedBaseUrl = config?.baseUrl;
+
+    if (idToken?.['user_org']) {
+      // Treat this login as an organization login and modify the base URL
+      updatedBaseUrl = `${config?.baseUrl}/o`;
+      config = { ...config, baseUrl: updatedBaseUrl };
+    }
+
     const userResponse = await getUserAction(sessionId);
     const userProfileResponse = await getUserProfileAction(sessionId);
     const currentOrganizationResponse = await getCurrentOrganizationAction(sessionId);
@@ -154,7 +165,6 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     // After switching organization, we need to refresh the page to get updated session data
     // This is because server components don't maintain state between function calls
     const {revalidatePath} = await import('next/cache');
-    const {redirect} = await import('next/navigation');
 
     // Revalidate the current path to refresh the component with new data
     revalidatePath('/');

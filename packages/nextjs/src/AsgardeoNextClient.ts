@@ -381,6 +381,14 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     return this.asgardeo.getAccessToken(sessionId as string);
   }
 
+  /**
+   * Get the decoded ID token for a session
+   */
+  async getDecodedIdToken(sessionId?: string): Promise<IdToken> {
+    await this.ensureInitialized();
+    return this.asgardeo.getDecodedIdToken(sessionId as string);
+  }
+
   override getConfiguration(): T {
     return this.asgardeo.getConfigData() as unknown as T;
   }
