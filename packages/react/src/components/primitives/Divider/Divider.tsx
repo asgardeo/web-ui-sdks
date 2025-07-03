@@ -130,7 +130,11 @@ const Divider: FC<DividerProps> = ({
       <>
         <style>{styles}</style>
         <div
-          className={clsx(withVendorCSSClassPrefix('divider'), withVendorCSSClassPrefix('divider--vertical'), className)}
+          className={clsx(
+            withVendorCSSClassPrefix('divider'),
+            withVendorCSSClassPrefix('divider--vertical'),
+            className,
+          )}
           style={style}
           role="separator"
           aria-orientation="vertical"
@@ -157,7 +161,12 @@ const Divider: FC<DividerProps> = ({
           {...rest}
         >
           <div className={withVendorCSSClassPrefix('divider__line')} />
-          <Typography variant="body2" color="textSecondary" className={withVendorCSSClassPrefix('divider__text')} inline>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            className={withVendorCSSClassPrefix('divider__text')}
+            inline
+          >
             {children}
           </Typography>
           <div className={withVendorCSSClassPrefix('divider__line')} />
@@ -170,7 +179,11 @@ const Divider: FC<DividerProps> = ({
     <>
       <style>{styles}</style>
       <div
-        className={clsx(withVendorCSSClassPrefix('divider'), withVendorCSSClassPrefix('divider--horizontal'), className)}
+        className={clsx(
+          withVendorCSSClassPrefix('divider'),
+          withVendorCSSClassPrefix('divider--horizontal'),
+          className,
+        )}
         style={style}
         role="separator"
         aria-orientation="horizontal"

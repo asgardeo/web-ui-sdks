@@ -127,11 +127,10 @@ const useButtonStyles = (
                 color: theme.vars.colors.primary.main,
                 border: '1px solid transparent',
                 '&:hover': {
-                  backgroundColor: theme.vars.colors.background.surface,
+                  backgroundColor: theme.vars.colors.action.hover,
                 },
                 '&:active': {
-                  backgroundColor: theme.vars.colors.background.surface,
-                  opacity: 0.8,
+                  backgroundColor: theme.vars.colors.action.selected,
                 },
               };
           }
@@ -173,11 +172,10 @@ const useButtonStyles = (
                 color: theme.vars.colors.secondary.main,
                 border: '1px solid transparent',
                 '&:hover': {
-                  backgroundColor: theme.vars.colors.background.surface,
+                  backgroundColor: theme.vars.colors.action.hover,
                 },
                 '&:active': {
-                  backgroundColor: theme.vars.colors.background.surface,
-                  opacity: 0.8,
+                  backgroundColor: theme.vars.colors.action.selected,
                 },
               };
           }
@@ -205,13 +203,12 @@ const useButtonStyles = (
                 color: theme.vars.colors.text.secondary,
                 border: `1px solid ${theme.vars.colors.border}`,
                 '&:hover': {
-                  backgroundColor: theme.vars.colors.background.surface,
+                  backgroundColor: theme.vars.colors.action.hover,
                   borderColor: theme.vars.colors.text.secondary,
                 },
                 '&:active': {
-                  backgroundColor: theme.vars.colors.background.surface,
+                  backgroundColor: theme.vars.colors.action.selected,
                   borderColor: theme.vars.colors.text.primary,
-                  opacity: 0.9,
                 },
               };
             case 'text':
@@ -220,13 +217,12 @@ const useButtonStyles = (
                 color: theme.vars.colors.text.secondary,
                 border: '1px solid transparent',
                 '&:hover': {
-                  backgroundColor: theme.vars.colors.background.surface,
+                  backgroundColor: theme.vars.colors.action.hover,
                   color: theme.vars.colors.text.primary,
                 },
                 '&:active': {
-                  backgroundColor: theme.vars.colors.background.surface,
+                  backgroundColor: theme.vars.colors.action.selected,
                   color: theme.vars.colors.text.primary,
-                  opacity: 0.8,
                 },
               };
           }

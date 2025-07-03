@@ -260,7 +260,7 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
       backgroundColor: 'transparent',
       border: 'none',
       '&:hover': {
-        backgroundColor: theme.vars.colors.background.surface,
+        backgroundColor: theme.vars.colors.action.hover,
       },
     } as CSSProperties,
     pairInput: {
@@ -290,7 +290,7 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
       alignItems: 'center',
       justifyContent: 'center',
       '&:hover': {
-        backgroundColor: theme.vars.colors.background.surface,
+        backgroundColor: theme.vars.colors.action.hover,
         color: theme.vars.colors.error.main,
       },
     } as CSSProperties,

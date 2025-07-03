@@ -99,6 +99,9 @@ const useStyles = () => {
         textAlign: 'left',
         borderRadius: theme.vars.borderRadius.medium,
         transition: 'background-color 0.15s ease-in-out',
+        '&:hover': {
+          backgroundColor: theme.vars.colors.action?.hover || 'rgba(0, 0, 0, 0.04)',
+        },
       } as CSSProperties,
       organizationInfo: {
         display: 'flex',
@@ -599,7 +602,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                             ...styles.menuItem,
                             backgroundColor:
                               hoveredItemIndex === switchableOrganizations.indexOf(organization)
-                                ? theme.vars.colors.secondary.main
+                                ? theme.vars.colors.action?.hover
                                 : 'transparent',
                           }}
                           onMouseEnter={(): void => setHoveredItemIndex(switchableOrganizations.indexOf(organization))}
@@ -629,7 +632,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                                     ...styles.menuItem,
                                     backgroundColor:
                                       hoveredItemIndex === switchableOrganizations.length + index
-                                        ? theme.vars.colors.secondary.main
+                                        ? theme.vars.colors.action?.hover
                                         : 'transparent',
                                   }}
                                   className={withVendorCSSClassPrefix('organization-switcher__menu-item')}
@@ -648,7 +651,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                                     ...styles.menuItem,
                                     backgroundColor:
                                       hoveredItemIndex === switchableOrganizations.length + index
-                                        ? theme.vars.colors.secondary.main
+                                        ? theme.vars.colors.action?.hover
                                         : 'transparent',
                                   }}
                                   className={withVendorCSSClassPrefix('organization-switcher__menu-item')}

@@ -38,6 +38,19 @@ import VendorConstants from '../constants/VendorConstants';
 
 const lightTheme: ThemeConfig = {
   colors: {
+    action: {
+      active: 'rgba(0, 0, 0, 0.54)',
+      hover: 'rgba(0, 0, 0, 0.04)',
+      hoverOpacity: 0.04,
+      selected: 'rgba(0, 0, 0, 0.08)',
+      selectedOpacity: 0.08,
+      disabled: 'rgba(0, 0, 0, 0.26)',
+      disabledBackground: 'rgba(0, 0, 0, 0.12)',
+      disabledOpacity: 0.38,
+      focus: 'rgba(0, 0, 0, 0.12)',
+      focusOpacity: 0.12,
+      activatedOpacity: 0.12,
+    },
     primary: {
       main: '#1a73e8',
       contrastText: '#ffffff',
@@ -111,6 +124,19 @@ const lightTheme: ThemeConfig = {
 
 const darkTheme: ThemeConfig = {
   colors: {
+    action: {
+      active: 'rgba(255, 255, 255, 0.70)',
+      hover: 'rgba(255, 255, 255, 0.04)',
+      hoverOpacity: 0.04,
+      selected: 'rgba(255, 255, 255, 0.08)',
+      selectedOpacity: 0.08,
+      disabled: 'rgba(255, 255, 255, 0.26)',
+      disabledBackground: 'rgba(255, 255, 255, 0.12)',
+      disabledOpacity: 0.38,
+      focus: 'rgba(255, 255, 255, 0.12)',
+      focusOpacity: 0.12,
+      activatedOpacity: 0.12,
+    },
     primary: {
       main: '#1a73e8',
       contrastText: '#ffffff',
@@ -185,6 +211,41 @@ const darkTheme: ThemeConfig = {
 const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
   const cssVars: Record<string, string> = {};
   const prefix = theme.cssVarPrefix || VendorConstants.VENDOR_PREFIX;
+
+  // Colors - Action
+  if (theme.colors?.action?.active) {
+    cssVars[`--${prefix}-color-action-active`] = theme.colors.action.active;
+  }
+  if (theme.colors?.action?.hover) {
+    cssVars[`--${prefix}-color-action-hover`] = theme.colors.action.hover;
+  }
+  if (theme.colors?.action?.hoverOpacity !== undefined) {
+    cssVars[`--${prefix}-color-action-hoverOpacity`] = theme.colors.action.hoverOpacity.toString();
+  }
+  if (theme.colors?.action?.selected) {
+    cssVars[`--${prefix}-color-action-selected`] = theme.colors.action.selected;
+  }
+  if (theme.colors?.action?.selectedOpacity !== undefined) {
+    cssVars[`--${prefix}-color-action-selectedOpacity`] = theme.colors.action.selectedOpacity.toString();
+  }
+  if (theme.colors?.action?.disabled) {
+    cssVars[`--${prefix}-color-action-disabled`] = theme.colors.action.disabled;
+  }
+  if (theme.colors?.action?.disabledBackground) {
+    cssVars[`--${prefix}-color-action-disabledBackground`] = theme.colors.action.disabledBackground;
+  }
+  if (theme.colors?.action?.disabledOpacity !== undefined) {
+    cssVars[`--${prefix}-color-action-disabledOpacity`] = theme.colors.action.disabledOpacity.toString();
+  }
+  if (theme.colors?.action?.focus) {
+    cssVars[`--${prefix}-color-action-focus`] = theme.colors.action.focus;
+  }
+  if (theme.colors?.action?.focusOpacity !== undefined) {
+    cssVars[`--${prefix}-color-action-focusOpacity`] = theme.colors.action.focusOpacity.toString();
+  }
+  if (theme.colors?.action?.activatedOpacity !== undefined) {
+    cssVars[`--${prefix}-color-action-activatedOpacity`] = theme.colors.action.activatedOpacity.toString();
+  }
 
   // Colors - Primary
   if (theme.colors?.primary?.main) {
@@ -338,6 +399,19 @@ const toThemeVars = (theme: ThemeConfig): ThemeVars => {
 
   return {
     colors: {
+      action: {
+        active: `var(--${prefix}-color-action-active)`,
+        hover: `var(--${prefix}-color-action-hover)`,
+        hoverOpacity: `var(--${prefix}-color-action-hoverOpacity)`,
+        selected: `var(--${prefix}-color-action-selected)`,
+        selectedOpacity: `var(--${prefix}-color-action-selectedOpacity)`,
+        disabled: `var(--${prefix}-color-action-disabled)`,
+        disabledBackground: `var(--${prefix}-color-action-disabledBackground)`,
+        disabledOpacity: `var(--${prefix}-color-action-disabledOpacity)`,
+        focus: `var(--${prefix}-color-action-focus)`,
+        focusOpacity: `var(--${prefix}-color-action-focusOpacity)`,
+        activatedOpacity: `var(--${prefix}-color-action-activatedOpacity)`,
+      },
       primary: {
         main: `var(--${prefix}-color-primary-main)`,
         contrastText: `var(--${prefix}-color-primary-contrastText)`,
@@ -419,6 +493,10 @@ const createTheme = (config: RecursivePartial<ThemeConfig> = {}, isDark = false)
     colors: {
       ...baseTheme.colors,
       ...config.colors,
+      action: {
+        ...baseTheme.colors.action,
+        ...(config.colors?.action || {}),
+      },
       secondary: {
         ...baseTheme.colors.secondary,
         ...(config.colors?.secondary || {}),

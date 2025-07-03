@@ -41,6 +41,19 @@ export interface ThemeTypography {
 }
 
 export interface ThemeColors {
+  action: {
+    active: string;
+    hover: string;
+    hoverOpacity: number;
+    selected: string;
+    selectedOpacity: number;
+    disabled: string;
+    disabledBackground: string;
+    disabledOpacity: number;
+    focus: string;
+    focusOpacity: number;
+    activatedOpacity: number;
+  };
   background: {
     body: {
       main: string;
@@ -122,6 +135,19 @@ export interface ThemeConfig {
 
 export interface ThemeVars {
   colors: {
+    action: {
+      active: string;
+      hover: string;
+      hoverOpacity: string;
+      selected: string;
+      selectedOpacity: string;
+      disabled: string;
+      disabledBackground: string;
+      disabledOpacity: string;
+      focus: string;
+      focusOpacity: string;
+      activatedOpacity: string;
+    };
     primary: {
       main: string;
       contrastText: string;

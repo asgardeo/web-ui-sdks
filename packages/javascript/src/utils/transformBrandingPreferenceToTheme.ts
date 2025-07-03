@@ -37,13 +37,26 @@ const extractContrastText = (colorVariant?: {main?: string; contrastText?: strin
 /**
  * Transforms a ThemeVariant from branding preference to ThemeConfig
  */
-const transformThemeVariant = (themeVariant: ThemeVariant): Partial<ThemeConfig> => {
+const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Partial<ThemeConfig> => {
   const colors = themeVariant.colors;
   const buttons = themeVariant.buttons;
   const inputs = themeVariant.inputs;
 
   return {
     colors: {
+      action: {
+        active: isDark ? 'rgba(255, 255, 255, 0.70)' : 'rgba(0, 0, 0, 0.54)',
+        hover: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)',
+        hoverOpacity: 0.04,
+        selected: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+        selectedOpacity: 0.08,
+        disabled: isDark ? 'rgba(255, 255, 255, 0.26)' : 'rgba(0, 0, 0, 0.26)',
+        disabledBackground: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)',
+        disabledOpacity: 0.38,
+        focus: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)',
+        focusOpacity: 0.12,
+        activatedOpacity: 0.12,
+      },
       primary: {
         main: extractColorValue(colors?.primary),
         contrastText: extractContrastText(colors?.primary),
@@ -130,7 +143,7 @@ export const transformBrandingPreferenceToTheme = (
     // If the specified theme variant doesn't exist, fallback to light theme
     const fallbackVariant = themeConfig.LIGHT || themeConfig.DARK;
     if (fallbackVariant) {
-      const transformedConfig = transformThemeVariant(fallbackVariant);
+      const transformedConfig = transformThemeVariant(fallbackVariant, activeThemeKey === 'DARK');
       return createTheme(transformedConfig, activeThemeKey === 'DARK');
     }
     // If no theme variants exist, return default theme
@@ -138,7 +151,7 @@ export const transformBrandingPreferenceToTheme = (
   }
 
   // Transform the theme variant to ThemeConfig
-  const transformedConfig = transformThemeVariant(themeVariant);
+  const transformedConfig = transformThemeVariant(themeVariant, activeThemeKey === 'DARK');
 
   // Create the theme using the transformed config
   return createTheme(transformedConfig, activeThemeKey === 'DARK');

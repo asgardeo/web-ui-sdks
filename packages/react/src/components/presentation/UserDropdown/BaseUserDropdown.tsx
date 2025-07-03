@@ -407,8 +407,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                         href={item.href}
                         style={{
                           ...styles.menuItemAnchor,
-                          backgroundColor:
-                            hoveredItemIndex === index ? theme.vars.colors.secondary.main : 'transparent',
+                          backgroundColor: hoveredItemIndex === index ? theme.vars.colors.action?.hover : 'transparent',
                         }}
                         className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
                         onMouseEnter={() => setHoveredItemIndex(index)}
@@ -424,8 +423,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                         onClick={() => handleMenuItemClick(item)}
                         style={{
                           ...styles.menuItem,
-                          backgroundColor:
-                            hoveredItemIndex === index ? theme.vars.colors.secondary.main : 'transparent',
+                          backgroundColor: hoveredItemIndex === index ? theme.vars.colors.action?.hover : 'transparent',
                         }}
                         className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
                         color="tertiary"
