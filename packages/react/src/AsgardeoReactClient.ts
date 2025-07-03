@@ -37,6 +37,7 @@ import {
   EmbeddedFlowExecuteRequestConfig,
   deriveOrganizationHandleFromBaseUrl,
   AllOrganizationsApiResponse,
+  extractUserClaimsFromIdToken,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/getMeOrganizations';
@@ -89,7 +90,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
 
       return generateUserProfile(profile, flattenUserSchema(schemas));
     } catch (error) {
-      return this.asgardeo.getDecodedIdToken();
+      return extractUserClaimsFromIdToken(await this.getDecodedIdToken());
     }
   }
 
@@ -121,8 +122,8 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     } catch (error) {
       return {
         schemas: [],
-        flattenedProfile: await this.asgardeo.getDecodedIdToken(),
-        profile: await this.asgardeo.getDecodedIdToken(),
+        flattenedProfile: extractUserClaimsFromIdToken(await this.getDecodedIdToken()),
+        profile: extractUserClaimsFromIdToken(await this.getDecodedIdToken()),
       };
     }
   }
@@ -139,7 +140,9 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       return getMeOrganizations({baseUrl});
     } catch (error) {
       throw new AsgardeoRuntimeError(
-        `Failed to fetch the user's associated organizations: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to fetch the user's associated organizations: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
         'AsgardeoReactClient-getMyOrganizations-RuntimeError-001',
         'react',
         'An error occurred while fetching associated organizations of the signed-in user.',
@@ -168,7 +171,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
   }
 
   override async getCurrentOrganization(): Promise<Organization | null> {
-    const idToken: IdToken = await this.asgardeo.getDecodedIdToken();
+    const idToken: IdToken = await this.getDecodedIdToken();
 
     return {
       orgHandle: idToken?.org_handle,

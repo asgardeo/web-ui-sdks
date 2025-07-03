@@ -137,7 +137,6 @@ const useStyles = () => {
         alignItems: 'center',
         gap: theme.vars.spacing.unit,
         padding: `${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 2)`,
-        borderBottom: `1px solid ${theme.vars.colors.border}`,
       } as CSSProperties,
       loadingContainer: {
         display: 'flex',

@@ -287,10 +287,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
         >
           {/* Error Alert */}
           {error && (
-            <Alert
-              variant="error"
-              style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
-            >
+            <Alert variant="error" style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
               <Alert.Title>Error</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>

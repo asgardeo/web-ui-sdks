@@ -49,6 +49,7 @@ import {
   deriveOrganizationHandleFromBaseUrl,
   getAllOrganizations,
   AllOrganizationsApiResponse,
+  extractUserClaimsFromIdToken,
 } from '@asgardeo/node';
 import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
@@ -200,8 +201,8 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     } catch (error) {
       return {
         schemas: [],
-        flattenedProfile: await this.asgardeo.getDecodedIdToken(userId),
-        profile: await this.asgardeo.getDecodedIdToken(userId),
+        flattenedProfile: extractUserClaimsFromIdToken(await this.asgardeo.getDecodedIdToken(userId)),
+        profile: extractUserClaimsFromIdToken(await this.asgardeo.getDecodedIdToken(userId)),
       };
     }
   }
