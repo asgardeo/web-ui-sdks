@@ -54,50 +54,45 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
     const baseColor = color || theme.colors.border;
     const borderStyle = variant === 'solid' ? 'solid' : variant === 'dashed' ? 'dashed' : 'dotted';
 
-    if (orientation === 'vertical') {
-      return {
-        container: {
-          display: 'inline-block',
-          height: '100%',
-          minHeight: `calc(${theme.vars.spacing.unit} * 2)`,
-          width: '1px',
-          borderLeft: `1px ${borderStyle} ${baseColor}`,
-          margin: `0 calc(${theme.vars.spacing.unit} * 1)`,
-        },
-      };
-    }
+    const styles = `
+      .${withVendorCSSClassPrefix('divider')} {
+        margin: calc(${theme.vars.spacing.unit} * 2) 0;
+      }
 
-    // Horizontal divider
-    const baseStyle = {
-      display: 'flex',
-      alignItems: 'center',
-      width: '100%',
-      margin: `calc(${theme.vars.spacing.unit} * 2) 0`,
-    };
+      .${withVendorCSSClassPrefix('divider--vertical')} {
+        display: inline-block;
+        height: 100%;
+        min-height: calc(${theme.vars.spacing.unit} * 2);
+        width: 1px;
+        border-left: 1px ${borderStyle} ${baseColor};
+        margin: 0 calc(${theme.vars.spacing.unit} * 1);
+      }
 
-    if (hasChildren) {
-      return {
-        container: baseStyle,
-        line: {
-          flex: 1,
-          height: '1px',
-          borderTop: `1px ${borderStyle} ${baseColor}`,
-        },
-        text: {
-          backgroundColor: theme.vars.colors.background.surface,
-          padding: `0 calc(${theme.vars.spacing.unit} * 1)`,
-          whiteSpace: 'nowrap' as const,
-        },
-      };
-    }
+      .${withVendorCSSClassPrefix('divider--horizontal')} {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
 
-    return {
-      container: {
-        ...baseStyle,
-        height: '1px',
-        borderTop: `1px ${borderStyle} ${baseColor}`,
-      },
-    };
+      .${withVendorCSSClassPrefix('divider--horizontal')}:not(.${withVendorCSSClassPrefix('divider--with-text')}) {
+        height: 1px;
+        border-top: 1px ${borderStyle} ${baseColor};
+      }
+
+      .${withVendorCSSClassPrefix('divider__line')} {
+        flex: 1;
+        height: 1px;
+        border-top: 1px ${borderStyle} ${baseColor};
+      }
+
+      .${withVendorCSSClassPrefix('divider__text')} {
+        background-color: ${theme.vars.colors.background.surface};
+        padding: 0 calc(${theme.vars.spacing.unit} * 1);
+        white-space: nowrap;
+      }
+    `;
+
+    return styles;
   }, [orientation, variant, color, hasChildren, theme]);
 };
 
@@ -132,47 +127,56 @@ const Divider: FC<DividerProps> = ({
 
   if (orientation === 'vertical') {
     return (
-      <div
-        className={clsx(withVendorCSSClassPrefix('divider'), withVendorCSSClassPrefix('divider-vertical'), className)}
-        style={{...styles.container, ...style}}
-        role="separator"
-        aria-orientation="vertical"
-        {...rest}
-      />
+      <>
+        <style>{styles}</style>
+        <div
+          className={clsx(withVendorCSSClassPrefix('divider'), withVendorCSSClassPrefix('divider--vertical'), className)}
+          style={style}
+          role="separator"
+          aria-orientation="vertical"
+          {...rest}
+        />
+      </>
     );
   }
 
   if (children) {
     return (
-      <div
-        className={clsx(
-          withVendorCSSClassPrefix('divider'),
-          withVendorCSSClassPrefix('divider-horizontal'),
-          withVendorCSSClassPrefix('divider-with-text'),
-          className,
-        )}
-        style={{...styles.container, ...style}}
-        role="separator"
-        aria-orientation="horizontal"
-        {...rest}
-      >
-        <div style={styles.line} />
-        <Typography variant="body2" color="textSecondary" style={styles.text} inline>
-          {children}
-        </Typography>
-        <div style={styles.line} />
-      </div>
+      <>
+        <style>{styles}</style>
+        <div
+          className={clsx(
+            withVendorCSSClassPrefix('divider'),
+            withVendorCSSClassPrefix('divider--horizontal'),
+            withVendorCSSClassPrefix('divider--with-text'),
+            className,
+          )}
+          style={style}
+          role="separator"
+          aria-orientation="horizontal"
+          {...rest}
+        >
+          <div className={withVendorCSSClassPrefix('divider__line')} />
+          <Typography variant="body2" color="textSecondary" className={withVendorCSSClassPrefix('divider__text')} inline>
+            {children}
+          </Typography>
+          <div className={withVendorCSSClassPrefix('divider__line')} />
+        </div>
+      </>
     );
   }
 
   return (
-    <div
-      className={clsx(withVendorCSSClassPrefix('divider'), withVendorCSSClassPrefix('divider-horizontal'), className)}
-      style={{...styles.container, ...style}}
-      role="separator"
-      aria-orientation="horizontal"
-      {...rest}
-    />
+    <>
+      <style>{styles}</style>
+      <div
+        className={clsx(withVendorCSSClassPrefix('divider'), withVendorCSSClassPrefix('divider--horizontal'), className)}
+        style={style}
+        role="separator"
+        aria-orientation="horizontal"
+        {...rest}
+      />
+    </>
   );
 };
 
