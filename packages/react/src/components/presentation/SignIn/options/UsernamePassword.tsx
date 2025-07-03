@@ -23,6 +23,7 @@ import Button from '../../../primitives/Button/Button';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
 import useFlow from '../../../../contexts/Flow/useFlow';
+import useTheme from '../../../../contexts/Theme/useTheme';
 
 /**
  * Username Password Sign-In Option Component.
@@ -39,6 +40,7 @@ const UsernamePassword: FC<BaseSignInOptionProps> = ({
   buttonClassName = '',
   preferences,
 }) => {
+  const {theme} = useTheme();
   const {t} = useTranslation(preferences?.i18n);
   const {setTitle, setSubtitle} = useFlow();
 
@@ -53,7 +55,7 @@ const UsernamePassword: FC<BaseSignInOptionProps> = ({
   return (
     <>
       {formFields.map(param => (
-        <div key={param.param} style={{marginBottom: '1rem'}}>
+        <div key={param.param} style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
           {createField({
             name: param.param,
             type:
@@ -84,7 +86,7 @@ const UsernamePassword: FC<BaseSignInOptionProps> = ({
         color="primary"
         variant="solid"
         fullWidth
-        style={{marginBottom: '1rem'}}
+        style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
       >
         {t('username.password.submit.button')}
       </Button>

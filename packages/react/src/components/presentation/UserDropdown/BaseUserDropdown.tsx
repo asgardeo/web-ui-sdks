@@ -48,18 +48,18 @@ const useStyles = () => {
       trigger: {
         display: 'inline-flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit}px`,
-        padding: `${theme.spacing.unit * 0.5}px`,
+        gap: theme.vars.spacing.unit,
+        padding: `calc(${theme.vars.spacing.unit} * 0.5)`,
         border: 'none',
         background: 'none',
         cursor: 'pointer',
-        borderRadius: theme.borderRadius.medium,
+        borderRadius: theme.vars.borderRadius.medium,
         '&:hover': {
-          backgroundColor: theme.colors.background,
+          backgroundColor: theme.vars.colors.background.surface,
         },
       } as CSSProperties,
       userName: {
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         fontWeight: 500,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
@@ -69,12 +69,10 @@ const useStyles = () => {
       dropdownContent: {
         minWidth: '200px',
         maxWidth: '300px',
-        backgroundColor: theme.colors.background.surface,
-        borderRadius: theme.borderRadius.medium,
-        boxShadow: `0 4px 6px -1px ${
-          colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.1)'
-        }, 0 2px 4px -1px ${colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.06)'}`,
-        border: `1px solid ${theme.colors.border}`,
+        backgroundColor: theme.vars.colors.background.surface,
+        borderRadius: theme.vars.borderRadius.medium,
+        boxShadow: theme.vars.shadows.medium,
+        border: `1px solid ${theme.vars.colors.border}`,
         outline: 'none',
         zIndex: 1000,
       } as CSSProperties,
@@ -87,51 +85,51 @@ const useStyles = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        gap: `${theme.spacing.unit}px`,
-        padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px`,
+        gap: theme.vars.spacing.unit,
+        padding: `calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 2)`,
         width: '100%',
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         textDecoration: 'none',
         border: 'none',
         background: 'none',
         cursor: 'pointer',
         fontSize: '0.875rem',
         textAlign: 'left',
-        borderRadius: theme.borderRadius.medium,
+        borderRadius: theme.vars.borderRadius.medium,
         transition: 'background-color 0.15s ease-in-out',
       } as CSSProperties,
       menuItemAnchor: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        gap: `${theme.spacing.unit}px`,
-        padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px`,
+        gap: theme.vars.spacing.unit,
+        padding: `calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 2)`,
         width: '100%',
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         textDecoration: 'none',
         border: 'none',
         background: 'none',
         cursor: 'pointer',
         fontSize: '0.875rem',
         textAlign: 'left',
-        borderRadius: theme.borderRadius.medium,
+        borderRadius: theme.vars.borderRadius.medium,
         transition: 'background-color 0.15s ease-in-out',
       } as CSSProperties,
       divider: {
-        margin: `${theme.spacing.unit * 0.5}px 0`,
-        borderBottom: `1px solid ${theme.colors.border}`,
+        margin: `calc(${theme.vars.spacing.unit} * 0.5) 0`,
+        borderBottom: `1px solid ${theme.vars.colors.border}`,
       } as CSSProperties,
       dropdownHeader: {
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit}px`,
-        padding: `${theme.spacing.unit * 1.5}px`,
-        borderBottom: `1px solid ${theme.colors.border}`,
+        gap: theme.vars.spacing.unit,
+        padding: `calc(${theme.vars.spacing.unit} * 1.5)`,
+        borderBottom: `1px solid ${theme.vars.colors.border}`,
       } as CSSProperties,
       headerInfo: {
         display: 'flex',
         flexDirection: 'column',
-        gap: `${theme.spacing.unit / 4}px`,
+        gap: `calc(${theme.vars.spacing.unit} / 4)`,
         flex: 1,
         minWidth: 0,
         overflow: 'hidden',
@@ -139,7 +137,7 @@ const useStyles = () => {
         whiteSpace: 'nowrap',
       } as CSSProperties,
       headerName: {
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         fontSize: '1rem',
         fontWeight: 500,
         margin: 0,
@@ -148,7 +146,7 @@ const useStyles = () => {
         whiteSpace: 'nowrap',
       } as CSSProperties,
       headerEmail: {
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         fontSize: '0.875rem',
         margin: 0,
         overflow: 'hidden',
@@ -160,10 +158,10 @@ const useStyles = () => {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '80px',
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
       } as CSSProperties,
       loadingText: {
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         fontSize: '0.875rem',
       } as CSSProperties,
     }),
@@ -258,8 +256,6 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
   const {theme, colorScheme} = useTheme();
-
-  const hoverBackgroundColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)';
 
   const {refs, floatingStyles, context} = useFloating({
     open: isOpen,
@@ -411,7 +407,8 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                         href={item.href}
                         style={{
                           ...styles.menuItemAnchor,
-                          backgroundColor: hoveredItemIndex === index ? hoverBackgroundColor : 'transparent',
+                          backgroundColor:
+                            hoveredItemIndex === index ? theme.vars.colors.secondary.main : 'transparent',
                         }}
                         className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
                         onMouseEnter={() => setHoveredItemIndex(index)}
@@ -427,7 +424,8 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                         onClick={() => handleMenuItemClick(item)}
                         style={{
                           ...styles.menuItem,
-                          backgroundColor: hoveredItemIndex === index ? hoverBackgroundColor : 'transparent',
+                          backgroundColor:
+                            hoveredItemIndex === index ? theme.vars.colors.secondary.main : 'transparent',
                         }}
                         className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
                         color="tertiary"

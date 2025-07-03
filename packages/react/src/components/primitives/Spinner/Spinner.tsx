@@ -66,7 +66,7 @@ const Spinner: FC<SpinnerProps> = ({size = 'medium', color, className, style}) =
     large: '32px',
   }[size];
 
-  const spinnerColor = color || theme.colors.primary.main;
+  const spinnerColor = color || theme.vars.colors.primary.main;
 
   const spinnerStyle: CSSProperties = {
     width: spinnerSize,

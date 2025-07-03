@@ -71,19 +71,19 @@ const useButtonStyles = (
     // Size configurations
     const sizeConfig = {
       small: {
-        padding: `${theme.spacing.unit / 2}px ${theme.spacing.unit}px`,
-        fontSize: '0.75rem',
-        minHeight: '24px',
+        padding: `calc(${theme.vars.spacing.unit} * 0.5) calc(${theme.vars.spacing.unit} * 1)`,
+        fontSize: theme.vars.typography.fontSizes.sm,
+        minHeight: `calc(${theme.vars.spacing.unit} * 3)`,
       },
       medium: {
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-        fontSize: '0.875rem',
-        minHeight: '32px',
+        padding: `calc(${theme.vars.spacing.unit} * 1) calc(${theme.vars.spacing.unit} * 2)`,
+        fontSize: theme.vars.typography.fontSizes.md,
+        minHeight: `calc(${theme.vars.spacing.unit} * 4)`,
       },
       large: {
-        padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 3}px`,
-        fontSize: '1rem',
-        minHeight: '40px',
+        padding: `calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 3)`,
+        fontSize: theme.vars.typography.fontSizes.lg,
+        minHeight: `calc(${theme.vars.spacing.unit} * 5)`,
       },
     };
 
@@ -94,43 +94,43 @@ const useButtonStyles = (
           switch (variant) {
             case 'solid':
               return {
-                backgroundColor: theme.colors.primary.main,
-                color: theme.colors.primary.contrastText,
-                border: `1px solid ${theme.colors.primary.main}`,
+                backgroundColor: theme.vars.colors.primary.main,
+                color: theme.vars.colors.primary.contrastText,
+                border: `1px solid ${theme.vars.colors.primary.main}`,
                 '&:hover': {
-                  backgroundColor: theme.colors.primary.main,
+                  backgroundColor: theme.vars.colors.primary.main,
                   opacity: 0.9,
                 },
                 '&:active': {
-                  backgroundColor: theme.colors.primary.main,
+                  backgroundColor: theme.vars.colors.primary.main,
                   opacity: 0.8,
                 },
               };
             case 'outline':
               return {
                 backgroundColor: 'transparent',
-                color: theme.colors.primary.main,
-                border: `1px solid ${theme.colors.primary.main}`,
+                color: theme.vars.colors.primary.main,
+                border: `1px solid ${theme.vars.colors.primary.main}`,
                 '&:hover': {
-                  backgroundColor: theme.colors.primary.main,
-                  color: theme.colors.primary.contrastText,
+                  backgroundColor: theme.vars.colors.primary.main,
+                  color: theme.vars.colors.primary.contrastText,
                 },
                 '&:active': {
-                  backgroundColor: theme.colors.primary.main,
-                  color: theme.colors.primary.contrastText,
+                  backgroundColor: theme.vars.colors.primary.main,
+                  color: theme.vars.colors.primary.contrastText,
                   opacity: 0.9,
                 },
               };
             case 'text':
               return {
                 backgroundColor: 'transparent',
-                color: theme.colors.primary.main,
+                color: theme.vars.colors.primary.main,
                 border: '1px solid transparent',
                 '&:hover': {
-                  backgroundColor: theme.colors.background.surface,
+                  backgroundColor: theme.vars.colors.background.surface,
                 },
                 '&:active': {
-                  backgroundColor: theme.colors.background.surface,
+                  backgroundColor: theme.vars.colors.background.surface,
                   opacity: 0.8,
                 },
               };
@@ -140,43 +140,43 @@ const useButtonStyles = (
           switch (variant) {
             case 'solid':
               return {
-                backgroundColor: theme.colors.secondary.main,
-                color: theme.colors.secondary.contrastText,
-                border: `1px solid ${theme.colors.secondary.main}`,
+                backgroundColor: theme.vars.colors.secondary.main,
+                color: theme.vars.colors.secondary.contrastText,
+                border: `1px solid ${theme.vars.colors.secondary.main}`,
                 '&:hover': {
-                  backgroundColor: theme.colors.secondary.main,
+                  backgroundColor: theme.vars.colors.secondary.main,
                   opacity: 0.9,
                 },
                 '&:active': {
-                  backgroundColor: theme.colors.secondary.main,
+                  backgroundColor: theme.vars.colors.secondary.main,
                   opacity: 0.8,
                 },
               };
             case 'outline':
               return {
                 backgroundColor: 'transparent',
-                color: theme.colors.secondary.main,
-                border: `1px solid ${theme.colors.secondary.main}`,
+                color: theme.vars.colors.secondary.main,
+                border: `1px solid ${theme.vars.colors.secondary.main}`,
                 '&:hover': {
-                  backgroundColor: theme.colors.secondary.main,
-                  color: theme.colors.secondary.contrastText,
+                  backgroundColor: theme.vars.colors.secondary.main,
+                  color: theme.vars.colors.secondary.contrastText,
                 },
                 '&:active': {
-                  backgroundColor: theme.colors.secondary.main,
-                  color: theme.colors.secondary.contrastText,
+                  backgroundColor: theme.vars.colors.secondary.main,
+                  color: theme.vars.colors.secondary.contrastText,
                   opacity: 0.9,
                 },
               };
             case 'text':
               return {
                 backgroundColor: 'transparent',
-                color: theme.colors.secondary.main,
+                color: theme.vars.colors.secondary.main,
                 border: '1px solid transparent',
                 '&:hover': {
-                  backgroundColor: theme.colors.background.surface,
+                  backgroundColor: theme.vars.colors.background.surface,
                 },
                 '&:active': {
-                  backgroundColor: theme.colors.background.surface,
+                  backgroundColor: theme.vars.colors.background.surface,
                   opacity: 0.8,
                 },
               };
@@ -186,46 +186,46 @@ const useButtonStyles = (
           switch (variant) {
             case 'solid':
               return {
-                backgroundColor: theme.colors.text.secondary,
-                color: theme.colors.background.surface,
-                border: `1px solid ${theme.colors.text.secondary}`,
+                backgroundColor: theme.vars.colors.text.secondary,
+                color: theme.vars.colors.background.surface,
+                border: `1px solid ${theme.vars.colors.text.secondary}`,
                 '&:hover': {
-                  backgroundColor: theme.colors.text.primary,
-                  color: theme.colors.background.surface,
+                  backgroundColor: theme.vars.colors.text.primary,
+                  color: theme.vars.colors.background.surface,
                 },
                 '&:active': {
-                  backgroundColor: theme.colors.text.primary,
-                  color: theme.colors.background.surface,
+                  backgroundColor: theme.vars.colors.text.primary,
+                  color: theme.vars.colors.background.surface,
                   opacity: 0.9,
                 },
               };
             case 'outline':
               return {
                 backgroundColor: 'transparent',
-                color: theme.colors.text.secondary,
-                border: `1px solid ${theme.colors.border}`,
+                color: theme.vars.colors.text.secondary,
+                border: `1px solid ${theme.vars.colors.border}`,
                 '&:hover': {
-                  backgroundColor: theme.colors.background.surface,
-                  borderColor: theme.colors.text.secondary,
+                  backgroundColor: theme.vars.colors.background.surface,
+                  borderColor: theme.vars.colors.text.secondary,
                 },
                 '&:active': {
-                  backgroundColor: theme.colors.background.surface,
-                  borderColor: theme.colors.text.primary,
+                  backgroundColor: theme.vars.colors.background.surface,
+                  borderColor: theme.vars.colors.text.primary,
                   opacity: 0.9,
                 },
               };
             case 'text':
               return {
                 backgroundColor: 'transparent',
-                color: theme.colors.text.secondary,
+                color: theme.vars.colors.text.secondary,
                 border: '1px solid transparent',
                 '&:hover': {
-                  backgroundColor: theme.colors.background.surface,
-                  color: theme.colors.text.primary,
+                  backgroundColor: theme.vars.colors.background.surface,
+                  color: theme.vars.colors.text.primary,
                 },
                 '&:active': {
-                  backgroundColor: theme.colors.background.surface,
-                  color: theme.colors.text.primary,
+                  backgroundColor: theme.vars.colors.background.surface,
+                  color: theme.vars.colors.text.primary,
                   opacity: 0.8,
                 },
               };
@@ -240,8 +240,8 @@ const useButtonStyles = (
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: `${theme.spacing.unit}px`,
-      borderRadius: theme.borderRadius.medium,
+      gap: `calc(${theme.vars.spacing.unit} * 1)`,
+      borderRadius: theme.vars.borderRadius.medium,
       fontWeight: 500,
       cursor: disabled || loading ? 'not-allowed' : 'pointer',
       transition: 'all 0.2s ease-in-out',
@@ -306,6 +306,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
+    const {theme} = useTheme();
     const buttonStyle = useButtonStyles(color, variant, size, fullWidth, disabled || false, loading);
 
     return (
@@ -331,8 +332,18 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             size={size as SpinnerSize}
             color="currentColor"
             style={{
-              width: size === 'small' ? '12px' : size === 'medium' ? '16px' : '20px',
-              height: size === 'small' ? '12px' : size === 'medium' ? '16px' : '20px',
+              width:
+                size === 'small'
+                  ? `calc(${theme.vars.spacing.unit} * 1.5)`
+                  : size === 'medium'
+                  ? `calc(${theme.vars.spacing.unit} * 2)`
+                  : `calc(${theme.vars.spacing.unit} * 2.5)`,
+              height:
+                size === 'small'
+                  ? `calc(${theme.vars.spacing.unit} * 1.5)`
+                  : size === 'medium'
+                  ? `calc(${theme.vars.spacing.unit} * 2)`
+                  : `calc(${theme.vars.spacing.unit} * 2.5)`,
             }}
           />
         )}

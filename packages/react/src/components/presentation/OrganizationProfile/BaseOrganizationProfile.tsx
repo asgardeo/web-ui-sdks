@@ -320,13 +320,13 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
   const getStatusColor = (status?: string): string => {
     switch (status?.toUpperCase()) {
       case 'ACTIVE':
-        return theme.colors.success.main;
+        return theme.vars.colors.success.main;
       case 'INACTIVE':
-        return theme.colors.warning.main;
+        return theme.vars.colors.warning.main;
       case 'SUSPENDED':
-        return theme.colors.error.main;
+        return theme.vars.colors.error.main;
       default:
-        return theme.colors.text.secondary;
+        return theme.vars.colors.text.secondary;
     }
   };
 
@@ -343,9 +343,9 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
   const styles = useStyles();
   const buttonStyle = useMemo(
     () => ({
-      padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-      margin: `${theme.spacing.unit}px`,
-      borderRadius: theme.borderRadius.medium,
+      padding: `${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 2)`,
+      margin: theme.vars.spacing.unit,
+      borderRadius: theme.vars.borderRadius.medium,
       border: 'none',
       cursor: 'pointer',
       fontSize: '0.875rem',
@@ -357,8 +357,8 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
   const saveButtonStyle = useMemo(
     () => ({
       ...buttonStyle,
-      backgroundColor: theme.colors.primary.main,
-      color: theme.colors.primary.contrastText,
+      backgroundColor: theme.vars.colors.primary.main,
+      color: theme.vars.colors.primary.contrastText,
     }),
     [theme, buttonStyle],
   );
@@ -366,8 +366,8 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
   const cancelButtonStyle = useMemo(
     () => ({
       ...buttonStyle,
-      backgroundColor: theme.colors.secondary.main,
-      border: `1px solid ${theme.colors.border}`,
+      backgroundColor: theme.vars.colors.secondary.main,
+      border: `1px solid ${theme.vars.colors.border}`,
     }),
     [theme, buttonStyle],
   );
@@ -532,12 +532,12 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
       ...styles.field,
       display: 'flex',
       alignItems: 'center',
-      gap: `${theme.spacing.unit}px`,
+      gap: theme.vars.spacing.unit,
     };
 
     return (
       <div style={fieldStyle} key={field.key}>
-        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: `${theme.spacing.unit}px`}}>
+        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: theme.vars.spacing.unit}}>
           {renderField(
             field,
             isFieldEditing,
@@ -550,7 +550,7 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
           )}
         </div>
         {isFieldEditable && (
-          <div style={{display: 'flex', alignItems: 'center', gap: `${theme.spacing.unit / 2}px`}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: `calc(${theme.vars.spacing.unit} / 2)`}}>
             {isFieldEditing ? (
               <>
                 <button onClick={() => handleFieldSave(field.key)} style={saveButtonStyle} title="Save changes">
@@ -569,12 +569,12 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
-                    padding: `${theme.spacing.unit / 2}px`,
-                    borderRadius: theme.borderRadius.small,
+                    padding: `calc(${theme.vars.spacing.unit} / 2)`,
+                    borderRadius: theme.vars.borderRadius.small,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: theme.colors.text.secondary,
+                    color: theme.vars.colors.text.secondary,
                   }}
                   title="Edit field"
                 >
@@ -616,7 +616,7 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeading>{title}</DialogHeading>
-          <div style={{padding: '1rem'}}>{profileContent}</div>
+          <div style={{padding: `calc(${theme.vars.spacing.unit} * 2)`}}>{profileContent}</div>
         </DialogContent>
       </Dialog>
     );
@@ -631,20 +631,20 @@ const useStyles = () => {
   return useMemo(
     () => ({
       root: {
-        padding: `${theme.spacing.unit * 4}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
         minWidth: '600px',
         margin: '0 auto',
       } as CSSProperties,
       card: {
-        background: theme.colors.background.surface,
-        borderRadius: theme.borderRadius.large,
+        background: theme.vars.colors.background.surface,
+        borderRadius: theme.vars.borderRadius.large,
       } as CSSProperties,
       header: {
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit * 2}px`,
-        marginBottom: `${theme.spacing.unit * 3}px`,
-        paddingBottom: `${theme.spacing.unit * 2}px`,
+        gap: `calc(${theme.vars.spacing.unit} * 2)`,
+        marginBottom: `calc(${theme.vars.spacing.unit} * 3)`,
+        paddingBottom: `calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
       orgInfo: {
         flex: 1,
@@ -653,24 +653,24 @@ const useStyles = () => {
         fontSize: '1.5rem',
         fontWeight: 600,
         margin: '0 0 8px 0',
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
       } as CSSProperties,
       handle: {
         fontSize: '1rem',
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         margin: '0',
         fontFamily: 'monospace',
       } as CSSProperties,
       infoContainer: {
         display: 'flex',
         flexDirection: 'column' as const,
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
       } as CSSProperties,
       field: {
         display: 'flex',
         alignItems: 'flex-start',
-        padding: `${theme.spacing.unit / 2}px 0`,
-        borderBottom: `1px solid ${theme.colors.border}`,
+        padding: `calc(${theme.vars.spacing.unit} / 2) 0`,
+        borderBottom: `1px solid ${theme.vars.colors.border}`,
         minHeight: '28px',
       } as CSSProperties,
       lastField: {
@@ -679,25 +679,25 @@ const useStyles = () => {
       label: {
         fontSize: '0.875rem',
         fontWeight: 500,
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         width: '120px',
         flexShrink: 0,
         lineHeight: '28px',
       } as CSSProperties,
       value: {
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         flex: 1,
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
         overflow: 'hidden',
         minHeight: '28px',
         lineHeight: '28px',
         wordBreak: 'break-word' as const,
       } as CSSProperties,
       statusBadge: {
-        padding: '4px 8px',
-        borderRadius: theme.borderRadius.small,
+        padding: `calc(${theme.vars.spacing.unit} / 2) ${theme.vars.spacing.unit}`,
+        borderRadius: theme.vars.borderRadius.small,
         fontSize: '0.75rem',
         fontWeight: 500,
         color: 'white',
@@ -707,37 +707,37 @@ const useStyles = () => {
       permissionsList: {
         display: 'flex',
         flexWrap: 'wrap' as const,
-        gap: `${theme.spacing.unit / 2}px`,
+        gap: `calc(${theme.vars.spacing.unit} / 2)`,
       } as CSSProperties,
       permissionBadge: {
-        padding: '2px 8px',
-        borderRadius: theme.borderRadius.small,
+        padding: `calc(${theme.vars.spacing.unit} / 4) ${theme.vars.spacing.unit}`,
+        borderRadius: theme.vars.borderRadius.small,
         fontSize: '0.75rem',
-        backgroundColor: theme.colors.primary.main,
-        color: theme.colors.primary.contrastText,
-        border: `1px solid ${theme.colors.border}`,
+        backgroundColor: theme.vars.colors.primary.main,
+        color: theme.vars.colors.primary.contrastText,
+        border: `1px solid ${theme.vars.colors.border}`,
       } as CSSProperties,
       attributesList: {
         display: 'flex',
         flexDirection: 'column' as const,
-        gap: `${theme.spacing.unit / 4}px`,
+        gap: `calc(${theme.vars.spacing.unit} / 4)`,
       } as CSSProperties,
       attributeItem: {
         display: 'flex',
-        gap: `${theme.spacing.unit}px`,
-        padding: `${theme.spacing.unit / 4}px 0`,
+        gap: theme.vars.spacing.unit,
+        padding: `calc(${theme.vars.spacing.unit} / 4) 0`,
         alignItems: 'center',
       } as CSSProperties,
       attributeKey: {
         fontSize: '0.75rem',
         fontWeight: 500,
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         minWidth: '80px',
         flexShrink: 0,
       } as CSSProperties,
       attributeValue: {
         fontSize: '0.75rem',
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         wordBreak: 'break-word' as const,
         flex: 1,
       } as CSSProperties,

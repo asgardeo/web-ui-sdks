@@ -59,10 +59,10 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
         container: {
           display: 'inline-block',
           height: '100%',
-          minHeight: '1rem',
+          minHeight: `calc(${theme.vars.spacing.unit} * 2)`,
           width: '1px',
           borderLeft: `1px ${borderStyle} ${baseColor}`,
-          margin: `0 ${theme.spacing.unit}px`,
+          margin: `0 calc(${theme.vars.spacing.unit} * 1)`,
         },
       };
     }
@@ -72,7 +72,7 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
       display: 'flex',
       alignItems: 'center',
       width: '100%',
-      margin: `${theme.spacing.unit * 2}px 0`,
+      margin: `calc(${theme.vars.spacing.unit} * 2) 0`,
     };
 
     if (hasChildren) {
@@ -84,8 +84,8 @@ const useStyles = (orientation: DividerOrientation, variant: DividerVariant, col
           borderTop: `1px ${borderStyle} ${baseColor}`,
         },
         text: {
-          backgroundColor: theme.colors.background.surface,
-          padding: `0 ${theme.spacing.unit}px`,
+          backgroundColor: theme.vars.colors.background.surface,
+          padding: `0 calc(${theme.vars.spacing.unit} * 1)`,
           whiteSpace: 'nowrap' as const,
         },
       };

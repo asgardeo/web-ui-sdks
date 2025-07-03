@@ -69,12 +69,12 @@ const DatePicker: FC<DatePickerProps> = ({
 
   const inputStyle: CSSProperties = {
     width: '100%',
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
-    border: `1px solid ${error ? theme.colors.error.main : theme.colors.border}`,
-    borderRadius: theme.borderRadius.medium,
+    padding: `${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 1.5)`,
+    border: `1px solid ${error ? theme.vars.colors.error.main : theme.vars.colors.border}`,
+    borderRadius: theme.vars.borderRadius.medium,
     fontSize: '1rem',
-    color: theme.colors.text.primary,
-    backgroundColor: disabled ? theme.colors.background.disabled : theme.colors.background.surface,
+    color: theme.vars.colors.text.primary,
+    backgroundColor: disabled ? theme.vars.colors.background.disabled : theme.vars.colors.background.surface,
     outline: 'none',
     transition: 'border-color 0.2s ease',
   };

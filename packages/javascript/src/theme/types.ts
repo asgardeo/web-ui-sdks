@@ -16,6 +16,30 @@
  * under the License.
  */
 
+export interface ThemeTypography {
+  fontFamily: string;
+  fontSizes: {
+    xs: string;
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+    '2xl': string;
+    '3xl': string;
+  };
+  fontWeights: {
+    normal: number;
+    medium: number;
+    semibold: number;
+    bold: number;
+  };
+  lineHeights: {
+    tight: number;
+    normal: number;
+    relaxed: number;
+  };
+}
+
 export interface ThemeColors {
   background: {
     body: {
@@ -65,6 +89,29 @@ export interface ThemeConfig {
   };
   spacing: {
     unit: number;
+  };
+  typography: {
+    fontFamily: string;
+    fontSizes: {
+      xs: string;
+      sm: string;
+      md: string;
+      lg: string;
+      xl: string;
+      '2xl': string;
+      '3xl': string;
+    };
+    fontWeights: {
+      normal: number;
+      medium: number;
+      semibold: number;
+      bold: number;
+    };
+    lineHeights: {
+      tight: number;
+      normal: number;
+      relaxed: number;
+    };
   };
   /**
    * The prefix used for CSS variables.
@@ -120,6 +167,29 @@ export interface ThemeVars {
     small: string;
     medium: string;
     large: string;
+  };
+  typography: {
+    fontFamily: string;
+    fontSizes: {
+      xs: string;
+      sm: string;
+      md: string;
+      lg: string;
+      xl: string;
+      '2xl': string;
+      '3xl': string;
+    };
+    fontWeights: {
+      normal: string;
+      medium: string;
+      semibold: string;
+      bold: string;
+    };
+    lineHeights: {
+      tight: string;
+      normal: string;
+      relaxed: string;
+    };
   };
 }
 

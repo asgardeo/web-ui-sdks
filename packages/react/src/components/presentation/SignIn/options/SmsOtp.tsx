@@ -24,6 +24,7 @@ import OtpField from '../../../primitives/OtpField/OtpField';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
 import useFlow from '../../../../contexts/Flow/useFlow';
+import useTheme from '../../../../contexts/Theme/useTheme';
 
 /**
  * SMS OTP Sign-In Option Component.
@@ -40,6 +41,7 @@ const SmsOtp: FC<BaseSignInOptionProps> = ({
   buttonClassName = '',
   preferences,
 }) => {
+  const {theme} = useTheme();
   const {t} = useTranslation(preferences?.i18n);
   const {setTitle, setSubtitle} = useFlow();
 
@@ -60,7 +62,7 @@ const SmsOtp: FC<BaseSignInOptionProps> = ({
         const isOtpParam = param.param.toLowerCase().includes('otp') || param.param.toLowerCase().includes('code');
 
         return (
-          <div key={param.param} style={{marginBottom: '1rem'}}>
+          <div key={param.param} style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
             {isOtpParam && hasOtpField ? (
               <OtpField
                 length={6}
@@ -99,7 +101,7 @@ const SmsOtp: FC<BaseSignInOptionProps> = ({
         color="primary"
         variant="solid"
         fullWidth
-        style={{marginBottom: '1rem'}}
+        style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
       >
         {t('sms.otp.submit.button')}
       </Button>

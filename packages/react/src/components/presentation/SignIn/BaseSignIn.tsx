@@ -36,6 +36,7 @@ import FlowProvider from '../../../contexts/Flow/FlowProvider';
 import useFlow from '../../../contexts/Flow/useFlow';
 import {useForm, FormField} from '../../../hooks/useForm';
 import useTranslation from '../../../hooks/useTranslation';
+import useTheme from '../../../contexts/Theme/useTheme';
 import Alert from '../../primitives/Alert/Alert';
 import Card, {CardProps} from '../../primitives/Card/Card';
 import Divider from '../../primitives/Divider/Divider';
@@ -340,6 +341,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   size = 'medium',
   variant = 'outlined',
 }: BaseSignInProps) => {
+  const {theme} = useTheme();
   const {t} = useTranslation();
   const {subtitle: flowSubtitle, title: flowTitle, messages: flowMessages} = useFlow();
 
@@ -424,7 +426,8 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
    */
   const handleRedirectionIfNeeded = (response: EmbeddedSignInFlowHandleResponse): boolean => {
     if (
-      response && 'nextStep' in response &&
+      response &&
+      'nextStep' in response &&
       response.nextStep &&
       (response.nextStep as any).stepType === EmbeddedSignInFlowStepType.AuthenticatorPrompt &&
       (response.nextStep as any).authenticators &&
@@ -1091,9 +1094,16 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     return (
       <Card className={containerClasses} variant={variant}>
         <Card.Content>
-          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem'}}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: `calc(${theme.vars.spacing.unit} * 4)`,
+            }}
+          >
             <Spinner size="medium" />
-            <Typography variant="body1" style={{marginTop: '1rem'}}>
+            <Typography variant="body1" style={{marginTop: `calc(${theme.vars.spacing.unit} * 2)`}}>
               {t('messages.loading')}
             </Typography>
           </div>
@@ -1119,17 +1129,17 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         <Card.Header>
           <Card.Title level={3}>{flowTitle || t('signin.title')}</Card.Title>
           {flowSubtitle && (
-            <Typography variant="body1" style={{marginTop: '0.5rem'}}>
+            <Typography variant="body1" style={{marginTop: `calc(${theme.vars.spacing.unit} * 1)`}}>
               {flowSubtitle || t('signin.subtitle')}
             </Typography>
           )}
           {flowMessages && flowMessages.length > 0 && (
-            <div style={{marginTop: '1rem'}}>
+            <div style={{marginTop: `calc(${theme.vars.spacing.unit} * 2)`}}>
               {flowMessages.map((flowMessage, index) => (
                 <Alert
                   key={flowMessage.id || index}
                   variant={flowMessage.type}
-                  style={{marginBottom: '0.5rem'}}
+                  style={{marginBottom: `calc(${theme.vars.spacing.unit} * 1)`}}
                   className={messageClasses}
                 >
                   <Alert.Description>{flowMessage.message}</Alert.Description>
@@ -1138,7 +1148,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             </div>
           )}
           {messages.length > 0 && (
-            <div style={{marginTop: '1rem'}}>
+            <div style={{marginTop: `calc(${theme.vars.spacing.unit} * 2)`}}>
               {messages.map((message, index) => {
                 const variant =
                   message.type.toLowerCase() === 'error'
@@ -1150,7 +1160,12 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                     : 'info';
 
                 return (
-                  <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClasses}>
+                  <Alert
+                    key={index}
+                    variant={variant}
+                    style={{marginBottom: `calc(${theme.vars.spacing.unit} * 1)`}}
+                    className={messageClasses}
+                  >
                     <Alert.Description>{message.message}</Alert.Description>
                   </Alert>
                 );
@@ -1161,17 +1176,21 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
         <Card.Content>
           {error && (
-            <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClasses}>
+            <Alert
+              variant="error"
+              style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
+              className={errorClasses}
+            >
               <Alert.Title>Error</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>
           )}
 
-          <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+          <div style={{display: 'flex', flexDirection: 'column', gap: `calc(${theme.vars.spacing.unit} * 2)`}}>
             {/* Render USER_PROMPT authenticators as form fields */}
             {userPromptAuthenticators.map((authenticator, index) => (
               <div key={authenticator.authenticatorId}>
-                {index > 0 && <Divider style={{margin: '0.5rem 0'}}>OR</Divider>}
+                {index > 0 && <Divider style={{margin: `calc(${theme.vars.spacing.unit} * 1) 0`}}>OR</Divider>}
                 <form
                   onSubmit={e => {
                     e.preventDefault();
@@ -1201,7 +1220,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
             {/* Add divider between user prompts and option authenticators if both exist */}
             {userPromptAuthenticators.length > 0 && optionAuthenticators.length > 0 && (
-              <Divider style={{margin: '0.5rem 0'}}>OR</Divider>
+              <Divider style={{margin: `calc(${theme.vars.spacing.unit} * 1) 0`}}>OR</Divider>
             )}
 
             {/* Render all other authenticators (REDIRECTION_PROMPT, multi-option buttons, etc.) */}
@@ -1254,12 +1273,15 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     return (
       <Card className={containerClasses} variant={variant}>
         <Card.Content>
-          <div style={{textAlign: 'center', padding: '2rem'}}>
-            <div style={{marginBottom: '1rem'}}>
+          <div style={{textAlign: 'center', padding: `calc(${theme.vars.spacing.unit} * 4)`}}>
+            <div style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
               <Spinner size="large" />
             </div>
             <Typography variant="body1">{t('passkey.authenticating') || 'Authenticating with passkey...'}</Typography>
-            <Typography variant="body2" style={{marginTop: '0.5rem', color: '#666'}}>
+            <Typography
+              variant="body2"
+              style={{marginTop: `calc(${theme.vars.spacing.unit} * 1)`, color: theme.vars.colors.text.secondary}}
+            >
               {t('passkey.instruction') || 'Please use your fingerprint, face, or security key to authenticate.'}
             </Typography>
           </div>
@@ -1272,16 +1294,16 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     <Card className={containerClasses} variant={variant}>
       <Card.Header>
         <Card.Title level={2}>{flowTitle || t('signin.title')}</Card.Title>
-        <Typography variant="body1" style={{marginTop: '0.5rem'}}>
+        <Typography variant="body1" style={{marginTop: `calc(${theme.vars.spacing.unit} * 1)`}}>
           {flowSubtitle || t('signin.subtitle')}
         </Typography>
         {flowMessages && flowMessages.length > 0 && (
-          <div style={{marginTop: '1rem'}}>
+          <div style={{marginTop: `calc(${theme.vars.spacing.unit} * 2)`}}>
             {flowMessages.map((flowMessage, index) => (
               <Alert
                 key={flowMessage.id || index}
                 variant={flowMessage.type}
-                style={{marginBottom: '0.5rem'}}
+                style={{marginBottom: `calc(${theme.vars.spacing.unit} * 1)`}}
                 className={messageClasses}
               >
                 <Alert.Description>{flowMessage.message}</Alert.Description>
@@ -1290,7 +1312,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           </div>
         )}
         {messages.length > 0 && (
-          <div style={{marginTop: '1rem'}}>
+          <div style={{marginTop: `calc(${theme.vars.spacing.unit} * 2)`}}>
             {messages.map((message, index) => {
               const variant =
                 message.type.toLowerCase() === 'error'
@@ -1302,7 +1324,12 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                   : 'info';
 
               return (
-                <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClasses}>
+                <Alert
+                  key={index}
+                  variant={variant}
+                  style={{marginBottom: `calc(${theme.vars.spacing.unit} * 1)`}}
+                  className={messageClasses}
+                >
                   <Alert.Description>{message.message}</Alert.Description>
                 </Alert>
               );
@@ -1313,7 +1340,11 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
       <Card.Content>
         {error && (
-          <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClasses}>
+          <Alert
+            variant="error"
+            style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
+            className={errorClasses}
+          >
             <Alert.Title>{t('errors.title')}</Alert.Title>
             <Alert.Description>{error}</Alert.Description>
           </Alert>

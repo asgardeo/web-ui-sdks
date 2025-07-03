@@ -32,6 +32,7 @@ import FlowProvider from '../../../contexts/Flow/FlowProvider';
 import useFlow from '../../../contexts/Flow/useFlow';
 import {useForm, FormField} from '../../../hooks/useForm';
 import useTranslation from '../../../hooks/useTranslation';
+import useTheme from '../../../contexts/Theme/useTheme';
 import Alert from '../../primitives/Alert/Alert';
 import Card, {CardProps} from '../../primitives/Card/Card';
 import Spinner from '../../primitives/Spinner/Spinner';
@@ -180,6 +181,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   variant = 'outlined',
   isInitialized,
 }) => {
+  const {theme} = useTheme();
   const {t} = useTranslation();
   const {subtitle: flowSubtitle, title: flowTitle, messages: flowMessages} = useFlow();
 
@@ -634,7 +636,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     return (
       <Card className={containerClasses} variant={variant}>
         <Card.Content>
-          <div style={{display: 'flex', justifyContent: 'center', padding: '2rem'}}>
+          <div style={{display: 'flex', justifyContent: 'center', padding: `calc(${theme.vars.spacing.unit} * 4)`}}>
             <Spinner size="medium" />
           </div>
         </Card.Content>
@@ -659,12 +661,12 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     <Card className={containerClasses} variant={variant}>
       <Card.Header>
         {flowMessages && flowMessages.length > 0 && (
-          <div style={{marginTop: '1rem'}}>
+          <div style={{marginTop: `calc(${theme.vars.spacing.unit} * 2)`}}>
             {flowMessages.map((message: any, index: number) => (
               <Alert
                 key={message.id || index}
                 variant={message.type?.toLowerCase() === 'error' ? 'error' : 'info'}
-                style={{marginBottom: '0.5rem'}}
+                style={{marginBottom: `calc(${theme.vars.spacing.unit} * 1)`}}
                 className={messageClasses}
               >
                 <Alert.Description>{message.message}</Alert.Description>
@@ -676,13 +678,17 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
 
       <Card.Content>
         {error && (
-          <Alert variant="error" className={errorClasses} style={{marginBottom: '1rem'}}>
+          <Alert
+            variant="error"
+            className={errorClasses}
+            style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
+          >
             <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
             <Alert.Description>{error}</Alert.Description>
           </Alert>
         )}
 
-        <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+        <div style={{display: 'flex', flexDirection: 'column', gap: `calc(${theme.vars.spacing.unit} * 2)`}}>
           {currentFlow.data?.components && renderComponents(currentFlow.data.components)}
         </div>
       </Card.Content>

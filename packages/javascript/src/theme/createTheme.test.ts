@@ -79,18 +79,18 @@ describe('createTheme', () => {
     // Should use custom prefix in CSS variables
     expect(customTheme.cssVariables['--custom-app-color-primary-main']).toBe('#custom-color');
     expect(customTheme.cssVariables['--custom-app-spacing-unit']).toBe('8px');
-    
+
     // Should use custom prefix in vars
     expect(customTheme.vars.colors.primary.main).toBe('var(--custom-app-color-primary-main)');
     expect(customTheme.vars.spacing.unit).toBe('var(--custom-app-spacing-unit)');
-    
+
     // Should not have old asgardeo prefixed variables
     expect(customTheme.cssVariables['--asgardeo-color-primary-main']).toBeUndefined();
   });
 
   it('should use VendorConstants.VENDOR_PREFIX as default prefix', () => {
     const theme = createTheme();
-    
+
     // Should use default prefix from VendorConstants
     expect(theme.cssVariables['--asgardeo-color-primary-main']).toBeDefined();
     expect(theme.vars.colors.primary.main).toBe('var(--asgardeo-color-primary-main)');

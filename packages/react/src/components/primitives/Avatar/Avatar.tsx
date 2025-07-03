@@ -75,10 +75,10 @@ const useStyles = ({
     () => ({
       avatar: {
         alignItems: 'center',
-        background: backgroundColor || theme.colors.background.surface,
-        border: backgroundColor ? 'none' : `1px solid ${theme.colors.border}`,
+        background: backgroundColor || theme.vars.colors.background.surface,
+        border: backgroundColor ? 'none' : `1px solid ${theme.vars.colors.border}`,
         borderRadius: variant === 'circular' ? '50%' : '8px',
-        color: backgroundColor ? '#ffffff' : theme.colors.text.primary,
+        color: backgroundColor ? '#ffffff' : theme.vars.colors.text.primary,
         display: 'flex',
         fontSize: `${size * 0.4}px`,
         fontWeight: 600,

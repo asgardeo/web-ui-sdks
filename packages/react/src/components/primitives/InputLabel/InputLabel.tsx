@@ -59,9 +59,9 @@ const InputLabel: FC<InputLabelProps> = ({
 
   const labelStyle: CSSProperties = {
     display: variant,
-    marginBottom: marginBottom || (variant === 'block' ? theme.spacing.unit + 'px' : '0'),
-    color: error ? theme.colors.error.main : theme.colors.text.secondary,
-    fontSize: '0.875rem',
+    marginBottom: marginBottom || (variant === 'block' ? `calc(${theme.vars.spacing.unit} + 1px)` : '0'),
+    color: error ? theme.vars.colors.error.main : theme.vars.colors.text.secondary,
+    fontSize: theme.vars.typography.fontSizes.sm,
     fontWeight: variant === 'block' ? 500 : 'normal',
     ...style,
   };
@@ -69,7 +69,7 @@ const InputLabel: FC<InputLabelProps> = ({
   return (
     <label style={labelStyle} {...rest}>
       {children}
-      {required && <span style={{color: theme.colors.error.main}}> *</span>}
+      {required && <span style={{color: theme.vars.colors.error.main}}> *</span>}
     </label>
   );
 };

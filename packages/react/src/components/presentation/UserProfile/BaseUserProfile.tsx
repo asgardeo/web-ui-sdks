@@ -174,11 +174,11 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       <table style={{width: '100%', borderCollapse: 'collapse'}}>
         <tbody>
           {Object.entries(data).map(([key, value]) => (
-            <tr key={key} style={{borderBottom: `1px solid ${theme.colors.border}`}}>
-              <td style={{padding: `${theme.spacing.unit}px`, verticalAlign: 'top'}}>
+            <tr key={key} style={{borderBottom: `1px solid ${theme.vars.colors.border}`}}>
+              <td style={{padding: theme.vars.spacing.unit, verticalAlign: 'top'}}>
                 <strong>{formatLabel(key)}:</strong>
               </td>
-              <td style={{padding: `${theme.spacing.unit}px`, verticalAlign: 'top'}}>
+              <td style={{padding: theme.vars.spacing.unit, verticalAlign: 'top'}}>
                 {typeof value === 'object' ? <ObjectDisplay data={value} /> : String(value)}
               </td>
             </tr>
@@ -276,9 +276,9 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const styles = useStyles();
   const buttonStyle = useMemo(
     () => ({
-      padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-      margin: `${theme.spacing.unit}px`,
-      borderRadius: theme.borderRadius.medium,
+      padding: `calc(${theme.vars.spacing.unit} * 1) calc(${theme.vars.spacing.unit} * 2)`,
+      margin: theme.vars.spacing.unit,
+      borderRadius: theme.vars.borderRadius.medium,
       border: 'none',
       cursor: 'pointer',
       fontSize: '0.875rem',
@@ -290,8 +290,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const saveButtonStyle = useMemo(
     () => ({
       ...buttonStyle,
-      backgroundColor: theme.colors.primary.main,
-      color: theme.colors.primary.contrastText,
+      backgroundColor: theme.vars.colors.primary.main,
+      color: theme.vars.colors.primary.contrastText,
     }),
     [theme, buttonStyle],
   );
@@ -299,8 +299,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const cancelButtonStyle = useMemo(
     () => ({
       ...buttonStyle,
-      backgroundColor: theme.colors.secondary.main,
-      border: `1px solid ${theme.colors.border}`,
+      backgroundColor: theme.vars.colors.secondary.main,
+      border: `1px solid ${theme.vars.colors.border}`,
     }),
     [theme, buttonStyle],
   );
@@ -491,8 +491,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 minHeight: '60px',
                 width: '100%',
                 padding: '8px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
+                border: `1px solid ${theme.vars.colors.border}`,
+                borderRadius: theme.vars.borderRadius.small,
                 resize: 'vertical',
               }}
             />
@@ -570,12 +570,12 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       ...styles.field,
       display: 'flex',
       alignItems: 'center',
-      gap: `${theme.spacing.unit}px`,
+      gap: theme.vars.spacing.unit,
     };
 
     return (
       <div style={fieldStyle}>
-        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: `${theme.spacing.unit}px`}}>
+        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: theme.vars.spacing.unit}}>
           {renderSchemaField(
             schema,
             isFieldEditing,
@@ -591,9 +591,9 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           <div
             style={{
               display: 'flex',
-              gap: `${theme.spacing.unit / 2}px`,
+              gap: `calc(${theme.vars.spacing.unit} / 2)`,
               alignItems: 'center',
-              marginLeft: `${theme.spacing.unit}px`,
+              marginLeft: theme.vars.spacing.unit,
             }}
           >
             {isFieldEditing && (
@@ -619,7 +619,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 onClick={() => toggleFieldEdit(schema.name!)}
                 title="Edit"
                 style={{
-                  padding: `${theme.spacing.unit / 2}px`,
+                  padding: `calc(${theme.vars.spacing.unit} / 2)`,
                 }}
               >
                 <PencilIcon />
@@ -703,7 +703,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeading>{title}</DialogHeading>
-          <div style={{padding: '1rem'}}>{profileContent}</div>
+          <div style={{padding: `calc(${theme.vars.spacing.unit} * 2)`}}>{profileContent}</div>
         </DialogContent>
       </Dialog>
     );
@@ -718,19 +718,19 @@ const useStyles = () => {
   return useMemo(
     () => ({
       root: {
-        padding: `${theme.spacing.unit * 4}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
         minWidth: '600px',
         margin: '0 auto',
       } as CSSProperties,
       card: {
-        background: theme.colors.background.surface,
-        borderRadius: theme.borderRadius.large,
+        background: theme.vars.colors.background.surface,
+        borderRadius: theme.vars.borderRadius.large,
       } as CSSProperties,
       header: {
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit * 1.5}px`,
-        marginBottom: `${theme.spacing.unit * 1.5}px`,
+        gap: `calc(${theme.vars.spacing.unit} * 1.5)`,
+        marginBottom: `calc(${theme.vars.spacing.unit} * 1.5)`,
       } as CSSProperties,
       profileInfo: {
         flex: 1,
@@ -739,18 +739,18 @@ const useStyles = () => {
         fontSize: '1.5rem',
         fontWeight: 600,
         margin: '0',
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
       } as CSSProperties,
       infoContainer: {
         display: 'flex',
         flexDirection: 'column' as const,
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
       } as CSSProperties,
       field: {
         display: 'flex',
         alignItems: 'center',
-        padding: `${theme.spacing.unit}px 0`,
-        borderBottom: `1px solid ${theme.colors.border}`,
+        padding: `${theme.vars.spacing.unit} 0`,
+        borderBottom: `1px solid ${theme.vars.colors.border}`,
         minHeight: '32px',
       } as CSSProperties,
       lastField: {
@@ -759,17 +759,17 @@ const useStyles = () => {
       label: {
         fontSize: '0.875rem',
         fontWeight: 500,
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         width: '120px',
         flexShrink: 0,
         lineHeight: '32px',
       } as CSSProperties,
       value: {
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         flex: 1,
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
         overflow: 'hidden',
         minHeight: '32px',
         '& input': {
@@ -778,16 +778,16 @@ const useStyles = () => {
         },
         lineHeight: '32px',
         '& table': {
-          backgroundColor: theme.colors.background,
-          borderRadius: theme.borderRadius.medium,
+          backgroundColor: theme.vars.colors.background.surface,
+          borderRadius: theme.vars.borderRadius.medium,
           whiteSpace: 'normal',
         },
         '& td': {
-          borderColor: theme.colors.border,
+          borderColor: theme.vars.colors.border,
         },
       } as CSSProperties,
       popup: {
-        padding: `${theme.spacing.unit * 2}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
     }),
     [theme, colorScheme],

@@ -238,29 +238,29 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
     container: {
       display: 'flex',
       flexDirection: 'column' as const,
-      gap: `${theme.spacing.unit / 2}px`,
+      gap: `calc(${theme.vars.spacing.unit} / 2)`,
     } as CSSProperties,
     label: {
       fontSize: '0.875rem',
       fontWeight: 500,
-      color: theme.colors.text.primary,
-      marginBottom: `${theme.spacing.unit / 2}px`,
+      color: theme.vars.colors.text.primary,
+      marginBottom: `calc(${theme.vars.spacing.unit} / 2)`,
     } as CSSProperties,
     pairsList: {
       display: 'flex',
       flexDirection: 'column' as const,
-      gap: `${theme.spacing.unit / 4}px`,
+      gap: `calc(${theme.vars.spacing.unit} / 4)`,
     } as CSSProperties,
     pairRow: {
       display: 'flex',
       alignItems: 'center',
-      gap: `${theme.spacing.unit / 2}px`,
-      padding: `${theme.spacing.unit / 2}px`,
-      borderRadius: theme.borderRadius.small,
+      gap: `calc(${theme.vars.spacing.unit} / 2)`,
+      padding: `calc(${theme.vars.spacing.unit} / 2)`,
+      borderRadius: theme.vars.borderRadius.small,
       backgroundColor: 'transparent',
       border: 'none',
       '&:hover': {
-        backgroundColor: theme.colors.background.surface,
+        backgroundColor: theme.vars.colors.background.surface,
       },
     } as CSSProperties,
     pairInput: {
@@ -270,12 +270,12 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
     addRow: {
       display: 'flex',
       alignItems: 'center',
-      gap: `${theme.spacing.unit / 2}px`,
-      padding: `${theme.spacing.unit / 2}px`,
+      gap: `calc(${theme.vars.spacing.unit} / 2)`,
+      padding: `calc(${theme.vars.spacing.unit} / 2)`,
       border: 'none',
-      borderRadius: theme.borderRadius.small,
+      borderRadius: theme.vars.borderRadius.small,
       backgroundColor: 'transparent',
-      marginTop: `${theme.spacing.unit / 2}px`,
+      marginTop: `calc(${theme.vars.spacing.unit} / 2)`,
     } as CSSProperties,
     removeButton: {
       minWidth: 'auto',
@@ -283,15 +283,15 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
       height: '24px',
       padding: '0',
       backgroundColor: 'transparent',
-      color: theme.colors.text.secondary,
+      color: theme.vars.colors.text.secondary,
       border: 'none',
-      borderRadius: theme.borderRadius.small,
+      borderRadius: theme.vars.borderRadius.small,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       '&:hover': {
-        backgroundColor: theme.colors.background.surface,
-        color: theme.colors.error.main,
+        backgroundColor: theme.vars.colors.background.surface,
+        color: theme.vars.colors.error.main,
       },
     } as CSSProperties,
     addButton: {
@@ -300,46 +300,46 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
       height: '24px',
       padding: '0',
       backgroundColor: 'transparent',
-      color: theme.colors.primary.main,
+      color: theme.vars.colors.primary.main,
       border: 'none',
-      borderRadius: theme.borderRadius.small,
+      borderRadius: theme.vars.borderRadius.small,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       '&:hover': {
-        backgroundColor: theme.colors.primary.main,
-        color: theme.colors.primary.contrastText,
+        backgroundColor: theme.vars.colors.primary.main,
+        color: theme.vars.colors.primary.contrastText,
       },
     } as CSSProperties,
     helperText: {
       fontSize: '0.75rem',
-      color: error ? theme.colors.error.main : theme.colors.text.secondary,
-      marginTop: `${theme.spacing.unit / 2}px`,
+      color: error ? theme.vars.colors.error.main : theme.vars.colors.text.secondary,
+      marginTop: `calc(${theme.vars.spacing.unit} / 2)`,
     } as CSSProperties,
     emptyState: {
-      padding: `${theme.spacing.unit}px`,
+      padding: theme.vars.spacing.unit,
       textAlign: 'center' as const,
-      color: theme.colors.text.secondary,
+      color: theme.vars.colors.text.secondary,
       fontStyle: 'italic',
       fontSize: '0.75rem',
     } as CSSProperties,
     readOnlyPair: {
       display: 'flex',
       alignItems: 'center',
-      gap: `${theme.spacing.unit / 2}px`,
-      padding: `${theme.spacing.unit / 4}px 0`,
+      gap: `calc(${theme.vars.spacing.unit} / 2)`,
+      padding: `calc(${theme.vars.spacing.unit} / 4) 0`,
       minHeight: '20px',
     } as CSSProperties,
     readOnlyKey: {
       fontSize: '0.75rem',
       fontWeight: 500,
-      color: theme.colors.text.secondary,
+      color: theme.vars.colors.text.secondary,
       minWidth: '80px',
       flexShrink: 0,
     } as CSSProperties,
     readOnlyValue: {
       fontSize: '0.75rem',
-      color: theme.colors.text.primary,
+      color: theme.vars.colors.text.primary,
       wordBreak: 'break-word' as const,
       flex: 1,
     } as CSSProperties,
@@ -350,7 +350,7 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
       {label && (
         <label style={styles.label}>
           {label}
-          {required && <span style={{color: theme.colors.error.main}}> *</span>}
+          {required && <span style={{color: theme.vars.colors.error.main}}> *</span>}
         </label>
       )}
 

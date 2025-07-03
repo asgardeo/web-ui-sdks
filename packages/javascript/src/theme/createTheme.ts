@@ -4,7 +4,23 @@
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
- * You may obtain a copy of the License at
+ * You may obtain a cop  // Shadows
+  if (theme.shadows?.small) {
+    cssVars[`--${prefix}-shadow-small`] = theme.shadows.small;
+  }
+  if (theme.shadows?.medium) {
+    cssVars[`--${prefix}-shadow-medium`] = theme.shadows.medium;
+  }
+  if (theme.shadows?.large) {
+    cssVars[`--${prefix}-shadow-large`] = theme.shadows.large;
+  }
+
+  // Typography - Font Family
+  if (theme.typography?.fontFamily) {
+    cssVars[`--${prefix}-typography-fontFamily`] = theme.typography.fontFamily;
+  }
+
+  // Typography - Font Sizesense at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -68,6 +84,29 @@ const lightTheme: ThemeConfig = {
     medium: '0 4px 16px rgba(0, 0, 0, 0.15)',
     large: '0 8px 32px rgba(0, 0, 0, 0.2)',
   },
+  typography: {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontSizes: {
+      xs: '0.75rem', // 12px
+      sm: '0.875rem', // 14px
+      md: '1rem', // 16px
+      lg: '1.125rem', // 18px
+      xl: '1.25rem', // 20px
+      '2xl': '1.5rem', // 24px
+      '3xl': '2.125rem', // 34px
+    },
+    fontWeights: {
+      normal: 400,
+      medium: 500,
+      semibold: 600,
+      bold: 700,
+    },
+    lineHeights: {
+      tight: 1.2,
+      normal: 1.4,
+      relaxed: 1.6,
+    },
+  },
 };
 
 const darkTheme: ThemeConfig = {
@@ -117,6 +156,29 @@ const darkTheme: ThemeConfig = {
     small: '0 2px 8px rgba(0, 0, 0, 0.3)',
     medium: '0 4px 16px rgba(0, 0, 0, 0.4)',
     large: '0 8px 32px rgba(0, 0, 0, 0.5)',
+  },
+  typography: {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontSizes: {
+      xs: '0.75rem', // 12px
+      sm: '0.875rem', // 14px
+      md: '1rem', // 16px
+      lg: '1.125rem', // 18px
+      xl: '1.25rem', // 20px
+      '2xl': '1.5rem', // 24px
+      '3xl': '2.125rem', // 34px
+    },
+    fontWeights: {
+      normal: 400,
+      medium: 500,
+      semibold: 600,
+      bold: 700,
+    },
+    lineHeights: {
+      tight: 1.2,
+      normal: 1.4,
+      relaxed: 1.6,
+    },
   },
 };
 
@@ -215,12 +277,65 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
     cssVars[`--${prefix}-shadow-large`] = theme.shadows.large;
   }
 
+  // Typography - Font Family
+  if (theme.typography?.fontFamily) {
+    cssVars[`--${prefix}-typography-fontFamily`] = theme.typography.fontFamily;
+  }
+
+  // Typography - Font Sizes
+  if (theme.typography?.fontSizes?.xs) {
+    cssVars[`--${prefix}-typography-fontSize-xs`] = theme.typography.fontSizes.xs;
+  }
+  if (theme.typography?.fontSizes?.sm) {
+    cssVars[`--${prefix}-typography-fontSize-sm`] = theme.typography.fontSizes.sm;
+  }
+  if (theme.typography?.fontSizes?.md) {
+    cssVars[`--${prefix}-typography-fontSize-md`] = theme.typography.fontSizes.md;
+  }
+  if (theme.typography?.fontSizes?.lg) {
+    cssVars[`--${prefix}-typography-fontSize-lg`] = theme.typography.fontSizes.lg;
+  }
+  if (theme.typography?.fontSizes?.xl) {
+    cssVars[`--${prefix}-typography-fontSize-xl`] = theme.typography.fontSizes.xl;
+  }
+  if (theme.typography?.fontSizes?.['2xl']) {
+    cssVars[`--${prefix}-typography-fontSize-2xl`] = theme.typography.fontSizes['2xl'];
+  }
+  if (theme.typography?.fontSizes?.['3xl']) {
+    cssVars[`--${prefix}-typography-fontSize-3xl`] = theme.typography.fontSizes['3xl'];
+  }
+
+  // Typography - Font Weights
+  if (theme.typography?.fontWeights?.normal !== undefined) {
+    cssVars[`--${prefix}-typography-fontWeight-normal`] = theme.typography.fontWeights.normal.toString();
+  }
+  if (theme.typography?.fontWeights?.medium !== undefined) {
+    cssVars[`--${prefix}-typography-fontWeight-medium`] = theme.typography.fontWeights.medium.toString();
+  }
+  if (theme.typography?.fontWeights?.semibold !== undefined) {
+    cssVars[`--${prefix}-typography-fontWeight-semibold`] = theme.typography.fontWeights.semibold.toString();
+  }
+  if (theme.typography?.fontWeights?.bold !== undefined) {
+    cssVars[`--${prefix}-typography-fontWeight-bold`] = theme.typography.fontWeights.bold.toString();
+  }
+
+  // Typography - Line Heights
+  if (theme.typography?.lineHeights?.tight !== undefined) {
+    cssVars[`--${prefix}-typography-lineHeight-tight`] = theme.typography.lineHeights.tight.toString();
+  }
+  if (theme.typography?.lineHeights?.normal !== undefined) {
+    cssVars[`--${prefix}-typography-lineHeight-normal`] = theme.typography.lineHeights.normal.toString();
+  }
+  if (theme.typography?.lineHeights?.relaxed !== undefined) {
+    cssVars[`--${prefix}-typography-lineHeight-relaxed`] = theme.typography.lineHeights.relaxed.toString();
+  }
+
   return cssVars;
 };
 
 const toThemeVars = (theme: ThemeConfig): ThemeVars => {
   const prefix = theme.cssVarPrefix || VendorConstants.VENDOR_PREFIX;
-  
+
   return {
     colors: {
       primary: {
@@ -269,11 +384,35 @@ const toThemeVars = (theme: ThemeConfig): ThemeVars => {
       medium: `var(--${prefix}-shadow-medium)`,
       large: `var(--${prefix}-shadow-large)`,
     },
+    typography: {
+      fontFamily: `var(--${prefix}-typography-fontFamily)`,
+      fontSizes: {
+        xs: `var(--${prefix}-typography-fontSize-xs)`,
+        sm: `var(--${prefix}-typography-fontSize-sm)`,
+        md: `var(--${prefix}-typography-fontSize-md)`,
+        lg: `var(--${prefix}-typography-fontSize-lg)`,
+        xl: `var(--${prefix}-typography-fontSize-xl)`,
+        '2xl': `var(--${prefix}-typography-fontSize-2xl)`,
+        '3xl': `var(--${prefix}-typography-fontSize-3xl)`,
+      },
+      fontWeights: {
+        normal: `var(--${prefix}-typography-fontWeight-normal)`,
+        medium: `var(--${prefix}-typography-fontWeight-medium)`,
+        semibold: `var(--${prefix}-typography-fontWeight-semibold)`,
+        bold: `var(--${prefix}-typography-fontWeight-bold)`,
+      },
+      lineHeights: {
+        tight: `var(--${prefix}-typography-lineHeight-tight)`,
+        normal: `var(--${prefix}-typography-lineHeight-normal)`,
+        relaxed: `var(--${prefix}-typography-lineHeight-relaxed)`,
+      },
+    },
   };
 };
 
 const createTheme = (config: RecursivePartial<ThemeConfig> = {}, isDark = false): Theme => {
   const baseTheme = isDark ? darkTheme : lightTheme;
+
   const mergedConfig = {
     ...baseTheme,
     ...config,
@@ -296,6 +435,22 @@ const createTheme = (config: RecursivePartial<ThemeConfig> = {}, isDark = false)
     shadows: {
       ...baseTheme.shadows,
       ...config.shadows,
+    },
+    typography: {
+      ...baseTheme.typography,
+      ...config.typography,
+      fontSizes: {
+        ...baseTheme.typography.fontSizes,
+        ...(config.typography?.fontSizes || {}),
+      },
+      fontWeights: {
+        ...baseTheme.typography.fontWeights,
+        ...(config.typography?.fontWeights || {}),
+      },
+      lineHeights: {
+        ...baseTheme.typography.lineHeights,
+        ...(config.typography?.lineHeights || {}),
+      },
     },
   } as ThemeConfig;
 

@@ -19,11 +19,13 @@
 import {FC} from 'react';
 import {BaseSignUpOptionProps} from './SignUpOptionFactory';
 import Divider from '../../../primitives/Divider/Divider';
+import useTheme from '../../../../contexts/Theme/useTheme';
 
 /**
  * Divider component for sign-up forms.
  */
 const DividerComponent: FC<BaseSignUpOptionProps> = ({component}) => {
+  const {theme} = useTheme();
   const config = component.config || {};
   const text = config['text'] || '';
   const variant = component.variant?.toLowerCase() || 'horizontal';
@@ -32,7 +34,7 @@ const DividerComponent: FC<BaseSignUpOptionProps> = ({component}) => {
     <Divider
       key={component.id}
       orientation={variant === 'vertical' ? 'vertical' : 'horizontal'}
-      style={{margin: '1rem 0'}}
+      style={{margin: `calc(${theme.vars.spacing.unit} * 2) 0`}}
     >
       {text}
     </Divider>
