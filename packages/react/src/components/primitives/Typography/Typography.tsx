@@ -19,6 +19,7 @@
 import {CSSProperties, FC, ReactNode, ComponentPropsWithoutRef, ElementType} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 
 // Typography variants mapped to HTML elements and styling
 export type TypographyVariant =
@@ -292,19 +293,21 @@ const Typography: FC<TypographyProps> = ({
     ...style,
   };
 
-  const classes = clsx(
-    'wso2-typography',
-    `wso2-typography-${variant}`,
-    {
-      'wso2-typography-noWrap': noWrap,
-      'wso2-typography-inline': inline,
-      'wso2-typography-gutterBottom': gutterBottom,
-    },
-    className,
-  );
-
   return (
-    <Component className={classes} style={typographyStyle} {...rest}>
+    <Component
+      className={clsx(
+        withVendorCSSClassPrefix('typography'),
+        withVendorCSSClassPrefix(`typography-${variant}`),
+        {
+          [withVendorCSSClassPrefix('typography-noWrap')]: noWrap,
+          [withVendorCSSClassPrefix('typography-inline')]: inline,
+          [withVendorCSSClassPrefix('typography-gutterBottom')]: gutterBottom,
+        },
+        className,
+      )}
+      style={typographyStyle}
+      {...rest}
+    >
       {children}
     </Component>
   );
