@@ -51,7 +51,7 @@ const useStyles = () => {
         gap: theme.vars.spacing.unit,
         padding: `calc(${theme.vars.spacing.unit} * 0.5)`,
         border: 'none',
-        background: 'none',
+        backgroundColor: 'none',
         cursor: 'pointer',
         borderRadius: theme.vars.borderRadius.medium,
         '&:hover': {
@@ -91,7 +91,7 @@ const useStyles = () => {
         color: theme.vars.colors.text.primary,
         textDecoration: 'none',
         border: 'none',
-        background: 'none',
+        backgroundColor: 'none',
         cursor: 'pointer',
         fontSize: '0.875rem',
         textAlign: 'left',

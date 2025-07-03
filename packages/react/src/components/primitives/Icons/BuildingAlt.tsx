@@ -47,9 +47,9 @@ const BuildingAlt: FC<BuildingAltProps> = ({color = 'currentColor', height = 24,
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
     <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
     <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />

@@ -93,7 +93,7 @@ const useStyles = () => {
         color: theme.vars.colors.text.primary,
         textDecoration: 'none',
         border: 'none',
-        background: 'none',
+        backgroundColor: 'none',
         cursor: 'pointer',
         fontSize: '0.875rem',
         textAlign: 'left',
