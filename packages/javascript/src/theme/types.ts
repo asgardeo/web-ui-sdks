@@ -127,6 +127,10 @@ export interface ThemeConfig {
     };
   };
   /**
+   * Image assets configuration
+   */
+  images?: ThemeImages;
+  /**
    * The prefix used for CSS variables.
    * @default 'asgardeo' (from VendorConstants.VENDOR_PREFIX)
    */
@@ -217,6 +221,25 @@ export interface ThemeVars {
       relaxed: string;
     };
   };
+  images?: {
+    favicon?: {
+      url?: string;
+      title?: string;
+      alt?: string;
+    };
+    logo?: {
+      url?: string;
+      title?: string;
+      alt?: string;
+    };
+    [key: string]:
+      | {
+          url?: string;
+          title?: string;
+          alt?: string;
+        }
+      | undefined;
+  };
 }
 
 export interface Theme extends ThemeConfig {
@@ -237,4 +260,34 @@ export interface ThemeDetection {
    * @default 'light'
    */
   lightClass?: string;
+}
+
+export interface ThemeImage {
+  /**
+   * The URL of the image
+   */
+  url?: string;
+  /**
+   * The title/alt text for the image
+   */
+  title?: string;
+  /**
+   * Alternative text for accessibility
+   */
+  alt?: string;
+}
+
+export interface ThemeImages {
+  /**
+   * Favicon configuration
+   */
+  favicon?: ThemeImage;
+  /**
+   * Logo configuration
+   */
+  logo?: ThemeImage;
+  /**
+   * Allow for additional custom images
+   */
+  [key: string]: ThemeImage | undefined;
 }

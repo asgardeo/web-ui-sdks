@@ -120,6 +120,10 @@ const lightTheme: ThemeConfig = {
       relaxed: 1.6,
     },
   },
+  images: {
+    favicon: {},
+    logo: {},
+  },
 };
 
 const darkTheme: ThemeConfig = {
@@ -205,6 +209,10 @@ const darkTheme: ThemeConfig = {
       normal: 1.4,
       relaxed: 1.6,
     },
+  },
+  images: {
+    favicon: {},
+    logo: {},
   },
 };
 
@@ -391,13 +399,29 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
     cssVars[`--${prefix}-typography-lineHeight-relaxed`] = theme.typography.lineHeights.relaxed.toString();
   }
 
+  // Images
+  if (theme.images) {
+    Object.keys(theme.images).forEach(imageKey => {
+      const imageConfig = theme.images![imageKey];
+      if (imageConfig?.url) {
+        cssVars[`--${prefix}-image-${imageKey}-url`] = imageConfig.url;
+      }
+      if (imageConfig?.title) {
+        cssVars[`--${prefix}-image-${imageKey}-title`] = imageConfig.title;
+      }
+      if (imageConfig?.alt) {
+        cssVars[`--${prefix}-image-${imageKey}-alt`] = imageConfig.alt;
+      }
+    });
+  }
+
   return cssVars;
 };
 
 const toThemeVars = (theme: ThemeConfig): ThemeVars => {
   const prefix = theme.cssVarPrefix || VendorConstants.VENDOR_PREFIX;
 
-  return {
+  const themeVars: ThemeVars = {
     colors: {
       action: {
         active: `var(--${prefix}-color-action-active)`,
@@ -482,6 +506,21 @@ const toThemeVars = (theme: ThemeConfig): ThemeVars => {
       },
     },
   };
+
+  // Add images if they exist
+  if (theme.images) {
+    themeVars.images = {};
+    Object.keys(theme.images).forEach(imageKey => {
+      const imageConfig = theme.images![imageKey];
+      themeVars.images![imageKey] = {
+        url: imageConfig?.url ? `var(--${prefix}-image-${imageKey}-url)` : undefined,
+        title: imageConfig?.title ? `var(--${prefix}-image-${imageKey}-title)` : undefined,
+        alt: imageConfig?.alt ? `var(--${prefix}-image-${imageKey}-alt)` : undefined,
+      };
+    });
+  }
+
+  return themeVars;
 };
 
 const createTheme = (config: RecursivePartial<ThemeConfig> = {}, isDark = false): Theme => {
@@ -529,6 +568,10 @@ const createTheme = (config: RecursivePartial<ThemeConfig> = {}, isDark = false)
         ...baseTheme.typography.lineHeights,
         ...(config.typography?.lineHeights || {}),
       },
+    },
+    images: {
+      ...baseTheme.images,
+      ...config.images,
     },
   } as ThemeConfig;
 

@@ -40,6 +40,7 @@ import useTheme from '../../../contexts/Theme/useTheme';
 import Alert from '../../primitives/Alert/Alert';
 import Card, {CardProps} from '../../primitives/Card/Card';
 import Divider from '../../primitives/Divider/Divider';
+import Logo from '../../primitives/Logo/Logo';
 import Spinner from '../../primitives/Spinner/Spinner';
 import Typography from '../../primitives/Typography/Typography';
 
@@ -1093,6 +1094,18 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   if (!isInitialized && isLoading) {
     return (
       <Card className={containerClasses} variant={variant}>
+        <Card.Header>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+            }}
+          >
+            <Logo size="medium" />
+          </div>
+        </Card.Header>
         <Card.Content>
           <div
             style={{
@@ -1127,6 +1140,16 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     return (
       <Card className={containerClasses} variant={variant}>
         <Card.Header>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+            }}
+          >
+            <Logo size="medium" />
+          </div>
           <Card.Title level={3}>{flowTitle || t('signin.title')}</Card.Title>
           {flowSubtitle && (
             <Typography variant="body1" style={{marginTop: `calc(${theme.vars.spacing.unit} * 1)`}}>
@@ -1250,6 +1273,18 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   if (!currentAuthenticator) {
     return (
       <Card className={containerClasses} variant={variant}>
+        <Card.Header>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+            }}
+          >
+            <Logo size="medium" />
+          </div>
+        </Card.Header>
         <Card.Content>
           {error && (
             <Alert variant="error">
@@ -1272,6 +1307,18 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     // Show loading state while passkey authentication is in progress
     return (
       <Card className={containerClasses} variant={variant}>
+        <Card.Header>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+            }}
+          >
+            <Logo size="medium" />
+          </div>
+        </Card.Header>
         <Card.Content>
           <div style={{textAlign: 'center', padding: `calc(${theme.vars.spacing.unit} * 4)`}}>
             <div style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
@@ -1293,6 +1340,16 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   return (
     <Card className={containerClasses} variant={variant}>
       <Card.Header>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+          }}
+        >
+          <Logo size="medium" />
+        </div>
         <Card.Title level={2}>{flowTitle || t('signin.title')}</Card.Title>
         <Typography variant="body1" style={{marginTop: `calc(${theme.vars.spacing.unit} * 1)`}}>
           {flowSubtitle || t('signin.subtitle')}

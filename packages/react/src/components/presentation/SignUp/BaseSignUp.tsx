@@ -35,6 +35,7 @@ import useTranslation from '../../../hooks/useTranslation';
 import useTheme from '../../../contexts/Theme/useTheme';
 import Alert from '../../primitives/Alert/Alert';
 import Card, {CardProps} from '../../primitives/Card/Card';
+import Logo from '../../primitives/Logo/Logo';
 import Spinner from '../../primitives/Spinner/Spinner';
 import Typography from '../../primitives/Typography/Typography';
 
@@ -635,6 +636,18 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   if (!isFlowInitialized && isLoading) {
     return (
       <Card className={containerClasses} variant={variant}>
+        <Card.Header>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+            }}
+          >
+            <Logo size="medium" />
+          </div>
+        </Card.Header>
         <Card.Content>
           <div style={{display: 'flex', justifyContent: 'center', padding: `calc(${theme.vars.spacing.unit} * 4)`}}>
             <Spinner size="medium" />
@@ -647,6 +660,18 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   if (!currentFlow) {
     return (
       <Card className={containerClasses} variant={variant}>
+        <Card.Header>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+            }}
+          >
+            <Logo size="medium" />
+          </div>
+        </Card.Header>
         <Card.Content>
           <Alert variant="error" className={errorClasses}>
             <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
@@ -660,6 +685,16 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   return (
     <Card className={containerClasses} variant={variant}>
       <Card.Header>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+          }}
+        >
+          <Logo size="medium" />
+        </div>
         {flowMessages && flowMessages.length > 0 && (
           <div style={{marginTop: `calc(${theme.vars.spacing.unit} * 2)`}}>
             {flowMessages.map((message: any, index: number) => (

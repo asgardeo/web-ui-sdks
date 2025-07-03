@@ -239,6 +239,9 @@ export * from './components/primitives/Typography/Typography';
 export {default as Divider} from './components/primitives/Divider/Divider';
 export * from './components/primitives/Divider/Divider';
 
+export {default as Logo} from './components/primitives/Logo/Logo';
+export * from './components/primitives/Logo/Logo';
+
 export {default as Spinner} from './components/primitives/Spinner/Spinner';
 export * from './components/primitives/Spinner/Spinner';
 

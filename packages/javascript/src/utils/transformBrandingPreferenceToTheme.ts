@@ -41,6 +41,7 @@ const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Part
   const colors = themeVariant.colors;
   const buttons = themeVariant.buttons;
   const inputs = themeVariant.inputs;
+  const images = themeVariant.images;
 
   return {
     colors: {
@@ -96,6 +97,23 @@ const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Part
       medium: buttons?.secondary?.base?.border?.borderRadius,
       large: buttons?.externalConnection?.base?.border?.borderRadius,
     },
+    // Extract and transform images
+    images: {
+      favicon: images?.favicon
+        ? {
+            url: images.favicon.imgURL,
+            title: images.favicon.title,
+            alt: images.favicon.altText,
+          }
+        : undefined,
+      logo: images?.logo
+        ? {
+            url: images.logo.imgURL,
+            title: images.logo.title,
+            alt: images.logo.altText,
+          }
+        : undefined,
+    },
   };
 };
 
@@ -107,10 +125,20 @@ const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Part
  *                     if not provided, will use the activeTheme from branding preference
  * @returns Theme object that can be used with the theme system
  *
+ * The function extracts the following from branding preference:
+ * - Colors (primary, secondary, background, text, alerts, etc.)
+ * - Border radius from buttons and inputs
+ * - Images (logo and favicon with their URLs, titles, and alt text)
+ * - Typography settings
+ *
  * @example
  * ```typescript
  * const brandingPreference = await getBrandingPreference({ baseUrl: "..." });
  * const theme = transformBrandingPreferenceToTheme(brandingPreference);
+ *
+ * // Access image URLs via CSS variables
+ * // Logo: var(--wso2-image-logo-url)
+ * // Favicon: var(--wso2-image-favicon-url)
  *
  * // Force light theme regardless of branding preference activeTheme
  * const lightTheme = transformBrandingPreferenceToTheme(brandingPreference, 'light');
