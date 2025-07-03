@@ -15,14 +15,14 @@ createRoot(document.getElementById('root')!).render(
       scopes="openid address email profile user:email read:user internal_organization_create internal_organization_view internal_organization_update internal_organization_delete internal_org_organization_update internal_org_organization_create internal_org_organization_view internal_org_organization_delete"
       preferences={{
         theme: {
-          overrides: {
-            colors: {
-              primary: {
-                main: '#1976d2', // Custom primary color
-                contrastText: 'white',
-              },
-            },
-          },
+          // overrides: {
+          //   colors: {
+          //     primary: {
+          //       main: '#1976d2', // Custom primary color
+          //       contrastText: 'white',
+          //     },
+          //   },
+          // },
           mode: 'light', // This will detect theme based on CSS classes
           // You can also use other modes:
           // mode: 'system', // Follows system preference (prefers-color-scheme)
