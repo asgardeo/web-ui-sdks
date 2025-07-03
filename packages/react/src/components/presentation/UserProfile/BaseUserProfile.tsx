@@ -636,9 +636,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         {profileEntries.map(([key, value]) => (
           <div key={key} style={styles.field}>
             <span style={styles.label}>{formatLabel(key)}</span>
-            <div style={styles.value}>
-              {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}
-            </div>
+            <div style={styles.value}>{typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}</div>
           </div>
         ))}
       </>
@@ -656,40 +654,38 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         />
       </div>
       <div style={styles.infoContainer}>
-        {schemas && schemas.length > 0 ? (
-          // Render with schemas when available
-          schemas
-            .filter(schema => {
-              // Skip fields that are in the fieldsToSkip array
-              if (fieldsToSkip.includes(schema.name)) return false;
+        {schemas && schemas.length > 0
+          ? // Render with schemas when available
+            schemas
+              .filter(schema => {
+                // Skip fields that are in the fieldsToSkip array
+                if (fieldsToSkip.includes(schema.name)) return false;
 
-              // For non-editable mode, only show fields with values
-              if (!editable) {
+                // For non-editable mode, only show fields with values
+                if (!editable) {
+                  const value = flattenedProfile && schema.name ? flattenedProfile[schema.name] : undefined;
+                  return value !== undefined && value !== '' && value !== null;
+                }
+
+                return true;
+              })
+              .sort((a, b) => {
+                const orderA = a.displayOrder ? parseInt(a.displayOrder) : 999;
+                const orderB = b.displayOrder ? parseInt(b.displayOrder) : 999;
+                return orderA - orderB;
+              })
+              .map((schema, index) => {
+                // Get the value from flattenedProfile
                 const value = flattenedProfile && schema.name ? flattenedProfile[schema.name] : undefined;
-                return value !== undefined && value !== '' && value !== null;
-              }
+                const schemaWithValue = {
+                  ...schema,
+                  value,
+                };
 
-              return true;
-            })
-            .sort((a, b) => {
-              const orderA = a.displayOrder ? parseInt(a.displayOrder) : 999;
-              const orderB = b.displayOrder ? parseInt(b.displayOrder) : 999;
-              return orderA - orderB;
-            })
-            .map((schema, index) => {
-              // Get the value from flattenedProfile
-              const value = flattenedProfile && schema.name ? flattenedProfile[schema.name] : undefined;
-              const schemaWithValue = {
-                ...schema,
-                value,
-              };
-
-              return <div key={schema.name || index}>{renderUserInfo(schemaWithValue)}</div>;
-            })
-        ) : (
-          // Fallback: render profile fields directly when schemas are not available
-          renderProfileWithoutSchemas()
-        )}
+                return <div key={schema.name || index}>{renderUserInfo(schemaWithValue)}</div>;
+              })
+          : // Fallback: render profile fields directly when schemas are not available
+            renderProfileWithoutSchemas()}
       </div>
     </Card>
   );

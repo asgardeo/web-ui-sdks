@@ -67,8 +67,8 @@ const useStyles = () => {
         maxWidth: '120px',
       } as CSSProperties,
       dropdownContent: {
-        minWidth: '200px',
-        maxWidth: '300px',
+        minWidth: '270px',
+        maxWidth: '500px',
         backgroundColor: theme.vars.colors.background.surface,
         borderRadius: theme.vars.borderRadius.medium,
         boxShadow: theme.vars.shadows.medium,

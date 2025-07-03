@@ -58,11 +58,12 @@ export const removeUserstorePrefix = (username?: string): string => {
 };
 
 /**
- * Processes a user object to remove userstore prefixes from the username field.
+ * Processes a user object to remove userstore prefixes from username fields.
  * This is a helper function for processing user objects returned from SCIM2 endpoints.
+ * Handles various username field variations: username, userName, and user_name.
  *
  * @param user - The user object to process
- * @returns The user object with the processed username
+ * @returns The user object with processed username fields
  *
  * @example
  * ```typescript
@@ -70,20 +71,38 @@ export const removeUserstorePrefix = (username?: string): string => {
  * const processedUser = processUserUsername(user);
  * console.log(processedUser.username); // "john.doe"
  *
- * const asgardeoUser = { username: "ASGARDEO_USER/jane.doe", email: "jane@example.com" };
- * const processedAsgardeoUser = processUserUsername(asgardeoUser);
- * console.log(processedAsgardeoUser.username); // "jane.doe"
+ * const camelCaseUser = { userName: "ASGARDEO_USER/jane.doe", email: "jane@example.com" };
+ * const processedCamelCaseUser = processUserUsername(camelCaseUser);
+ * console.log(processedCamelCaseUser.userName); // "jane.doe"
+ *
+ * const snakeCaseUser = { user_name: "PRIMARY/admin", email: "admin@example.com" };
+ * const processedSnakeCaseUser = processUserUsername(snakeCaseUser);
+ * console.log(processedSnakeCaseUser.user_name); // "admin"
  * ```
  */
-const processUsername = <T extends {username?: string}>(user: T): T => {
-  if (!user || !user.username) {
+const processUsername = <T extends {username?: string; userName?: string; user_name?: string}>(user: T): T => {
+  if (!user) {
     return user;
   }
 
-  return {
-    ...user,
-    username: removeUserstorePrefix(user.username),
-  };
+  const processedUser = {...user};
+
+  // Process username field
+  if (processedUser.username) {
+    processedUser.username = removeUserstorePrefix(processedUser.username);
+  }
+
+  // Process userName field
+  if (processedUser.userName) {
+    processedUser.userName = removeUserstorePrefix(processedUser.userName);
+  }
+
+  // Process user_name field
+  if (processedUser.user_name) {
+    processedUser.user_name = removeUserstorePrefix(processedUser.user_name);
+  }
+
+  return processedUser;
 };
 
 export default processUsername;
