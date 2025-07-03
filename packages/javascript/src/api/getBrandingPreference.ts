@@ -134,7 +134,7 @@ const getBrandingPreference = async ({
   );
 
   const fetchFn = fetcher || fetch;
-  const resolvedUrl = `${baseUrl}/api/server/v1/branding-preference${
+  const resolvedUrl = `${baseUrl}/api/server/v1/branding-preference/resolve${
     queryParams.toString() ? `?${queryParams.toString()}` : ''
   }`;
 

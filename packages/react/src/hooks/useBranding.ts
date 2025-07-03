@@ -16,45 +16,36 @@
  * under the License.
  */
 
-import {useCallback, useEffect, useState} from 'react';
-import {
-  getBrandingPreference,
-  GetBrandingPreferenceConfig,
-  BrandingPreference,
-  Theme,
-  transformBrandingPreferenceToTheme,
-} from '@asgardeo/browser';
-import useAsgardeo from '../contexts/Asgardeo/useAsgardeo';
+import {BrandingPreference, Theme} from '@asgardeo/browser';
+import useBrandingContext from '../contexts/Branding/useBrandingContext';
 
 /**
  * Configuration options for the useBranding hook
+ * @deprecated Use BrandingProvider instead for better performance and consistency
  */
 export interface UseBrandingConfig {
   /**
-   * Locale for the branding preference
+   * @deprecated This configuration is now handled by BrandingProvider
    */
   locale?: string;
   /**
-   * Name of the branding preference
+   * @deprecated This configuration is now handled by BrandingProvider
    */
   name?: string;
   /**
-   * Type of the branding preference
+   * @deprecated This configuration is now handled by BrandingProvider
    */
   type?: string;
   /**
-   * Force a specific theme ('light' or 'dark')
-   * If not provided, will use the activeTheme from branding preference
+   * @deprecated This configuration is now handled by BrandingProvider
    */
   forceTheme?: 'light' | 'dark';
   /**
-   * Whether to automatically fetch branding preference on mount
-   * @default true
+   * @deprecated This configuration is now handled by BrandingProvider
    */
   autoFetch?: boolean;
   /**
-   * Optional custom fetcher function.
-   * If not provided, native fetch will be used
+   * @deprecated This configuration is now handled by BrandingProvider
    */
   fetcher?: (url: string, config: RequestInit) => Promise<Response>;
 }
@@ -95,14 +86,13 @@ export interface UseBrandingReturn {
 }
 
 /**
- * React hook for fetching and transforming branding preferences from Asgardeo.
- * This hook automatically fetches branding preferences using the configured
- * base URL from the Asgardeo context and transforms them into a theme object.
- * 
- * The hook ensures the branding API is called only once during the component lifecycle
- * unless explicitly refetched using the refetch function.
+ * React hook for accessing branding preferences from the BrandingProvider context.
+ * This hook provides access to branding preferences, theme data, and loading states.
  *
- * @param config - Configuration options for the hook
+ * @deprecated Consider using useBrandingContext directly for better performance.
+ * This hook is maintained for backward compatibility.
+ *
+ * @param config - Configuration options (deprecated, use BrandingProvider props instead)
  * @returns Object containing branding preference data, theme, loading state, error, and refetch function
  *
  * @example
@@ -124,136 +114,39 @@ export interface UseBrandingReturn {
  * ```
  *
  * @example
- * With custom configuration:
+ * For new implementations, use BrandingProvider with useBrandingContext:
  * ```tsx
+ * // In your root component
+ * <BrandingProvider baseUrl="https://api.asgardeo.io/t/your-org">
+ *   <App />
+ * </BrandingProvider>
+ *
+ * // In your component
  * function MyComponent() {
- *   const { theme, fetchBranding } = useBranding({
- *     locale: 'en-US',
- *     name: 'my-branding',
- *     type: 'org',
- *     forceTheme: 'dark',
- *     autoFetch: false
- *   });
- *
- *   useEffect(() => {
- *     fetchBranding();
- *   }, [fetchBranding]);
- *
- *   return <div>Custom branding component</div>;
- * }
- * ```
- *
- * @example
- * With custom fetcher:
- * ```tsx
- * function MyComponent() {
- *   const { theme, isLoading, error } = useBranding({
- *     fetcher: async (url, config) => {
- *       // Use your custom HTTP client
- *       const response = await myHttpClient.request({
- *         url,
- *         method: config.method,
- *         headers: config.headers,
- *         ...config
- *       });
- *       return response;
- *     }
- *   });
- *
- *   return <div>Component with custom fetcher</div>;
+ *   const { theme, activeTheme, isLoading, error } = useBrandingContext();
+ *   // ... rest of your component
  * }
  * ```
  */
 export const useBranding = (config: UseBrandingConfig = {}): UseBrandingReturn => {
-  const {locale, name, type, forceTheme, autoFetch = true, fetcher} = config;
+  try {
+    return useBrandingContext();
+  } catch (error) {
+    console.warn(
+      'useBranding: BrandingProvider not available. ' +
+        'Make sure to wrap your app with BrandingProvider or AsgardeoProvider with branding preferences.',
+    );
 
-  const {baseUrl, isInitialized} = useAsgardeo();
-
-  const [brandingPreference, setBrandingPreference] = useState<BrandingPreference | null>(null);
-  const [theme, setTheme] = useState<Theme | null>(null);
-  const [activeTheme, setActiveTheme] = useState<'light' | 'dark' | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hasFetched, setHasFetched] = useState<boolean>(false);
-
-  const fetchBranding = useCallback(async (): Promise<void> => {
-    if (!baseUrl) {
-      setError(new Error('Base URL is not available. Make sure you are using this hook within an AsgardeoProvider.'));
-      return;
-    }
-
-    // Prevent multiple calls if already fetching or already fetched (unless explicitly called)
-    if (isLoading) {
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const getBrandingConfig: GetBrandingPreferenceConfig = {
-        baseUrl,
-        locale,
-        name,
-        type,
-        fetcher,
-      };
-
-      const brandingData = await getBrandingPreference(getBrandingConfig);
-      setBrandingPreference(brandingData);
-
-      // Extract active theme from branding preference
-      const activeThemeFromBranding = brandingData?.preference?.theme?.activeTheme;
-      let extractedActiveTheme: 'light' | 'dark' | null = null;
-      
-      if (activeThemeFromBranding) {
-        // Convert to lowercase and map to our expected values
-        const themeMode = activeThemeFromBranding.toLowerCase();
-        if (themeMode === 'light' || themeMode === 'dark') {
-          extractedActiveTheme = themeMode;
-        }
-      }
-      
-      setActiveTheme(extractedActiveTheme);
-
-      // Transform branding preference to theme
-      const transformedTheme = transformBrandingPreferenceToTheme(brandingData, forceTheme);
-      setTheme(transformedTheme);
-      setHasFetched(true);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err : new Error('Failed to fetch branding preference');
-      setError(errorMessage);
-      setBrandingPreference(null);
-      setTheme(null);
-      setActiveTheme(null);
-      setHasFetched(true); // Mark as fetched even on error to prevent retries
-    } finally {
-      setIsLoading(false);
-    }
-  }, [baseUrl, locale, name, type, forceTheme, fetcher, isLoading]);
-
-  // Auto-fetch when dependencies change - but only once
-  useEffect(() => {
-    if (autoFetch && isInitialized && baseUrl && !hasFetched) {
-      fetchBranding();
-    }
-  }, [autoFetch, isInitialized, baseUrl, hasFetched, fetchBranding]);
-
-  // Manual refetch function that bypasses the hasFetched check
-  const refetch = useCallback(async (): Promise<void> => {
-    setHasFetched(false); // Reset the flag to allow refetching
-    await fetchBranding();
-  }, [fetchBranding]);
-
-  return {
-    brandingPreference,
-    theme,
-    activeTheme,
-    isLoading,
-    error,
-    fetchBranding,
-    refetch,
-  };
+    return {
+      brandingPreference: null,
+      theme: null,
+      activeTheme: null,
+      isLoading: false,
+      error: new Error('BrandingProvider not available'),
+      fetchBranding: async () => {},
+      refetch: async () => {},
+    };
+  }
 };
 
 export default useBranding;

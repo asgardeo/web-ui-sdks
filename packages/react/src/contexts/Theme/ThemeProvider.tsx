@@ -30,7 +30,7 @@ import {
   ThemePreferences,
 } from '@asgardeo/browser';
 import ThemeContext from './ThemeContext';
-import useBranding, {UseBrandingConfig} from '../../hooks/useBranding';
+import useBrandingContext from '../Branding/useBrandingContext';
 
 export interface ThemeProviderProps {
   theme?: RecursivePartial<ThemeConfig>;
@@ -51,10 +51,6 @@ export interface ThemeProviderProps {
    * Configuration for branding integration
    */
   inheritFromBranding?: ThemePreferences['inheritFromBranding'];
-  /**
-   * Configuration for branding API call
-   */
-  brandingConfig?: UseBrandingConfig;
 }
 
 const applyThemeToDOM = (theme: Theme) => {
@@ -109,20 +105,6 @@ const applyThemeToDOM = (theme: Theme) => {
  *   <App />
  * </ThemeProvider>
  * ```
- *
- * @example
- * With custom branding configuration:
- * ```tsx
- * <ThemeProvider
- *   inheritFromBranding={true}
- *   brandingConfig={{
- *     locale: 'en-US',
- *     name: 'custom-branding'
- *   }}
- * >
- *   <App />
- * </ThemeProvider>
- * ```
  */
 const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
@@ -130,7 +112,6 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   mode = 'system',
   detection = {},
   inheritFromBranding = true,
-  brandingConfig,
 }: PropsWithChildren<ThemeProviderProps>): ReactElement => {
   const [colorScheme, setColorScheme] = useState<'light' | 'dark'>(() => {
     // Initialize with detected theme mode or fallback to defaultMode
@@ -145,16 +126,27 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   });
 
   // Use branding theme if inheritFromBranding is enabled
-  const {
-    theme: brandingTheme,
-    activeTheme: brandingActiveTheme,
-    isLoading: isBrandingLoading,
-    error: brandingError
-  } = useBranding({
-    autoFetch: inheritFromBranding,
-    // Don't pass forceTheme initially, let branding determine the active theme
-    ...brandingConfig, // Allow override of branding configuration
-  });
+  // Handle case where BrandingProvider might not be available
+  let brandingTheme = null;
+  let brandingActiveTheme = null;
+  let isBrandingLoading = false;
+  let brandingError = null;
+
+  try {
+    const brandingContext = useBrandingContext();
+    brandingTheme = brandingContext.theme;
+    brandingActiveTheme = brandingContext.activeTheme;
+    isBrandingLoading = brandingContext.isLoading;
+    brandingError = brandingContext.error;
+  } catch (error) {
+    // BrandingProvider not available, fall back to no branding
+    if (inheritFromBranding) {
+      console.warn(
+        'ThemeProvider: inheritFromBranding is enabled but BrandingProvider is not available. ' +
+          'Make sure to wrap your app with BrandingProvider or AsgardeoProvider with branding preferences.',
+      );
+    }
+  }
 
   // Update color scheme based on branding active theme when available
   useEffect(() => {

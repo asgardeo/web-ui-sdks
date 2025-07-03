@@ -26,8 +26,11 @@ import {
   SignOutOptions,
   User,
   UserProfile,
+  getBrandingPreference,
+  GetBrandingPreferenceConfig,
+  BrandingPreference,
 } from '@asgardeo/browser';
-import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState} from 'react';
+import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, useCallback} from 'react';
 import AsgardeoContext from './AsgardeoContext';
 import AsgardeoReactClient from '../../AsgardeoReactClient';
 import useBrowserUrl from '../../hooks/useBrowserUrl';
@@ -36,6 +39,7 @@ import FlowProvider from '../Flow/FlowProvider';
 import I18nProvider from '../I18n/I18nProvider';
 import OrganizationProvider from '../Organization/OrganizationProvider';
 import ThemeProvider from '../Theme/ThemeProvider';
+import BrandingProvider from '../Branding/BrandingProvider';
 import UserProvider from '../User/UserProvider';
 
 /**
@@ -82,9 +86,21 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     ...rest,
   });
 
+  // Branding state
+  const [brandingPreference, setBrandingPreference] = useState<BrandingPreference | null>(null);
+  const [isBrandingLoading, setIsBrandingLoading] = useState<boolean>(false);
+  const [brandingError, setBrandingError] = useState<Error | null>(null);
+  const [hasFetchedBranding, setHasFetchedBranding] = useState<boolean>(false);
+
   useEffect(() => {
     setBaseUrl(_baseUrl);
-  }, [_baseUrl]);
+    // Reset branding state when baseUrl changes
+    if (_baseUrl !== baseUrl) {
+      setHasFetchedBranding(false);
+      setBrandingPreference(null);
+      setBrandingError(null);
+    }
+  }, [_baseUrl, baseUrl]);
 
   useEffect(() => {
     (async (): Promise<void> => {
@@ -200,6 +216,63 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     setMyOrganizations(await asgardeo.getMyOrganizations());
   };
 
+  // Branding fetch function
+  const fetchBranding = useCallback(async (): Promise<void> => {
+    if (!baseUrl) {
+      return;
+    }
+
+    // Prevent multiple calls if already fetching
+    if (isBrandingLoading) {
+      return;
+    }
+
+    setIsBrandingLoading(true);
+    setBrandingError(null);
+
+    try {
+      const getBrandingConfig: GetBrandingPreferenceConfig = {
+        baseUrl,
+        locale: preferences?.i18n?.language,
+        // Add other branding config options as needed
+      };
+
+      const brandingData = await getBrandingPreference(getBrandingConfig);
+      setBrandingPreference(brandingData);
+      setHasFetchedBranding(true);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err : new Error('Failed to fetch branding preference');
+      setBrandingError(errorMessage);
+      setBrandingPreference(null);
+      setHasFetchedBranding(true); // Mark as fetched even on error to prevent retries
+    } finally {
+      setIsBrandingLoading(false);
+    }
+  }, [baseUrl, preferences?.i18n?.language]);
+
+  // Refetch branding function
+  const refetchBranding = useCallback(async (): Promise<void> => {
+    setHasFetchedBranding(false); // Reset the flag to allow refetching
+    await fetchBranding();
+  }, [fetchBranding]);
+
+  // Auto-fetch branding when initialized and configured
+  useEffect(() => {
+    // Enable branding by default or when explicitly enabled
+    const shouldFetchBranding = preferences?.theme?.inheritFromBranding !== false;
+
+    if (shouldFetchBranding && isInitializedSync && baseUrl && !hasFetchedBranding && !isBrandingLoading) {
+      fetchBranding();
+    }
+  }, [
+    preferences?.theme?.inheritFromBranding,
+    isInitializedSync,
+    baseUrl,
+    hasFetchedBranding,
+    isBrandingLoading,
+    fetchBranding,
+  ]);
+
   const signIn = async (...args: any): Promise<User> => {
     try {
       const response: User = await asgardeo.signIn(...args);
@@ -283,25 +356,33 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       }}
     >
       <I18nProvider preferences={preferences?.i18n}>
-        <ThemeProvider
-          inheritFromBranding={preferences?.theme?.inheritFromBranding}
-          theme={preferences?.theme?.overrides}
-          mode={isDarkMode ? 'dark' : 'light'}
+        <BrandingProvider
+          brandingPreference={brandingPreference}
+          isLoading={isBrandingLoading}
+          error={brandingError}
+          enabled={preferences?.theme?.inheritFromBranding !== false}
+          refetch={refetchBranding}
         >
-          <FlowProvider>
-            <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate}>
-              <OrganizationProvider
-                getAllOrganizations={async () => await asgardeo.getAllOrganizations()}
-                myOrganizations={myOrganizations}
-                currentOrganization={currentOrganization}
-                onOrganizationSwitch={switchOrganization}
-                revalidateMyOrganizations={async () => await asgardeo.getMyOrganizations()}
-              >
-                {children}
-              </OrganizationProvider>
-            </UserProvider>
-          </FlowProvider>
-        </ThemeProvider>
+          <ThemeProvider
+            inheritFromBranding={preferences?.theme?.inheritFromBranding}
+            theme={preferences?.theme?.overrides}
+            mode={isDarkMode ? 'dark' : 'light'}
+          >
+            <FlowProvider>
+              <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate}>
+                <OrganizationProvider
+                  getAllOrganizations={async () => await asgardeo.getAllOrganizations()}
+                  myOrganizations={myOrganizations}
+                  currentOrganization={currentOrganization}
+                  onOrganizationSwitch={switchOrganization}
+                  revalidateMyOrganizations={async () => await asgardeo.getMyOrganizations()}
+                >
+                  {children}
+                </OrganizationProvider>
+              </UserProvider>
+            </FlowProvider>
+          </ThemeProvider>
+        </BrandingProvider>
       </I18nProvider>
     </AsgardeoContext.Provider>
   );

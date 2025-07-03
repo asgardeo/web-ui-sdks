@@ -70,6 +70,15 @@ export * from './contexts/Theme/ThemeProvider';
 export {default as useTheme} from './contexts/Theme/useTheme';
 export * from './contexts/Theme/useTheme';
 
+export {default as BrandingContext} from './contexts/Branding/BrandingContext';
+export * from './contexts/Branding/BrandingContext';
+
+export {default as BrandingProvider} from './contexts/Branding/BrandingProvider';
+export * from './contexts/Branding/BrandingProvider';
+
+export {default as useBrandingContext} from './contexts/Branding/useBrandingContext';
+export * from './contexts/Branding/useBrandingContext';
+
 export {default as useBrowserUrl} from './hooks/useBrowserUrl';
 export * from './hooks/useBrowserUrl';
 
