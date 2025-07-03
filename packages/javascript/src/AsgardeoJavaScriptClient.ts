@@ -21,6 +21,7 @@ import {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './mo
 import {Config} from './models/config';
 import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './models/embedded-flow';
 import {EmbeddedSignInFlowHandleRequestPayload} from './models/embedded-signin-flow';
+import {TokenResponse} from './models/token';
 import {Organization} from './models/organization';
 import {User, UserProfile} from './models/user';
 
@@ -31,7 +32,7 @@ import {User, UserProfile} from './models/user';
  * @typeParam T - Configuration type that extends Config.
  */
 abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T> {
-  abstract switchOrganization(organization: Organization): Promise<void>;
+  abstract switchOrganization(organization: Organization, sessionId?: string): Promise<TokenResponse | Response>;
 
   abstract initialize(config: T): Promise<boolean>;
 

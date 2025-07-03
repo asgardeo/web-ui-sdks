@@ -25,6 +25,7 @@ import {
 import {EmbeddedSignInFlowHandleRequestPayload} from './embedded-signin-flow';
 import {Organization} from './organization';
 import {User, UserProfile} from './user';
+import {TokenResponse} from './token';
 
 export type SignInOptions = Record<string, unknown>;
 export type SignOutOptions = Record<string, unknown>;
@@ -62,7 +63,7 @@ export interface AsgardeoClient<T> {
    * @param organization - The organization to switch to.
    * @returns A promise that resolves when the switch is complete.
    */
-  switchOrganization(organization: Organization): Promise<void>;
+  switchOrganization(organization: Organization, sessionId?: string): Promise<TokenResponse | Response> ;
 
   getConfiguration(): T;
 

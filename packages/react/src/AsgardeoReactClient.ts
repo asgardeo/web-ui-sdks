@@ -38,6 +38,7 @@ import {
   deriveOrganizationHandleFromBaseUrl,
   AllOrganizationsApiResponse,
   extractUserClaimsFromIdToken,
+  TokenResponse,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/getMeOrganizations';
@@ -180,7 +181,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     };
   }
 
-  override async switchOrganization(organization: Organization): Promise<void> {
+  override async switchOrganization(organization: Organization, sessionId?: string): Promise<TokenResponse | Response>  {
     try {
       const configData = await this.asgardeo.getConfigData();
       const scopes = configData?.scopes;
@@ -208,11 +209,11 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
         signInRequired: true,
       };
 
-      await this.asgardeo.exchangeToken(
+      return await this.asgardeo.exchangeToken(
         exchangeConfig,
         (user: User) => {},
         () => null,
-      );
+      ) as TokenResponse | Response;
     } catch (error) {
       throw new AsgardeoRuntimeError(
         `Failed to switch organization: ${error.message || error}`,

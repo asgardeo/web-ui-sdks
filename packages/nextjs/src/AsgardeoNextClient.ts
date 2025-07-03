@@ -50,8 +50,8 @@ import {
   getAllOrganizations,
   AllOrganizationsApiResponse,
   extractUserClaimsFromIdToken,
+  TokenResponse
 } from '@asgardeo/node';
-import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
 import getSessionId from './server/actions/getSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
@@ -329,7 +329,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     };
   }
 
-  override async switchOrganization(organization: Organization, userId?: string): Promise<void> {
+  override async switchOrganization(organization: Organization, userId?: string): Promise<TokenResponse | Response> {
     try {
       const configData = await this.asgardeo.getConfigData();
       const scopes = configData?.scopes;
@@ -347,6 +347,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
         attachToken: false,
         data: {
           client_id: '{{clientId}}',
+          client_secret: '{{clientSecret}}',
           grant_type: 'organization_switch',
           scope: '{{scopes}}',
           switching_organization: organization.id,
@@ -357,10 +358,10 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
         signInRequired: true,
       };
 
-      await this.asgardeo.exchangeToken(exchangeConfig, userId);
+      return await this.asgardeo.exchangeToken(exchangeConfig, userId);
     } catch (error) {
       throw new AsgardeoRuntimeError(
-        `Failed to switch organization: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to switch organization: ${error instanceof Error ? error.message : String(JSON.stringify(error))}`,
         'AsgardeoReactClient-RuntimeError-003',
         'nextjs',
         'An error occurred while switching to the specified organization. Please try again.',

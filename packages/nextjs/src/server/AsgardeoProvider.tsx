@@ -44,6 +44,7 @@ import updateUserProfileAction from './actions/updateUserProfileAction';
 import getMyOrganizations from './actions/getMyOrganizations';
 import getAllOrganizations from './actions/getAllOrganizations';
 import getBrandingPreference from './actions/getBrandingPreference';
+import switchOrganization from './actions/switchOrganization';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -126,7 +127,7 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     try {
       brandingPreference = await getBrandingPreference(
         {
-          baseUrl: config?.baseUrl,
+          baseUrl: config?.baseUrl as string,
           locale: 'en-US',
           name: config.applicationId || config.organizationHandle,
           type: config.applicationId ? 'APP' : 'ORG',
@@ -144,6 +145,19 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
   ): Promise<AllOrganizationsApiResponse> => {
     'use server';
     return await getAllOrganizations(options, sessionId);
+  };
+
+  const handleSwitchOrganization = async (organization: Organization, _sessionId?: string): Promise<void> => {
+    'use server';
+    await switchOrganization(organization, sessionId);
+
+    // After switching organization, we need to refresh the page to get updated session data
+    // This is because server components don't maintain state between function calls
+    const { revalidatePath } = await import('next/cache');
+    const { redirect } = await import('next/navigation');
+
+    // Revalidate the current path to refresh the component with new data
+    revalidatePath('/');
   };
 
   return (
@@ -166,6 +180,7 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
       isSignedIn={_isSignedIn}
       myOrganizations={myOrganizations}
       getAllOrganizations={handleGetAllOrganizations}
+      switchOrganization={handleSwitchOrganization}
       brandingPreference={brandingPreference}
     >
       {children}

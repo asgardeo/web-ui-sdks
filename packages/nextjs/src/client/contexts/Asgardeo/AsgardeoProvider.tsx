@@ -43,8 +43,6 @@ import {
 import {FC, PropsWithChildren, RefObject, useEffect, useMemo, useRef, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
-import getSessionId from '../../../server/actions/getSessionId';
-import switchOrganizationAction from '../../../server/actions/switchOrganizationAction';
 
 /**
  * Props interface of {@link AsgardeoClientProvider}
@@ -73,6 +71,7 @@ export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'b
     myOrganizations: Organization[];
     revalidateMyOrganizations?: (sessionId?: string) => Promise<Organization[]>;
     brandingPreference?: BrandingPreference | null;
+    switchOrganization: (organization: Organization, sessionId?: string) => Promise<void>;
   };
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
@@ -95,6 +94,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   myOrganizations,
   revalidateMyOrganizations,
   getAllOrganizations,
+  switchOrganization,
   brandingPreference,
 }: PropsWithChildren<AsgardeoClientProviderProps>) => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
@@ -260,25 +260,6 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
       return result?.data ?? result;
     } catch (error) {
       throw error;
-    }
-  };
-
-  const switchOrganization = async (organization: Organization): Promise<void> => {
-    try {
-      await switchOrganizationAction(organization, (await getSessionId()) as string);
-
-      // if (await asgardeo.isSignedIn()) {
-      //   setUser(await asgardeo.getUser());
-      //   setUserProfile(await asgardeo.getUserProfile());
-      //   setCurrentOrganization(await asgardeo.getCurrentOrganization());
-      // }
-    } catch (error) {
-      throw new AsgardeoRuntimeError(
-        `Failed to switch organization: ${error instanceof Error ? error.message : String(error)}`,
-        'AsgardeoClientProvider-switchOrganization-RuntimeError-001',
-        'nextjs',
-        'An error occurred while switching to the specified organization.',
-      );
     }
   };
 
