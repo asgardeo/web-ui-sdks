@@ -21,6 +21,7 @@ import clsx from 'clsx';
 import {ChangeEvent, CSSProperties, FC, ReactElement, ReactNode, useMemo, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
+import Alert from '../../primitives/Alert/Alert';
 import Button from '../../primitives/Button/Button';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 import FormControl from '../../primitives/FormControl/FormControl';
@@ -284,6 +285,17 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
           style={styles.form}
           onSubmit={handleSubmit}
         >
+          {/* Error Alert */}
+          {error && (
+            <Alert
+              variant="error"
+              style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
+            >
+              <Alert.Title>Error</Alert.Title>
+              <Alert.Description>{error}</Alert.Description>
+            </Alert>
+          )}
+
           {/* Organization Name */}
           <div className={withVendorCSSClassPrefix('create-organization__field-group')}>
             <TextField
@@ -334,13 +346,6 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
 
           {/* Additional Fields */}
           {renderAdditionalFields && renderAdditionalFields()}
-
-          {/* Error Message */}
-          {error && (
-            <Typography variant="body2" style={{color: theme.vars.colors.error.main, fontSize: '0.875rem'}}>
-              {error}
-            </Typography>
-          )}
         </form>
 
         {/* Actions */}
