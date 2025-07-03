@@ -120,7 +120,7 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     if (idToken?.['user_org']) {
       // Treat this login as an organization login and modify the base URL
       updatedBaseUrl = `${config?.baseUrl}/o`;
-      config = { ...config, baseUrl: updatedBaseUrl };
+      config = {...config, baseUrl: updatedBaseUrl};
     }
 
     const userResponse = await getUserAction(sessionId);

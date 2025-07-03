@@ -50,7 +50,7 @@ import {
   getAllOrganizations,
   AllOrganizationsApiResponse,
   extractUserClaimsFromIdToken,
-  TokenResponse
+  TokenResponse,
 } from '@asgardeo/node';
 import {AsgardeoNextConfig} from './models/config';
 import getSessionId from './server/actions/getSessionId';
