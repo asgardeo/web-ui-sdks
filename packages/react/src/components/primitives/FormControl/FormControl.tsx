@@ -64,6 +64,7 @@ const FormControl: FC<FormControlProps> = ({
   const {theme} = useTheme();
 
   const containerStyle: CSSProperties = {
+    textAlign: 'left',
     marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
     ...style,
   };
