@@ -295,6 +295,7 @@ const useStyles = () => {
     () => ({
       card: {
         gap: `calc(${theme.vars.spacing.unit} * 2)`,
+        minWidth: '420px',
       } as CSSProperties,
       header: {
         gap: 0,
