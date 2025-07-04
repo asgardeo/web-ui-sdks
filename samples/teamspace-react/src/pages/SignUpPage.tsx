@@ -1,6 +1,5 @@
 'use client';
 
-import {Users} from 'lucide-react';
 import {SignUp} from '@asgardeo/react';
 import {useNavigate} from 'react-router-dom';
 

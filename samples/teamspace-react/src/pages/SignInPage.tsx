@@ -1,6 +1,5 @@
 'use client';
 
-import {Users} from 'lucide-react';
 import {SignIn} from '@asgardeo/react';
 
 export default function SignInPage() {
