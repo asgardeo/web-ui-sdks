@@ -23,6 +23,18 @@ export interface ThemeContextValue {
   theme: Theme;
   colorScheme: 'light' | 'dark';
   toggleTheme: () => void;
+  /**
+   * Whether branding theme is currently loading
+   */
+  isBrandingLoading?: boolean;
+  /**
+   * Error from branding theme fetch, if any
+   */
+  brandingError?: Error | null;
+  /**
+   * Whether branding inheritance is enabled
+   */
+  inheritFromBranding?: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);

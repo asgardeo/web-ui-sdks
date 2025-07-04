@@ -18,11 +18,13 @@
 
 import {FC} from 'react';
 import {BaseSignUpOptionProps} from './SignUpOptionFactory';
+import useTheme from '../../../../contexts/Theme/useTheme';
 
 /**
  * Image component for sign-up forms.
  */
 const ImageComponent: FC<BaseSignUpOptionProps> = ({component}) => {
+  const {theme} = useTheme();
   const config = component.config || {};
   const src = config['src'] || '';
   const alt = config['alt'] || config['label'] || 'Image';
@@ -33,7 +35,7 @@ const ImageComponent: FC<BaseSignUpOptionProps> = ({component}) => {
     height: 'auto',
     display: 'block',
     margin: variant === 'image_block' ? '1rem auto' : '0',
-    borderRadius: '4px',
+    borderRadius: theme.vars.borderRadius.small,
   };
 
   if (!src) {

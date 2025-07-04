@@ -56,10 +56,10 @@ const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperT
   };
 
   const inputStyle: CSSProperties = {
-    width: theme.spacing.unit * 2.5 + 'px',
-    height: theme.spacing.unit * 2.5 + 'px',
-    marginRight: theme.spacing.unit + 'px',
-    accentColor: theme.colors.primary.main,
+    width: `calc(${theme.vars.spacing.unit} * 2.5)`,
+    height: `calc(${theme.vars.spacing.unit} * 2.5)`,
+    marginRight: theme.vars.spacing.unit,
+    accentColor: theme.vars.colors.primary.main,
   };
 
   return (
@@ -67,7 +67,7 @@ const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperT
       error={error}
       helperText={helperText}
       className={clsx(withVendorCSSClassPrefix('checkbox'), className)}
-      helperTextMarginLeft={theme.spacing.unit * 3.5 + 'px'}
+      helperTextMarginLeft={`calc(${theme.vars.spacing.unit} * 3.5)`}
     >
       <div style={containerStyle}>
         <input type="checkbox" style={inputStyle} aria-invalid={!!error} aria-required={required} {...rest} />
@@ -77,7 +77,7 @@ const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperT
             error={!!error}
             variant="inline"
             style={{
-              color: error ? theme.colors.error.main : theme.colors.text.primary,
+              color: error ? theme.vars.colors.error.main : theme.vars.colors.text.primary,
               fontSize: '0.875rem',
             }}
           >

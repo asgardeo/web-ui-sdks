@@ -18,26 +18,26 @@
 
 'use server';
 
-import {Organization} from '@asgardeo/node';
+import {Organization, AsgardeoAPIError, AsgardeoRuntimeError, TokenResponse} from '@asgardeo/node';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
 
 /**
- * Server action to get organizations.
+ * Server action to switch organization.
  */
-const getOrganizationsAction = async (sessionId: string) => {
+const switchOrganization = async (organization: Organization, sessionId: string): Promise<TokenResponse | Response> => {
   try {
     const client = AsgardeoNextClient.getInstance();
-    const organizations: Organization[] = await client.getOrganizations(sessionId);
-    return {success: true, data: {organizations}, error: null};
+    return await client.switchOrganization(organization, sessionId);
   } catch (error) {
-    return {
-      success: false,
-      data: {
-        user: {},
-      },
-      error: 'Failed to get organizations',
-    };
+    throw new AsgardeoAPIError(
+      `Failed to switch the organizations: ${
+        error instanceof AsgardeoRuntimeError ? error.message : error instanceof Error ? error.message : String(error)
+      }`,
+      'switchOrganization-ServerActionError-001',
+      'nextjs',
+      error instanceof AsgardeoAPIError ? error.statusCode : undefined,
+    );
   }
 };
 
-export default getOrganizationsAction;
+export default switchOrganization;

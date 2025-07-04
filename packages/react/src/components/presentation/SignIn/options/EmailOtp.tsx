@@ -24,6 +24,7 @@ import OtpField from '../../../primitives/OtpField/OtpField';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
 import useFlow from '../../../../contexts/Flow/useFlow';
+import useTheme from '../../../../contexts/Theme/useTheme';
 
 /**
  * Email OTP Sign-In Option Component.
@@ -40,6 +41,7 @@ const EmailOtp: FC<BaseSignInOptionProps> = ({
   buttonClassName = '',
   preferences,
 }) => {
+  const {theme} = useTheme();
   const {t} = useTranslation(preferences?.i18n);
   const {setTitle, setSubtitle} = useFlow();
 
@@ -61,7 +63,7 @@ const EmailOtp: FC<BaseSignInOptionProps> = ({
         const isOtpParam = param.param.toLowerCase().includes('otp') || param.param.toLowerCase().includes('code');
 
         return (
-          <div key={param.param} style={{marginBottom: '1rem'}}>
+          <div key={param.param} style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
             {isOtpParam && hasOtpField ? (
               <OtpField
                 length={6}
@@ -100,7 +102,7 @@ const EmailOtp: FC<BaseSignInOptionProps> = ({
         color="primary"
         variant="solid"
         fullWidth
-        style={{marginBottom: '1rem'}}
+        style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
       >
         {t('email.otp.submit.button')}
       </Button>

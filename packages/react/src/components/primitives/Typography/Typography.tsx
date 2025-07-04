@@ -19,6 +19,7 @@
 import {CSSProperties, FC, ReactNode, ComponentPropsWithoutRef, ElementType} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import clsx from 'clsx';
+import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 
 // Typography variants mapped to HTML elements and styling
 export type TypographyVariant =
@@ -173,84 +174,84 @@ const Typography: FC<TypographyProps> = ({
     switch (variantName) {
       case 'h1':
         return {
-          fontSize: '2.125rem', // 34px
+          fontSize: theme.vars.typography.fontSizes['3xl'], // 34px
           fontWeight: 600,
           lineHeight: 1.235,
           letterSpacing: '-0.00735em',
         };
       case 'h2':
         return {
-          fontSize: '1.5rem', // 24px
+          fontSize: theme.vars.typography.fontSizes['2xl'], // 24px
           fontWeight: 600,
           lineHeight: 1.334,
           letterSpacing: '0em',
         };
       case 'h3':
         return {
-          fontSize: '1.25rem', // 20px
+          fontSize: theme.vars.typography.fontSizes.xl, // 20px
           fontWeight: 600,
           lineHeight: 1.6,
           letterSpacing: '0.0075em',
         };
       case 'h4':
         return {
-          fontSize: '1.125rem', // 18px
+          fontSize: theme.vars.typography.fontSizes.lg, // 18px
           fontWeight: 600,
           lineHeight: 1.5,
           letterSpacing: '0.00938em',
         };
       case 'h5':
         return {
-          fontSize: '1rem', // 16px
+          fontSize: theme.vars.typography.fontSizes.md, // 16px
           fontWeight: 600,
           lineHeight: 1.334,
           letterSpacing: '0em',
         };
       case 'h6':
         return {
-          fontSize: '0.875rem', // 14px
+          fontSize: theme.vars.typography.fontSizes.sm, // 14px
           fontWeight: 500,
           lineHeight: 1.6,
           letterSpacing: '0.0075em',
         };
       case 'subtitle1':
         return {
-          fontSize: '1rem', // 16px
+          fontSize: theme.vars.typography.fontSizes.md, // 16px
           fontWeight: 400,
           lineHeight: 1.75,
           letterSpacing: '0.00938em',
         };
       case 'subtitle2':
         return {
-          fontSize: '0.875rem', // 14px
+          fontSize: theme.vars.typography.fontSizes.sm, // 14px
           fontWeight: 500,
           lineHeight: 1.57,
           letterSpacing: '0.00714em',
         };
       case 'body1':
         return {
-          fontSize: '1rem', // 16px
+          fontSize: theme.vars.typography.fontSizes.md, // 16px
           fontWeight: 400,
           lineHeight: 1.5,
           letterSpacing: '0.00938em',
         };
       case 'body2':
         return {
-          fontSize: '0.875rem', // 14px
+          fontSize: theme.vars.typography.fontSizes.sm, // 14px
           fontWeight: 400,
           lineHeight: 1.43,
           letterSpacing: '0.01071em',
         };
       case 'caption':
         return {
-          fontSize: '0.75rem', // 12px
+          fontSize: theme.vars.typography.fontSizes.xs, // 12px
           fontWeight: 400,
           lineHeight: 1.66,
           letterSpacing: '0.03333em',
         };
       case 'overline':
         return {
-          fontSize: '0.75rem', // 12px
+          fontSize: theme.vars.typography.fontSizes.xs, // 12px
           fontWeight: 400,
           lineHeight: 2.66,
           letterSpacing: '0.08333em',
@@ -258,7 +259,7 @@ const Typography: FC<TypographyProps> = ({
         };
       case 'button':
         return {
-          fontSize: '0.875rem', // 14px
+          fontSize: theme.vars.typography.fontSizes.sm, // 14px
           fontWeight: 500,
           lineHeight: 1.75,
           letterSpacing: '0.02857em',
@@ -292,19 +293,21 @@ const Typography: FC<TypographyProps> = ({
     ...style,
   };
 
-  const classes = clsx(
-    'wso2-typography',
-    `wso2-typography-${variant}`,
-    {
-      'wso2-typography-noWrap': noWrap,
-      'wso2-typography-inline': inline,
-      'wso2-typography-gutterBottom': gutterBottom,
-    },
-    className,
-  );
-
   return (
-    <Component className={classes} style={typographyStyle} {...rest}>
+    <Component
+      className={clsx(
+        withVendorCSSClassPrefix('typography'),
+        withVendorCSSClassPrefix(`typography-${variant}`),
+        {
+          [withVendorCSSClassPrefix('typography-noWrap')]: noWrap,
+          [withVendorCSSClassPrefix('typography-inline')]: inline,
+          [withVendorCSSClassPrefix('typography-gutterBottom')]: gutterBottom,
+        },
+        className,
+      )}
+      style={typographyStyle}
+      {...rest}
+    >
       {children}
     </Component>
   );

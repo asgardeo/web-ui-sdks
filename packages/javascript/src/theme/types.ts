@@ -16,7 +16,44 @@
  * under the License.
  */
 
+export interface ThemeTypography {
+  fontFamily: string;
+  fontSizes: {
+    xs: string;
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+    '2xl': string;
+    '3xl': string;
+  };
+  fontWeights: {
+    normal: number;
+    medium: number;
+    semibold: number;
+    bold: number;
+  };
+  lineHeights: {
+    tight: number;
+    normal: number;
+    relaxed: number;
+  };
+}
+
 export interface ThemeColors {
+  action: {
+    active: string;
+    hover: string;
+    hoverOpacity: number;
+    selected: string;
+    selectedOpacity: number;
+    disabled: string;
+    disabledBackground: string;
+    disabledOpacity: number;
+    focus: string;
+    focusOpacity: number;
+    activatedOpacity: number;
+  };
   background: {
     body: {
       main: string;
@@ -66,10 +103,148 @@ export interface ThemeConfig {
   spacing: {
     unit: number;
   };
+  typography: {
+    fontFamily: string;
+    fontSizes: {
+      xs: string;
+      sm: string;
+      md: string;
+      lg: string;
+      xl: string;
+      '2xl': string;
+      '3xl': string;
+    };
+    fontWeights: {
+      normal: number;
+      medium: number;
+      semibold: number;
+      bold: number;
+    };
+    lineHeights: {
+      tight: number;
+      normal: number;
+      relaxed: number;
+    };
+  };
+  /**
+   * Image assets configuration
+   */
+  images?: ThemeImages;
+  /**
+   * The prefix used for CSS variables.
+   * @default 'asgardeo' (from VendorConstants.VENDOR_PREFIX)
+   */
+  cssVarPrefix?: string;
+}
+
+export interface ThemeVars {
+  colors: {
+    action: {
+      active: string;
+      hover: string;
+      hoverOpacity: string;
+      selected: string;
+      selectedOpacity: string;
+      disabled: string;
+      disabledBackground: string;
+      disabledOpacity: string;
+      focus: string;
+      focusOpacity: string;
+      activatedOpacity: string;
+    };
+    primary: {
+      main: string;
+      contrastText: string;
+    };
+    secondary: {
+      main: string;
+      contrastText: string;
+    };
+    background: {
+      surface: string;
+      disabled: string;
+      body: {
+        main: string;
+      };
+    };
+    error: {
+      main: string;
+      contrastText: string;
+    };
+    success: {
+      main: string;
+      contrastText: string;
+    };
+    warning: {
+      main: string;
+      contrastText: string;
+    };
+    text: {
+      primary: string;
+      secondary: string;
+    };
+    border: string;
+  };
+  spacing: {
+    unit: string;
+  };
+  borderRadius: {
+    small: string;
+    medium: string;
+    large: string;
+  };
+  shadows: {
+    small: string;
+    medium: string;
+    large: string;
+  };
+  typography: {
+    fontFamily: string;
+    fontSizes: {
+      xs: string;
+      sm: string;
+      md: string;
+      lg: string;
+      xl: string;
+      '2xl': string;
+      '3xl': string;
+    };
+    fontWeights: {
+      normal: string;
+      medium: string;
+      semibold: string;
+      bold: string;
+    };
+    lineHeights: {
+      tight: string;
+      normal: string;
+      relaxed: string;
+    };
+  };
+  images?: {
+    favicon?: {
+      url?: string;
+      title?: string;
+      alt?: string;
+    };
+    logo?: {
+      url?: string;
+      title?: string;
+      alt?: string;
+    };
+    [key: string]:
+      | {
+          url?: string;
+          title?: string;
+          alt?: string;
+        }
+      | undefined;
+  };
 }
 
 export interface Theme extends ThemeConfig {
   cssVariables: Record<string, string>;
+  vars: ThemeVars;
 }
 
 export type ThemeMode = 'light' | 'dark' | 'system' | 'class';
@@ -85,4 +260,34 @@ export interface ThemeDetection {
    * @default 'light'
    */
   lightClass?: string;
+}
+
+export interface ThemeImage {
+  /**
+   * The URL of the image
+   */
+  url?: string;
+  /**
+   * The title/alt text for the image
+   */
+  title?: string;
+  /**
+   * Alternative text for accessibility
+   */
+  alt?: string;
+}
+
+export interface ThemeImages {
+  /**
+   * Favicon configuration
+   */
+  favicon?: ThemeImage;
+  /**
+   * Logo configuration
+   */
+  logo?: ThemeImage;
+  /**
+   * Allow for additional custom images
+   */
+  [key: string]: ThemeImage | undefined;
 }

@@ -71,33 +71,33 @@ const useAlertStyles = (variant: AlertVariant) => {
   return useMemo(() => {
     const variantStyles: Record<AlertVariant, CSSProperties> = {
       success: {
-        backgroundColor: '#d4edda',
-        borderColor: '#28a745',
-        color: '#155724',
+        backgroundColor: `${theme.vars.colors.success.main}15`,
+        borderColor: theme.vars.colors.success.main,
+        color: theme.vars.colors.success.main,
       },
       error: {
-        backgroundColor: `${theme.colors.error.main}15`,
-        borderColor: theme.colors.error.main,
-        color: theme.colors.error.main,
+        backgroundColor: `${theme.vars.colors.error.main}15`,
+        borderColor: theme.vars.colors.error.main,
+        color: theme.vars.colors.error.main,
       },
       warning: {
-        backgroundColor: '#fff3cd',
-        borderColor: '#ffc107',
-        color: '#856404',
+        backgroundColor: `${theme.vars.colors.warning.main}15`,
+        borderColor: theme.vars.colors.warning.main,
+        color: theme.vars.colors.warning.main,
       },
       info: {
-        backgroundColor: `${theme.colors.primary.main}15`,
-        borderColor: theme.colors.primary.main,
-        color: theme.colors.primary.main,
+        backgroundColor: `${theme.vars.colors.primary.main}15`,
+        borderColor: theme.vars.colors.primary.main,
+        color: theme.vars.colors.primary.main,
       },
     };
 
     return {
-      padding: `${theme.spacing.unit * 2}px`,
-      borderRadius: theme.borderRadius.medium,
+      padding: `calc(${theme.vars.spacing.unit} * 2)`,
+      borderRadius: theme.vars.borderRadius.medium,
       border: '1px solid',
       display: 'flex',
-      gap: `${theme.spacing.unit * 1.5}px`,
+      gap: `calc(${theme.vars.spacing.unit} * 1.5)`,
       alignItems: 'flex-start',
       ...variantStyles[variant],
     };
@@ -110,9 +110,9 @@ const useAlertIconStyles = () => {
   return useMemo(
     (): CSSProperties => ({
       flexShrink: 0,
-      marginTop: '2px', // Slight alignment adjustment
-      width: '20px',
-      height: '20px',
+      marginTop: `calc(${theme.vars.spacing.unit} * 0.25)`, // Slight alignment adjustment
+      width: `calc(${theme.vars.spacing.unit} * 2.5)`,
+      height: `calc(${theme.vars.spacing.unit} * 2.5)`,
     }),
     [theme],
   );
@@ -126,7 +126,7 @@ const useAlertContentStyles = () => {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: `${theme.spacing.unit}px`,
+      gap: theme.vars.spacing.unit,
     }),
     [theme],
   );
@@ -138,7 +138,7 @@ const useAlertTitleStyles = () => {
   return useMemo(
     (): CSSProperties => ({
       margin: 0,
-      fontSize: '14px',
+      fontSize: theme.vars.typography.fontSizes.sm,
       fontWeight: 600,
       lineHeight: 1.4,
       color: 'inherit',
@@ -153,9 +153,9 @@ const useAlertDescriptionStyles = () => {
   return useMemo(
     (): CSSProperties => ({
       margin: 0,
-      fontSize: '14px',
+      fontSize: theme.vars.typography.fontSizes.sm,
       lineHeight: 1.4,
-      color: theme.colors.text.secondary,
+      color: theme.vars.colors.text.secondary,
     }),
     [theme],
   );

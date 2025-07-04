@@ -49,19 +49,19 @@ const useStyles = () => {
       trigger: {
         display: 'inline-flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit}px`,
-        padding: `${theme.spacing.unit * 0.75}px ${theme.spacing.unit}px`,
-        border: `1px solid ${theme.colors.border}`,
-        background: theme.colors.background.surface,
+        gap: theme.vars.spacing.unit,
+        padding: `calc(${theme.vars.spacing.unit} * 0.75) ${theme.vars.spacing.unit}`,
+        border: `1px solid ${theme.vars.colors.border}`,
+        background: theme.vars.colors.background.surface,
         cursor: 'pointer',
-        borderRadius: theme.borderRadius.medium,
+        borderRadius: theme.vars.borderRadius.medium,
         minWidth: '160px',
         '&:hover': {
-          backgroundColor: theme.colors.background,
+          backgroundColor: theme.vars.colors.background.surface,
         },
       } as CSSProperties,
       orgName: {
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         fontWeight: 500,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
@@ -71,12 +71,10 @@ const useStyles = () => {
       dropdownContent: {
         minWidth: '280px',
         maxWidth: '400px',
-        backgroundColor: theme.colors.background.surface,
-        borderRadius: theme.borderRadius.medium,
-        boxShadow: `0 4px 6px -1px ${
-          colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.1)'
-        }, 0 2px 4px -1px ${colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.06)'}`,
-        border: `1px solid ${theme.colors.border}`,
+        backgroundColor: theme.vars.colors.background.surface,
+        borderRadius: theme.vars.borderRadius.medium,
+        boxShadow: theme.vars.shadows.medium,
+        border: `1px solid ${theme.vars.colors.border}`,
         outline: 'none',
         zIndex: 1000,
       } as CSSProperties,
@@ -89,29 +87,32 @@ const useStyles = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        gap: `${theme.spacing.unit}px`,
-        padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px`,
+        gap: theme.vars.spacing.unit,
+        padding: `calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 2)`,
         width: '100%',
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         textDecoration: 'none',
         border: 'none',
-        background: 'none',
+        backgroundColor: 'none',
         cursor: 'pointer',
         fontSize: '0.875rem',
         textAlign: 'left',
-        borderRadius: theme.borderRadius.medium,
+        borderRadius: theme.vars.borderRadius.medium,
         transition: 'background-color 0.15s ease-in-out',
+        '&:hover': {
+          backgroundColor: theme.vars.colors.action?.hover || 'rgba(0, 0, 0, 0.04)',
+        },
       } as CSSProperties,
       organizationInfo: {
         display: 'flex',
         flexDirection: 'column',
-        gap: `${theme.spacing.unit / 4}px`,
+        gap: `calc(${theme.vars.spacing.unit} / 4)`,
         flex: 1,
         minWidth: 0,
         overflow: 'hidden',
       } as CSSProperties,
       organizationName: {
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         fontSize: '0.875rem',
         fontWeight: 500,
         margin: 0,
@@ -120,7 +121,7 @@ const useStyles = () => {
         whiteSpace: 'nowrap',
       } as CSSProperties,
       organizationMeta: {
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         fontSize: '0.75rem',
         margin: 0,
         overflow: 'hidden',
@@ -128,25 +129,24 @@ const useStyles = () => {
         whiteSpace: 'nowrap',
       } as CSSProperties,
       divider: {
-        margin: `${theme.spacing.unit * 0.5}px 0`,
-        borderBottom: `1px solid ${theme.colors.border}`,
+        margin: `calc(${theme.vars.spacing.unit} * 0.5) 0`,
+        borderBottom: `1px solid ${theme.vars.colors.border}`,
       } as CSSProperties,
       dropdownHeader: {
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit}px`,
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-        borderBottom: `1px solid ${theme.colors.border}`,
+        gap: theme.vars.spacing.unit,
+        padding: `${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
       loadingContainer: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '80px',
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
       } as CSSProperties,
       loadingText: {
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         fontSize: '0.875rem',
       } as CSSProperties,
       errorContainer: {
@@ -154,10 +154,10 @@ const useStyles = () => {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '80px',
-        padding: `${theme.spacing.unit * 2}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
       errorText: {
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         fontSize: '0.875rem',
         textAlign: 'center',
       } as CSSProperties,
@@ -171,12 +171,12 @@ const useStyles = () => {
       sectionHeader: {
         textTransform: 'uppercase',
         letterSpacing: '0.05em',
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
       } as CSSProperties,
       sectionHeaderContainer: {
         borderTop: 'none',
         borderBottom: 'none',
-        paddingBottom: `${theme.spacing.unit / 2}px`,
+        paddingBottom: `calc(${theme.vars.spacing.unit} / 2)`,
       } as CSSProperties,
     }),
     [theme, colorScheme],
@@ -333,8 +333,6 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
   const {theme, colorScheme} = useTheme();
   const {t} = useTranslation();
 
-  const hoverBackgroundColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)';
-
   const {refs, floatingStyles, context} = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
@@ -396,7 +394,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
           {showRole && organization.role && <span style={styles.roleCapitalized}>{organization.role}</span>}
         </div>
       </div>
-      {isSelected && <Check width="16" height="16" color={theme.colors.text.primary} />}
+      {isSelected && <Check width="16" height="16" color={theme.vars.colors.text.primary} />}
     </>
   );
 
@@ -564,7 +562,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                   style={{
                     ...styles.dropdownHeader,
                     ...styles.sectionHeaderContainer,
-                    borderTop: currentOrganization ? `1px solid ${theme.colors.border}` : 'none',
+                    borderTop: currentOrganization ? `1px solid ${theme.vars.colors.border}` : 'none',
                   }}
                 >
                   <Typography variant="caption" fontWeight={600} style={styles.sectionHeader}>
@@ -603,7 +601,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                             ...styles.menuItem,
                             backgroundColor:
                               hoveredItemIndex === switchableOrganizations.indexOf(organization)
-                                ? hoverBackgroundColor
+                                ? theme.vars.colors.action?.hover
                                 : 'transparent',
                           }}
                           onMouseEnter={(): void => setHoveredItemIndex(switchableOrganizations.indexOf(organization))}
@@ -633,7 +631,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                                     ...styles.menuItem,
                                     backgroundColor:
                                       hoveredItemIndex === switchableOrganizations.length + index
-                                        ? hoverBackgroundColor
+                                        ? theme.vars.colors.action?.hover
                                         : 'transparent',
                                   }}
                                   className={withVendorCSSClassPrefix('organization-switcher__menu-item')}
@@ -652,7 +650,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                                     ...styles.menuItem,
                                     backgroundColor:
                                       hoveredItemIndex === switchableOrganizations.length + index
-                                        ? hoverBackgroundColor
+                                        ? theme.vars.colors.action?.hover
                                         : 'transparent',
                                   }}
                                   className={withVendorCSSClassPrefix('organization-switcher__menu-item')}

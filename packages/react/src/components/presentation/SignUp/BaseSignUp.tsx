@@ -26,14 +26,16 @@ import {
   AsgardeoAPIError,
 } from '@asgardeo/browser';
 import {clsx} from 'clsx';
-import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef} from 'react';
+import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef, useMemo, CSSProperties} from 'react';
 import {renderSignUpComponents} from './options/SignUpOptionFactory';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
 import useFlow from '../../../contexts/Flow/useFlow';
 import {useForm, FormField} from '../../../hooks/useForm';
 import useTranslation from '../../../hooks/useTranslation';
+import useTheme from '../../../contexts/Theme/useTheme';
 import Alert from '../../primitives/Alert/Alert';
 import Card, {CardProps} from '../../primitives/Card/Card';
+import Logo from '../../primitives/Logo/Logo';
 import Spinner from '../../primitives/Spinner/Spinner';
 import Typography from '../../primitives/Typography/Typography';
 
@@ -121,6 +123,71 @@ export interface BaseSignUpProps {
 }
 
 /**
+ * Custom hook for managing component styles
+ */
+const useStyles = () => {
+  const {theme} = useTheme();
+
+  return useMemo(
+    () => ({
+      card: {
+        gap: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      header: {
+        gap: 0,
+      } as CSSProperties,
+      subtitle: {
+        marginTop: `calc(${theme.vars.spacing.unit} * 1)`,
+      } as CSSProperties,
+      messagesContainer: {
+        marginTop: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      messageItem: {
+        marginBottom: `calc(${theme.vars.spacing.unit} * 1)`,
+      } as CSSProperties,
+      errorContainer: {
+        marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      contentContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      loadingContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
+      } as CSSProperties,
+      loadingText: {
+        marginTop: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      divider: {
+        margin: `calc(${theme.vars.spacing.unit} * 1) 0`,
+      } as CSSProperties,
+      logoContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginBottom: `calc(${theme.vars.spacing.unit} * 3)`,
+      } as CSSProperties,
+      centeredContainer: {
+        textAlign: 'center',
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
+      } as CSSProperties,
+      passkeyContainer: {
+        marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      passkeyText: {
+        marginTop: `calc(${theme.vars.spacing.unit} * 1)`,
+        color: theme.vars.colors.text.secondary,
+      } as CSSProperties,
+    }),
+    [theme.vars.spacing.unit, theme.vars.colors.text.secondary],
+  );
+};
+
+/**
  * Base SignUp component that provides embedded sign-up flow.
  * This component handles both the presentation layer and sign-up flow logic.
  * It accepts API functions as props to maintain framework independence.
@@ -155,11 +222,21 @@ export interface BaseSignUpProps {
  * };
  * ```
  */
-const BaseSignUp: FC<BaseSignUpProps> = props => (
-  <FlowProvider>
-    <BaseSignUpContent {...props} />
-  </FlowProvider>
-);
+const BaseSignUp: FC<BaseSignUpProps> = props => {
+  const {theme} = useTheme();
+  const styles = useStyles();
+
+  return (
+    <div>
+      <div style={styles.logoContainer}>
+        <Logo size="large" />
+      </div>
+      <FlowProvider>
+        <BaseSignUpContent {...props} />
+      </FlowProvider>
+    </div>
+  );
+};
 
 /**
  * Internal component that consumes FlowContext and renders the sign-up UI.
@@ -180,8 +257,10 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   variant = 'outlined',
   isInitialized,
 }) => {
+  const {theme} = useTheme();
   const {t} = useTranslation();
   const {subtitle: flowSubtitle, title: flowTitle, messages: flowMessages} = useFlow();
+  const styles = useStyles();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isFlowInitialized, setIsFlowInitialized] = useState(false);
@@ -632,9 +711,9 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
 
   if (!isFlowInitialized && isLoading) {
     return (
-      <Card className={containerClasses} variant={variant}>
+      <Card className={containerClasses} style={styles.card} variant={variant}>
         <Card.Content>
-          <div style={{display: 'flex', justifyContent: 'center', padding: '2rem'}}>
+          <div style={{display: 'flex', justifyContent: 'center', padding: `calc(${theme.vars.spacing.unit} * 4)`}}>
             <Spinner size="medium" />
           </div>
         </Card.Content>
@@ -644,7 +723,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
 
   if (!currentFlow) {
     return (
-      <Card className={containerClasses} variant={variant}>
+      <Card className={containerClasses} style={styles.card} variant={variant}>
         <Card.Content>
           <Alert variant="error" className={errorClasses}>
             <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
@@ -656,33 +735,36 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   }
 
   return (
-    <Card className={containerClasses} variant={variant}>
-      <Card.Header>
-        {flowMessages && flowMessages.length > 0 && (
-          <div style={{marginTop: '1rem'}}>
+    <Card className={containerClasses} style={styles.card} variant={variant}>
+      {flowMessages && flowMessages.length > 0 && (
+        <Card.Header style={styles.header}>
+          <div style={{marginTop: `calc(${theme.vars.spacing.unit} * 2)`}}>
             {flowMessages.map((message: any, index: number) => (
               <Alert
                 key={message.id || index}
                 variant={message.type?.toLowerCase() === 'error' ? 'error' : 'info'}
-                style={{marginBottom: '0.5rem'}}
+                style={{marginBottom: `calc(${theme.vars.spacing.unit} * 1)`}}
                 className={messageClasses}
               >
                 <Alert.Description>{message.message}</Alert.Description>
               </Alert>
             ))}
           </div>
-        )}
-      </Card.Header>
-
+        </Card.Header>
+      )}
       <Card.Content>
         {error && (
-          <Alert variant="error" className={errorClasses} style={{marginBottom: '1rem'}}>
+          <Alert
+            variant="error"
+            className={errorClasses}
+            style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
+          >
             <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
             <Alert.Description>{error}</Alert.Description>
           </Alert>
         )}
 
-        <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+        <div style={{display: 'flex', flexDirection: 'column', gap: `calc(${theme.vars.spacing.unit} * 2)`}}>
           {currentFlow.data?.components && renderComponents(currentFlow.data.components)}
         </div>
       </Card.Content>

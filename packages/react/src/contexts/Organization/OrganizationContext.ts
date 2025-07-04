@@ -16,18 +16,8 @@
  * under the License.
  */
 
-import {Organization} from '@asgardeo/browser';
+import {AllOrganizationsApiResponse, Organization} from '@asgardeo/browser';
 import {Context, createContext} from 'react';
-
-/**
- * Interface for organizations with switch access information.
- */
-export interface OrganizationWithSwitchAccess extends Organization {
-  /**
-   * Whether the user has switch access to this organization
-   */
-  canSwitch: boolean;
-}
 
 /**
  * Props interface of {@link OrganizationContext}
@@ -35,42 +25,11 @@ export interface OrganizationWithSwitchAccess extends Organization {
 export type OrganizationContextProps = {
   currentOrganization: Organization | null;
   error: string | null;
-  getOrganizations: () => Promise<Organization[]>;
   isLoading: boolean;
-  organizations: Organization[] | null;
-  revalidateOrganizations: () => Promise<void>;
+  myOrganizations: Organization[];
   switchOrganization: (organization: Organization) => Promise<void>;
-
-  // Enhanced features for paginated organizations with switch access
-  /**
-   * Paginated organizations with switch access information
-   */
-  paginatedOrganizations: OrganizationWithSwitchAccess[];
-  /**
-   * Whether there are more organizations to load
-   */
-  hasMore: boolean;
-  /**
-   * Whether more data is being loaded
-   */
-  isLoadingMore: boolean;
-  /**
-   * Total number of organizations
-   */
-  totalCount: number;
-  /**
-   * Function to fetch more organizations (pagination)
-   */
-  fetchMore: () => Promise<void>;
-  /**
-   * Function to fetch paginated organizations with switch access
-   */
-  fetchPaginatedOrganizations: (config?: {
-    filter?: string;
-    limit?: number;
-    recursive?: boolean;
-    reset?: boolean;
-  }) => Promise<void>;
+  revalidateMyOrganizations: () => Promise<Organization[]>;
+  getAllOrganizations: () => Promise<AllOrganizationsApiResponse>;
 };
 
 /**
@@ -79,19 +38,15 @@ export type OrganizationContextProps = {
 const OrganizationContext: Context<OrganizationContextProps | null> = createContext<null | OrganizationContextProps>({
   currentOrganization: null,
   error: null,
-  getOrganizations: () => Promise.resolve([]),
   isLoading: false,
-  organizations: null,
-  revalidateOrganizations: () => Promise.resolve(),
+  myOrganizations: null,
   switchOrganization: () => Promise.resolve(),
-
-  // Enhanced features for paginated organizations with switch access
-  paginatedOrganizations: [],
-  hasMore: false,
-  isLoadingMore: false,
-  totalCount: 0,
-  fetchMore: () => Promise.resolve(),
-  fetchPaginatedOrganizations: () => Promise.resolve(),
+  revalidateMyOrganizations: () => Promise.resolve([]),
+  getAllOrganizations: () =>
+    Promise.resolve({
+      count: 0,
+      organizations: [],
+    }),
 });
 
 OrganizationContext.displayName = 'OrganizationContext';

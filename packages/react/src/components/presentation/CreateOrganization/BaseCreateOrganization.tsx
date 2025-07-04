@@ -21,6 +21,7 @@ import clsx from 'clsx';
 import {ChangeEvent, CSSProperties, FC, ReactElement, ReactNode, useMemo, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
+import Alert from '../../primitives/Alert/Alert';
 import Button from '../../primitives/Button/Button';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
 import FormControl from '../../primitives/FormControl/FormControl';
@@ -34,90 +35,90 @@ const useStyles = () => {
   return useMemo(
     () => ({
       root: {
-        padding: `${theme.spacing.unit * 4}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
         minWidth: '600px',
         margin: '0 auto',
       } as CSSProperties,
       card: {
-        background: theme.colors.background.surface,
-        borderRadius: theme.borderRadius.large,
-        padding: `${theme.spacing.unit * 4}px`,
+        background: theme.vars.colors.background.surface,
+        borderRadius: theme.vars.borderRadius.large,
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
       } as CSSProperties,
       content: {
         display: 'flex',
         flexDirection: 'column',
-        gap: `${theme.spacing.unit * 2}px`,
+        gap: `calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
       form: {
         display: 'flex',
         flexDirection: 'column',
-        gap: `${theme.spacing.unit * 2}px`,
+        gap: `calc(${theme.vars.spacing.unit} * 2)`,
         width: '100%',
       } as CSSProperties,
       header: {
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit * 1.5}px`,
-        marginBottom: `${theme.spacing.unit * 1.5}px`,
+        gap: `calc(${theme.vars.spacing.unit} * 1.5)`,
+        marginBottom: `calc(${theme.vars.spacing.unit} * 1.5)`,
       } as CSSProperties,
       field: {
         display: 'flex',
         alignItems: 'center',
-        padding: `${theme.spacing.unit}px 0`,
-        borderBottom: `1px solid ${theme.colors.border}`,
+        padding: `${theme.vars.spacing.unit} 0`,
+        borderBottom: `1px solid ${theme.vars.colors.border}`,
         minHeight: '32px',
       } as CSSProperties,
       textarea: {
         width: '100%',
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
-        border: `1px solid ${theme.colors.border}`,
-        borderRadius: theme.borderRadius.medium,
-        fontSize: '1rem',
-        color: theme.colors.text.primary,
-        backgroundColor: theme.colors.background.surface,
+        padding: `${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 1.5)`,
+        border: `1px solid ${theme.vars.colors.border}`,
+        borderRadius: theme.vars.borderRadius.medium,
+        fontSize: theme.vars.typography.fontSizes.md,
+        color: theme.vars.colors.text.primary,
+        backgroundColor: theme.vars.colors.background.surface,
         fontFamily: 'inherit',
         minHeight: '80px',
         resize: 'vertical',
         outline: 'none',
         '&:focus': {
-          borderColor: theme.colors.primary.main,
-          boxShadow: `0 0 0 2px ${theme.colors.primary.main}20`,
+          borderColor: theme.vars.colors.primary.main,
+          boxShadow: `0 0 0 2px ${theme.vars.colors.primary.main}20`,
         },
         '&:disabled': {
-          backgroundColor: theme.colors.background.disabled,
-          color: theme.colors.text.secondary,
+          backgroundColor: theme.vars.colors.background.disabled,
+          color: theme.vars.colors.text.secondary,
           cursor: 'not-allowed',
         },
       } as CSSProperties,
       avatarContainer: {
         alignItems: 'flex-start',
         display: 'flex',
-        gap: `${theme.spacing.unit * 2}px`,
-        marginBottom: `${theme.spacing.unit}px`,
+        gap: `calc(${theme.vars.spacing.unit} * 2)`,
+        marginBottom: theme.vars.spacing.unit,
       } as CSSProperties,
       actions: {
         display: 'flex',
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
         justifyContent: 'flex-end',
-        paddingTop: `${theme.spacing.unit * 2}px`,
+        paddingTop: `calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
       infoContainer: {
         display: 'flex',
         flexDirection: 'column' as const,
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
       } as CSSProperties,
       value: {
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         flex: 1,
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
         overflow: 'hidden',
         minHeight: '32px',
         lineHeight: '32px',
       } as CSSProperties,
       popup: {
-        padding: `${theme.spacing.unit * 2}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
     }),
     [theme, colorScheme],
@@ -284,6 +285,14 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
           style={styles.form}
           onSubmit={handleSubmit}
         >
+          {/* Error Alert */}
+          {error && (
+            <Alert variant="error" style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
+              <Alert.Title>Error</Alert.Title>
+              <Alert.Description>{error}</Alert.Description>
+            </Alert>
+          )}
+
           {/* Organization Name */}
           <div className={withVendorCSSClassPrefix('create-organization__field-group')}>
             <TextField
@@ -321,7 +330,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
                 className={withVendorCSSClassPrefix('create-organization__textarea')}
                 style={{
                   ...styles.textarea,
-                  borderColor: formErrors.description ? theme.colors.error.main : theme.colors.border,
+                  borderColor: formErrors.description ? theme.vars.colors.error.main : theme.vars.colors.border,
                 }}
                 placeholder={t('organization.create.description.placeholder')}
                 value={formData.description}
@@ -334,13 +343,6 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
 
           {/* Additional Fields */}
           {renderAdditionalFields && renderAdditionalFields()}
-
-          {/* Error Message */}
-          {error && (
-            <Typography variant="body2" style={{color: theme.colors.error.main, fontSize: '0.875rem'}}>
-              {error}
-            </Typography>
-          )}
         </form>
 
         {/* Actions */}
@@ -363,7 +365,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeading>{title}</DialogHeading>
-          <div style={{padding: '1rem'}}>{createOrganizationContent}</div>
+          <div style={{padding: `calc(${theme.vars.spacing.unit} * 2)`}}>{createOrganizationContent}</div>
         </DialogContent>
       </Dialog>
     );

@@ -46,9 +46,12 @@ import {
   CreateOrganizationPayload,
   getOrganization,
   OrganizationDetails,
-  deriveOrganizationHandleFromBaseUrl
+  deriveOrganizationHandleFromBaseUrl,
+  getAllOrganizations,
+  AllOrganizationsApiResponse,
+  extractUserClaimsFromIdToken,
+  TokenResponse,
 } from '@asgardeo/node';
-import {NextRequest, NextResponse} from 'next/server';
 import {AsgardeoNextConfig} from './models/config';
 import getSessionId from './server/actions/getSessionId';
 import decorateConfigWithNextEnv from './utils/decorateConfigWithNextEnv';
@@ -101,8 +104,17 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       return Promise.resolve(true);
     }
 
-    const {baseUrl, organizationHandle, clientId, clientSecret, signInUrl, afterSignInUrl, afterSignOutUrl, signUpUrl, ...rest} =
-      decorateConfigWithNextEnv(config);
+    const {
+      baseUrl,
+      organizationHandle,
+      clientId,
+      clientSecret,
+      signInUrl,
+      afterSignInUrl,
+      afterSignOutUrl,
+      signUpUrl,
+      ...rest
+    } = decorateConfigWithNextEnv(config);
 
     this.isInitialized = true;
 
@@ -189,8 +201,8 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     } catch (error) {
       return {
         schemas: [],
-        flattenedProfile: await this.asgardeo.getDecodedIdToken(userId),
-        profile: await this.asgardeo.getDecodedIdToken(userId),
+        flattenedProfile: extractUserClaimsFromIdToken(await this.asgardeo.getDecodedIdToken(userId)),
+        profile: extractUserClaimsFromIdToken(await this.asgardeo.getDecodedIdToken(userId)),
       };
     }
   }
@@ -263,25 +275,46 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     }
   }
 
-  override async getOrganizations(userId?: string): Promise<Organization[]> {
+  override async getMyOrganizations(options?: any, userId?: string): Promise<Organization[]> {
     try {
       const configData = await this.asgardeo.getConfigData();
       const baseUrl: string = configData?.baseUrl as string;
 
-      const organizations = await getMeOrganizations({
+      return await getMeOrganizations({
         baseUrl,
         headers: {
           Authorization: `Bearer ${await this.getAccessToken(userId)}`,
         },
       });
-
-      return organizations;
     } catch (error) {
       throw new AsgardeoRuntimeError(
-        'Failed to fetch organizations.',
-        'react-AsgardeoReactClient-GetOrganizationsError-001',
-        'react',
-        'An error occurred while fetching the organizations associated with the user.',
+        `Failed to fetch the user's associated organizations: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        'AsgardeoNextClient-getMyOrganizations-RuntimeError-001',
+        'nextjs',
+        'An error occurred while fetching associated organizations of the signed-in user.',
+      );
+    }
+  }
+
+  override async getAllOrganizations(options?: any, userId?: string): Promise<AllOrganizationsApiResponse> {
+    try {
+      const configData = await this.asgardeo.getConfigData();
+      const baseUrl: string = configData?.baseUrl as string;
+
+      return getAllOrganizations({
+        baseUrl,
+        headers: {
+          Authorization: `Bearer ${await this.getAccessToken(userId)}`,
+        },
+      });
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to fetch all organizations: ${error instanceof Error ? error.message : String(error)}`,
+        'AsgardeoNextClient-getAllOrganizations-RuntimeError-001',
+        'nextjs',
+        'An error occurred while fetching all the organizations associated with the user.',
       );
     }
   }
@@ -296,7 +329,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     };
   }
 
-  override async switchOrganization(organization: Organization, userId?: string): Promise<void> {
+  override async switchOrganization(organization: Organization, userId?: string): Promise<TokenResponse | Response> {
     try {
       const configData = await this.asgardeo.getConfigData();
       const scopes = configData?.scopes;
@@ -304,8 +337,8 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
       if (!organization.id) {
         throw new AsgardeoRuntimeError(
           'Organization ID is required for switching organizations',
-          'react-AsgardeoReactClient-ValidationError-001',
-          'react',
+          'AsgardeoNextClient-switchOrganization-ValidationError-001',
+          'nextjs',
           'The organization object must contain a valid ID to perform the organization switch.',
         );
       }
@@ -314,6 +347,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
         attachToken: false,
         data: {
           client_id: '{{clientId}}',
+          client_secret: '{{clientSecret}}',
           grant_type: 'organization_switch',
           scope: '{{scopes}}',
           switching_organization: organization.id,
@@ -324,10 +358,10 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
         signInRequired: true,
       };
 
-      await this.asgardeo.exchangeToken(exchangeConfig, userId);
+      return await this.asgardeo.exchangeToken(exchangeConfig, userId);
     } catch (error) {
       throw new AsgardeoRuntimeError(
-        `Failed to switch organization: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to switch organization: ${error instanceof Error ? error.message : String(JSON.stringify(error))}`,
         'AsgardeoReactClient-RuntimeError-003',
         'nextjs',
         'An error occurred while switching to the specified organization. Please try again.',
@@ -345,6 +379,14 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
   getAccessToken(sessionId?: string): Promise<string> {
     return this.asgardeo.getAccessToken(sessionId as string);
+  }
+
+  /**
+   * Get the decoded ID token for a session
+   */
+  async getDecodedIdToken(sessionId?: string): Promise<IdToken> {
+    await this.ensureInitialized();
+    return this.asgardeo.getDecodedIdToken(sessionId as string);
   }
 
   override getConfiguration(): T {

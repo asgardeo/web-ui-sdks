@@ -41,7 +41,7 @@ import OrganizationContext, {OrganizationContextProps} from './OrganizationConte
  *     organizations,
  *     currentOrganization,
  *     switchOrganization,
- *     revalidateOrganizations,
+ *     revalidateMyOrganizations,
  *     getOrganizations,
  *     isLoading,
  *     error
@@ -71,7 +71,7 @@ import OrganizationContext, {OrganizationContextProps} from './OrganizationConte
  *           </option>
  *         ))}
  *       </select>
- *       <button onClick={revalidateOrganizations}>
+ *       <button onClick={revalidateMyOrganizations}>
  *         Refresh Organizations
  *       </button>
  *       <button onClick={async () => {

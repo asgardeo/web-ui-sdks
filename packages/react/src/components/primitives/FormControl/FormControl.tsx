@@ -64,12 +64,12 @@ const FormControl: FC<FormControlProps> = ({
   const {theme} = useTheme();
 
   const containerStyle: CSSProperties = {
-    marginBottom: theme.spacing.unit * 2 + 'px',
+    marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
     ...style,
   };
 
   const helperTextStyle: CSSProperties = {
-    marginTop: theme.spacing.unit / 2 + 'px',
+    marginTop: `calc(${theme.vars.spacing.unit} / 2)`,
     textAlign: helperTextAlign,
     ...(helperTextMarginLeft && {marginLeft: helperTextMarginLeft}),
   };

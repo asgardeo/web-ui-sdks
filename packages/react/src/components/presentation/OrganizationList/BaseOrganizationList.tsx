@@ -16,13 +16,20 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {AllOrganizationsApiResponse, Organization, withVendorCSSClassPrefix} from '@asgardeo/browser';
 import clsx from 'clsx';
 import {FC, ReactElement, ReactNode, useMemo, CSSProperties} from 'react';
-import {OrganizationWithSwitchAccess} from '../../../contexts/Organization/OrganizationContext';
 import useTheme from '../../../contexts/Theme/useTheme';
+import useTranslation from '../../../hooks/useTranslation';
 import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
-import {Avatar} from '../../primitives/Avatar/Avatar';
+import Avatar from '../../primitives/Avatar/Avatar';
+import Button from '../../primitives/Button/Button';
+import Typography from '../../primitives/Typography/Typography';
+import Spinner from '../../primitives/Spinner/Spinner';
+
+export interface OrganizationWithSwitchAccess extends Organization {
+  canSwitch: boolean;
+}
 
 /**
  * Props interface for the BaseOrganizationList component.
@@ -33,9 +40,13 @@ export interface BaseOrganizationListProps {
    */
   className?: string;
   /**
-   * List of organizations with switch access information
+   * List of organizations discoverable to the signed-in user.
    */
-  data: OrganizationWithSwitchAccess[];
+  allOrganizations: AllOrganizationsApiResponse;
+  /**
+   * List of organizations associated to the signed-in user.
+   */
+  myOrganizations: Organization[];
   /**
    * Error message to display
    */
@@ -81,13 +92,13 @@ export interface BaseOrganizationListProps {
    */
   renderOrganization?: (organization: OrganizationWithSwitchAccess, index: number) => ReactNode;
   /**
+   * Function called when an organization is selected/clicked
+   */
+  onOrganizationSelect?: (organization: OrganizationWithSwitchAccess) => void;
+  /**
    * Inline styles to apply to the container
    */
   style?: React.CSSProperties;
-  /**
-   * Total number of organizations
-   */
-  totalCount?: number;
   /**
    * Display mode: 'inline' for normal display, 'popup' for modal dialog
    */
@@ -104,49 +115,67 @@ export interface BaseOrganizationListProps {
    * Title for the popup dialog (only used in popup mode)
    */
   title?: string;
+  /**
+   * Whether to show the organization status in the list
+   */
+  showStatus?: boolean;
 }
 
 /**
  * Default organization item renderer
  */
-const defaultRenderOrganization = (organization: OrganizationWithSwitchAccess, styles: any): ReactNode => {
-  const getOrgInitials = (name?: string): string => {
-    if (!name) return 'ORG';
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
+const defaultRenderOrganization = (
+  organization: OrganizationWithSwitchAccess,
+  styles: any,
+  t: (key: string, params?: Record<string, string | number>) => string,
+  onOrganizationSelect?: (organization: OrganizationWithSwitchAccess) => void,
+  showStatus?: boolean,
+): ReactNode => {
   return (
-    <div key={organization.id} style={styles.organizationItem}>
+    <div
+      key={organization.id}
+      style={{
+        ...styles.organizationItem,
+      }}
+    >
       <div style={styles.organizationContent}>
-        <Avatar name={getOrgInitials(organization.name)} size={48} alt={`${organization.name} logo`} />
+        <Avatar variant="square" name={organization.name} size={48} alt={`${organization.name} logo`} />
         <div style={styles.organizationInfo}>
-          <h3 style={styles.organizationName}>{organization.name}</h3>
-          <p style={styles.organizationHandle}>@{organization.orgHandle}</p>
-          <p style={styles.organizationStatus}>
-            Status:{' '}
-            <span
-              style={{
-                ...styles.statusText,
-                color: organization.status === 'ACTIVE' ? styles.activeColor : styles.inactiveColor,
-              }}
-            >
-              {organization.status}
-            </span>
-          </p>
+          <Typography variant="h6" style={styles.organizationName}>
+            {organization.name}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" style={styles.organizationHandle}>
+            @{organization.orgHandle}
+          </Typography>
+          {showStatus && (
+            <Typography variant="body2" color="textSecondary" style={styles.organizationStatus}>
+              {t('organization.switcher.status.label')}{' '}
+              <span
+                style={{
+                  ...styles.statusText,
+                  color: organization.status === 'ACTIVE' ? styles.activeColor : styles.inactiveColor,
+                }}
+              >
+                {organization.status}
+              </span>
+            </Typography>
+          )}
         </div>
       </div>
-      <div style={styles.organizationActions}>
-        {organization.canSwitch ? (
-          <span style={{...styles.badge, ...styles.successBadge}}>Can Switch</span>
-        ) : (
-          <span style={{...styles.badge, ...styles.errorBadge}}>No Access</span>
-        )}
-      </div>
+      {organization.canSwitch && (
+        <div style={styles.organizationActions}>
+          <Button
+            onClick={e => {
+              e.stopPropagation();
+              onOrganizationSelect(organization);
+            }}
+            type="button"
+            size="small"
+          >
+            {t('organization.switcher.switch.button')}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
@@ -154,26 +183,43 @@ const defaultRenderOrganization = (organization: OrganizationWithSwitchAccess, s
 /**
  * Default loading renderer
  */
-const defaultRenderLoading = (styles: any): ReactNode => (
+const defaultRenderLoading = (
+  t: (key: string, params?: Record<string, string | number>) => string,
+  styles: any,
+): ReactNode => (
   <div style={styles.loadingContainer}>
-    <div style={styles.loadingText}>Loading organizations...</div>
+    <Spinner size="medium" />
+    <Typography variant="body1" color="textSecondary" style={styles.loadingText}>
+      {t('organization.switcher.loading.organizations')}
+    </Typography>
   </div>
 );
 
 /**
  * Default error renderer
  */
-const defaultRenderError = (error: string, styles: any): ReactNode => (
+const defaultRenderError = (
+  error: string,
+  t: (key: string, params?: Record<string, string | number>) => string,
+  styles: any,
+): ReactNode => (
   <div style={styles.errorContainer}>
-    <strong>Error:</strong> {error}
+    <Typography variant="body1" color="error">
+      <strong>{t('organization.switcher.error.prefix')}</strong> {error}
+    </Typography>
   </div>
 );
 
 /**
  * Default load more button renderer
  */
-const defaultRenderLoadMore = (onLoadMore: () => Promise<void>, isLoading: boolean, styles: any): ReactNode => (
-  <button
+const defaultRenderLoadMore = (
+  onLoadMore: () => Promise<void>,
+  isLoading: boolean,
+  t: (key: string, params?: Record<string, string | number>) => string,
+  styles: any,
+): ReactNode => (
+  <Button
     onClick={onLoadMore}
     disabled={isLoading}
     style={{
@@ -181,17 +227,23 @@ const defaultRenderLoadMore = (onLoadMore: () => Promise<void>, isLoading: boole
       ...(isLoading ? styles.loadMoreButtonDisabled : {}),
     }}
     type="button"
+    fullWidth
   >
-    {isLoading ? 'Loading...' : 'Load More Organizations'}
-  </button>
+    {isLoading ? t('organization.switcher.loading.more') : t('organization.switcher.load.more')}
+  </Button>
 );
 
 /**
  * Default empty state renderer
  */
-const defaultRenderEmpty = (styles: any): ReactNode => (
+const defaultRenderEmpty = (
+  t: (key: string, params?: Record<string, string | number>) => string,
+  styles: any,
+): ReactNode => (
   <div style={styles.emptyContainer}>
-    <div style={styles.emptyText}>No organizations found</div>
+    <Typography variant="body1" color="textSecondary" style={styles.emptyText}>
+      {t('organization.switcher.no.organizations')}
+    </Typography>
   </div>
 );
 
@@ -212,7 +264,8 @@ const defaultRenderEmpty = (styles: any): ReactNode => (
  */
 export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   className = '',
-  data,
+  allOrganizations,
+  myOrganizations,
   error,
   fetchMore,
   hasMore = false,
@@ -220,6 +273,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   isLoadingMore = false,
   mode = 'inline',
   onOpenChange,
+  onOrganizationSelect,
   onRefresh,
   open = false,
   renderEmpty,
@@ -229,22 +283,40 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   renderOrganization,
   style,
   title = 'Organizations',
-  totalCount,
+  showStatus,
 }): ReactElement => {
   const styles = useStyles();
+  const {t} = useTranslation();
 
-  // Use custom renderers or defaults with styles
-  const renderLoadingWithStyles = renderLoading || (() => defaultRenderLoading(styles));
-  const renderErrorWithStyles = renderError || ((error: string) => defaultRenderError(error, styles));
-  const renderEmptyWithStyles = renderEmpty || (() => defaultRenderEmpty(styles));
+  // Combine allOrganizations with myOrganizations to determine which orgs can be switched to
+  const organizationsWithSwitchAccess: OrganizationWithSwitchAccess[] = useMemo(() => {
+    if (!allOrganizations?.organizations) {
+      return [];
+    }
+
+    // Create a Set of IDs from myOrganizations for faster lookup
+    const myOrgIds = new Set(myOrganizations?.map(org => org.id) || []);
+
+    return allOrganizations.organizations.map(org => ({
+      ...org,
+      canSwitch: myOrgIds.has(org.id),
+    }));
+  }, [allOrganizations?.organizations, myOrganizations]);
+
+  // Use custom renderers or defaults with styles and translations
+  const renderLoadingWithStyles = renderLoading || (() => defaultRenderLoading(t, styles));
+  const renderErrorWithStyles = renderError || ((error: string) => defaultRenderError(error, t, styles));
+  const renderEmptyWithStyles = renderEmpty || (() => defaultRenderEmpty(t, styles));
   const renderLoadMoreWithStyles =
     renderLoadMore ||
-    ((onLoadMore: () => Promise<void>, isLoading: boolean) => defaultRenderLoadMore(onLoadMore, isLoading, styles));
+    ((onLoadMore: () => Promise<void>, isLoading: boolean) => defaultRenderLoadMore(onLoadMore, isLoading, t, styles));
   const renderOrganizationWithStyles =
-    renderOrganization || ((org: OrganizationWithSwitchAccess) => defaultRenderOrganization(org, styles));
+    renderOrganization ||
+    ((org: OrganizationWithSwitchAccess) =>
+      defaultRenderOrganization(org, styles, t, onOrganizationSelect, showStatus));
 
   // Show loading state
-  if (isLoading && data.length === 0) {
+  if (isLoading && organizationsWithSwitchAccess?.length === 0) {
     const loadingContent = (
       <div
         className={clsx(withVendorCSSClassPrefix('organization-list'), className)}
@@ -269,7 +341,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   }
 
   // Show error state
-  if (error && data.length === 0) {
+  if (error && organizationsWithSwitchAccess?.length === 0) {
     const errorContent = (
       <div
         className={clsx(withVendorCSSClassPrefix('organization-list'), className)}
@@ -294,7 +366,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   }
 
   // Show empty state
-  if (!isLoading && data.length === 0) {
+  if (!isLoading && organizationsWithSwitchAccess?.length === 0) {
     const emptyContent = (
       <div
         className={clsx(withVendorCSSClassPrefix('organization-list'), className)}
@@ -323,29 +395,31 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
       {/* Header with total count and refresh button */}
       <div style={styles.header}>
         <div style={styles.headerInfo}>
-          <h2 style={styles.title}>Organizations</h2>
-          {totalCount !== undefined && (
-            <p style={styles.subtitle}>
-              Showing {data.length} of {totalCount} organizations
-            </p>
-          )}
+          <Typography variant="body2" color="textSecondary" style={styles.subtitle}>
+            {t('organization.switcher.showing.count', {
+              showing: organizationsWithSwitchAccess?.length,
+              total: allOrganizations?.organizations?.length || 0,
+            })}
+          </Typography>
         </div>
         {onRefresh && (
-          <button onClick={onRefresh} style={styles.refreshButton} type="button">
-            Refresh
-          </button>
+          <Button onClick={onRefresh} style={styles.refreshButton} type="button" variant="outline" size="small">
+            {t('organization.switcher.refresh.button')}
+          </Button>
         )}
       </div>
 
       {/* Organizations list */}
       <div style={styles.listContainer}>
-        {data.map((organization: OrganizationWithSwitchAccess, index: number) =>
+        {organizationsWithSwitchAccess?.map((organization: OrganizationWithSwitchAccess, index: number) =>
           renderOrganizationWithStyles(organization, index),
         )}
       </div>
 
       {/* Error message for additional data */}
-      {error && data.length > 0 && <div style={styles.errorMargin}>{renderErrorWithStyles(error)}</div>}
+      {error && organizationsWithSwitchAccess?.length > 0 && (
+        <div style={styles.errorMargin}>{renderErrorWithStyles(error)}</div>
+      )}
 
       {/* Load more button */}
       {hasMore && fetchMore && (
@@ -374,20 +448,19 @@ const useStyles = () => {
   return useMemo(
     () => ({
       root: {
-        padding: `${theme.spacing.unit * 4}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
         minWidth: '600px',
         margin: '0 auto',
-        background: theme.colors.background.surface,
-        borderRadius: theme.borderRadius.large,
-        boxShadow: theme.shadows.small,
+        background: theme.vars.colors.background.surface,
+        borderRadius: theme.vars.borderRadius.large,
       } as CSSProperties,
       header: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: `${theme.spacing.unit * 3}px`,
-        paddingBottom: `${theme.spacing.unit * 2}px`,
-        borderBottom: `1px solid ${theme.colors.border}`,
+        marginBottom: `calc(${theme.vars.spacing.unit} * 3)`,
+        paddingBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+        borderBottom: `1px solid ${theme.vars.colors.border}`,
       } as CSSProperties,
       headerInfo: {
         flex: 1,
@@ -396,42 +469,41 @@ const useStyles = () => {
         fontSize: '1.5rem',
         fontWeight: 600,
         margin: '0 0 8px 0',
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
       } as CSSProperties,
       subtitle: {
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         fontSize: '0.875rem',
         margin: '0',
       } as CSSProperties,
       refreshButton: {
-        backgroundColor: theme.colors.background.surface,
-        border: `1px solid ${theme.colors.border}`,
-        borderRadius: theme.borderRadius.small,
-        color: theme.colors.text.primary,
+        backgroundColor: theme.vars.colors.background.surface,
+        border: `1px solid ${theme.vars.colors.border}`,
+        borderRadius: theme.vars.borderRadius.small,
+        color: theme.vars.colors.text.primary,
         cursor: 'pointer',
         fontSize: '0.875rem',
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+        padding: `${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 2)`,
         transition: 'all 0.2s',
       } as CSSProperties,
       listContainer: {
         display: 'flex',
         flexDirection: 'column' as const,
-        gap: `${theme.spacing.unit * 1.5}px`,
+        gap: `calc(${theme.vars.spacing.unit} * 1.5)`,
       } as CSSProperties,
       organizationItem: {
-        border: `1px solid ${theme.colors.border}`,
-        borderRadius: theme.borderRadius.medium,
+        border: `1px solid ${theme.vars.colors.border}`,
+        borderRadius: theme.vars.borderRadius.medium,
         display: 'flex',
         justifyContent: 'space-between',
-        padding: `${theme.spacing.unit * 2}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 2)`,
         transition: 'all 0.2s',
-        cursor: 'pointer',
-        backgroundColor: theme.colors.background.surface,
+        backgroundColor: theme.vars.colors.background.surface,
       } as CSSProperties,
       organizationContent: {
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit * 2}px`,
+        gap: `calc(${theme.vars.spacing.unit} * 2)`,
         flex: 1,
       } as CSSProperties,
       organizationInfo: {
@@ -441,92 +513,95 @@ const useStyles = () => {
         fontSize: '1.125rem',
         fontWeight: 600,
         margin: '0 0 4px 0',
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
       } as CSSProperties,
       organizationHandle: {
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         fontSize: '0.875rem',
         margin: '0 0 4px 0',
         fontFamily: 'monospace',
       } as CSSProperties,
       organizationStatus: {
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         fontSize: '0.875rem',
         margin: '0',
       } as CSSProperties,
       statusText: {
         fontWeight: 500,
       } as CSSProperties,
-      activeColor: theme.colors.success.main,
-      inactiveColor: theme.colors.error.main,
+      activeColor: theme.vars.colors.success.main,
+      inactiveColor: theme.vars.colors.error.main,
       organizationActions: {
         display: 'flex',
         alignItems: 'center',
       } as CSSProperties,
       badge: {
-        borderRadius: theme.borderRadius.large,
+        borderRadius: theme.vars.borderRadius.large,
         fontSize: '0.75rem',
         fontWeight: 500,
-        padding: '4px 12px',
+        padding: `calc(${theme.vars.spacing.unit} / 2) calc(${theme.vars.spacing.unit} * 1.5)`,
         textTransform: 'uppercase' as const,
         letterSpacing: '0.5px',
       } as CSSProperties,
       successBadge: {
-        backgroundColor: `${theme.colors.success.main}20`,
-        color: theme.colors.success.main,
+        backgroundColor: `color-mix(in srgb, ${theme.vars.colors.success.main} 20%, transparent)`,
+        color: theme.vars.colors.success.main,
       } as CSSProperties,
       errorBadge: {
-        backgroundColor: `${theme.colors.error.main}20`,
-        color: theme.colors.error.main,
+        backgroundColor: `color-mix(in srgb, ${theme.vars.colors.error.main} 20%, transparent)`,
+        color: theme.vars.colors.error.main,
       } as CSSProperties,
       loadingContainer: {
-        padding: `${theme.spacing.unit * 4}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
         textAlign: 'center' as const,
+        display: 'flex',
+        flexDirection: 'column' as const,
+        alignItems: 'center',
+        gap: `calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
       loadingText: {
-        color: theme.colors.text.secondary,
-        fontSize: '1rem',
+        marginTop: theme.vars.spacing.unit,
       } as CSSProperties,
       errorContainer: {
-        backgroundColor: `${theme.colors.error.main}20`,
-        border: `1px solid ${theme.colors.error.main}`,
-        borderRadius: theme.borderRadius.medium,
-        color: theme.colors.error.main,
-        padding: `${theme.spacing.unit * 2}px`,
+        backgroundColor: `color-mix(in srgb, ${theme.vars.colors.error.main} 20%, transparent)`,
+        border: `1px solid ${theme.vars.colors.error.main}`,
+        borderRadius: theme.vars.borderRadius.medium,
+        color: theme.vars.colors.error.main,
+        padding: `calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
       emptyContainer: {
-        padding: `${theme.spacing.unit * 4}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
         textAlign: 'center' as const,
       } as CSSProperties,
       emptyText: {
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         fontSize: '1rem',
       } as CSSProperties,
       loadMoreButton: {
-        backgroundColor: theme.colors.primary.main,
+        backgroundColor: theme.vars.colors.primary.main,
         border: 'none',
-        borderRadius: theme.borderRadius.medium,
-        color: theme.colors.primary.contrastText,
+        borderRadius: theme.vars.borderRadius.medium,
+        color: theme.vars.colors.primary.contrastText,
         cursor: 'pointer',
         fontSize: '0.875rem',
         fontWeight: 500,
-        padding: `${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 3}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 3)`,
         width: '100%',
         transition: 'all 0.2s',
       } as CSSProperties,
       loadMoreButtonDisabled: {
-        backgroundColor: theme.colors.text.secondary,
+        backgroundColor: theme.vars.colors.text.secondary,
         cursor: 'not-allowed',
         opacity: 0.6,
       } as CSSProperties,
       errorMargin: {
-        marginTop: `${theme.spacing.unit * 2}px`,
+        marginTop: `calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
       loadMoreMargin: {
-        marginTop: `${theme.spacing.unit * 3}px`,
+        marginTop: `calc(${theme.vars.spacing.unit} * 3)`,
       } as CSSProperties,
       popupContent: {
-        padding: `${theme.spacing.unit}px`,
+        padding: theme.vars.spacing.unit,
       } as CSSProperties,
     }),
     [theme, colorScheme],

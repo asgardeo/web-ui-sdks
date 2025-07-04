@@ -70,6 +70,15 @@ export * from './contexts/Theme/ThemeProvider';
 export {default as useTheme} from './contexts/Theme/useTheme';
 export * from './contexts/Theme/useTheme';
 
+export {default as BrandingContext} from './contexts/Branding/BrandingContext';
+export * from './contexts/Branding/BrandingContext';
+
+export {default as BrandingProvider} from './contexts/Branding/BrandingProvider';
+export * from './contexts/Branding/BrandingProvider';
+
+export {default as useBrandingContext} from './contexts/Branding/useBrandingContext';
+export * from './contexts/Branding/useBrandingContext';
+
 export {default as useBrowserUrl} from './hooks/useBrowserUrl';
 export * from './hooks/useBrowserUrl';
 
@@ -78,6 +87,9 @@ export * from './hooks/useTranslation';
 
 export {default as useForm} from './hooks/useForm';
 export * from './hooks/useForm';
+
+export {default as useBranding} from './hooks/useBranding';
+export * from './hooks/useBranding';
 
 export {default as BaseSignInButton} from './components/actions/SignInButton/BaseSignInButton';
 export * from './components/actions/SignInButton/BaseSignInButton';
@@ -226,6 +238,9 @@ export * from './components/primitives/Typography/Typography';
 
 export {default as Divider} from './components/primitives/Divider/Divider';
 export * from './components/primitives/Divider/Divider';
+
+export {default as Logo} from './components/primitives/Logo/Logo';
+export * from './components/primitives/Logo/Logo';
 
 export {default as Spinner} from './components/primitives/Spinner/Spinner';
 export * from './components/primitives/Spinner/Spinner';

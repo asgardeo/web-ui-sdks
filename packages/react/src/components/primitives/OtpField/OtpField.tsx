@@ -134,29 +134,29 @@ const OtpField: FC<OtpInputProps> = ({
 
   const inputContainerStyle: CSSProperties = {
     display: 'flex',
-    gap: theme.spacing.unit + 'px',
+    gap: theme.vars.spacing.unit,
     justifyContent: 'space-between',
     alignItems: 'center',
     flexWrap: 'wrap',
   };
 
   const inputStyle: CSSProperties = {
-    width: theme.spacing.unit * 6 + 'px',
-    height: theme.spacing.unit * 6 + 'px',
+    width: `calc(${theme.vars.spacing.unit} * 6)`,
+    height: `calc(${theme.vars.spacing.unit} * 6)`,
     textAlign: 'center',
-    fontSize: '1.25rem',
+    fontSize: theme.vars.typography.fontSizes.xl,
     fontWeight: 500,
-    border: `2px solid ${error ? theme.colors.error.main : theme.colors.border}`,
-    borderRadius: theme.borderRadius.medium,
-    color: theme.colors.text.primary,
-    backgroundColor: disabled ? theme.colors.background.disabled : theme.colors.background.surface,
+    border: `2px solid ${error ? theme.vars.colors.error.main : theme.vars.colors.border}`,
+    borderRadius: theme.vars.borderRadius.medium,
+    color: theme.vars.colors.text.primary,
+    backgroundColor: disabled ? theme.vars.colors.background.disabled : theme.vars.colors.background.surface,
     outline: 'none',
     transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
   };
 
   const focusedInputStyle: CSSProperties = {
-    borderColor: error ? theme.colors.error.main : theme.colors.primary.main,
-    boxShadow: `0 0 0 2px ${error ? theme.colors.error.main + '20' : theme.colors.primary.main + '20'}`,
+    borderColor: error ? theme.vars.colors.error.main : theme.vars.colors.primary.main,
+    boxShadow: `0 0 0 2px ${error ? theme.vars.colors.error.main + '20' : theme.vars.colors.primary.main + '20'}`,
   };
 
   const handleChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
@@ -276,13 +276,13 @@ const OtpField: FC<OtpInputProps> = ({
             onKeyDown={event => handleKeyDown(index, event)}
             onPaste={handlePaste}
             onFocus={event => {
-              event.target.style.borderColor = error ? theme.colors.error.main : theme.colors.primary.main;
+              event.target.style.borderColor = error ? theme.vars.colors.error.main : theme.vars.colors.primary.main;
               event.target.style.boxShadow = `0 0 0 2px ${
-                error ? theme.colors.error.main + '20' : theme.colors.primary.main + '20'
+                error ? theme.vars.colors.error.main + '20' : theme.vars.colors.primary.main + '20'
               }`;
             }}
             onBlur={event => {
-              event.target.style.borderColor = error ? theme.colors.error.main : theme.colors.border;
+              event.target.style.borderColor = error ? theme.vars.colors.error.main : theme.vars.colors.border;
               event.target.style.boxShadow = 'none';
             }}
             style={inputStyle}

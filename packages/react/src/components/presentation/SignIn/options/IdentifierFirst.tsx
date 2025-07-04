@@ -23,6 +23,7 @@ import Button from '../../../primitives/Button/Button';
 import {BaseSignInOptionProps} from './SignInOptionFactory';
 import useTranslation from '../../../../hooks/useTranslation';
 import useFlow from '../../../../contexts/Flow/useFlow';
+import useTheme from '../../../../contexts/Theme/useTheme';
 
 /**
  * Identifier First Sign-In Option Component.
@@ -39,6 +40,7 @@ const IdentifierFirst: FC<BaseSignInOptionProps> = ({
   buttonClassName = '',
   preferences,
 }) => {
+  const {theme} = useTheme();
   const {t} = useTranslation(preferences?.i18n);
   const {setTitle, setSubtitle} = useFlow();
 
@@ -52,7 +54,7 @@ const IdentifierFirst: FC<BaseSignInOptionProps> = ({
   return (
     <>
       {formFields.map(param => (
-        <div key={param.param} style={{marginBottom: '1rem'}}>
+        <div key={param.param} style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
           {createField({
             name: param.param,
             type:
@@ -83,7 +85,7 @@ const IdentifierFirst: FC<BaseSignInOptionProps> = ({
         color="primary"
         variant="solid"
         fullWidth
-        style={{marginBottom: '1rem'}}
+        style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
       >
         {t('identifier.first.submit.button')}
       </Button>

@@ -82,7 +82,6 @@ const fieldsToSkip: string[] = [
   'roles.default',
   'active',
   'groups',
-  'profileUrl',
   'accountLocked',
   'accountDisabled',
   'oneTimePassword',
@@ -107,7 +106,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   className = '',
   cardLayout = true,
   profile,
-  schemas,
+  schemas = [],
   flattenedProfile,
   mode = 'inline',
   title = 'User Profile',
@@ -175,11 +174,11 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       <table style={{width: '100%', borderCollapse: 'collapse'}}>
         <tbody>
           {Object.entries(data).map(([key, value]) => (
-            <tr key={key} style={{borderBottom: `1px solid ${theme.colors.border}`}}>
-              <td style={{padding: `${theme.spacing.unit}px`, verticalAlign: 'top'}}>
+            <tr key={key} style={{borderBottom: `1px solid ${theme.vars.colors.border}`}}>
+              <td style={{padding: theme.vars.spacing.unit, verticalAlign: 'top'}}>
                 <strong>{formatLabel(key)}:</strong>
               </td>
-              <td style={{padding: `${theme.spacing.unit}px`, verticalAlign: 'top'}}>
+              <td style={{padding: theme.vars.spacing.unit, verticalAlign: 'top'}}>
                 {typeof value === 'object' ? <ObjectDisplay data={value} /> : String(value)}
               </td>
             </tr>
@@ -275,36 +274,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   );
 
   const styles = useStyles();
-  const buttonStyle = useMemo(
-    () => ({
-      padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-      margin: `${theme.spacing.unit}px`,
-      borderRadius: theme.borderRadius.medium,
-      border: 'none',
-      cursor: 'pointer',
-      fontSize: '0.875rem',
-      fontWeight: 500,
-    }),
-    [theme],
-  );
-
-  const saveButtonStyle = useMemo(
-    () => ({
-      ...buttonStyle,
-      backgroundColor: theme.colors.primary.main,
-      color: theme.colors.primary.contrastText,
-    }),
-    [theme, buttonStyle],
-  );
-
-  const cancelButtonStyle = useMemo(
-    () => ({
-      ...buttonStyle,
-      backgroundColor: theme.colors.secondary.main,
-      border: `1px solid ${theme.colors.border}`,
-    }),
-    [theme, buttonStyle],
-  );
 
   const defaultAttributeMappings = {
     picture: ['profile', 'profileUrl', 'picture', 'URL'],
@@ -421,23 +390,22 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           <span style={styles.label}>{label}</span>
           <div style={{...styles.value, fontStyle: hasValues ? 'normal' : 'italic', opacity: hasValues ? 1 : 0.7}}>
             {!hasValues && isEditable && onStartEdit ? (
-              <button
+              <Button
                 onClick={onStartEdit}
+                variant="text"
+                color="secondary"
+                size="small"
+                title="Click to edit"
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'inherit',
-                  cursor: 'pointer',
-                  padding: 0,
-                  font: 'inherit',
                   fontStyle: 'italic',
                   textDecoration: 'underline',
                   opacity: 0.7,
+                  padding: 0,
+                  minHeight: 'auto',
                 }}
-                title="Click to edit"
               >
                 {displayValue}
-              </button>
+              </Button>
             ) : (
               displayValue
             )}
@@ -492,8 +460,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 minHeight: '60px',
                 width: '100%',
                 padding: '8px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
+                border: `1px solid ${theme.vars.colors.border}`,
+                borderRadius: theme.vars.borderRadius.small,
                 resize: 'vertical',
               }}
             />
@@ -527,23 +495,22 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         <span style={styles.label}>{label}</span>
         <div style={{...styles.value, fontStyle: hasValue ? 'normal' : 'italic', opacity: hasValue ? 1 : 0.7}}>
           {!hasValue && isEditable && onStartEdit ? (
-            <button
+            <Button
               onClick={onStartEdit}
+              variant="text"
+              color="secondary"
+              size="small"
+              title="Click to edit"
               style={{
-                background: 'none',
-                border: 'none',
-                color: 'inherit',
-                cursor: 'pointer',
-                padding: 0,
-                font: 'inherit',
                 fontStyle: 'italic',
                 textDecoration: 'underline',
                 opacity: 0.7,
+                padding: 0,
+                minHeight: 'auto',
               }}
-              title="Click to edit"
             >
               {displayValue}
-            </button>
+            </Button>
           ) : (
             displayValue
           )}
@@ -571,12 +538,12 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       ...styles.field,
       display: 'flex',
       alignItems: 'center',
-      gap: `${theme.spacing.unit}px`,
+      gap: theme.vars.spacing.unit,
     };
 
     return (
       <div style={fieldStyle}>
-        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: `${theme.spacing.unit}px`}}>
+        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: theme.vars.spacing.unit}}>
           {renderSchemaField(
             schema,
             isFieldEditing,
@@ -592,9 +559,9 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           <div
             style={{
               display: 'flex',
-              gap: `${theme.spacing.unit / 2}px`,
+              gap: `calc(${theme.vars.spacing.unit} / 2)`,
               alignItems: 'center',
-              marginLeft: `${theme.spacing.unit}px`,
+              marginLeft: theme.vars.spacing.unit,
             }}
           >
             {isFieldEditing && (
@@ -602,12 +569,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 <Button size="small" color="primary" variant="solid" onClick={() => handleFieldSave(schema)}>
                   Save
                 </Button>
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="outline"
-                  onClick={() => handleFieldCancel(schema.name!)}
-                >
+                <Button size="small" color="secondary" variant="solid" onClick={() => handleFieldCancel(schema.name!)}>
                   Cancel
                 </Button>
               </>
@@ -620,7 +582,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 onClick={() => toggleFieldEdit(schema.name!)}
                 title="Edit"
                 style={{
-                  padding: `${theme.spacing.unit / 2}px`,
+                  padding: `calc(${theme.vars.spacing.unit} / 2)`,
                 }}
               >
                 <PencilIcon />
@@ -633,15 +595,14 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   };
 
   const getDisplayName = () => {
-    const currentUser = flattenedProfile || profile;
-    const firstName = getMappedUserProfileValue('firstName', mergedMappings, currentUser);
-    const lastName = getMappedUserProfileValue('lastName', mergedMappings, currentUser);
+    const firstName = getMappedUserProfileValue('firstName', mergedMappings, profile);
+    const lastName = getMappedUserProfileValue('lastName', mergedMappings, profile);
 
     if (firstName && lastName) {
       return `${firstName} ${lastName}`;
     }
 
-    return getMappedUserProfileValue('username', mergedMappings, currentUser) || '';
+    return getMappedUserProfileValue('username', mergedMappings, profile) || '';
   };
 
   if (!profile && !flattenedProfile) {
@@ -657,6 +618,31 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const avatarAttributes = ['picture'];
   const excludedProps = avatarAttributes.map(attr => mergedMappings[attr] || attr);
 
+  // Function to render profile fields when schemas are not available
+  const renderProfileWithoutSchemas = () => {
+    if (!currentUser) return null;
+
+    const profileEntries = Object.entries(currentUser)
+      .filter(([key, value]) => {
+        // Skip fields that are in the fieldsToSkip array
+        if (fieldsToSkip.includes(key)) return false;
+        // Skip empty values
+        return value !== undefined && value !== '' && value !== null;
+      })
+      .sort(([a], [b]) => a.localeCompare(b)); // Sort alphabetically
+
+    return (
+      <>
+        {profileEntries.map(([key, value]) => (
+          <div key={key} style={styles.field}>
+            <span style={styles.label}>{formatLabel(key)}</span>
+            <div style={styles.value}>{typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}</div>
+          </div>
+        ))}
+      </>
+    );
+  };
+
   const profileContent = (
     <Card style={containerStyle} className={clsx(withVendorCSSClassPrefix('user-profile'), className)}>
       <div style={styles.header}>
@@ -668,37 +654,38 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         />
       </div>
       <div style={styles.infoContainer}>
-        {schemas
-          .filter(schema => {
-            // Filter out avatar-related fields and fields we don't want to show
-            if (!schema.name || schema.name === 'profileUrl') return false;
+        {schemas && schemas.length > 0
+          ? // Render with schemas when available
+            schemas
+              .filter(schema => {
+                // Skip fields that are in the fieldsToSkip array
+                if (fieldsToSkip.includes(schema.name)) return false;
 
-            // Skip fields that are in the fieldsToSkip array
-            if (fieldsToSkip.includes(schema.name)) return false;
+                // For non-editable mode, only show fields with values
+                if (!editable) {
+                  const value = flattenedProfile && schema.name ? flattenedProfile[schema.name] : undefined;
+                  return value !== undefined && value !== '' && value !== null;
+                }
 
-            // For non-editable mode, only show fields with values
-            if (!editable) {
-              const value = flattenedProfile && schema.name ? flattenedProfile[schema.name] : undefined;
-              return value !== undefined && value !== '' && value !== null;
-            }
+                return true;
+              })
+              .sort((a, b) => {
+                const orderA = a.displayOrder ? parseInt(a.displayOrder) : 999;
+                const orderB = b.displayOrder ? parseInt(b.displayOrder) : 999;
+                return orderA - orderB;
+              })
+              .map((schema, index) => {
+                // Get the value from flattenedProfile
+                const value = flattenedProfile && schema.name ? flattenedProfile[schema.name] : undefined;
+                const schemaWithValue = {
+                  ...schema,
+                  value,
+                };
 
-            return true;
-          })
-          .sort((a, b) => {
-            const orderA = a.displayOrder ? parseInt(a.displayOrder) : 999;
-            const orderB = b.displayOrder ? parseInt(b.displayOrder) : 999;
-            return orderA - orderB;
-          })
-          .map((schema, index) => {
-            // Get the value from flattenedProfile
-            const value = flattenedProfile && schema.name ? flattenedProfile[schema.name] : undefined;
-            const schemaWithValue = {
-              ...schema,
-              value,
-            };
-
-            return <div key={schema.name || index}>{renderUserInfo(schemaWithValue)}</div>;
-          })}
+                return <div key={schema.name || index}>{renderUserInfo(schemaWithValue)}</div>;
+              })
+          : // Fallback: render profile fields directly when schemas are not available
+            renderProfileWithoutSchemas()}
       </div>
     </Card>
   );
@@ -708,7 +695,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeading>{title}</DialogHeading>
-          <div style={{padding: '1rem'}}>{profileContent}</div>
+          <div style={{padding: `calc(${theme.vars.spacing.unit} * 2)`}}>{profileContent}</div>
         </DialogContent>
       </Dialog>
     );
@@ -723,19 +710,19 @@ const useStyles = () => {
   return useMemo(
     () => ({
       root: {
-        padding: `${theme.spacing.unit * 4}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
         minWidth: '600px',
         margin: '0 auto',
       } as CSSProperties,
       card: {
-        background: theme.colors.background.surface,
-        borderRadius: theme.borderRadius.large,
+        background: theme.vars.colors.background.surface,
+        borderRadius: theme.vars.borderRadius.large,
       } as CSSProperties,
       header: {
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit * 1.5}px`,
-        marginBottom: `${theme.spacing.unit * 1.5}px`,
+        gap: `calc(${theme.vars.spacing.unit} * 1.5)`,
+        marginBottom: `calc(${theme.vars.spacing.unit} * 1.5)`,
       } as CSSProperties,
       profileInfo: {
         flex: 1,
@@ -744,19 +731,19 @@ const useStyles = () => {
         fontSize: '1.5rem',
         fontWeight: 600,
         margin: '0',
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
       } as CSSProperties,
       infoContainer: {
         display: 'flex',
         flexDirection: 'column' as const,
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
       } as CSSProperties,
       field: {
         display: 'flex',
-        alignItems: 'center',
-        padding: `${theme.spacing.unit}px 0`,
-        borderBottom: `1px solid ${theme.colors.border}`,
-        minHeight: '32px',
+        alignItems: 'flex-start',
+        padding: `calc(${theme.vars.spacing.unit} / 2) 0`,
+        borderBottom: `1px solid ${theme.vars.colors.border}`,
+        minHeight: '28px',
       } as CSSProperties,
       lastField: {
         borderBottom: 'none',
@@ -764,35 +751,36 @@ const useStyles = () => {
       label: {
         fontSize: '0.875rem',
         fontWeight: 500,
-        color: theme.colors.text.secondary,
+        color: theme.vars.colors.text.secondary,
         width: '120px',
         flexShrink: 0,
-        lineHeight: '32px',
+        lineHeight: '28px',
       } as CSSProperties,
       value: {
-        color: theme.colors.text.primary,
+        color: theme.vars.colors.text.primary,
         flex: 1,
         display: 'flex',
         alignItems: 'center',
-        gap: `${theme.spacing.unit}px`,
+        gap: theme.vars.spacing.unit,
         overflow: 'hidden',
-        minHeight: '32px',
+        minHeight: '28px',
         '& input': {
           height: '32px',
           margin: 0,
         },
-        lineHeight: '32px',
+        lineHeight: '28px',
+        wordBreak: 'break-word' as const,
         '& table': {
-          backgroundColor: theme.colors.background,
-          borderRadius: theme.borderRadius.medium,
+          backgroundColor: theme.vars.colors.background.surface,
+          borderRadius: theme.vars.borderRadius.medium,
           whiteSpace: 'normal',
         },
         '& td': {
-          borderColor: theme.colors.border,
+          borderColor: theme.vars.colors.border,
         },
       } as CSSProperties,
       popup: {
-        padding: `${theme.spacing.unit * 2}px`,
+        padding: `calc(${theme.vars.spacing.unit} * 2)`,
       } as CSSProperties,
     }),
     [theme, colorScheme],

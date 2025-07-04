@@ -77,9 +77,9 @@ const initializeEmbeddedSignInFlow = async ({
     ...requestConfig,
     method: requestConfig.method || 'POST',
     headers: {
+      ...requestConfig.headers,
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept: 'application/json',
-      ...requestConfig.headers,
     },
     body: searchParams.toString(),
   });

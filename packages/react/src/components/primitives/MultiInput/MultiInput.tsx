@@ -122,7 +122,7 @@ const useStyles = () => {
       listContainer: {
         display: 'flex',
         flexDirection: 'column' as const,
-        gap: `${theme.spacing.unit / 2}px`,
+        gap: `${theme.spacing.unit * 0}px`,
       },
       listItem: {
         display: 'flex',
@@ -130,7 +130,6 @@ const useStyles = () => {
         justifyContent: 'space-between',
         padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
         backgroundColor: theme.colors.background.surface,
-        border: `1px solid ${theme.colors.border}`,
         borderRadius: theme.borderRadius.medium,
         fontSize: '1rem',
         color: theme.colors.text.primary,

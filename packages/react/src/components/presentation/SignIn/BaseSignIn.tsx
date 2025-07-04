@@ -30,15 +30,17 @@ import {
   EmbeddedFlowExecuteRequestConfig,
 } from '@asgardeo/browser';
 import {clsx} from 'clsx';
-import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef} from 'react';
+import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef, useMemo, CSSProperties} from 'react';
 import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
 import useFlow from '../../../contexts/Flow/useFlow';
 import {useForm, FormField} from '../../../hooks/useForm';
 import useTranslation from '../../../hooks/useTranslation';
+import useTheme from '../../../contexts/Theme/useTheme';
 import Alert from '../../primitives/Alert/Alert';
 import Card, {CardProps} from '../../primitives/Card/Card';
 import Divider from '../../primitives/Divider/Divider';
+import Logo from '../../primitives/Logo/Logo';
 import Spinner from '../../primitives/Spinner/Spinner';
 import Typography from '../../primitives/Typography/Typography';
 
@@ -284,6 +286,71 @@ export interface BaseSignInProps {
 }
 
 /**
+ * Custom hook for managing component styles
+ */
+const useStyles = () => {
+  const {theme} = useTheme();
+
+  return useMemo(
+    () => ({
+      card: {
+        gap: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      header: {
+        gap: 0,
+      } as CSSProperties,
+      subtitle: {
+        marginTop: `calc(${theme.vars.spacing.unit} * 1)`,
+      } as CSSProperties,
+      messagesContainer: {
+        marginTop: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      messageItem: {
+        marginBottom: `calc(${theme.vars.spacing.unit} * 1)`,
+      } as CSSProperties,
+      errorContainer: {
+        marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      contentContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      loadingContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
+      } as CSSProperties,
+      loadingText: {
+        marginTop: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      divider: {
+        margin: `calc(${theme.vars.spacing.unit} * 1) 0`,
+      } as CSSProperties,
+      logoContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginBottom: `calc(${theme.vars.spacing.unit} * 3)`,
+      } as CSSProperties,
+      centeredContainer: {
+        textAlign: 'center',
+        padding: `calc(${theme.vars.spacing.unit} * 4)`,
+      } as CSSProperties,
+      passkeyContainer: {
+        marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
+      } as CSSProperties,
+      passkeyText: {
+        marginTop: `calc(${theme.vars.spacing.unit} * 1)`,
+        color: theme.vars.colors.text.secondary,
+      } as CSSProperties,
+    }),
+    [theme.vars.spacing.unit, theme.vars.colors.text.secondary],
+  );
+};
+
+/**
  * Base SignIn component that provides native authentication flow.
  * This component handles both the presentation layer and authentication flow logic.
  * It accepts API functions as props to maintain framework independence.
@@ -315,11 +382,21 @@ export interface BaseSignInProps {
  * };
  * ```
  */
-const BaseSignIn: FC<BaseSignInProps> = props => (
-  <FlowProvider>
-    <BaseSignInContent {...props} />
-  </FlowProvider>
-);
+const BaseSignIn: FC<BaseSignInProps> = props => {
+  const {theme} = useTheme();
+  const styles = useStyles();
+
+  return (
+    <div>
+      <div style={styles.logoContainer}>
+        <Logo size="large" />
+      </div>
+      <FlowProvider>
+        <BaseSignInContent {...props} />
+      </FlowProvider>
+    </div>
+  );
+};
 
 /**
  * Internal component that consumes FlowContext and renders the sign-in UI.
@@ -340,8 +417,10 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   size = 'medium',
   variant = 'outlined',
 }: BaseSignInProps) => {
+  const {theme} = useTheme();
   const {t} = useTranslation();
   const {subtitle: flowSubtitle, title: flowTitle, messages: flowMessages} = useFlow();
+  const styles = useStyles();
 
   const [isSignInInitializationRequestLoading, setIsSignInInitializationRequestLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -424,7 +503,8 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
    */
   const handleRedirectionIfNeeded = (response: EmbeddedSignInFlowHandleResponse): boolean => {
     if (
-      response && 'nextStep' in response &&
+      response &&
+      'nextStep' in response &&
       response.nextStep &&
       (response.nextStep as any).stepType === EmbeddedSignInFlowStepType.AuthenticatorPrompt &&
       (response.nextStep as any).authenticators &&
@@ -1089,11 +1169,11 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
   if (!isInitialized && isLoading) {
     return (
-      <Card className={containerClasses} variant={variant}>
+      <Card className={containerClasses} style={styles.card} variant={variant}>
         <Card.Content>
-          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem'}}>
+          <div style={styles.loadingContainer}>
             <Spinner size="medium" />
-            <Typography variant="body1" style={{marginTop: '1rem'}}>
+            <Typography variant="body1" style={styles.loadingText}>
               {t('messages.loading')}
             </Typography>
           </div>
@@ -1115,21 +1195,21 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     const optionAuthenticators = availableAuthenticators.filter(auth => !userPromptAuthenticators.includes(auth));
 
     return (
-      <Card className={containerClasses} variant={variant}>
-        <Card.Header>
-          <Card.Title level={3}>{flowTitle || t('signin.title')}</Card.Title>
+      <Card className={containerClasses} style={styles.card} variant={variant}>
+        <Card.Header style={styles.header}>
+          <Card.Title level={2}>{flowTitle || t('signin.title')}</Card.Title>
           {flowSubtitle && (
-            <Typography variant="body1" style={{marginTop: '0.5rem'}}>
+            <Typography variant="body1" style={styles.subtitle}>
               {flowSubtitle || t('signin.subtitle')}
             </Typography>
           )}
           {flowMessages && flowMessages.length > 0 && (
-            <div style={{marginTop: '1rem'}}>
+            <div style={styles.messagesContainer}>
               {flowMessages.map((flowMessage, index) => (
                 <Alert
                   key={flowMessage.id || index}
                   variant={flowMessage.type}
-                  style={{marginBottom: '0.5rem'}}
+                  style={styles.messageItem}
                   className={messageClasses}
                 >
                   <Alert.Description>{flowMessage.message}</Alert.Description>
@@ -1138,7 +1218,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
             </div>
           )}
           {messages.length > 0 && (
-            <div style={{marginTop: '1rem'}}>
+            <div style={styles.messagesContainer}>
               {messages.map((message, index) => {
                 const variant =
                   message.type.toLowerCase() === 'error'
@@ -1150,7 +1230,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                     : 'info';
 
                 return (
-                  <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClasses}>
+                  <Alert key={index} variant={variant} style={styles.messageItem} className={messageClasses}>
                     <Alert.Description>{message.message}</Alert.Description>
                   </Alert>
                 );
@@ -1161,17 +1241,17 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
         <Card.Content>
           {error && (
-            <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClasses}>
+            <Alert variant="error" style={styles.errorContainer} className={errorClasses}>
               <Alert.Title>Error</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>
           )}
 
-          <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+          <div style={styles.contentContainer}>
             {/* Render USER_PROMPT authenticators as form fields */}
             {userPromptAuthenticators.map((authenticator, index) => (
               <div key={authenticator.authenticatorId}>
-                {index > 0 && <Divider style={{margin: '0.5rem 0'}}>OR</Divider>}
+                {index > 0 && <Divider style={styles.divider}>OR</Divider>}
                 <form
                   onSubmit={e => {
                     e.preventDefault();
@@ -1201,7 +1281,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
             {/* Add divider between user prompts and option authenticators if both exist */}
             {userPromptAuthenticators.length > 0 && optionAuthenticators.length > 0 && (
-              <Divider style={{margin: '0.5rem 0'}}>OR</Divider>
+              <Divider style={styles.divider}>OR</Divider>
             )}
 
             {/* Render all other authenticators (REDIRECTION_PROMPT, multi-option buttons, etc.) */}
@@ -1254,12 +1334,12 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     return (
       <Card className={containerClasses} variant={variant}>
         <Card.Content>
-          <div style={{textAlign: 'center', padding: '2rem'}}>
-            <div style={{marginBottom: '1rem'}}>
+          <div style={styles.centeredContainer}>
+            <div style={styles.passkeyContainer}>
               <Spinner size="large" />
             </div>
             <Typography variant="body1">{t('passkey.authenticating') || 'Authenticating with passkey...'}</Typography>
-            <Typography variant="body2" style={{marginTop: '0.5rem', color: '#666'}}>
+            <Typography variant="body2" style={styles.passkeyText}>
               {t('passkey.instruction') || 'Please use your fingerprint, face, or security key to authenticate.'}
             </Typography>
           </div>
@@ -1269,19 +1349,19 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   }
 
   return (
-    <Card className={containerClasses} variant={variant}>
-      <Card.Header>
+    <Card className={containerClasses} style={styles.card} variant={variant}>
+      <Card.Header style={styles.header}>
         <Card.Title level={2}>{flowTitle || t('signin.title')}</Card.Title>
-        <Typography variant="body1" style={{marginTop: '0.5rem'}}>
+        <Typography variant="body1" style={styles.subtitle}>
           {flowSubtitle || t('signin.subtitle')}
         </Typography>
         {flowMessages && flowMessages.length > 0 && (
-          <div style={{marginTop: '1rem'}}>
+          <div style={styles.messagesContainer}>
             {flowMessages.map((flowMessage, index) => (
               <Alert
                 key={flowMessage.id || index}
                 variant={flowMessage.type}
-                style={{marginBottom: '0.5rem'}}
+                style={styles.messageItem}
                 className={messageClasses}
               >
                 <Alert.Description>{flowMessage.message}</Alert.Description>
@@ -1290,7 +1370,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
           </div>
         )}
         {messages.length > 0 && (
-          <div style={{marginTop: '1rem'}}>
+          <div style={styles.messagesContainer}>
             {messages.map((message, index) => {
               const variant =
                 message.type.toLowerCase() === 'error'
@@ -1302,7 +1382,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
                   : 'info';
 
               return (
-                <Alert key={index} variant={variant} style={{marginBottom: '0.5rem'}} className={messageClasses}>
+                <Alert key={index} variant={variant} style={styles.messageItem} className={messageClasses}>
                   <Alert.Description>{message.message}</Alert.Description>
                 </Alert>
               );
@@ -1313,7 +1393,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
 
       <Card.Content>
         {error && (
-          <Alert variant="error" style={{marginBottom: '1rem'}} className={errorClasses}>
+          <Alert variant="error" style={styles.errorContainer} className={errorClasses}>
             <Alert.Title>{t('errors.title')}</Alert.Title>
             <Alert.Description>{error}</Alert.Description>
           </Alert>

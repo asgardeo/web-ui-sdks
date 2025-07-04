@@ -19,7 +19,15 @@
 'use server';
 
 import {FC, PropsWithChildren, ReactElement} from 'react';
-import {AsgardeoRuntimeError, Organization, User, UserProfile} from '@asgardeo/node';
+import {
+  BrandingPreference,
+  AllOrganizationsApiResponse,
+  AsgardeoRuntimeError,
+  Organization,
+  User,
+  UserProfile,
+  IdToken,
+} from '@asgardeo/node';
 import AsgardeoClientProvider from '../client/contexts/Asgardeo/AsgardeoProvider';
 import AsgardeoNextClient from '../AsgardeoNextClient';
 import signInAction from './actions/signInAction';
@@ -34,6 +42,10 @@ import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
 import {AsgardeoProviderProps} from '@asgardeo/react';
 import getCurrentOrganizationAction from './actions/getCurrentOrganizationAction';
 import updateUserProfileAction from './actions/updateUserProfileAction';
+import getMyOrganizations from './actions/getMyOrganizations';
+import getAllOrganizations from './actions/getAllOrganizations';
+import getBrandingPreference from './actions/getBrandingPreference';
+import switchOrganization from './actions/switchOrganization';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -97,16 +109,66 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     name: '',
     orgHandle: '',
   };
+  let myOrganizations: Organization[] = [];
+  let brandingPreference: BrandingPreference | null = null;
 
   if (_isSignedIn) {
+    // Check if there's a `user_org` claim in the ID token to determine if this is an organization login
+    const idToken = await asgardeoClient.getDecodedIdToken(sessionId);
+    let updatedBaseUrl = config?.baseUrl;
+
+    if (idToken?.['user_org']) {
+      // Treat this login as an organization login and modify the base URL
+      updatedBaseUrl = `${config?.baseUrl}/o`;
+      config = {...config, baseUrl: updatedBaseUrl};
+    }
+
     const userResponse = await getUserAction(sessionId);
     const userProfileResponse = await getUserProfileAction(sessionId);
     const currentOrganizationResponse = await getCurrentOrganizationAction(sessionId);
+    myOrganizations = await getMyOrganizations({}, sessionId);
 
     user = userResponse.data?.user || {};
     userProfile = userProfileResponse.data?.userProfile;
     currentOrganization = currentOrganizationResponse?.data?.organization as Organization;
   }
+
+  // Fetch branding preference if branding is enabled in config
+  if (config?.preferences?.theme?.inheritFromBranding !== false) {
+    try {
+      brandingPreference = await getBrandingPreference(
+        {
+          baseUrl: config?.baseUrl as string,
+          locale: 'en-US',
+          name: config.applicationId || config.organizationHandle,
+          type: config.applicationId ? 'APP' : 'ORG',
+        },
+        sessionId,
+      );
+    } catch (error) {
+      console.warn('[AsgardeoServerProvider] Failed to fetch branding preference:', error);
+    }
+  }
+
+  const handleGetAllOrganizations = async (
+    options?: any,
+    _sessionId?: string,
+  ): Promise<AllOrganizationsApiResponse> => {
+    'use server';
+    return await getAllOrganizations(options, sessionId);
+  };
+
+  const handleSwitchOrganization = async (organization: Organization, _sessionId?: string): Promise<void> => {
+    'use server';
+    await switchOrganization(organization, sessionId);
+
+    // After switching organization, we need to refresh the page to get updated session data
+    // This is because server components don't maintain state between function calls
+    const {revalidatePath} = await import('next/cache');
+
+    // Revalidate the current path to refresh the component with new data
+    revalidatePath('/');
+  };
 
   return (
     <AsgardeoClientProvider
@@ -126,6 +188,10 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
       userProfile={userProfile}
       updateProfile={updateUserProfileAction}
       isSignedIn={_isSignedIn}
+      myOrganizations={myOrganizations}
+      getAllOrganizations={handleGetAllOrganizations}
+      switchOrganization={handleSwitchOrganization}
+      brandingPreference={brandingPreference}
     >
       {children}
     </AsgardeoClientProvider>

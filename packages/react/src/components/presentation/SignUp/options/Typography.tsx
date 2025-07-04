@@ -19,11 +19,13 @@
 import {FC} from 'react';
 import {BaseSignUpOptionProps} from './SignUpOptionFactory';
 import Typography from '../../../primitives/Typography/Typography';
+import useTheme from '../../../../contexts/Theme/useTheme';
 
 /**
  * Typography component for sign-up forms (titles, descriptions, etc.).
  */
 const TypographyComponent: FC<BaseSignUpOptionProps> = ({component}) => {
+  const {theme} = useTheme();
   const config = component.config || {};
   const text = config['text'] || config['content'] || '';
   const variant = component.variant?.toLowerCase() || 'body1';
@@ -67,7 +69,11 @@ const TypographyComponent: FC<BaseSignUpOptionProps> = ({component}) => {
   }
 
   return (
-    <Typography key={component.id} variant={typographyVariant} style={{marginBottom: '1rem'}}>
+    <Typography
+      key={component.id}
+      variant={typographyVariant}
+      style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
+    >
       {text}
     </Typography>
   );

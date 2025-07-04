@@ -78,7 +78,7 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
   ...props
 }: CreateOrganizationProps): ReactElement => {
   const {isSignedIn, baseUrl} = useAsgardeo();
-  const {currentOrganization, revalidateOrganizations} = useOrganization();
+  const {currentOrganization, revalidateMyOrganizations} = useOrganization();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -119,7 +119,7 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
       }
 
       // Refresh organizations list to include the new organization
-      await revalidateOrganizations();
+      await revalidateMyOrganizations();
 
       // Call success callback if provided
       if (onSuccess) {

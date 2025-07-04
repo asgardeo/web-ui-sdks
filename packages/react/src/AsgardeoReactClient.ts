@@ -36,12 +36,16 @@ import {
   IdToken,
   EmbeddedFlowExecuteRequestConfig,
   deriveOrganizationHandleFromBaseUrl,
+  AllOrganizationsApiResponse,
+  extractUserClaimsFromIdToken,
+  TokenResponse,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/getMeOrganizations';
 import getScim2Me from './api/getScim2Me';
 import getSchemas from './api/getSchemas';
 import {AsgardeoReactConfig} from './models/config';
+import getAllOrganizations from './api/getAllOrganizations';
 
 /**
  * Client for mplementing Asgardeo in React applications.
@@ -87,7 +91,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
 
       return generateUserProfile(profile, flattenUserSchema(schemas));
     } catch (error) {
-      return this.asgardeo.getDecodedIdToken();
+      return extractUserClaimsFromIdToken(await this.getDecodedIdToken());
     }
   }
 
@@ -119,13 +123,13 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     } catch (error) {
       return {
         schemas: [],
-        flattenedProfile: await this.asgardeo.getDecodedIdToken(),
-        profile: await this.asgardeo.getDecodedIdToken(),
+        flattenedProfile: extractUserClaimsFromIdToken(await this.getDecodedIdToken()),
+        profile: extractUserClaimsFromIdToken(await this.getDecodedIdToken()),
       };
     }
   }
 
-  override async getOrganizations(options?: any): Promise<Organization[]> {
+  override async getMyOrganizations(options?: any, sessionId?: string): Promise<Organization[]> {
     try {
       let baseUrl = options?.baseUrl;
 
@@ -134,21 +138,41 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
         baseUrl = configData?.baseUrl;
       }
 
-      const organizations = await getMeOrganizations({baseUrl});
-
-      return organizations;
+      return getMeOrganizations({baseUrl});
     } catch (error) {
       throw new AsgardeoRuntimeError(
-        'Failed to fetch organizations.',
-        'react-AsgardeoReactClient-GetOrganizationsError-001',
+        `Failed to fetch the user's associated organizations: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        'AsgardeoReactClient-getMyOrganizations-RuntimeError-001',
         'react',
-        'An error occurred while fetching the organizations associated with the user.',
+        'An error occurred while fetching associated organizations of the signed-in user.',
+      );
+    }
+  }
+
+  override async getAllOrganizations(options?: any, sessionId?: string): Promise<AllOrganizationsApiResponse> {
+    try {
+      let baseUrl = options?.baseUrl;
+
+      if (!baseUrl) {
+        const configData = await this.asgardeo.getConfigData();
+        baseUrl = configData?.baseUrl;
+      }
+
+      return getAllOrganizations({baseUrl});
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Failed to fetch all organizations: ${error instanceof Error ? error.message : String(error)}`,
+        'AsgardeoReactClient-getAllOrganizations-RuntimeError-001',
+        'react',
+        'An error occurred while fetching all the organizations associated with the user.',
       );
     }
   }
 
   override async getCurrentOrganization(): Promise<Organization | null> {
-    const idToken: IdToken = await this.asgardeo.getDecodedIdToken();
+    const idToken: IdToken = await this.getDecodedIdToken();
 
     return {
       orgHandle: idToken?.org_handle,
@@ -157,7 +181,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     };
   }
 
-  override async switchOrganization(organization: Organization): Promise<void> {
+  override async switchOrganization(organization: Organization, sessionId?: string): Promise<TokenResponse | Response>  {
     try {
       const configData = await this.asgardeo.getConfigData();
       const scopes = configData?.scopes;
@@ -185,11 +209,11 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
         signInRequired: true,
       };
 
-      await this.asgardeo.exchangeToken(
+      return await this.asgardeo.exchangeToken(
         exchangeConfig,
         (user: User) => {},
         () => null,
-      );
+      ) as TokenResponse | Response;
     } catch (error) {
       throw new AsgardeoRuntimeError(
         `Failed to switch organization: ${error.message || error}`,

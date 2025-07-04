@@ -27,11 +27,7 @@ export {default as executeEmbeddedSignUpFlow} from './api/executeEmbeddedSignUpF
 export {default as getUserInfo} from './api/getUserInfo';
 export {default as getScim2Me, GetScim2MeConfig} from './api/getScim2Me';
 export {default as getSchemas, GetSchemasConfig} from './api/getSchemas';
-export {
-  default as getAllOrganizations,
-  PaginatedOrganizationsResponse,
-  GetAllOrganizationsConfig,
-} from './api/getAllOrganizations';
+export {default as getAllOrganizations, GetAllOrganizationsConfig} from './api/getAllOrganizations';
 export {
   default as createOrganization,
   CreateOrganizationPayload,
@@ -53,6 +49,7 @@ export {default as AsgardeoAPIError} from './errors/AsgardeoAPIError';
 export {default as AsgardeoRuntimeError} from './errors/AsgardeoRuntimeError';
 export {AsgardeoAuthException} from './errors/exception';
 
+export {AllOrganizationsApiResponse} from './models/organization';
 export {
   EmbeddedSignInFlowInitiateResponse,
   EmbeddedSignInFlowStatus,
@@ -115,6 +112,7 @@ export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 export {default as createTheme} from './theme/createTheme';
 export {ThemeColors, ThemeConfig, Theme, ThemeMode, ThemeDetection} from './theme/types';
 
+export {default as processUsername} from './utils/processUsername';
 export {default as deepMerge} from './utils/deepMerge';
 export {default as deriveOrganizationHandleFromBaseUrl} from './utils/deriveOrganizationHandleFromBaseUrl';
 export {default as extractUserClaimsFromIdToken} from './utils/extractUserClaimsFromIdToken';
@@ -132,5 +130,6 @@ export {default as resolveFieldType} from './utils/resolveFieldType';
 export {default as resolveFieldName} from './utils/resolveFieldName';
 export {default as processOpenIDScopes} from './utils/processOpenIDScopes';
 export {default as withVendorCSSClassPrefix} from './utils/withVendorCSSClassPrefix';
+export {default as transformBrandingPreferenceToTheme} from './utils/transformBrandingPreferenceToTheme';
 
 export {default as StorageManager} from './StorageManager';

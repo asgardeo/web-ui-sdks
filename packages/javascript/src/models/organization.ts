@@ -23,3 +23,13 @@ export interface Organization {
   ref?: string;
   status?: string;
 }
+
+/**
+ * Interface for paginated organization response.
+ */
+export interface AllOrganizationsApiResponse {
+  hasMore?: boolean;
+  nextCursor?: string;
+  organizations: Organization[];
+  totalCount?: number;
+}
