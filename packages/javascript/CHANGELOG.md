@@ -1,5 +1,13 @@
 # @asgardeo/javascript
 
+## 0.1.3
+
+### Patch Changes
+
+- [#87](https://github.com/asgardeo/web-ui-sdks/pull/87)
+  [`c0b7ebd`](https://github.com/asgardeo/web-ui-sdks/commit/c0b7ebd71adb258d3df9fc336dfcb122e6ff6434) Thanks
+  [@brionmario](https://github.com/brionmario)! - Fix B2B components
+
 ## 0.1.2
 
 ### Patch Changes
