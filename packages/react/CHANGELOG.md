@@ -1,5 +1,13 @@
 # @asgardeo/react
 
+## 0.5.6
+
+### Patch Changes
+
+- [#90](https://github.com/asgardeo/web-ui-sdks/pull/90)
+  [`b23868f`](https://github.com/asgardeo/web-ui-sdks/commit/b23868f33d9a05df790b22b6585cd20ce7316de9) Thanks
+  [@brionmario](https://github.com/brionmario)! - Fix alignment issues in the components
+
 ## 0.5.5
 
 ### Patch Changes
