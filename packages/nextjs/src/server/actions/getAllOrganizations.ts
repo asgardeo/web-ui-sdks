@@ -18,16 +18,20 @@
 
 'use server';
 
-import {AllOrganizationsApiResponse, AsgardeoAPIError, Organization} from '@asgardeo/node';
+import {AllOrganizationsApiResponse, AsgardeoAPIError} from '@asgardeo/node';
+import getSessionId from './getSessionId';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
 
 /**
  * Server action to get organizations.
  */
-const getAllOrganizations = async (options?: any, sessionId?: string | undefined): Promise<AllOrganizationsApiResponse> => {
+const getAllOrganizations = async (
+  options?: any,
+  sessionId?: string | undefined,
+): Promise<AllOrganizationsApiResponse> => {
   try {
-    const client = AsgardeoNextClient.getInstance();
-    return client.getAllOrganizations(options, sessionId);
+    const client: AsgardeoNextClient = AsgardeoNextClient.getInstance();
+    return await client.getAllOrganizations(options, sessionId ?? ((await getSessionId()) as string));
   } catch (error) {
     throw new AsgardeoAPIError(
       `Failed to get all the organizations for the user: ${error instanceof Error ? error.message : String(error)}`,

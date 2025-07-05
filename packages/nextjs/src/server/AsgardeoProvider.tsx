@@ -18,34 +18,27 @@
 
 'use server';
 
-import {FC, PropsWithChildren, ReactElement} from 'react';
-import {
-  BrandingPreference,
-  AllOrganizationsApiResponse,
-  AsgardeoRuntimeError,
-  Organization,
-  User,
-  UserProfile,
-  IdToken,
-} from '@asgardeo/node';
-import AsgardeoClientProvider from '../client/contexts/Asgardeo/AsgardeoProvider';
-import AsgardeoNextClient from '../AsgardeoNextClient';
-import signInAction from './actions/signInAction';
-import signOutAction from './actions/signOutAction';
-import {AsgardeoNextConfig} from '../models/config';
-import isSignedIn from './actions/isSignedIn';
-import getUserAction from './actions/getUserAction';
-import getSessionId from './actions/getSessionId';
-import getUserProfileAction from './actions/getUserProfileAction';
-import signUpAction from './actions/signUpAction';
-import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
+import {BrandingPreference, AsgardeoRuntimeError, Organization, User, UserProfile} from '@asgardeo/node';
 import {AsgardeoProviderProps} from '@asgardeo/react';
-import getCurrentOrganizationAction from './actions/getCurrentOrganizationAction';
-import updateUserProfileAction from './actions/updateUserProfileAction';
-import getMyOrganizations from './actions/getMyOrganizations';
+import {FC, PropsWithChildren, ReactElement} from 'react';
+import createOrganization from './actions/createOrganization';
 import getAllOrganizations from './actions/getAllOrganizations';
 import getBrandingPreference from './actions/getBrandingPreference';
+import getCurrentOrganizationAction from './actions/getCurrentOrganizationAction';
+import getMyOrganizations from './actions/getMyOrganizations';
+import getSessionId from './actions/getSessionId';
+import getUserAction from './actions/getUserAction';
+import getUserProfileAction from './actions/getUserProfileAction';
+import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
+import isSignedIn from './actions/isSignedIn';
+import signInAction from './actions/signInAction';
+import signOutAction from './actions/signOutAction';
+import signUpAction from './actions/signUpAction';
 import switchOrganization from './actions/switchOrganization';
+import updateUserProfileAction from './actions/updateUserProfileAction';
+import AsgardeoNextClient from '../AsgardeoNextClient';
+import AsgardeoClientProvider from '../client/contexts/Asgardeo/AsgardeoProvider';
+import {AsgardeoNextConfig} from '../models/config';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -150,26 +143,6 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     }
   }
 
-  const handleGetAllOrganizations = async (
-    options?: any,
-    _sessionId?: string,
-  ): Promise<AllOrganizationsApiResponse> => {
-    'use server';
-    return await getAllOrganizations(options, sessionId);
-  };
-
-  const handleSwitchOrganization = async (organization: Organization, _sessionId?: string): Promise<void> => {
-    'use server';
-    await switchOrganization(organization, sessionId);
-
-    // After switching organization, we need to refresh the page to get updated session data
-    // This is because server components don't maintain state between function calls
-    const {revalidatePath} = await import('next/cache');
-
-    // Revalidate the current path to refresh the component with new data
-    revalidatePath('/');
-  };
-
   return (
     <AsgardeoClientProvider
       organizationHandle={config?.organizationHandle}
@@ -189,9 +162,10 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
       updateProfile={updateUserProfileAction}
       isSignedIn={_isSignedIn}
       myOrganizations={myOrganizations}
-      getAllOrganizations={handleGetAllOrganizations}
-      switchOrganization={handleSwitchOrganization}
+      getAllOrganizations={getAllOrganizations}
+      switchOrganization={switchOrganization}
       brandingPreference={brandingPreference}
+      createOrganization={createOrganization}
     >
       {children}
     </AsgardeoClientProvider>

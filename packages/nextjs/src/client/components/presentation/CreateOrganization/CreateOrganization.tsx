@@ -18,13 +18,11 @@
 
 'use client';
 
-import {FC, ReactElement, useState} from 'react';
-
+import {CreateOrganizationPayload, AsgardeoRuntimeError} from '@asgardeo/node';
 import {BaseCreateOrganization, BaseCreateOrganizationProps, useOrganization} from '@asgardeo/react';
-import {CreateOrganizationPayload} from '@asgardeo/node';
-import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
-import createOrganizationAction from '../../../../server/actions/createOrganizationAction';
+import {FC, ReactElement, useState} from 'react';
 import getSessionId from '../../../../server/actions/getSessionId';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 
 /**
  * Props interface for the CreateOrganization component.
@@ -80,7 +78,7 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
   ...props
 }: CreateOrganizationProps): ReactElement => {
   const {isSignedIn, baseUrl} = useAsgardeo();
-  const {currentOrganization, revalidateMyOrganizations} = useOrganization();
+  const {currentOrganization, revalidateMyOrganizations, createOrganization} = useOrganization();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -104,14 +102,22 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
       let result: any;
 
       if (onCreateOrganization) {
-        // Use the provided custom creation function
         result = await onCreateOrganization(payload);
       } else {
-        // Use the default API
         if (!baseUrl) {
           throw new Error('Base URL is required for organization creation');
         }
-        result = await createOrganizationAction(
+
+        if (!createOrganization) {
+          throw new AsgardeoRuntimeError(
+            `createOrganization function is not available.`,
+            'CreateOrganization-handleSubmit-RuntimeError-001',
+            'nextjs',
+            'The createOrganization function must be provided by the Organization context.',
+          );
+        }
+
+        result = await createOrganization(
           {
             ...payload,
             parentId,
@@ -121,7 +127,9 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
       }
 
       // Refresh organizations list to include the new organization
-      await revalidateMyOrganizations();
+      if (revalidateMyOrganizations) {
+        await revalidateMyOrganizations();
+      }
 
       // Call success callback if provided
       if (onSuccess) {
