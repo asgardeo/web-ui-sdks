@@ -16,7 +16,12 @@
  * under the License.
  */
 
-import {AsgardeoRuntimeError, Organization, AllOrganizationsApiResponse} from '@asgardeo/browser';
+import {
+  AsgardeoRuntimeError,
+  Organization,
+  AllOrganizationsApiResponse,
+  CreateOrganizationPayload,
+} from '@asgardeo/browser';
 import {FC, PropsWithChildren, ReactElement, useCallback, useMemo, useState} from 'react';
 import OrganizationContext, {OrganizationContextProps} from './OrganizationContext';
 
@@ -29,9 +34,17 @@ export interface OrganizationProviderProps {
    */
   autoFetch?: boolean;
   /**
+   * Function to create a new organization.
+   */
+  createOrganization?: (payload: CreateOrganizationPayload, sessionId: string) => Promise<Organization>;
+  /**
    * Initial current organization
    */
   currentOrganization?: Organization | null;
+  /**
+   * Initial list of organizations
+   */
+  getAllOrganizations?: () => Promise<AllOrganizationsApiResponse>;
   /**
    * List of organizations the signed-in user belongs to.
    */
@@ -44,10 +57,6 @@ export interface OrganizationProviderProps {
    * Callback function called when switching organizations
    */
   onOrganizationSwitch?: (organization: Organization) => Promise<void>;
-  /**
-   * Initial list of organizations
-   */
-  getAllOrganizations?: () => Promise<AllOrganizationsApiResponse>;
   /**
    * Refetch the my organizations list.
    * @returns
@@ -97,6 +106,7 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
   onOrganizationSwitch,
   revalidateMyOrganizations,
   getAllOrganizations,
+  createOrganization,
 }: PropsWithChildren<OrganizationProviderProps>): ReactElement => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -138,13 +148,14 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
 
   const contextValue: OrganizationContextProps = useMemo(
     () => ({
+      createOrganization,
       currentOrganization,
       error,
+      getAllOrganizations,
       isLoading,
       myOrganizations,
-      switchOrganization,
       revalidateMyOrganizations,
-      getAllOrganizations,
+      switchOrganization,
     }),
     [
       currentOrganization,
@@ -154,6 +165,7 @@ const OrganizationProvider: FC<PropsWithChildren<OrganizationProviderProps>> = (
       switchOrganization,
       revalidateMyOrganizations,
       getAllOrganizations,
+      createOrganization,
     ],
   );
 

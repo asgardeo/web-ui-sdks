@@ -16,37 +16,42 @@
  * under the License.
  */
 
-import {AllOrganizationsApiResponse, Organization} from '@asgardeo/browser';
+import {AllOrganizationsApiResponse, Organization, CreateOrganizationPayload} from '@asgardeo/browser';
 import {Context, createContext} from 'react';
 
 /**
  * Props interface of {@link OrganizationContext}
  */
 export type OrganizationContextProps = {
+  /**
+   * Function to create a new organization.
+   */
+  createOrganization?: (payload: CreateOrganizationPayload, sessionId: string) => Promise<Organization>;
   currentOrganization: Organization | null;
   error: string | null;
+  getAllOrganizations: () => Promise<AllOrganizationsApiResponse>;
   isLoading: boolean;
   myOrganizations: Organization[];
-  switchOrganization: (organization: Organization) => Promise<void>;
   revalidateMyOrganizations: () => Promise<Organization[]>;
-  getAllOrganizations: () => Promise<AllOrganizationsApiResponse>;
+  switchOrganization: (organization: Organization) => Promise<void>;
 };
 
 /**
  * Context object for managing organization data and related operations.
  */
 const OrganizationContext: Context<OrganizationContextProps | null> = createContext<null | OrganizationContextProps>({
+  createOrganization: () => null,
   currentOrganization: null,
   error: null,
-  isLoading: false,
-  myOrganizations: null,
-  switchOrganization: () => Promise.resolve(),
-  revalidateMyOrganizations: () => Promise.resolve([]),
   getAllOrganizations: () =>
     Promise.resolve({
       count: 0,
       organizations: [],
     }),
+  isLoading: false,
+  myOrganizations: null,
+  revalidateMyOrganizations: () => Promise.resolve([]),
+  switchOrganization: () => Promise.resolve(),
 });
 
 OrganizationContext.displayName = 'OrganizationContext';

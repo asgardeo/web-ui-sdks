@@ -18,26 +18,25 @@
 
 'use server';
 
-import {CreateOrganizationPayload, Organization} from '@asgardeo/node';
+import {CreateOrganizationPayload, Organization, AsgardeoAPIError} from '@asgardeo/node';
+import getSessionId from './getSessionId';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
 
 /**
  * Server action to create an organization.
  */
-const createOrganizationAction = async (payload: CreateOrganizationPayload, sessionId: string) => {
+const createOrganization = async (payload: CreateOrganizationPayload, sessionId: string): Promise<Organization> => {
   try {
-    const client = AsgardeoNextClient.getInstance();
-    const organization: Organization = await client.createOrganization(payload, sessionId);
-    return {success: true, data: {organization}, error: null};
+    const client: AsgardeoNextClient = AsgardeoNextClient.getInstance();
+    return await client.createOrganization(payload, sessionId ?? ((await getSessionId()) as string));
   } catch (error) {
-    return {
-      success: false,
-      data: {
-        user: {},
-      },
-      error: 'Failed to create organization',
-    };
+    throw new AsgardeoAPIError(
+      `Failed to create the organization: ${error instanceof Error ? error.message : String(error)}`,
+      'createOrganization-ServerActionError-001',
+      'nextjs',
+      error instanceof AsgardeoAPIError ? error.statusCode : undefined,
+    );
   }
 };
 
-export default createOrganizationAction;
+export default createOrganization;

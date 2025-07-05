@@ -20,7 +20,6 @@
 
 import {
   AllOrganizationsApiResponse,
-  AsgardeoRuntimeError,
   EmbeddedFlowExecuteRequestConfig,
   EmbeddedFlowExecuteRequestPayload,
   EmbeddedSignInFlowHandleRequestPayload,
@@ -30,6 +29,8 @@ import {
   User,
   UserProfile,
   BrandingPreference,
+  TokenResponse,
+  CreateOrganizationPayload,
 } from '@asgardeo/node';
 import {
   I18nProvider,
@@ -40,8 +41,8 @@ import {
   OrganizationProvider,
   BrandingProvider,
 } from '@asgardeo/react';
-import {FC, PropsWithChildren, RefObject, useEffect, useMemo, useRef, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
+import {FC, PropsWithChildren, RefObject, useEffect, useMemo, useRef, useState} from 'react';
 import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
 
 /**
@@ -49,29 +50,30 @@ import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
  */
 export type AsgardeoClientProviderProps = Partial<Omit<AsgardeoProviderProps, 'baseUrl' | 'clientId'>> &
   Pick<AsgardeoProviderProps, 'baseUrl' | 'clientId'> & {
-    signOut: AsgardeoContextProps['signOut'];
-    signIn: AsgardeoContextProps['signIn'];
-    signUp: AsgardeoContextProps['signUp'];
     applicationId: AsgardeoContextProps['applicationId'];
-    organizationHandle: AsgardeoContextProps['organizationHandle'];
+    brandingPreference?: BrandingPreference | null;
+    createOrganization: (payload: CreateOrganizationPayload, sessionId: string) => Promise<Organization>;
+    currentOrganization: Organization;
+    getAllOrganizations: (options?: any, sessionId?: string) => Promise<AllOrganizationsApiResponse>;
     handleOAuthCallback: (
       code: string,
       state: string,
       sessionState?: string,
-    ) => Promise<{success: boolean; error?: string; redirectUrl?: string}>;
+    ) => Promise<{error?: string; redirectUrl?: string; success: boolean}>;
     isSignedIn: boolean;
-    userProfile: UserProfile;
-    currentOrganization: Organization;
-    user: User | null;
+    myOrganizations: Organization[];
+    organizationHandle: AsgardeoContextProps['organizationHandle'];
+    revalidateMyOrganizations?: (sessionId?: string) => Promise<Organization[]>;
+    signIn: AsgardeoContextProps['signIn'];
+    signOut: AsgardeoContextProps['signOut'];
+    signUp: AsgardeoContextProps['signUp'];
+    switchOrganization: (organization: Organization, sessionId?: string) => Promise<TokenResponse | Response>;
     updateProfile: (
       requestConfig: UpdateMeProfileConfig,
       sessionId?: string,
-    ) => Promise<{success: boolean; data: {user: User}; error: string}>;
-    getAllOrganizations: (options?: any, sessionId?: string) => Promise<AllOrganizationsApiResponse>;
-    myOrganizations: Organization[];
-    revalidateMyOrganizations?: (sessionId?: string) => Promise<Organization[]>;
-    brandingPreference?: BrandingPreference | null;
-    switchOrganization: (organization: Organization, sessionId?: string) => Promise<void>;
+    ) => Promise<{data: {user: User}; error: string; success: boolean}>;
+    user: User | null;
+    userProfile: UserProfile;
   };
 
 const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>> = ({
@@ -81,6 +83,7 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   signOut,
   signUp,
   handleOAuthCallback,
+  createOrganization,
   preferences,
   isSignedIn,
   signInUrl,
@@ -297,10 +300,11 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
             <FlowProvider>
               <UserProvider profile={userProfile} onUpdateProfile={handleProfileUpdate} updateProfile={updateProfile}>
                 <OrganizationProvider
+                  createOrganization={createOrganization}
                   getAllOrganizations={getAllOrganizations}
                   myOrganizations={myOrganizations}
                   currentOrganization={currentOrganization}
-                  onOrganizationSwitch={switchOrganization}
+                  onOrganizationSwitch={switchOrganization as any}
                   revalidateMyOrganizations={revalidateMyOrganizations as any}
                 >
                   {children}

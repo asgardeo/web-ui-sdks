@@ -18,21 +18,35 @@
 
 'use server';
 
-import {Organization, AsgardeoAPIError, AsgardeoRuntimeError, TokenResponse} from '@asgardeo/node';
+import {Organization, AsgardeoAPIError, TokenResponse} from '@asgardeo/node';
+import getSessionId from './getSessionId';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
 
 /**
  * Server action to switch organization.
  */
-const switchOrganization = async (organization: Organization, sessionId: string): Promise<TokenResponse | Response> => {
+const switchOrganization = async (
+  organization: Organization,
+  sessionId: string | undefined,
+): Promise<TokenResponse | Response> => {
   try {
-    const client = AsgardeoNextClient.getInstance();
-    return await client.switchOrganization(organization, sessionId);
+    const client: AsgardeoNextClient = AsgardeoNextClient.getInstance();
+    const response: TokenResponse | Response = await client.switchOrganization(
+      organization,
+      sessionId ?? ((await getSessionId()) as string),
+    );
+
+    // After switching organization, we need to refresh the page to get updated session data
+    // This is because server components don't maintain state between function calls
+    const {revalidatePath} = await import('next/cache');
+
+    // Revalidate the current path to refresh the component with new data
+    revalidatePath('/');
+
+    return response;
   } catch (error) {
     throw new AsgardeoAPIError(
-      `Failed to switch the organizations: ${
-        error instanceof AsgardeoRuntimeError ? error.message : error instanceof Error ? error.message : String(error)
-      }`,
+      `Failed to switch the organizations: ${error instanceof Error ? error.message : String(error)}`,
       'switchOrganization-ServerActionError-001',
       'nextjs',
       error instanceof AsgardeoAPIError ? error.statusCode : undefined,
