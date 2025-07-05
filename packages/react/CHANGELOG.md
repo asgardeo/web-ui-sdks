@@ -1,5 +1,13 @@
 # @asgardeo/react
 
+## 0.5.7
+
+### Patch Changes
+
+- [#92](https://github.com/asgardeo/web-ui-sdks/pull/92)
+  [`1ce6a26`](https://github.com/asgardeo/web-ui-sdks/commit/1ce6a2657678549e06609958162003027b986b03) Thanks
+  [@brionmario](https://github.com/brionmario)! - Fix issues in next components
+
 ## 0.5.6
 
 ### Patch Changes
