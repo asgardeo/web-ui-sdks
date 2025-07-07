@@ -17,7 +17,7 @@
  */
 
 import {FC, PropsWithChildren, ReactNode} from 'react';
-import useAsgardeo from '../../contexts/Asgardeo/useAsgardeo';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 
 /**
  * Props for the Loading component.
@@ -47,10 +47,7 @@ export interface LoadingProps {
  * }
  * ```
  */
-const Loading: FC<PropsWithChildren<LoadingProps>> = ({
-  children,
-  fallback = null,
-}: PropsWithChildren<LoadingProps>) => {
+const Loading: FC<PropsWithChildren<LoadingProps>> = ({children, fallback = null}: PropsWithChildren<LoadingProps>) => {
   const {isLoading} = useAsgardeo();
 
   if (!isLoading) {

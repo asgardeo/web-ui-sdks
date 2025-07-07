@@ -109,14 +109,14 @@ export * from './components/actions/SignUpButton/BaseSignUpButton';
 export {default as SignUpButton} from './components/actions/SignUpButton/SignUpButton';
 export * from './components/actions/SignUpButton/SignUpButton';
 
-export {default as SignedIn} from './components/control/SignedIn';
-export * from './components/control/SignedIn';
+export {default as SignedIn} from './components/control/SignedIn/SignedIn';
+export * from './components/control/SignedIn/SignedIn';
 
-export {default as SignedOut} from './components/control/SignedOut';
-export * from './components/control/SignedOut';
+export {default as SignedOut} from './components/control/SignedOut/SignedOut';
+export * from './components/control/SignedOut/SignedOut';
 
-export {default as Loading} from './components/control/Loading';
-export * from './components/control/Loading';
+export {default as Loading} from './components/control/Loading/Loading';
+export * from './components/control/Loading/Loading';
 
 export {default as BaseSignIn} from './components/presentation/SignIn/BaseSignIn';
 export * from './components/presentation/SignIn/BaseSignIn';
