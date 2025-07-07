@@ -1,6 +1,6 @@
 'use client';
 
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route} from 'react-router';
 import {useState, createContext, useContext} from 'react';
 import DashboardPage from './pages/Dashboard';
 import ProfilePage from './pages/Profile';
@@ -12,6 +12,7 @@ import LandingLayout from './layouts/LandingLayout';
 import DashboardLayout from './layouts/DashboardLayout';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 import SignUpPage from './pages/SignUpPage';
+import {ProtectedRoute} from '@asgardeo/react-router';
 
 // Types
 export interface User {
@@ -129,33 +130,41 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <DashboardLayout>
-                <DashboardPage />
-              </DashboardLayout>
+              <ProtectedRoute redirectTo="/signin">
+                <DashboardLayout>
+                  <DashboardPage />
+                </DashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/profile"
             element={
-              <DashboardLayout>
-                <ProfilePage />
-              </DashboardLayout>
+              <ProtectedRoute redirectTo="/signin">
+                <DashboardLayout>
+                  <ProfilePage />
+                </DashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/organizations"
             element={
-              <DashboardLayout>
-                <OrganizationsPage />
-              </DashboardLayout>
+              <ProtectedRoute redirectTo="/signin">
+                <DashboardLayout>
+                  <OrganizationsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/organizations/new"
             element={
-              <DashboardLayout>
-                <CreateOrganizationPage />
-              </DashboardLayout>
+              <ProtectedRoute redirectTo="/signin">
+                <DashboardLayout>
+                  <CreateOrganizationPage />
+                </DashboardLayout>
+              </ProtectedRoute>
             }
           />
         </Routes>

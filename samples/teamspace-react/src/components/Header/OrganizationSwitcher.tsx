@@ -1,7 +1,7 @@
 'use client';
 
 import {useState, useRef, useEffect} from 'react';
-import {Link} from 'react-router-dom';
+import {Link} from 'react-router';
 import {ChevronDown, Plus, Check, Building2} from 'lucide-react';
 import {useApp} from '../../App';
 

@@ -2,7 +2,7 @@
 
 import {UserProfile} from '@asgardeo/react';
 import {ArrowLeft} from 'lucide-react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router';
 
 export default function Profile() {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 'use client';
 
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router';
 import {SignInButton, SignUpButton} from '@asgardeo/react';
 import {Button} from '../ui/button';
 
