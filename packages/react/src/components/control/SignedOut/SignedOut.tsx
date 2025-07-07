@@ -17,7 +17,7 @@
  */
 
 import {FC, PropsWithChildren, ReactNode} from 'react';
-import useAsgardeo from '../../contexts/Asgardeo/useAsgardeo';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 
 /**
  * Props for the SignedOut component.
