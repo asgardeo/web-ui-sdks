@@ -166,9 +166,9 @@ describe('asgardeoPlugin', () => {
 
     mockAuthAPI.getState.mockReturnValueOnce(silentSignInState);
 
-    await authContext.trySignInSilently(additionalParams, tokenRequestConfig);
+    await authContext.signInSilently(additionalParams, tokenRequestConfig);
 
-    expect(mockAuthAPI.trySignInSilently).toHaveBeenCalledWith(additionalParams, tokenRequestConfig);
+    expect(mockAuthAPI.signInSilently).toHaveBeenCalledWith(additionalParams, tokenRequestConfig);
     expect(authContext.state).toMatchObject(silentSignInState);
   });
 

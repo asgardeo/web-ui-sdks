@@ -428,10 +428,10 @@ export class AsgardeoSPAClient {
    *
    * @example
    *```
-   * auth.trySignInSilently()
+   * auth.signInSilently()
    *```
    */
-  public async trySignInSilently(
+  public async signInSilently(
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ): Promise<User | boolean | undefined> {
@@ -442,7 +442,7 @@ export class AsgardeoSPAClient {
       return undefined;
     }
 
-    return this._client?.trySignInSilently(additionalParams, tokenRequestConfig).then((response: User | boolean) => {
+    return this._client?.signInSilently(additionalParams, tokenRequestConfig).then((response: User | boolean) => {
       if (this._onSignInCallback && response) {
         this._onSignInCallback(response as User);
       }

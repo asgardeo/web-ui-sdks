@@ -16,13 +16,5 @@
  * under the License.
  */
 
-// Components
 export {default as ProtectedRoute} from './components/ProtectedRoute';
 export * from './components/ProtectedRoute';
-
-export {default as withAuthentication} from './components/withAuthentication';
-export * from './components/withAuthentication';
-
-// Hooks
-export {default as useAuthGuard, useReturnUrl} from './hooks/useAuthGuard';
-export * from './hooks/useAuthGuard';

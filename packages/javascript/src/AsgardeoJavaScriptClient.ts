@@ -66,6 +66,8 @@ abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T>
     onSignInSuccess?: (afterSignInUrl: string) => void,
   ): Promise<User>;
 
+  abstract signInSilently(options?: SignInOptions): Promise<User | boolean>;
+
   abstract signOut(options?: SignOutOptions, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;
   abstract signOut(
     options?: SignOutOptions,

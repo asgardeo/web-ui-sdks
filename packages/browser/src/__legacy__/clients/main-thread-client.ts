@@ -356,11 +356,11 @@ export const MainThreadClient = async (
    * @return {Promise<User|boolean} Returns a Promise that resolves with the User
    * if the user is signed in or with `false` if there is no active user session in the server.
    */
-  const trySignInSilently = async (
+  const signInSilently = async (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ): Promise<User | boolean> =>
-    _authenticationHelper.trySignInSilently(
+    _authenticationHelper.signInSilently(
       constructSilentSignInUrl,
       requestAccessToken,
       _sessionManagementHelper,
@@ -370,7 +370,8 @@ export const MainThreadClient = async (
 
   const getUser = async (): Promise<User> => _authenticationHelper.getUser();
 
-  const getDecodedIdToken = async (sessionId?: string): Promise<IdToken> => _authenticationHelper.getDecodedIdToken(sessionId);
+  const getDecodedIdToken = async (sessionId?: string): Promise<IdToken> =>
+    _authenticationHelper.getDecodedIdToken(sessionId);
 
   const getCrypto = async (): Promise<IsomorphicCrypto> => _authenticationHelper.getCrypto();
 
@@ -437,7 +438,7 @@ export const MainThreadClient = async (
     setHttpRequestSuccessCallback,
     signIn,
     signOut,
-    trySignInSilently,
+    signInSilently,
     reInitialize,
   };
 };

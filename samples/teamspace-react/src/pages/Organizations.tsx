@@ -1,6 +1,6 @@
 'use client';
 
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router';
 import {ArrowLeft, Plus} from 'lucide-react';
 import {OrganizationList} from '@asgardeo/react';
 

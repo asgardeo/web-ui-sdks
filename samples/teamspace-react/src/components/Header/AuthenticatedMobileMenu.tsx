@@ -1,7 +1,7 @@
 'use client';
 
 import {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link} from 'react-router';
 import {Menu, X, Home, Briefcase, Users as UsersIcon} from 'lucide-react';
 
 interface AuthenticatedMobileMenuProps {

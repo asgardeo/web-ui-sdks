@@ -55,12 +55,36 @@ import getAllOrganizations from './api/getAllOrganizations';
  */
 class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> extends AsgardeoBrowserClient<T> {
   private asgardeo: AuthAPI;
+  private _isLoading: boolean = false;
 
   constructor() {
     super();
 
     // FIXME: This has to be the browser client from `@asgardeo/browser` package.
     this.asgardeo = new AuthAPI();
+  }
+
+  /**
+   * Set the loading state of the client
+   * @param loading - Boolean indicating if the client is in a loading state
+   */
+  private setLoading(loading: boolean): void {
+    this._isLoading = loading;
+  }
+
+  /**
+   * Wrap async operations with loading state management
+   * @param operation - The async operation to execute
+   * @returns Promise with the result of the operation
+   */
+  private async withLoading<T>(operation: () => Promise<T>): Promise<T> {
+    this.setLoading(true);
+    try {
+      const result = await operation();
+      return result;
+    } finally {
+      this.setLoading(false);
+    }
   }
 
   override initialize(config: AsgardeoReactConfig): Promise<boolean> {
@@ -70,7 +94,9 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       resolvedOrganizationHandle = deriveOrganizationHandleFromBaseUrl(config?.baseUrl);
     }
 
-    return this.asgardeo.init({...config, organizationHandle: resolvedOrganizationHandle} as any);
+    return this.withLoading(async () => {
+      return this.asgardeo.init({...config, organizationHandle: resolvedOrganizationHandle} as any);
+    });
   }
 
   override async updateUserProfile(payload: any, userId?: string): Promise<User> {
@@ -181,51 +207,53 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     };
   }
 
-  override async switchOrganization(organization: Organization, sessionId?: string): Promise<TokenResponse | Response>  {
-    try {
-      const configData = await this.asgardeo.getConfigData();
-      const scopes = configData?.scopes;
+  override async switchOrganization(organization: Organization, sessionId?: string): Promise<TokenResponse | Response> {
+    return this.withLoading(async () => {
+      try {
+        const configData = await this.asgardeo.getConfigData();
+        const scopes = configData?.scopes;
 
-      if (!organization.id) {
+        if (!organization.id) {
+          throw new AsgardeoRuntimeError(
+            'Organization ID is required for switching organizations',
+            'react-AsgardeoReactClient-SwitchOrganizationError-001',
+            'react',
+            'The organization object must contain a valid ID to perform the organization switch.',
+          );
+        }
+
+        const exchangeConfig = {
+          attachToken: false,
+          data: {
+            client_id: '{{clientId}}',
+            grant_type: 'organization_switch',
+            scope: '{{scopes}}',
+            switching_organization: organization.id,
+            token: '{{accessToken}}',
+          },
+          id: 'organization-switch',
+          returnsSession: true,
+          signInRequired: true,
+        };
+
+        return (await this.asgardeo.exchangeToken(
+          exchangeConfig,
+          (user: User) => {},
+          () => null,
+        )) as TokenResponse | Response;
+      } catch (error) {
         throw new AsgardeoRuntimeError(
-          'Organization ID is required for switching organizations',
-          'react-AsgardeoReactClient-SwitchOrganizationError-001',
+          `Failed to switch organization: ${error.message || error}`,
+          'react-AsgardeoReactClient-SwitchOrganizationError-003',
           'react',
-          'The organization object must contain a valid ID to perform the organization switch.',
+          'An error occurred while switching to the specified organization. Please try again.',
         );
       }
-
-      const exchangeConfig = {
-        attachToken: false,
-        data: {
-          client_id: '{{clientId}}',
-          grant_type: 'organization_switch',
-          scope: '{{scopes}}',
-          switching_organization: organization.id,
-          token: '{{accessToken}}',
-        },
-        id: 'organization-switch',
-        returnsSession: true,
-        signInRequired: true,
-      };
-
-      return await this.asgardeo.exchangeToken(
-        exchangeConfig,
-        (user: User) => {},
-        () => null,
-      ) as TokenResponse | Response;
-    } catch (error) {
-      throw new AsgardeoRuntimeError(
-        `Failed to switch organization: ${error.message || error}`,
-        'react-AsgardeoReactClient-SwitchOrganizationError-003',
-        'react',
-        'An error occurred while switching to the specified organization. Please try again.',
-      );
-    }
+    });
   }
 
   override isLoading(): boolean {
-    return this.asgardeo.isLoading();
+    return this._isLoading || this.asgardeo.isLoading();
   }
 
   async isInitialized(): Promise<boolean> {
@@ -252,17 +280,25 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     onSignInSuccess?: (afterSignInUrl: string) => void,
   ): Promise<User>;
   override async signIn(...args: any[]): Promise<User> {
-    const arg1 = args[0];
-    const arg2 = args[1];
+    return this.withLoading(async () => {
+      const arg1 = args[0];
+      const arg2 = args[1];
 
-    if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg2 === 'object' && 'url' in arg2) {
-      return executeEmbeddedSignInFlow({
-        payload: arg1,
-        url: arg2.url,
-      });
-    }
+      if (typeof arg1 === 'object' && 'flowId' in arg1 && typeof arg2 === 'object' && 'url' in arg2) {
+        return executeEmbeddedSignInFlow({
+          payload: arg1,
+          url: arg2.url,
+        });
+      }
 
-    return (await this.asgardeo.signIn(arg1 as any)) as unknown as Promise<User>;
+      return (await this.asgardeo.signIn(arg1 as any)) as unknown as Promise<User>;
+    });
+  }
+
+  override async signInSilently(options?: SignInOptions): Promise<User | boolean> {
+    return this.withLoading(async () => {
+      return this.asgardeo.signInSilently(options as Record<string, string | boolean>);
+    });
   }
 
   override signOut(options?: SignOutOptions, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;

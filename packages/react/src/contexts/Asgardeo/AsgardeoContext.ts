@@ -18,6 +18,7 @@
 
 import {Context, createContext} from 'react';
 import {Organization} from '@asgardeo/browser';
+import AsgardeoReactClient from '../../AsgardeoReactClient';
 
 /**
  * Props interface of {@link AsgardeoContext}
@@ -44,6 +45,7 @@ export type AsgardeoContextProps = {
    * TODO: Fix the types.
    */
   signIn: any;
+  signInSilently: AsgardeoReactClient['signInSilently'];
   /**
    * Sign-out function to terminate the authentication session.
    * @remark This is the programmatic version of the `SignOutButton` component.
@@ -75,6 +77,7 @@ const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null
   isSignedIn: false,
   organization: null,
   signIn: null,
+  signInSilently: null,
   signOut: null,
   signUp: null,
   user: null,

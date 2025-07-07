@@ -1,6 +1,6 @@
 'use client';
 
-import {Link} from 'react-router-dom';
+import {Link} from 'react-router';
 import {Users} from 'lucide-react';
 
 interface LogoProps {

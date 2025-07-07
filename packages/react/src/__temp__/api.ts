@@ -426,39 +426,18 @@ class AuthAPI {
    *
    * @example
    *```
-   * client.trySignInSilently()
+   * client.signInSilently()
    *```
    */
-  public async trySignInSilently(
-    state: AuthStateInterface,
-    dispatch: (state: AuthStateInterface) => void,
+  public async signInSilently(
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ): Promise<User | boolean | undefined> {
     return this._client
-      .trySignInSilently(additionalParams, tokenRequestConfig)
+      .signInSilently(additionalParams, tokenRequestConfig)
       .then(async (response: User | boolean) => {
         if (!response) {
-          this.updateState({...this.getState(), isLoading: false});
-          dispatch({...state, isLoading: false});
-
           return false;
-        }
-
-        if (await this._client.isSignedIn()) {
-          const basicUserInfo = response as User;
-          const stateToUpdate = {
-            displayName: basicUserInfo.displayName,
-            email: basicUserInfo.email,
-            isSignedIn: true,
-            isLoading: false,
-            isSigningOut: false,
-            username: basicUserInfo.username,
-          };
-
-          this.updateState(stateToUpdate);
-
-          dispatch({...state, ...stateToUpdate});
         }
 
         return response;

@@ -505,7 +505,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     );
   }
 
-  public async trySignInSilently(
+  public async signInSilently(
     constructSilentSignInUrl: (additionalParams?: Record<string, string | boolean>) => Promise<string>,
     requestAccessToken: (
       authzCode: string,

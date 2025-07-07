@@ -445,14 +445,14 @@ describe('AuthAPI', () => {
     });
   });
 
-  describe('trySignInSilently', () => {
-    it('should call trySignInSilently on the client and update state on success', async () => {
+  describe('signInSilently', () => {
+    it('should call signInSilently on the client and update state on success', async () => {
       const additionalParams: Record<string, string | boolean> = {prompt: 'none'};
       const tokenRequestConfig: {params: Record<string, unknown>} = {params: {scope: 'openid profile'}};
 
-      const result: boolean | BasicUserInfo = await authApi.trySignInSilently(additionalParams, tokenRequestConfig);
+      const result: boolean | BasicUserInfo = await authApi.signInSilently(additionalParams, tokenRequestConfig);
 
-      expect(mockClient.trySignInSilently).toHaveBeenCalledWith(additionalParams, tokenRequestConfig);
+      expect(mockClient.signInSilently).toHaveBeenCalledWith(additionalParams, tokenRequestConfig);
       expect(authApi.getState()).toMatchObject({
         allowedScopes: 'openid profile',
         displayName: 'Test User',
@@ -471,11 +471,11 @@ describe('AuthAPI', () => {
       });
     });
 
-    it('should handle false response from trySignInSilently', async () => {
-      mockClient.trySignInSilently.mockResolvedValueOnce(false);
+    it('should handle false response from signInSilently', async () => {
+      mockClient.signInSilently.mockResolvedValueOnce(false);
       mockClient.isSignedIn.mockResolvedValueOnce(false);
 
-      const result: boolean | BasicUserInfo = await authApi.trySignInSilently();
+      const result: boolean | BasicUserInfo = await authApi.signInSilently();
 
       expect(result).toBe(false);
       expect(authApi.getState().isLoading).toBe(false);

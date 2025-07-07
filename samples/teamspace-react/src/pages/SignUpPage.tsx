@@ -1,7 +1,7 @@
 'use client';
 
 import {SignUp} from '@asgardeo/react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router';
 
 export default function SignUpPage() {
   const navigate = useNavigate();

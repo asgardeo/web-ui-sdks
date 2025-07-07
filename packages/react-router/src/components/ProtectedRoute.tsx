@@ -1,5 +1,8 @@
 /**
- * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (import React, {FC, ReactElement, ReactNode} from 'react';
+import {Navigate} from 'react-router';
+import {useAsgardeo} from '@asgardeo/react';
+import {AsgardeoRuntimeError} from '@asgardeo/browser';2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,9 +19,9 @@
  * under the License.
  */
 
-import React from 'react';
-import {Navigate} from 'react-router-dom';
-import {useAsgardeo} from '@asgardeo/react';
+import {FC, ReactElement, ReactNode} from 'react';
+import {Navigate} from 'react-router';
+import {useAsgardeo, AsgardeoRuntimeError} from '@asgardeo/react';
 
 /**
  * Props for the ProtectedRoute component.
@@ -27,26 +30,21 @@ export interface ProtectedRouteProps {
   /**
    * The element to render when the user is authenticated.
    */
-  children: React.ReactElement;
+  children: ReactElement;
   /**
    * Custom fallback element to render when the user is not authenticated.
    * If provided, this takes precedence over redirectTo.
    */
-  fallback?: React.ReactElement;
+  fallback?: ReactElement;
   /**
    * URL to redirect to when the user is not authenticated.
    * Required unless a fallback element is provided.
    */
   redirectTo?: string;
   /**
-   * Whether to show a loading state while authentication status is being determined.
-   * @default true
-   */
-  showLoading?: boolean;
-  /**
    * Custom loading element to render while authentication status is being determined.
    */
-  loadingElement?: React.ReactElement;
+  loader?: ReactNode;
 }
 
 /**
@@ -83,33 +81,18 @@ export interface ProtectedRouteProps {
  * />
  * ```
  */
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
-  fallback,
-  redirectTo,
-  showLoading = true,
-  loadingElement,
-}) => {
-  const {isSignedIn, isLoading, signIn} = useAsgardeo();
+const ProtectedRoute: FC<ProtectedRouteProps> = ({children, fallback, redirectTo, loader = null}) => {
+  const {isSignedIn, isLoading} = useAsgardeo();
 
-  // Show loading state while authentication status is being determined
-  if (isLoading && showLoading) {
-    if (loadingElement) {
-      return loadingElement;
-    }
-    return (
-      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
-        <div>Loading...</div>
-      </div>
-    );
+  // Always wait for loading to finish before making authentication decisions
+  if (isLoading) {
+    return loader;
   }
 
-  // If user is authenticated, render the protected content
   if (isSignedIn) {
     return children;
   }
 
-  // If user is not authenticated, handle fallback/redirect
   if (fallback) {
     return fallback;
   }
@@ -118,9 +101,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={redirectTo} replace />;
   }
 
-  // If neither fallback nor redirectTo is provided, throw an error
-  throw new Error(
-    'ProtectedRoute: Either "fallback" or "redirectTo" prop must be provided to handle unauthenticated users.',
+  throw new AsgardeoRuntimeError(
+    '"fallback" or "redirectTo" prop is required.',
+    'ProtectedRoute-ValidationError-001',
+    'react-router',
+    'Either "fallback" or "redirectTo" prop must be provided to handle unauthenticated users.',
   );
 };
 
