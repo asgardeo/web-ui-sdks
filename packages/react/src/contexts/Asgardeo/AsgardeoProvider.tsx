@@ -69,6 +69,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
   const [isSignedInSync, setIsSignedInSync] = useState<boolean>(false);
   const [isInitializedSync, setIsInitializedSync] = useState<boolean>(false);
+  const [isLoadingSync, setIsLoadingSync] = useState<boolean>(true);
 
   const [myOrganizations, setMyOrganizations] = useState<Organization[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -200,20 +201,45 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     })();
   }, [asgardeo]);
 
+  /**
+   * Track loading state changes from the Asgardeo client
+   */
+  useEffect(() => {
+    const checkLoadingState = (): void => {
+      const loadingState = asgardeo.isLoading();
+      setIsLoadingSync(loadingState);
+    };
+
+    // Initial check
+    checkLoadingState();
+
+    // Set up an interval to check for loading state changes
+    const interval = setInterval(checkLoadingState, 100);
+
+    return (): void => {
+      clearInterval(interval);
+    };
+  }, [asgardeo]);
+
   const updateSession = async (): Promise<void> => {
-    let _baseUrl: string = baseUrl;
+    try {
+      setIsLoadingSync(true);
+      let _baseUrl: string = baseUrl;
 
-    // If there's a `user_org` claim in the ID token,
-    // Treat this login as a organization login.
-    if ((await asgardeo.getDecodedIdToken())?.['user_org']) {
-      _baseUrl = `${(await asgardeo.getConfiguration()).baseUrl}/o`;
-      setBaseUrl(_baseUrl);
+      // If there's a `user_org` claim in the ID token,
+      // Treat this login as a organization login.
+      if ((await asgardeo.getDecodedIdToken())?.['user_org']) {
+        _baseUrl = `${(await asgardeo.getConfiguration()).baseUrl}/o`;
+        setBaseUrl(_baseUrl);
+      }
+
+      setUser(await asgardeo.getUser({baseUrl: _baseUrl}));
+      setUserProfile(await asgardeo.getUserProfile({baseUrl: _baseUrl}));
+      setCurrentOrganization(await asgardeo.getCurrentOrganization());
+      setMyOrganizations(await asgardeo.getMyOrganizations());
+    } finally {
+      setIsLoadingSync(asgardeo.isLoading());
     }
-
-    setUser(await asgardeo.getUser({baseUrl: _baseUrl}));
-    setUserProfile(await asgardeo.getUserProfile({baseUrl: _baseUrl}));
-    setCurrentOrganization(await asgardeo.getCurrentOrganization());
-    setMyOrganizations(await asgardeo.getMyOrganizations());
   };
 
   // Branding fetch function
@@ -275,6 +301,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
   const signIn = async (...args: any): Promise<User> => {
     try {
+      setIsLoadingSync(true);
       const response: User = await asgardeo.signIn(...args);
 
       if (await asgardeo.isSignedIn()) {
@@ -284,6 +311,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       return response;
     } catch (error) {
       throw new Error(`Error while signing in: ${error}`);
+    } finally {
+      setIsLoadingSync(asgardeo.isLoading());
     }
   };
 
@@ -305,6 +334,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
   const switchOrganization = async (organization: Organization): Promise<void> => {
     try {
+      setIsLoadingSync(true);
       await asgardeo.switchOrganization(organization);
 
       if (await asgardeo.isSignedIn()) {
@@ -317,6 +347,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         'react',
         'An error occurred while switching to the specified organization.',
       );
+    } finally {
+      setIsLoadingSync(asgardeo.isLoading());
     }
   };
 
@@ -346,7 +378,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         afterSignInUrl,
         baseUrl,
         isInitialized: isInitializedSync,
-        isLoading: asgardeo.isLoading(),
+        isLoading: isLoadingSync,
         isSignedIn: isSignedInSync,
         organization: currentOrganization,
         signIn,

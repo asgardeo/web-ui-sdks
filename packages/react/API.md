@@ -33,7 +33,7 @@ The root provider component that configures the Asgardeo SDK and provides authen
 | `clientId` | `string` | Yes | Your application's client ID |
 | `afterSignInUrl` | `string` | No | URL to redirect after sign in (defaults to current URL) |
 | `afterSignOutUrl` | `string` | No | URL to redirect after sign out (defaults to current URL) |
-| `scopes` | `string[] | string` | No | OAuth scopes to request (defaults to `['openid', 'profile']`) |
+| `scopes` | `string[] \| string` | No | OAuth scopes to request (defaults to `'openid profile internal_login'`) |
 | `storage` | `'localStorage' \| 'sessionStorage'` | No | Storage mechanism for tokens (defaults to `'localStorage'`) |
 
 #### Example
