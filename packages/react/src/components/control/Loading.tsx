@@ -22,7 +22,7 @@ import useAsgardeo from '../../contexts/Asgardeo/useAsgardeo';
 /**
  * Props for the Loading component.
  */
-export interface AsgardeoLoadingProps {
+export interface LoadingProps {
   /**
    * Content to show when the user is not signed in.
    */
@@ -36,21 +36,21 @@ export interface AsgardeoLoadingProps {
  *
  * @example
  * ```tsx
- * import { AsgardeoLoading } from '@asgardeo/auth-react';
+ * import { Loading } from '@asgardeo/auth-react';
  *
  * const App = () => {
  *   return (
- *     <AsgardeoLoading fallback={<p>Finished Loading...</p>}>
+ *     <Loading fallback={<p>Finished Loading...</p>}>
  *       <p>Loading...</p>
- *     </AsgardeoLoading>
+ *     </Loading>
  *   );
  * }
  * ```
  */
-const AsgardeoLoading: FC<PropsWithChildren<AsgardeoLoadingProps>> = ({
+const Loading: FC<PropsWithChildren<LoadingProps>> = ({
   children,
   fallback = null,
-}: PropsWithChildren<AsgardeoLoadingProps>) => {
+}: PropsWithChildren<LoadingProps>) => {
   const {isLoading} = useAsgardeo();
 
   if (!isLoading) {
@@ -60,6 +60,6 @@ const AsgardeoLoading: FC<PropsWithChildren<AsgardeoLoadingProps>> = ({
   return <>{children}</>;
 };
 
-AsgardeoLoading.displayName = 'AsgardeoLoading';
+Loading.displayName = 'Loading';
 
-export default AsgardeoLoading;
+export default Loading;

@@ -115,8 +115,8 @@ export * from './components/control/SignedIn';
 export {default as SignedOut} from './components/control/SignedOut';
 export * from './components/control/SignedOut';
 
-export {default as AsgardeoLoading} from './components/control/AsgardeoLoading';
-export * from './components/control/AsgardeoLoading';
+export {default as Loading} from './components/control/Loading';
+export * from './components/control/Loading';
 
 export {default as BaseSignIn} from './components/presentation/SignIn/BaseSignIn';
 export * from './components/presentation/SignIn/BaseSignIn';
