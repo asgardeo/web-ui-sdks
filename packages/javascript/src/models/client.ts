@@ -63,7 +63,7 @@ export interface AsgardeoClient<T> {
    * @param organization - The organization to switch to.
    * @returns A promise that resolves when the switch is complete.
    */
-  switchOrganization(organization: Organization, sessionId?: string): Promise<TokenResponse | Response> ;
+  switchOrganization(organization: Organization, sessionId?: string): Promise<TokenResponse | Response>;
 
   getConfiguration(): T;
 
@@ -136,6 +136,17 @@ export interface AsgardeoClient<T> {
     sessionId?: string,
     onSignInSuccess?: (afterSignInUrl: string) => void,
   ): Promise<User>;
+
+  /**
+   * Try signing in silently in the background without any user interactions.
+   *
+   * @remarks This approach uses a passive auth request (prompt=none) sent from an iframe which might pose issues in cross-origin scenarios.
+   * Make sure you are aware of the limitations and browser compatibility issues.
+   *
+   * @param options - Optional sign-in options like additional parameters to be sent in the authorize request, etc.
+   * @returns A promise that resolves to the user if sign-in is successful, or false if not.
+   */
+  signInSilently(options?: SignInOptions): Promise<User | boolean>;
 
   /**
    * Signs out the currently signed-in user.

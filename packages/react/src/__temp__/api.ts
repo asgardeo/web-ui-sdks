@@ -430,8 +430,6 @@ class AuthAPI {
    *```
    */
   public async signInSilently(
-    state: AuthStateInterface,
-    dispatch: (state: AuthStateInterface) => void,
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ): Promise<User | boolean | undefined> {
@@ -439,26 +437,7 @@ class AuthAPI {
       .signInSilently(additionalParams, tokenRequestConfig)
       .then(async (response: User | boolean) => {
         if (!response) {
-          this.updateState({...this.getState(), isLoading: false});
-          dispatch({...state, isLoading: false});
-
           return false;
-        }
-
-        if (await this._client.isSignedIn()) {
-          const basicUserInfo = response as User;
-          const stateToUpdate = {
-            displayName: basicUserInfo.displayName,
-            email: basicUserInfo.email,
-            isSignedIn: true,
-            isLoading: false,
-            isSigningOut: false,
-            username: basicUserInfo.username,
-          };
-
-          this.updateState(stateToUpdate);
-
-          dispatch({...state, ...stateToUpdate});
         }
 
         return response;

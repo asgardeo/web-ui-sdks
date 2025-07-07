@@ -488,6 +488,15 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     );
   }
 
+  override signInSilently(options?: SignInOptions): Promise<User | boolean> {
+    throw new AsgardeoRuntimeError(
+      'Not implemented',
+      'AsgardeoNextClient-signInSilently-NotImplementedError-001',
+      'nextjs',
+      'The signInSilently method is not implemented in the Next.js client.',
+    );
+  }
+
   /**
    * Gets the sign-in URL for authentication.
    * Ensures the client is initialized before making the call.

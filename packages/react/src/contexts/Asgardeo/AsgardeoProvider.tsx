@@ -316,6 +316,28 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     }
   };
 
+  const signInSilently = async (options?: SignInOptions): Promise<User | boolean> => {
+    try {
+      setIsLoadingSync(true);
+      const response: User | boolean = await asgardeo.signInSilently(options);
+
+      if (await asgardeo.isSignedIn()) {
+        await updateSession();
+      }
+
+      return response;
+    } catch (error) {
+      throw new AsgardeoRuntimeError(
+        `Error while signing in silently: ${error.message || error}`,
+        'asgardeo-signInSilently-Error',
+        'react',
+        'An error occurred while trying to sign in silently.',
+      );
+    } finally {
+      setIsLoadingSync(asgardeo.isLoading());
+    }
+  };
+
   const signUp = async (payload?: EmbeddedFlowExecuteRequestPayload): Promise<void | EmbeddedFlowExecuteResponse> => {
     try {
       return await asgardeo.signUp(payload);
@@ -382,6 +404,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         isSignedIn: isSignedInSync,
         organization: currentOrganization,
         signIn,
+        signInSilently,
         signOut,
         signUp,
         user,

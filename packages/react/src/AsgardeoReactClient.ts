@@ -295,6 +295,12 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     });
   }
 
+  override async signInSilently(options?: SignInOptions): Promise<User | boolean> {
+    return this.withLoading(async () => {
+      return this.asgardeo.signInSilently(options as Record<string, string | boolean>);
+    });
+  }
+
   override signOut(options?: SignOutOptions, afterSignOut?: (afterSignOutUrl: string) => void): Promise<string>;
   override signOut(
     options?: SignOutOptions,
