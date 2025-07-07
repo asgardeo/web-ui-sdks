@@ -72,11 +72,11 @@ export const asgardeoPlugin: Plugin = {
       }
     };
 
-    const trySignInSilently = async (
+    const signInSilently = async (
       additionalParams?: Record<string, string | boolean>,
       tokenRequestConfig?: {params: Record<string, unknown>},
     ): Promise<boolean | BasicUserInfo> =>
-      withStateSync(async () => AuthClient.trySignInSilently(additionalParams, tokenRequestConfig));
+      withStateSync(async () => AuthClient.signInSilently(additionalParams, tokenRequestConfig));
 
     const checkIsAuthenticated = async (): Promise<void> =>
       withStateSync(async () => {
@@ -141,7 +141,7 @@ export const asgardeoPlugin: Plugin = {
           }
 
           if (!config.disableTrySignInSilently) {
-            await trySignInSilently();
+            await signInSilently();
           }
         } catch (err) {
           error.value = err;
@@ -219,7 +219,7 @@ export const asgardeoPlugin: Plugin = {
           return result;
         }),
       state,
-      trySignInSilently,
+      signInSilently,
       reInitialize: async (config: Partial<AuthClientConfig<Config>>): Promise<void> =>
         withStateSync(async () => {
           await AuthClient.reInitialize(config);

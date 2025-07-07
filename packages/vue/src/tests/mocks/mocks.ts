@@ -62,7 +62,7 @@ export type MockAuthAPI = {
   revokeAccessToken: Mock;
   signIn: Mock;
   signOut: Mock;
-  trySignInSilently: Mock;
+  signInSilently: Mock;
   reInitialize: Mock;
   updateState: Mock;
 };
@@ -108,7 +108,7 @@ export const mockAuthAPI: MockAuthAPI = {
     username: 'testUser',
   }),
   signOut: vi.fn().mockResolvedValue(true),
-  trySignInSilently: vi.fn().mockResolvedValue(false),
+  signInSilently: vi.fn().mockResolvedValue(false),
   reInitialize: vi.fn().mockResolvedValue(undefined),
   updateState: vi.fn().mockImplementation((newState: AuthStateInterface) => {
     Object.assign(mockState, newState);
@@ -156,7 +156,7 @@ export const mockAsgardeoSPAClient: Partial<AsgardeoSPAClient> = {
     username: 'testUser',
   }),
   signOut: vi.fn().mockResolvedValue(true),
-  trySignInSilently: vi.fn().mockResolvedValue({
+  signInSilently: vi.fn().mockResolvedValue({
     allowedScopes: 'openid profile',
     displayName: 'Test User',
     email: 'test@example.com',

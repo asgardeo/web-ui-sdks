@@ -104,7 +104,7 @@ export interface AuthContextInterface {
   enableHttpHandler(): Promise<boolean>;
   disableHttpHandler(): Promise<boolean>;
   reInitialize(config: Partial<AuthClientConfig<Config>>): Promise<void>;
-  trySignInSilently: (
+  signInSilently: (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ) => Promise<boolean | User>;

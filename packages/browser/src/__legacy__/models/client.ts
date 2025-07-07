@@ -68,7 +68,7 @@ export interface MainThreadClientInterface {
   getStorageManager(): Promise<StorageManager<MainThreadClientConfig>>;
   isSignedIn(): Promise<boolean>;
   reInitialize(config: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void>;
-  trySignInSilently(
+  signInSilently(
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ): Promise<User | boolean>;
@@ -107,7 +107,7 @@ export interface WebWorkerClientInterface {
   setHttpRequestFinishCallback(callback: () => void): void;
   refreshAccessToken(): Promise<User>;
   reInitialize(config: Partial<AuthClientConfig<WebWorkerClientConfig>>): Promise<void>;
-  trySignInSilently(
+  signInSilently(
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ): Promise<User | boolean>;

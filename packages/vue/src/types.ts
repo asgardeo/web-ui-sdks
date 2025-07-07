@@ -120,7 +120,7 @@ export interface AuthContextInterface {
   ) => Promise<BasicUserInfo>;
   signOut: (callback?: (response: boolean) => void) => Promise<boolean>;
   state: AuthStateInterface;
-  trySignInSilently: (
+  signInSilently: (
     additionalParams?: Record<string, string | boolean>,
     tokenRequestConfig?: {params: Record<string, unknown>},
   ) => Promise<boolean | BasicUserInfo>;
