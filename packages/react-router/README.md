@@ -1,22 +1,21 @@
 # @asgardeo/react-router
 
-React Router integration for Asgardeo React SDK with protected routes and authentication guards.
+React Router integration for Asgardeo React SDK with protected routes.
 
 [![npm version](https://img.shields.io/npm/v/@asgardeo/react-router.svg)](https://www.npmjs.com/package/@asgardeo/react-router)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Overview
 
-`@asgardeo/react-router` is a supplementary package that provides seamless integration between Asgardeo authentication and React Router. It offers components and hooks to easily protect routes and handle authentication flows in your React applications.
+`@asgardeo/react-router` is a supplementary package that provides seamless integration between Asgardeo authentication and React Router. It offers components to easily protect routes and handle authentication flows in your React applications.
 
 ## Features
 
 - 🛡️ **ProtectedRoute Component**: Drop-in replacement for React Router's Route with built-in authentication
-- 🔒 **withAuthentication HOC**: Higher-order component for protecting any React component
-- 🪝 **Authentication Hooks**: Powerful hooks for custom authentication logic
-- 🔄 **Return URL Handling**: Automatic redirect back to intended destination after sign-in
 - ⚡ **TypeScript Support**: Full TypeScript support with comprehensive type definitions
 - 🎨 **Customizable**: Flexible configuration options for different use cases
+- 🔒 **Authentication Guards**: Built-in authentication checking with loading states
+- 🚀 **Lightweight**: Minimal bundle size with essential features only
 
 ## Installation
 
@@ -33,7 +32,7 @@ pnpm add @asgardeo/react-router
 This package requires the following peer dependencies:
 
 ```bash
-npm install @asgardeo/react react react-router-dom
+npm install @asgardeo/react react react-router
 ```
 
 ## Quick Start
@@ -84,7 +83,7 @@ function App() {
 export default App;
 ```
 
-### 2. Custom Fallback and Redirects
+### 2. Custom Fallback and Loading States
 
 ```tsx
 import { ProtectedRoute } from '@asgardeo/react-router';
@@ -120,7 +119,7 @@ import { ProtectedRoute } from '@asgardeo/react-router';
   element={
     <ProtectedRoute 
       redirectTo="/signin"
-      loadingElement={<div className="spinner">Loading...</div>}
+      loader={<div className="spinner">Loading...</div>}
     >
       <Dashboard />
     </ProtectedRoute>
@@ -128,182 +127,7 @@ import { ProtectedRoute } from '@asgardeo/react-router';
 />
 ```
 
-## API Reference
-
-### Components
-
-#### ProtectedRoute
-
-A component that protects routes based on authentication status. Should be used as the element prop of a Route component.
-
-```tsx
-interface ProtectedRouteProps {
-  children: React.ReactElement;
-  fallback?: React.ReactElement;
-  redirectTo?: string;
-  showLoading?: boolean;
-  loadingElement?: React.ReactElement;
-}
-```
-
-**Props:**
-
-- `children` - The component to render when authenticated
-- `fallback` - Custom component to render when not authenticated (takes precedence over redirectTo)
-- `redirectTo` - URL to redirect to when not authenticated (required unless fallback is provided)
-- `showLoading` - Whether to show loading state (default: `true`)
-- `loadingElement` - Custom loading component
-
-**Note:** Either `fallback` or `redirectTo` must be provided to handle unauthenticated users.
-
-#### withAuthentication
-
-Higher-order component that wraps any component with authentication protection.
-
-```tsx
-import { withAuthentication } from '@asgardeo/react-router';
-
-const Dashboard = () => <div>Protected Dashboard</div>;
-
-const ProtectedDashboard = withAuthentication(Dashboard, {
-  redirectTo: '/login'
-});
-
-// With role-based access
-const AdminPanel = withAuthentication(AdminPanelComponent, {
-  additionalCheck: (authContext) => {
-    return authContext.user?.groups?.includes('admin');
-  },
-  fallback: <div>Access denied</div>
-});
-```
-
-### Hooks
-
-#### useAuthGuard
-
-Hook that provides authentication guard functionality for routes.
-
-```tsx
-import { useAuthGuard } from '@asgardeo/react-router';
-
-function Dashboard() {
-  const { isAllowed, isLoading } = useAuthGuard({
-    redirectTo: '/login'
-  });
-
-  if (isLoading) return <div>Loading...</div>;
-  if (!isAllowed) return null; // Will redirect
-
-  return <div>Protected Dashboard Content</div>;
-}
-```
-
-**Options:**
-
-- `redirectTo` - Path to redirect when not authenticated (default: `'/login'`)
-- `preserveReturnUrl` - Whether to preserve current location as return URL (default: `true`)
-- `additionalCheck` - Additional authorization check function
-- `immediate` - Whether to check immediately on mount (default: `true`)
-
-**Returns:**
-
-- `isAllowed` - Whether user can access the route
-- `isLoading` - Whether authentication is being checked
-- `isAuthenticated` - Whether user is signed in
-- `meetsAdditionalChecks` - Whether additional checks pass
-- `authContext` - Full Asgardeo authentication context
-- `checkAuth()` - Function to manually trigger auth check
-
-#### useReturnUrl
-
-Hook for handling return URLs after authentication.
-
-```tsx
-import { useReturnUrl } from '@asgardeo/react-router';
-import { useAsgardeo } from '@asgardeo/react';
-
-function LoginPage() {
-  const { returnTo, navigateToReturnUrl } = useReturnUrl();
-  const { signIn } = useAsgardeo();
-
-  const handleSignIn = async () => {
-    await signIn();
-    navigateToReturnUrl(); // Redirects to original destination
-  };
-
-  return (
-    <div>
-      <button onClick={handleSignIn}>Sign In</button>
-      {returnTo && <p>You'll be redirected to: {returnTo}</p>}
-    </div>
-  );
-}
-```
-
-**Returns:**
-
-- `returnTo` - The URL to return to after authentication
-- `navigateToReturnUrl(fallback?)` - Function to navigate to return URL
-- `hasReturnUrl` - Whether a return URL is available
-
-## Advanced Usage
-
-### Role-Based Access Control
-
-```tsx
-import { withAuthentication } from '@asgardeo/react-router';
-
-const AdminPanel = withAuthentication(AdminPanelComponent, {
-  additionalCheck: (authContext) => {
-    const userRoles = authContext.user?.groups || [];
-    return userRoles.includes('admin') || userRoles.includes('moderator');
-  },
-  fallback: (
-    <div>
-      <h2>Access Denied</h2>
-      <p>You don't have permission to access this page.</p>
-    </div>
-  )
-});
-```
-
-### Custom Authentication Flow
-
-```tsx
-import { useAuthGuard } from '@asgardeo/react-router';
-
-function CustomProtectedPage() {
-  const { isAllowed, authContext, checkAuth } = useAuthGuard({
-    immediate: false, // Don't redirect immediately
-    additionalCheck: (auth) => auth.user?.email_verified === true
-  });
-
-  if (!authContext.isSignedIn) {
-    return (
-      <div>
-        <h2>Sign In Required</h2>
-        <button onClick={() => authContext.signIn()}>
-          Sign In
-        </button>
-      </div>
-    );
-  }
-
-  if (!authContext.user?.email_verified) {
-    return (
-      <div>
-        <h2>Email Verification Required</h2>
-        <p>Please verify your email before accessing this page.</p>
-      </div>
-    );
-  }
-
-  return <div>Protected Content</div>;
-}
-```
-
-### Integration with Layouts
+### 3. Integration with Layouts
 
 ```tsx
 import { ProtectedRoute } from '@asgardeo/react-router';
@@ -350,21 +174,47 @@ function App() {
 }
 ```
 
+## API Reference
+
+### Components
+
+#### ProtectedRoute
+
+A component that protects routes based on authentication status. Should be used as the element prop of a Route component.
+
+```tsx
+interface ProtectedRouteProps {
+  children: React.ReactElement;
+  fallback?: React.ReactElement;
+  redirectTo?: string;
+  loader?: React.ReactNode;
+}
+```
+
+**Props:**
+
+- `children` - The component to render when authenticated
+- `fallback` - Custom component to render when not authenticated (takes precedence over redirectTo)
+- `redirectTo` - URL to redirect to when not authenticated (required unless fallback is provided)
+- `loader` - Custom loading component to render while authentication status is being determined
+
+**Note:** Either `fallback` or `redirectTo` must be provided to handle unauthenticated users.
+
 ## Examples
 
-Check out our [examples directory](./examples) for complete working examples:
+Check out our sample applications in the repository:
 
-- [Basic Protected Routes](./examples/basic)
-- [Role-Based Access Control](./examples/rbac)
-- [Custom Authentication Flow](./examples/custom-flow)
-- [Integration with Next.js](./examples/nextjs)
+- [React Sample](../../samples/asgardeo-react) - Complete React application with Asgardeo authentication
+- [Next.js Sample](../../samples/asgardeo-nextjs) - Next.js application example
+- [Teamspace React](../../samples/teamspace-react) - Team collaboration app with React
+- [Teamspace Next.js](../../samples/teamspace-nextjs) - Team collaboration app with Next.js
 
 ## TypeScript Support
 
-This package is written in TypeScript and provides comprehensive type definitions. All components and hooks are fully typed for the best development experience.
+This package is written in TypeScript and provides comprehensive type definitions. All components are fully typed for the best development experience.
 
 ```tsx
-import type { ProtectedRouteProps, WithAuthenticationOptions } from '@asgardeo/react-router';
+import type { ProtectedRouteProps } from '@asgardeo/react-router';
 ```
 
 ## Contributing
