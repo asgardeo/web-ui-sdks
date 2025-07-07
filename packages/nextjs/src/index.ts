@@ -41,6 +41,9 @@ export {SignedInProps} from './client/components/control/SignedIn/SignedIn';
 export {default as SignedOut} from './client/components/control/SignedOut/SignedOut';
 export {SignedOutProps} from './client/components/control/SignedOut/SignedOut';
 
+export {default as Loading} from './client/components/control/Loading/Loading';
+export {LoadingProps} from './client/components/control/Loading/Loading';
+
 export {default as SignInButton} from './client/components/actions/SignInButton/SignInButton';
 export type {SignInButtonProps} from './client/components/actions/SignInButton/SignInButton';
 
