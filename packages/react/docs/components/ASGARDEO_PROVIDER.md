@@ -29,8 +29,12 @@ All props are based on the `AsgardeoReactConfig` interface, which extends the ba
 | `signInUrl` | `string` | Custom sign-in page URL. If provided, users will be redirected here instead of Asgardeo's default sign-in page |
 | `signUpUrl` | `string` | Custom sign-up page URL. If provided, users will be redirected here instead of Asgardeo's default sign-up page |
 | `clientSecret` | `string` | Client secret for confidential clients. Not recommended for browser applications |
-| `tokenValidation` | `TokenValidation` | Token validation configuration for ID tokens including validation flags and clock tolerance |
-| `preferences` | `Preferences` | Configuration object for theming, internationalization, and UI customization |
+| `tokenValidation` | `[TokenValidation](#tokenvalidation)` | Token validation configuration for ID tokens including validation flags and clock tolerance |
+| `preferences` | `[Preferences](#preferences)` | Configuration object for theming, internationalization, and UI customization |
+
+<details>
+
+<summary>TokenValidation</summary>
 
 ### TokenValidation
 
@@ -48,7 +52,9 @@ The `tokenValidation` prop allows you to configure how ID tokens are validated.
 | `validateIssuer` | `boolean` | `true` | Whether to validate the issuer |
 | `clockTolerance` | `number` | `300` | Allowed clock skew in seconds |
 
-### Preferences Object
+</details>
+
+### Preferences
 
 The `preferences` prop allows you to customize the UI components provided by the SDK.
 
