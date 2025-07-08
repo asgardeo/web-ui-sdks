@@ -197,8 +197,8 @@ export class AuthenticationHelper<T> {
       (await this._config()).clientId,
       issuer ?? '',
       this._cryptoHelper.decodeIdToken(idToken).sub,
-      (await this._config()).clockTolerance,
-      (await this._config()).validateIDTokenIssuer ?? true,
+      (await this._config()).tokenValidation?.idToken?.clockTolerance,
+      (await this._config()).tokenValidation?.idToken?.validateIssuer ?? true,
     );
   }
 
@@ -257,7 +257,7 @@ export class AuthenticationHelper<T> {
 
     parsedResponse.created_at = new Date().getTime();
 
-    const shouldValidateIdToken: boolean | undefined = (await this._config()).validateIDToken;
+    const shouldValidateIdToken: boolean | undefined = (await this._config()).tokenValidation?.idToken?.validate;
 
     if (shouldValidateIdToken) {
       return this.validateIdToken(parsedResponse.id_token).then(async () => {

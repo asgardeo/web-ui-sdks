@@ -107,6 +107,33 @@ export interface BaseConfig<T = unknown> extends WithPreferences {
    * and use the `SignUp` component to render it.
    */
   signUpUrl?: string | undefined;
+
+  /**
+   * Token validation configuration.
+   * This allows you to configure how the SDK validates tokens received from the authorization server.
+   * It includes options for ID token validation, such as whether to validate the token,
+   * whether to validate the issuer, and the allowed clock tolerance for token validation.
+   * If not provided, the SDK will use default validation settings.
+   */
+  tokenValidation?: {
+    /**
+     * ID token validation config.
+     */
+    idToken?: {
+      /**
+       * Whether to validate ID tokens.
+       */
+      validate?: boolean;
+      /**
+       * Whether to validate the issuer of ID tokens.
+       */
+      validateIssuer?: boolean;
+      /**
+       * Allowed leeway for ID tokens (in seconds).
+       */
+      clockTolerance?: number;
+    };
+  };
 }
 
 export interface WithPreferences {

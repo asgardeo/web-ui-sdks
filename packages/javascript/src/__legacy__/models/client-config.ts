@@ -29,12 +29,25 @@ export interface DefaultAuthClientConfig {
   prompt?: string;
   responseMode?: OAuthResponseMode;
   scopes?: string | string[] | undefined;
-  validateIDToken?: boolean;
-  validateIDTokenIssuer?: boolean;
-  /**
-   * Allowed leeway for id_tokens (in seconds).
-   */
-  clockTolerance?: number;
+  tokenValidation?: {
+    /**
+     * ID token validation config.
+     */
+    idToken?: {
+      /**
+       * Whether to validate ID tokens.
+       */
+      validate?: boolean;
+      /**
+       * Whether to validate the issuer of ID tokens.
+       */
+      validateIssuer?: boolean;
+      /**
+       * Allowed leeway for ID tokens (in seconds).
+       */
+      clockTolerance?: number;
+    };
+  };
   /**
    * Specifies if cookies should be sent with access-token requests, refresh-token requests,
    * custom-grant requests, etc.
