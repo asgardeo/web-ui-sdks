@@ -34,7 +34,7 @@ All props are based on the `AsgardeoReactConfig` interface, which extends the ba
 
 <details>
 
-<summary>TokenValidation</summary>
+<summary><h1>TokenValidation</h1></summary>
 
 ### TokenValidation
 
