@@ -213,7 +213,6 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     return this.withLoading(async () => {
       try {
         const configData = await this.asgardeo.getConfigData();
-        const scopes = configData?.scopes;
 
         if (!organization.id) {
           throw new AsgardeoRuntimeError(
@@ -241,7 +240,6 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
         return (await this.asgardeo.exchangeToken(
           exchangeConfig,
           (user: User) => {},
-          () => null,
         )) as TokenResponse | Response;
       } catch (error) {
         throw new AsgardeoRuntimeError(
@@ -350,11 +348,12 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     );
   }
 
-  async fetch(url: string, options?: HttpRequestConfig): Promise<HttpResponse<any>> {
-    return this.asgardeo.httpRequest({
-      url,
-      ...options,
-    });
+  async request(requestConfig?: HttpRequestConfig): Promise<HttpResponse<any>> {
+    return this.asgardeo.httpRequest(requestConfig);
+  }
+
+  async requestAll(requestConfigs?: HttpRequestConfig[]): Promise<HttpResponse<any>[]> {
+    return this.asgardeo.httpRequestAll(requestConfigs);
   }
 }
 

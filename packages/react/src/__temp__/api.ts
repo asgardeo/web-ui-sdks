@@ -229,7 +229,6 @@ class AuthAPI {
   public exchangeToken(
     config: SPACustomGrantConfig,
     callback: (response: User | Response) => void,
-    dispatch: (state: AuthStateInterface) => void,
   ): Promise<User | Response> {
     return this._client
       .exchangeToken(config)
@@ -245,8 +244,6 @@ class AuthAPI {
             isSignedIn: true,
             isLoading: false,
           });
-
-          dispatch({...(response as User), isSignedIn: true, isLoading: false});
         }
 
         callback && callback(response);
