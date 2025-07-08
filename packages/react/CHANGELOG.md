@@ -1,5 +1,17 @@
 # @asgardeo/react
 
+## 0.5.9
+
+### Patch Changes
+
+- [#98](https://github.com/asgardeo/web-ui-sdks/pull/98)
+  [`b50ea2b`](https://github.com/asgardeo/web-ui-sdks/commit/b50ea2b5be3f8a8056fe64edd2b09cba8ee69691) Thanks
+  [@brionmario](https://github.com/brionmario)! - - Fix `organizationHandle` resolution issues with the on-prem WSO2
+  Identity Server
+  - Expose `fetch` method in `AsgardeoContext` to allow custom HTTP requests
+- Updated dependencies []:
+  - @asgardeo/browser@0.1.5
+
 ## 0.5.8
 
 ### Patch Changes
