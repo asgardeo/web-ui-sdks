@@ -36,7 +36,7 @@ export interface HttpRequestInterface {
   enableRetrievingSignOutURLFromSession?: (config: SPACustomGrantConfig) => void;
 }
 
-export interface HttpRequestConfig extends AxiosRequestConfig {
+export interface HttpRequestConfig extends AxiosRequestConfig, Omit<Request, 'headers' | 'method' | 'signal' | 'url'> {
   attachToken?: boolean;
   shouldEncodeToFormData?: boolean;
   shouldAttachIDPAccessToken?: boolean;

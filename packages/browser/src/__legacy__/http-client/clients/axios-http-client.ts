@@ -84,7 +84,7 @@ export class HttpClient implements HttpClientInterface<HttpRequestConfig, HttpRe
     }
 
     // Register request interceptor
-    this.axiosInstance.interceptors.request.use(async request => await this.clientInstance.requestHandler(request));
+    this.axiosInstance.interceptors.request.use(async request => await this.clientInstance.requestHandler(request as HttpRequestConfig));
 
     // Register response interceptor
     this.axiosInstance.interceptors.response.use(

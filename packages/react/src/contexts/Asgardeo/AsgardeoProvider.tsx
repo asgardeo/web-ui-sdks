@@ -29,6 +29,7 @@ import {
   getBrandingPreference,
   GetBrandingPreferenceConfig,
   BrandingPreference,
+  HttpRequestConfig,
 } from '@asgardeo/browser';
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, useCallback} from 'react';
 import AsgardeoContext from './AsgardeoContext';
@@ -390,6 +391,10 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     }));
   };
 
+  const fetch = async (url: string, options?: HttpRequestConfig): Promise<any> => {
+    return asgardeo.fetch(url, options);
+  };
+
   return (
     <AsgardeoContext.Provider
       value={{
@@ -408,6 +413,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         signOut,
         signUp,
         user,
+        fetch,
       }}
     >
       <I18nProvider preferences={preferences?.i18n}>

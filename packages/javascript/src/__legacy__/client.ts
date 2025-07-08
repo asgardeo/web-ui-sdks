@@ -45,12 +45,16 @@ import processOpenIDScopes from '../utils/processOpenIDScopes';
  * Default configurations.
  */
 const DefaultConfig: Partial<AuthClientConfig<unknown>> = {
-  clockTolerance: 300,
+  tokenValidation: {
+    idToken: {
+      validate: true,
+      validateIssuer: true,
+      clockTolerance: 300,
+    },
+  },
   enablePKCE: true,
   responseMode: 'query',
   sendCookiesInRequests: true,
-  validateIDToken: true,
-  validateIDTokenIssuer: true,
 };
 
 /**
