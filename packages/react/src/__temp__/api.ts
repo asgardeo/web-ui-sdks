@@ -29,8 +29,6 @@ import {
   OIDCEndpoints,
   SignInConfig,
   SPACustomGrantConfig,
-  initializeEmbeddedSignInFlow,
-  processOpenIDScopes,
 } from '@asgardeo/browser';
 import {AuthStateInterface} from './models';
 
@@ -323,8 +321,8 @@ class AuthAPI {
    *
    * @return {Promise<string>} - A Promise that resolves with the access token.
    */
-  public async getAccessToken(): Promise<string> {
-    return this._client.getAccessToken();
+  public async getAccessToken(sessionId?: string): Promise<string> {
+    return this._client.getAccessToken(sessionId);
   }
 
   /**

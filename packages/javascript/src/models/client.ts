@@ -187,4 +187,11 @@ export interface AsgardeoClient<T> {
    * @returns A promise that resolves to an EmbeddedFlowExecuteResponse containing the flow execution details.
    */
   signUp(payload: EmbeddedFlowExecuteRequestPayload): Promise<EmbeddedFlowExecuteResponse>;
+
+  /**
+   * Retrieves the access token for the current session.
+   * @param sessionId - Optional session ID to retrieve the access token for a specific session.
+   * @returns A promise that resolves to the access token string.
+   */
+  getAccessToken(sessionId?: string): Promise<string>;
 }

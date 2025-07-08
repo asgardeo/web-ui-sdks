@@ -237,10 +237,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
           signInRequired: true,
         };
 
-        return (await this.asgardeo.exchangeToken(
-          exchangeConfig,
-          (user: User) => {},
-        )) as TokenResponse | Response;
+        return (await this.asgardeo.exchangeToken(exchangeConfig, (user: User) => {})) as TokenResponse | Response;
       } catch (error) {
         throw new AsgardeoRuntimeError(
           `Failed to switch organization: ${error.message || error}`,
@@ -354,6 +351,10 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
 
   async requestAll(requestConfigs?: HttpRequestConfig[]): Promise<HttpResponse<any>[]> {
     return this.asgardeo.httpRequestAll(requestConfigs);
+  }
+
+  override async getAccessToken(sessionId?: string): Promise<string> {
+    return this.asgardeo.getAccessToken(sessionId);
   }
 }
 
