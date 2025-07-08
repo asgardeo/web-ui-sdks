@@ -16,4 +16,4 @@ The Asgardeo React SDK provides a comprehensive set of hooks, components, and ut
 
 ## What's Next
 
-- [Quickstart Guide](./getting-started/README.md): Get started with a simple integration.
+- [Quickstart Guide](./getting-started/overview.md): Get started with a simple integration.

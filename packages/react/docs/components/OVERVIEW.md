@@ -6,7 +6,7 @@ The Asgardeo React SDK provides a comprehensive set of components to handle auth
 
 Root components are the entry points for integrating Asgardeo authentication into your React application. They provide the necessary context and configuration for the SDK.
 
-- **`AsgardeoProvider`** - The main provider component that wraps your application, providing authentication context and configuration.
+- [**`AsgardeoProvider`**](./asgardeo-provider.md) - The main provider component that wraps your application, providing authentication context and configuration.
 
 ## Action Components
 

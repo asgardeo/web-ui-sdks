@@ -181,4 +181,4 @@ Visit your app's homepage at [http://localhost:5173](http://localhost:5173).
 
 Now that you have basic authentication working, you can:
 
-- [Explore all available components](../components/README.md) to enhance your app.
+- [Explore all available components](../components/overview.md) to enhance your app.
