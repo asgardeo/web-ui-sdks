@@ -1,5 +1,13 @@
 # @asgardeo/browser
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b50ea2b`](https://github.com/asgardeo/web-ui-sdks/commit/b50ea2b5be3f8a8056fe64edd2b09cba8ee69691)]:
+  - @asgardeo/javascript@0.1.5
+
 ## 0.1.4
 
 ### Patch Changes
