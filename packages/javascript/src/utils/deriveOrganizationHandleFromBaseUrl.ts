@@ -69,38 +69,35 @@ const deriveOrganizationHandleFromBaseUrl = (baseUrl?: string): string => {
     );
   }
 
-  // Check if the hostname matches the Asgardeo pattern: *.asgardeo.io
-  const hostname = parsedUrl.hostname.toLowerCase();
-  if (!hostname.endsWith('.asgardeo.io')) {
-    throw new AsgardeoRuntimeError(
-      'Organization handle is required since a custom domain is configured.',
-      'javascript-deriveOrganizationHandleFromBaseUrl-CustomDomainError-001',
-      'javascript',
-      'The provided base URL uses a custom domain. Please provide the organizationHandle explicitly in the configuration.',
-    );
-  }
-
   // Extract the organization handle from the path pattern: /t/{orgHandle}
-  const pathSegments = parsedUrl.pathname.split('/').filter(segment => segment.length > 0);
+  const pathSegments = parsedUrl.pathname?.split('/')?.filter(segment => segment?.length > 0);
 
   if (pathSegments.length < 2 || pathSegments[0] !== 't') {
-    throw new AsgardeoRuntimeError(
-      'Organization handle is required since a custom domain is configured.',
-      'javascript-deriveOrganizationHandleFromBaseUrl-CustomDomainError-002',
-      'javascript',
-      'The provided base URL does not follow the expected Asgardeo URL pattern (/t/{orgHandle}). Please provide the organizationHandle explicitly in the configuration.',
+    console.warn(
+      new AsgardeoRuntimeError(
+        'Organization handle is required since a custom domain is configured.',
+        'javascript-deriveOrganizationHandleFromBaseUrl-CustomDomainError-002',
+        'javascript',
+        'The provided base URL does not follow the expected URL pattern (/t/{orgHandle}). Please provide the organizationHandle explicitly in the configuration.',
+      ).toString(),
     );
+
+    return '';
   }
 
   const organizationHandle = pathSegments[1];
 
   if (!organizationHandle || organizationHandle.trim().length === 0) {
-    throw new AsgardeoRuntimeError(
-      'Organization handle is required since a custom domain is configured.',
-      'javascript-deriveOrganizationHandleFromBaseUrl-CustomDomainError-003',
-      'javascript',
-      'The organization handle could not be extracted from the base URL. Please provide the organizationHandle explicitly in the configuration.',
+    console.warn(
+      new AsgardeoRuntimeError(
+        'Organization handle is required since a custom domain is configured.',
+        'javascript-deriveOrganizationHandleFromBaseUrl-CustomDomainError-003',
+        'javascript',
+        'The organization handle could not be extracted from the base URL. Please provide the organizationHandle explicitly in the configuration.',
+      ).toString(),
     );
+
+    return '';
   }
 
   return organizationHandle;
