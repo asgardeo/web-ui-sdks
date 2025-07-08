@@ -18,7 +18,7 @@ All props are based on the `AsgardeoReactConfig` interface, which extends the ba
 | `clientId` | `string` | **REQUIRED** | The client ID obtained from your Asgardeo application registration |
 | `afterSignInUrl` | `string` | `window.location.origin` | URL to redirect users after successful sign-in. Must match configured redirect URIs in Asgardeo |
 | `afterSignOutUrl` | `string` | `window.location.origin` | URL to redirect users after sign-out. Must match configured post-logout redirect URIs |
-| `scopes` | `string \| string[]` | `["openid profile internal_login"]` | OAuth scopes to request during authentication (e.g., `"openid profile email"` or `["openid", "profile", "email"]`) |
+| `scopes` | `string \| string[]` | `openid profile internal_login` | OAuth scopes to request during authentication (e.g., `"openid profile email"` or `["openid", "profile", "email"]`) |
 | `organizationHandle` | `string` | - | Organization handle for organization-specific features like branding. Auto-derived from `baseUrl` if not provided. Required for custom domains |
 | `applicationId` | `string` | - | UUID of the Asgardeo application for application-specific branding and features |
 | `signInUrl` | `string` | - | Custom sign-in page URL. If provided, users will be redirected here instead of Asgardeo's default sign-in page |
