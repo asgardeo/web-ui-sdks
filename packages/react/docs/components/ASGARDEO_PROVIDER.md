@@ -12,31 +12,24 @@ All props are based on the `AsgardeoReactConfig` interface, which extends the ba
 
 ### Required Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `baseUrl` | `string` | The base URL of your Asgardeo organization. Format: `https://api.asgardeo.io/t/{org_name}` |
-| `clientId` | `string` | The client ID obtained from your Asgardeo application registration |
-
-### Optional Props
-
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
+| `baseUrl` | `string` | **REQUIRED** | The base URL of your Asgardeo organization. Format: `https://api.asgardeo.io/t/{org_name}` |
+| `clientId` | `string` | **REQUIRED** | The client ID obtained from your Asgardeo application registration |
 | `afterSignInUrl` | `string` | `window.location.origin` | URL to redirect users after successful sign-in. Must match configured redirect URIs in Asgardeo |
 | `afterSignOutUrl` | `string` | `window.location.origin` | URL to redirect users after sign-out. Must match configured post-logout redirect URIs |
-| `scopes` | `string \| string[]` | `["openid"]` | OAuth scopes to request during authentication (e.g., `"openid profile email"` or `["openid", "profile", "email"]`) |
-| `organizationHandle` | `string` | Organization handle for organization-specific features like branding. Auto-derived from `baseUrl` if not provided. Required for custom domains |
-| `applicationId` | `string` | UUID of the Asgardeo application for application-specific branding and features |
-| `signInUrl` | `string` | Custom sign-in page URL. If provided, users will be redirected here instead of Asgardeo's default sign-in page |
-| `signUpUrl` | `string` | Custom sign-up page URL. If provided, users will be redirected here instead of Asgardeo's default sign-up page |
-| `clientSecret` | `string` | Client secret for confidential clients. Not recommended for browser applications |
-| `tokenValidation` | `[TokenValidation](#tokenvalidation)` | Token validation configuration for ID tokens including validation flags and clock tolerance |
-| `preferences` | `[Preferences](#preferences)` | Configuration object for theming, internationalization, and UI customization |
+| `scopes` | `string \| string[]` | `["openid profile internal_login"]` | OAuth scopes to request during authentication (e.g., `"openid profile email"` or `["openid", "profile", "email"]`) |
+| `organizationHandle` | `string` | - | Organization handle for organization-specific features like branding. Auto-derived from `baseUrl` if not provided. Required for custom domains |
+| `applicationId` | `string` | - | UUID of the Asgardeo application for application-specific branding and features |
+| `signInUrl` | `string` | - | Custom sign-in page URL. If provided, users will be redirected here instead of Asgardeo's default sign-in page |
+| `signUpUrl` | `string` | - | Custom sign-up page URL. If provided, users will be redirected here instead of Asgardeo's default sign-up page |
+| `clientSecret` | `string` | - | Client secret for confidential clients. Not recommended for browser applications |
+| `tokenValidation` | `[TokenValidation](#tokenvalidation)` | - | Token validation configuration for ID tokens including validation flags and clock tolerance |
+| `preferences` | `[Preferences](#preferences)` | - | Configuration object for theming, internationalization, and UI customization |
 
 <details>
 
-<summary><h1>TokenValidation</h1></summary>
-
-### TokenValidation
+<summary><h4>TokenValidation</h4></summary>
 
 The `tokenValidation` prop allows you to configure how ID tokens are validated.
 
@@ -54,7 +47,9 @@ The `tokenValidation` prop allows you to configure how ID tokens are validated.
 
 </details>
 
-### Preferences
+<details>
+
+<summary><h4>Preferences</h4></summary>
 
 The `preferences` prop allows you to customize the UI components provided by the SDK.
 
@@ -73,6 +68,8 @@ The `preferences` prop allows you to customize the UI components provided by the
 | `language` | `string` | Browser default | Language code for UI text (e.g., `'en-US'`, `'es-ES'`) |
 | `fallbackLanguage` | `string` | `'en-US'` | Fallback language when translations aren't available |
 | `bundles` | `object` | `{}` | Custom translation bundles to override default text |
+
+</details>
 
 ## Usage
 
