@@ -17,7 +17,7 @@
  */
 
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import {FC, ReactElement, useState, useCallback, CSSProperties} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import Button from '../Button/Button';
@@ -346,7 +346,7 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
   };
 
   return (
-    <div className={clsx(withVendorCSSClassPrefix('key-value-input'), className)} style={styles.container}>
+    <div className={cx(withVendorCSSClassPrefix('key-value-input'), className)} style={styles.container}>
       {label && (
         <label style={styles.label}>
           {label}

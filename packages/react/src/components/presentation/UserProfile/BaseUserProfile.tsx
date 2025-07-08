@@ -17,7 +17,7 @@
  */
 
 import {User, withVendorCSSClassPrefix, WellKnownSchemaIds} from '@asgardeo/browser';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import {CSSProperties, FC, ReactElement, useMemo, useState, useCallback, useRef} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
@@ -25,7 +25,7 @@ import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
 import Checkbox from '../../primitives/Checkbox/Checkbox';
 import DatePicker from '../../primitives/DatePicker/DatePicker';
-import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
+import {Dialog, DialogContent, DialogHeading} from '../../primitives/Dialog/Dialog';
 import TextField from '../../primitives/TextField/TextField';
 import MultiInput from '../../primitives/MultiInput/MultiInput';
 import Card from '../../primitives/Card/Card';
@@ -644,7 +644,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   };
 
   const profileContent = (
-    <Card style={containerStyle} className={clsx(withVendorCSSClassPrefix('user-profile'), className)}>
+    <Card style={containerStyle} className={cx(withVendorCSSClassPrefix('user-profile'), className)}>
       <div style={styles.header}>
         <Avatar
           imageUrl={getMappedUserProfileValue('picture', mergedMappings, currentUser)}

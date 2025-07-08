@@ -17,7 +17,7 @@
  */
 
 import {FC} from 'react';
-import {clsx} from 'clsx';
+import {cx} from '@emotion/css';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 import useTheme from '../../../contexts/Theme/useTheme';
 
@@ -70,7 +70,7 @@ const Logo: FC<LogoProps> = ({className, src, alt, title, size = 'medium', style
 
   const logoTitle = title || logoConfig?.title;
 
-  const logoClasses = clsx(withVendorCSSClassPrefix('logo'), withVendorCSSClassPrefix(`logo--${size}`), className);
+  const logoClasses = cx(withVendorCSSClassPrefix('logo'), withVendorCSSClassPrefix(`logo--${size}`), className);
 
   const sizeStyles: Record<string, React.CSSProperties> = {
     small: {

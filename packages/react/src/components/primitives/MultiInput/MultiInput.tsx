@@ -18,7 +18,7 @@
 
 import {CSSProperties, FC, ReactNode, useCallback, useState, useMemo} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
 import TextField from '../TextField/TextField';
@@ -282,7 +282,7 @@ const MultiInput: FC<MultiInputProps> = ({
     <FormControl
       error={error}
       helperText={helperText}
-      className={clsx(withVendorCSSClassPrefix('multi-input'), className)}
+      className={cx(withVendorCSSClassPrefix('multi-input'), className)}
       style={style}
     >
       {label && (

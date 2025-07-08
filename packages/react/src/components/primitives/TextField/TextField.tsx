@@ -18,7 +18,7 @@
 
 import {CSSProperties, FC, InputHTMLAttributes, ReactNode} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
@@ -136,7 +136,7 @@ const TextField: FC<TextFieldProps> = ({
     <FormControl
       error={error}
       helperText={helperText}
-      className={clsx(withVendorCSSClassPrefix('text-field'), className)}
+      className={cx(withVendorCSSClassPrefix('text-field'), className)}
       style={style}
     >
       {label && (

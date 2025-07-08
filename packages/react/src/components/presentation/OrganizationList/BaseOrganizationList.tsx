@@ -21,7 +21,7 @@ import {cx} from '@emotion/css';
 import {FC, ReactElement, ReactNode, useMemo, CSSProperties} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
-import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
+import {Dialog, DialogContent, DialogHeading} from '../../primitives/Dialog/Dialog';
 import Avatar from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
 import Typography from '../../primitives/Typography/Typography';

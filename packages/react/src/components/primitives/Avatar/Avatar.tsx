@@ -17,7 +17,7 @@
  */
 
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import {CSSProperties, FC, JSX, useMemo} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 
@@ -186,7 +186,7 @@ export const Avatar: FC<AvatarProps> = ({
   };
 
   return (
-    <div style={styles.avatar} className={clsx(withVendorCSSClassPrefix('avatar'), className)}>
+    <div style={styles.avatar} className={cx(withVendorCSSClassPrefix('avatar'), className)}>
       <style>
         {`
           @keyframes skeleton-loading {

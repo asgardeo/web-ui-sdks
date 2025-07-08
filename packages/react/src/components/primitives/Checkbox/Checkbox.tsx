@@ -18,7 +18,7 @@
 
 import {CSSProperties, FC, InputHTMLAttributes} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
@@ -66,7 +66,7 @@ const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperT
     <FormControl
       error={error}
       helperText={helperText}
-      className={clsx(withVendorCSSClassPrefix('checkbox'), className)}
+      className={cx(withVendorCSSClassPrefix('checkbox'), className)}
       helperTextMarginLeft={`calc(${theme.vars.spacing.unit} * 3.5)`}
     >
       <div style={containerStyle}>

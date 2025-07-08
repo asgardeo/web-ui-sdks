@@ -19,7 +19,7 @@
 import {CSSProperties, FC, ButtonHTMLAttributes, forwardRef, useMemo} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import Spinner, {SpinnerSize} from '../Spinner/Spinner';
 
 export type ButtonColor = 'primary' | 'secondary' | 'tertiary' | string;
@@ -309,7 +309,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         style={{...buttonStyle, ...style}}
-        className={clsx(
+        className={cx(
           withVendorCSSClassPrefix('button'),
           withVendorCSSClassPrefix(`button-${color}`),
           withVendorCSSClassPrefix(`button-${variant}`),

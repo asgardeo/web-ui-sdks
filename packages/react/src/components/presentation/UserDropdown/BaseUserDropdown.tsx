@@ -30,7 +30,7 @@ import {
   FloatingFocusManager,
   FloatingPortal,
 } from '@floating-ui/react';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useRef, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
@@ -333,7 +333,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
   }
 
   return (
-    <div className={clsx(withVendorCSSClassPrefix('user-dropdown'), className)}>
+    <div className={cx(withVendorCSSClassPrefix('user-dropdown'), className)}>
       <Button
         ref={refs.setReference}
         className={withVendorCSSClassPrefix('user-dropdown__trigger')}

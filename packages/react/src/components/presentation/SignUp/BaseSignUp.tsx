@@ -25,7 +25,7 @@ import {
   withVendorCSSClassPrefix,
   AsgardeoAPIError,
 } from '@asgardeo/browser';
-import {clsx} from 'clsx';
+import {cx} from '@emotion/css';
 import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef, useMemo, CSSProperties} from 'react';
 import {renderSignUpComponents} from './options/SignUpOptionFactory';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
@@ -593,7 +593,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   };
 
   // Generate CSS classes
-  const containerClasses = clsx(
+  const containerClasses = cx(
     [
       withVendorCSSClassPrefix('signup'),
       withVendorCSSClassPrefix(`signup--${size}`),
@@ -602,7 +602,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     className,
   );
 
-  const inputClasses = clsx(
+  const inputClasses = cx(
     [
       withVendorCSSClassPrefix('signup__input'),
       size === 'small' && withVendorCSSClassPrefix('signup__input--small'),
@@ -611,7 +611,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     inputClassName,
   );
 
-  const buttonClasses = clsx(
+  const buttonClasses = cx(
     [
       withVendorCSSClassPrefix('signup__button'),
       size === 'small' && withVendorCSSClassPrefix('signup__button--small'),
@@ -620,9 +620,9 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     buttonClassName,
   );
 
-  const errorClasses = clsx([withVendorCSSClassPrefix('signup__error')], errorClassName);
+  const errorClasses = cx([withVendorCSSClassPrefix('signup__error')], errorClassName);
 
-  const messageClasses = clsx([withVendorCSSClassPrefix('signup__messages')], messageClassName);
+  const messageClasses = cx([withVendorCSSClassPrefix('signup__messages')], messageClassName);
 
   /**
    * Render form components based on flow data using the factory

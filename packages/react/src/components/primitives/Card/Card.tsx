@@ -17,7 +17,7 @@
  */
 
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import {
   CSSProperties,
   HTMLAttributes,
@@ -244,7 +244,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         style={{...cardStyle, ...style}}
-        className={clsx(
+        className={cx(
           withVendorCSSClassPrefix('card'),
           withVendorCSSClassPrefix(`card-${variant}`),
           {
@@ -270,7 +270,7 @@ const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(({children, class
     <div
       ref={ref}
       style={{...headerStyle, ...style}}
-      className={clsx(withVendorCSSClassPrefix('card-header'), className)}
+      className={cx(withVendorCSSClassPrefix('card-header'), className)}
       {...rest}
     >
       {children}
@@ -333,7 +333,7 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
         component={getComponentFromLevel(level)}
         variant={getVariantFromLevel(level)}
         style={{...titleStyle, ...style}}
-        className={clsx(withVendorCSSClassPrefix('card-title'), className)}
+        className={cx(withVendorCSSClassPrefix('card-title'), className)}
         fontWeight={600}
         {...filteredRest}
         // We can't forward ref to Typography since it doesn't use forwardRef
@@ -361,7 +361,7 @@ const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
         variant="body2"
         color="textSecondary"
         style={{...descriptionStyle, ...style}}
-        className={clsx(withVendorCSSClassPrefix('card-description'), className)}
+        className={cx(withVendorCSSClassPrefix('card-description'), className)}
         {...filteredRest}
       >
         {children}
@@ -380,7 +380,7 @@ const CardAction = forwardRef<HTMLDivElement, CardActionProps>(({children, class
     <div
       ref={ref}
       style={{...actionStyle, ...style}}
-      className={clsx(withVendorCSSClassPrefix('card-action'), className)}
+      className={cx(withVendorCSSClassPrefix('card-action'), className)}
       {...rest}
     >
       {children}
@@ -398,7 +398,7 @@ const CardContent = forwardRef<HTMLDivElement, CardContentProps>(({children, cla
     <div
       ref={ref}
       style={{...contentStyle, ...style}}
-      className={clsx(withVendorCSSClassPrefix('card-content'), className)}
+      className={cx(withVendorCSSClassPrefix('card-content'), className)}
       {...rest}
     >
       {children}
@@ -416,7 +416,7 @@ const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(({children, class
     <div
       ref={ref}
       style={{...footerStyle, ...style}}
-      className={clsx(withVendorCSSClassPrefix('card-footer'), className)}
+      className={cx(withVendorCSSClassPrefix('card-footer'), className)}
       {...rest}
     >
       {children}

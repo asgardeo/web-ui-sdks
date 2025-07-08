@@ -17,7 +17,7 @@
  */
 
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import {clsx} from 'clsx';
+import {cx} from '@emotion/css';
 import {FC, HTMLAttributes, useMemo} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import Typography from '../Typography/Typography';
@@ -130,7 +130,7 @@ const Divider: FC<DividerProps> = ({
       <>
         <style>{styles}</style>
         <div
-          className={clsx(
+          className={cx(
             withVendorCSSClassPrefix('divider'),
             withVendorCSSClassPrefix('divider--vertical'),
             className,
@@ -149,7 +149,7 @@ const Divider: FC<DividerProps> = ({
       <>
         <style>{styles}</style>
         <div
-          className={clsx(
+          className={cx(
             withVendorCSSClassPrefix('divider'),
             withVendorCSSClassPrefix('divider--horizontal'),
             withVendorCSSClassPrefix('divider--with-text'),
@@ -179,7 +179,7 @@ const Divider: FC<DividerProps> = ({
     <>
       <style>{styles}</style>
       <div
-        className={clsx(
+        className={cx(
           withVendorCSSClassPrefix('divider'),
           withVendorCSSClassPrefix('divider--horizontal'),
           className,

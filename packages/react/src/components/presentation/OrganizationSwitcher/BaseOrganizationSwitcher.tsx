@@ -30,7 +30,7 @@ import {
   FloatingFocusManager,
   FloatingPortal,
 } from '@floating-ui/react';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
@@ -415,7 +415,7 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
   );
 
   return (
-    <div className={clsx(withVendorCSSClassPrefix('organization-switcher'), className)} style={style}>
+    <div className={cx(withVendorCSSClassPrefix('organization-switcher'), className)} style={style}>
       <Button
         ref={refs.setReference}
         className={withVendorCSSClassPrefix('organization-switcher__trigger')}

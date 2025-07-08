@@ -27,7 +27,7 @@ import {
 } from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import Typography from '../Typography/Typography';
 import CircleCheck from '../Icons/CircleCheck';
 import CircleAlert from '../Icons/CircleAlert';
@@ -201,7 +201,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
         ref={ref}
         role="alert"
         style={{...alertStyle, ...style}}
-        className={clsx(withVendorCSSClassPrefix('alert'), withVendorCSSClassPrefix(`alert-${variant}`), className)}
+        className={cx(withVendorCSSClassPrefix('alert'), withVendorCSSClassPrefix(`alert-${variant}`), className)}
         {...rest}
       >
         {showIcon && (
@@ -232,7 +232,7 @@ const AlertTitle = forwardRef<HTMLHeadingElement, AlertTitleProps>(({children, c
       variant="h6"
       fontWeight={600}
       style={{...titleStyle, ...style}}
-      className={clsx(withVendorCSSClassPrefix('alert-title'), className)}
+      className={cx(withVendorCSSClassPrefix('alert-title'), className)}
       {...filteredRest}
     >
       {children}
@@ -255,7 +255,7 @@ const AlertDescription = forwardRef<HTMLParagraphElement, AlertDescriptionProps>
         component="p"
         variant="body2"
         style={{...descriptionStyle, ...style}}
-        className={clsx(withVendorCSSClassPrefix('alert-description'), className)}
+        className={cx(withVendorCSSClassPrefix('alert-description'), className)}
         {...filteredRest}
       >
         {children}

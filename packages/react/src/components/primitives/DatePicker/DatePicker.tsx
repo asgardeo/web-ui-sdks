@@ -18,7 +18,7 @@
 
 import {CSSProperties, FC, InputHTMLAttributes} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
@@ -83,7 +83,7 @@ const DatePicker: FC<DatePickerProps> = ({
     <FormControl
       error={error}
       helperText={helperText}
-      className={clsx(withVendorCSSClassPrefix('date-picker'), className)}
+      className={cx(withVendorCSSClassPrefix('date-picker'), className)}
       style={style}
     >
       {label && (

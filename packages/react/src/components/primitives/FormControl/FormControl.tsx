@@ -18,7 +18,8 @@
 
 import {CSSProperties, FC, ReactNode} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
+import {bem, withVendorCSSClassPrefix} from '@asgardeo/browser';
 import Typography from '../Typography/Typography';
 
 export interface FormControlProps {
@@ -76,10 +77,17 @@ const FormControl: FC<FormControlProps> = ({
   };
 
   return (
-    <div style={containerStyle} className={className}>
+    <div style={containerStyle} className={cx(withVendorCSSClassPrefix('form-control'), className)}>
       {children}
       {(error || helperText) && (
-        <Typography variant="caption" color={error ? 'error' : 'textSecondary'} style={helperTextStyle}>
+        <Typography
+          variant="caption"
+          color={error ? 'error' : 'textSecondary'}
+          style={helperTextStyle}
+          className={cx(withVendorCSSClassPrefix(bem('form-control', 'helper-text')), {
+            [withVendorCSSClassPrefix(bem('form-control', 'helper-text', 'error'))]: !!error,
+          })}
+        >
           {error || helperText}
         </Typography>
       )}

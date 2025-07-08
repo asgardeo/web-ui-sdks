@@ -29,7 +29,7 @@ import {
   EmbeddedSignInFlowHandleRequestPayload,
   EmbeddedFlowExecuteRequestConfig,
 } from '@asgardeo/browser';
-import {clsx} from 'clsx';
+import {cx} from '@emotion/css';
 import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef, useMemo, CSSProperties} from 'react';
 import {createSignInOptionFromAuthenticator} from './options/SignInOptionFactory';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
@@ -1073,7 +1073,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
   }, [currentFlow]);
 
   // Generate CSS classes
-  const containerClasses = clsx(
+  const containerClasses = cx(
     [
       withVendorCSSClassPrefix('signin'),
       withVendorCSSClassPrefix(`signin--${size}`),
@@ -1082,7 +1082,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     className,
   );
 
-  const inputClasses = clsx(
+  const inputClasses = cx(
     [
       withVendorCSSClassPrefix('signin__input'),
       size === 'small' && withVendorCSSClassPrefix('signin__input--small'),
@@ -1091,7 +1091,7 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     inputClassName,
   );
 
-  const buttonClasses = clsx(
+  const buttonClasses = cx(
     [
       withVendorCSSClassPrefix('signin__button'),
       size === 'small' && withVendorCSSClassPrefix('signin__button--small'),
@@ -1100,9 +1100,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
     buttonClassName,
   );
 
-  const errorClasses = clsx([withVendorCSSClassPrefix('signin__error')], errorClassName);
+  const errorClasses = cx([withVendorCSSClassPrefix('signin__error')], errorClassName);
 
-  const messageClasses = clsx([withVendorCSSClassPrefix('signin__messages')], messageClassName); // Initialize the flow on component mount
+  const messageClasses = cx([withVendorCSSClassPrefix('signin__messages')], messageClassName); // Initialize the flow on component mount
 
   useEffect(() => {
     if (isLoading) {

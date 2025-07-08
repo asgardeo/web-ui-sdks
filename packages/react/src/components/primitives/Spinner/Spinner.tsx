@@ -18,7 +18,7 @@
 
 import {FC, CSSProperties} from 'react';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import {clsx} from 'clsx';
+import {cx} from '@emotion/css';
 import useTheme from '../../../contexts/Theme/useTheme';
 
 export type SpinnerSize = 'small' | 'medium' | 'large';
@@ -89,7 +89,7 @@ const Spinner: FC<SpinnerProps> = ({size = 'medium', color, className, style}) =
         `}
       </style>
       <span
-        className={clsx(withVendorCSSClassPrefix('spinner'), className)}
+        className={cx(withVendorCSSClassPrefix('spinner'), className)}
         style={spinnerStyle}
         role="status"
         aria-label="Loading"

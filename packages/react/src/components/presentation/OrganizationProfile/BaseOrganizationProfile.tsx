@@ -17,7 +17,7 @@
  */
 
 import {withVendorCSSClassPrefix, OrganizationDetails} from '@asgardeo/browser';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import {FC, ReactElement, useMemo, CSSProperties, useState, useCallback, useRef} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
@@ -25,7 +25,7 @@ import Button from '../../primitives/Button/Button';
 import Checkbox from '../../primitives/Checkbox/Checkbox';
 import DatePicker from '../../primitives/DatePicker/DatePicker';
 import KeyValueInput from '../../primitives/KeyValueInput/KeyValueInput';
-import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
+import {Dialog, DialogContent, DialogHeading} from '../../primitives/Dialog/Dialog';
 import TextField from '../../primitives/TextField/TextField';
 import Card from '../../primitives/Card/Card';
 
@@ -576,7 +576,7 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
   };
 
   const profileContent = (
-    <Card style={containerStyle} className={clsx(withVendorCSSClassPrefix('organization-profile'), className)}>
+    <Card style={containerStyle} className={cx(withVendorCSSClassPrefix('organization-profile'), className)}>
       <div style={styles.header}>
         <Avatar name={getOrgInitials(organization.name)} size={80} alt={`${organization.name} logo`} />
         <div style={styles.orgInfo}>

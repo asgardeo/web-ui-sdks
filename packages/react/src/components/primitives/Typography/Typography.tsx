@@ -18,7 +18,7 @@
 
 import {CSSProperties, FC, ReactNode, ComponentPropsWithoutRef, ElementType} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import {withVendorCSSClassPrefix} from '@asgardeo/browser';
 
 // Typography variants mapped to HTML elements and styling
@@ -295,7 +295,7 @@ const Typography: FC<TypographyProps> = ({
 
   return (
     <Component
-      className={clsx(
+      className={cx(
         withVendorCSSClassPrefix('typography'),
         withVendorCSSClassPrefix(`typography-${variant}`),
         {
