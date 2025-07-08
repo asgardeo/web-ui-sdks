@@ -24,8 +24,8 @@ All props are based on the `AsgardeoReactConfig` interface, which extends the ba
 | `signInUrl` | `string` | - | Custom sign-in page URL. If provided, users will be redirected here instead of Asgardeo's default sign-in page |
 | `signUpUrl` | `string` | - | Custom sign-up page URL. If provided, users will be redirected here instead of Asgardeo's default sign-up page |
 | `clientSecret` | `string` | - | Client secret for confidential clients. Not recommended for browser applications |
-| `tokenValidation` | `[TokenValidation](#tokenvalidation)` | - | Token validation configuration for ID tokens including validation flags and clock tolerance |
-| `preferences` | `[Preferences](#preferences)` | - | Configuration object for theming, internationalization, and UI customization |
+| `tokenValidation` | [TokenValidation](#tokenvalidation) | - | Token validation configuration for ID tokens including validation flags and clock tolerance |
+| `preferences` | [Preferences](#preferences) | - | Configuration object for theming, internationalization, and UI customization |
 
 <details>
 
