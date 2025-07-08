@@ -17,7 +17,7 @@
  */
 
 import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import {
   ButtonHTMLAttributes,
   forwardRef,
@@ -93,7 +93,7 @@ const BaseSignInButton: ForwardRefExoticComponent<BaseSignInButtonProps & RefAtt
       return (
         <Button
           ref={ref}
-          className={clsx(withVendorCSSClassPrefix('sign-in-button'), className)}
+          className={cx(withVendorCSSClassPrefix('sign-in-button'), className)}
           style={style}
           disabled={isLoading}
           loading={isLoading}

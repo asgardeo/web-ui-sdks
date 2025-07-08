@@ -17,7 +17,7 @@
  */
 
 import {WithPreferences, withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import {
   forwardRef,
   ForwardRefExoticComponent,
@@ -93,7 +93,7 @@ const BaseSignOutButton: ForwardRefExoticComponent<BaseSignOutButtonProps & RefA
       return (
         <Button
           ref={ref}
-          className={clsx(withVendorCSSClassPrefix('sign-out-button'), className)}
+          className={cx(withVendorCSSClassPrefix('sign-out-button'), className)}
           style={style}
           disabled={isLoading}
           loading={isLoading}
