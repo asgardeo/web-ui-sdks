@@ -39,6 +39,8 @@ import {
   AllOrganizationsApiResponse,
   extractUserClaimsFromIdToken,
   TokenResponse,
+  HttpRequestConfig,
+  HttpResponse,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/getMeOrganizations';
@@ -346,6 +348,13 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
       'react',
       'The signUp method with SignUpOptions is not implemented in the React client.',
     );
+  }
+
+  async fetch(url: string, options?: HttpRequestConfig): Promise<HttpResponse<any>> {
+    return this.asgardeo.httpRequest({
+      url,
+      ...options,
+    });
   }
 }
 

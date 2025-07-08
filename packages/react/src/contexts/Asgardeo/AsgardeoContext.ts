@@ -17,7 +17,7 @@
  */
 
 import {Context, createContext} from 'react';
-import {Organization} from '@asgardeo/browser';
+import {HttpRequestConfig, HttpResponse, Organization} from '@asgardeo/browser';
 import AsgardeoReactClient from '../../AsgardeoReactClient';
 
 /**
@@ -60,6 +60,13 @@ export type AsgardeoContextProps = {
   signUp: any;
   user: any;
   organization: Organization;
+  /**
+   * Custom fetch function to make HTTP requests.
+   * @param url - The URL to fetch.
+   * @param options - Optional configuration for the HTTP request.
+   * @returns A promise that resolves to the HTTP response.
+   */
+  fetch: (url: string, options?: HttpRequestConfig) => Promise<HttpResponse<any>>;
 };
 
 /**
@@ -81,6 +88,7 @@ const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null
   signOut: null,
   signUp: null,
   user: null,
+  fetch: () => null,
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';
