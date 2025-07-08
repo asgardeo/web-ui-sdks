@@ -35,7 +35,7 @@ import {
   UseFloatingReturn,
   UseInteractionsReturn,
 } from '@floating-ui/react';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import React, {CSSProperties, useMemo} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import Button from '../Button/Button';
@@ -302,7 +302,7 @@ export const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLProps<HT
           <div
             ref={ref}
             style={styles.content}
-            className={clsx(withVendorCSSClassPrefix('popover-content'), props.className)}
+            className={cx(withVendorCSSClassPrefix('popover-content'), props.className)}
             aria-labelledby={context.labelId}
             aria-describedby={context.descriptionId}
             {...context.getFloatingProps(props)}
@@ -365,7 +365,7 @@ export const PopoverContent = React.forwardRef<HTMLDivElement, React.HTMLProps<H
         <div
           ref={ref}
           style={{...styles.dropdownContent, ...context.floatingStyles}}
-          className={clsx(withVendorCSSClassPrefix('popover-content'), props.className)}
+          className={cx(withVendorCSSClassPrefix('popover-content'), props.className)}
           aria-labelledby={context.labelId}
           aria-describedby={context.descriptionId}
           {...context.getFloatingProps(props)}
