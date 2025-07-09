@@ -66,6 +66,10 @@ export interface ThemeColors {
     contrastText: string;
     main: string;
   };
+  info: {
+    contrastText: string;
+    main: string;
+  };
   primary: {
     contrastText: string;
     main: string;

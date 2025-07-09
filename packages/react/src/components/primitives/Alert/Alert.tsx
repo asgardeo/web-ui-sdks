@@ -16,23 +16,16 @@
  * under the License.
  */
 
-import {
-  CSSProperties,
-  forwardRef,
-  HTMLAttributes,
-  ReactNode,
-  RefAttributes,
-  ForwardRefExoticComponent,
-  useMemo,
-} from 'react';
+import {forwardRef, HTMLAttributes, ReactNode, RefAttributes, ForwardRefExoticComponent} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
 import Typography from '../Typography/Typography';
 import CircleCheck from '../Icons/CircleCheck';
 import CircleAlert from '../Icons/CircleAlert';
 import TriangleAlert from '../Icons/TriangleAlert';
 import Info from '../Icons/Info';
+import useStyles from './Alert.styles';
 
 export type AlertVariant = 'success' | 'error' | 'warning' | 'info';
 
@@ -65,102 +58,6 @@ export interface AlertDescriptionProps extends HTMLAttributes<HTMLParagraphEleme
   children?: ReactNode;
 }
 
-const useAlertStyles = (variant: AlertVariant) => {
-  const {theme} = useTheme();
-
-  return useMemo(() => {
-    const variantStyles: Record<AlertVariant, CSSProperties> = {
-      success: {
-        backgroundColor: `${theme.vars.colors.success.main}15`,
-        borderColor: theme.vars.colors.success.main,
-        color: theme.vars.colors.success.main,
-      },
-      error: {
-        backgroundColor: `${theme.vars.colors.error.main}15`,
-        borderColor: theme.vars.colors.error.main,
-        color: theme.vars.colors.error.main,
-      },
-      warning: {
-        backgroundColor: `${theme.vars.colors.warning.main}15`,
-        borderColor: theme.vars.colors.warning.main,
-        color: theme.vars.colors.warning.main,
-      },
-      info: {
-        backgroundColor: `${theme.vars.colors.primary.main}15`,
-        borderColor: theme.vars.colors.primary.main,
-        color: theme.vars.colors.primary.main,
-      },
-    };
-
-    return {
-      padding: `calc(${theme.vars.spacing.unit} * 2)`,
-      borderRadius: theme.vars.borderRadius.medium,
-      border: '1px solid',
-      display: 'flex',
-      gap: `calc(${theme.vars.spacing.unit} * 1.5)`,
-      alignItems: 'flex-start',
-      ...variantStyles[variant],
-    };
-  }, [theme, variant]);
-};
-
-const useAlertIconStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    (): CSSProperties => ({
-      flexShrink: 0,
-      marginTop: `calc(${theme.vars.spacing.unit} * 0.25)`, // Slight alignment adjustment
-      width: `calc(${theme.vars.spacing.unit} * 2.5)`,
-      height: `calc(${theme.vars.spacing.unit} * 2.5)`,
-    }),
-    [theme],
-  );
-};
-
-const useAlertContentStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    (): CSSProperties => ({
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: theme.vars.spacing.unit,
-    }),
-    [theme],
-  );
-};
-
-const useAlertTitleStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    (): CSSProperties => ({
-      margin: 0,
-      fontSize: theme.vars.typography.fontSizes.sm,
-      fontWeight: 600,
-      lineHeight: 1.4,
-      color: 'inherit',
-    }),
-    [theme],
-  );
-};
-
-const useAlertDescriptionStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    (): CSSProperties => ({
-      margin: 0,
-      fontSize: theme.vars.typography.fontSizes.sm,
-      lineHeight: 1.4,
-      color: theme.vars.colors.text.secondary,
-    }),
-    [theme],
-  );
-};
-
 const getDefaultIcon = (variant: AlertVariant) => {
   switch (variant) {
     case 'success':
@@ -191,27 +88,30 @@ const getDefaultIcon = (variant: AlertVariant) => {
  */
 const Alert = forwardRef<HTMLDivElement, AlertProps>(
   ({variant = 'info', showIcon = true, children, className, style, ...rest}, ref) => {
-    const alertStyle = useAlertStyles(variant);
-    const iconStyle = useAlertIconStyles();
-    const contentStyle = useAlertContentStyles();
+    const {theme, colorScheme} = useTheme();
+    const styles = useStyles(theme, colorScheme, variant);
     const IconComponent = getDefaultIcon(variant);
 
     return (
       <div
         ref={ref}
         role="alert"
-        style={{...alertStyle, ...style}}
-        className={cx(withVendorCSSClassPrefix('alert'), withVendorCSSClassPrefix(`alert-${variant}`), className)}
+        style={style}
+        className={cx(
+          withVendorCSSClassPrefix(bem('alert')),
+          styles.alert,
+          styles.variant,
+          withVendorCSSClassPrefix(bem('alert', null, variant)),
+          className,
+        )}
         {...rest}
       >
         {showIcon && (
-          <div style={iconStyle} className={withVendorCSSClassPrefix('alert-icon')}>
+          <div className={cx(withVendorCSSClassPrefix(bem('alert', 'icon')), styles.icon)}>
             <IconComponent />
           </div>
         )}
-        <div style={contentStyle} className={withVendorCSSClassPrefix('alert-content')}>
-          {children}
-        </div>
+        <div className={cx(withVendorCSSClassPrefix(bem('alert', 'content')), styles.content)}>{children}</div>
       </div>
     );
   },
@@ -221,9 +121,9 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
  * Alert title component.
  */
 const AlertTitle = forwardRef<HTMLHeadingElement, AlertTitleProps>(({children, className, style, ...rest}, ref) => {
-  const titleStyle = useAlertTitleStyles();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, 'info');
 
-  // Filter out conflicting props that shouldn't be passed to Typography
   const {color, ...filteredRest} = rest;
 
   return (
@@ -231,8 +131,8 @@ const AlertTitle = forwardRef<HTMLHeadingElement, AlertTitleProps>(({children, c
       component="h3"
       variant="h6"
       fontWeight={600}
-      style={{...titleStyle, ...style}}
-      className={cx(withVendorCSSClassPrefix('alert-title'), className)}
+      style={style}
+      className={cx(withVendorCSSClassPrefix(bem('alert', 'title')), styles.title, className)}
       {...filteredRest}
     >
       {children}
@@ -245,17 +145,17 @@ const AlertTitle = forwardRef<HTMLHeadingElement, AlertTitleProps>(({children, c
  */
 const AlertDescription = forwardRef<HTMLParagraphElement, AlertDescriptionProps>(
   ({children, className, style, ...rest}, ref) => {
-    const descriptionStyle = useAlertDescriptionStyles();
+    const {theme, colorScheme} = useTheme();
+    const styles = useStyles(theme, colorScheme, 'info');
 
-    // Filter out conflicting props that shouldn't be passed to Typography
     const {color, ...filteredRest} = rest;
 
     return (
       <Typography
         component="p"
         variant="body2"
-        style={{...descriptionStyle, ...style}}
-        className={cx(withVendorCSSClassPrefix('alert-description'), className)}
+        style={style}
+        className={cx(withVendorCSSClassPrefix(bem('alert', 'description')), styles.description, className)}
         {...filteredRest}
       >
         {children}
@@ -268,11 +168,9 @@ Alert.displayName = 'Alert';
 AlertTitle.displayName = 'Alert.Title';
 AlertDescription.displayName = 'Alert.Description';
 
-// Attach subcomponents to Alert for dot notation usage
 (Alert as any).Title = AlertTitle;
 (Alert as any).Description = AlertDescription;
 
-// TypeScript interface augmentation for dot notation
 export interface AlertComponent extends ForwardRefExoticComponent<AlertProps & RefAttributes<HTMLDivElement>> {
   Title: typeof AlertTitle;
   Description: typeof AlertDescription;

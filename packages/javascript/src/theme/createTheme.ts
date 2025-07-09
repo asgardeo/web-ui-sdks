@@ -68,15 +68,19 @@ const lightTheme: ThemeConfig = {
     },
     error: {
       main: '#d32f2f',
-      contrastText: '#ffffff',
+      contrastText: '#d52828',
+    },
+    info: {
+      main: '#bbebff',
+      contrastText: '#43aeda',
     },
     success: {
       main: '#4caf50',
-      contrastText: '#ffffff',
+      contrastText: '#00a807',
     },
     warning: {
       main: '#ff9800',
-      contrastText: '#ffffff',
+      contrastText: '#be7100',
     },
     text: {
       primary: '#1a1a1a',
@@ -158,15 +162,19 @@ const darkTheme: ThemeConfig = {
     },
     error: {
       main: '#d32f2f',
-      contrastText: '#ffffff',
+      contrastText: '#d52828',
+    },
+    info: {
+      main: '#bbebff',
+      contrastText: '#43aeda',
     },
     success: {
       main: '#4caf50',
-      contrastText: '#ffffff',
+      contrastText: '#00a807',
     },
     warning: {
       main: '#ff9800',
-      contrastText: '#ffffff',
+      contrastText: '#be7100',
     },
     text: {
       primary: '#ffffff',
