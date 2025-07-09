@@ -28,7 +28,7 @@ yarn add @asgardeo/nextjs
 1. Create a `.env.local` file with your Asgardeo configuration:
 
 ```bash
-NEXT_PUBLIC_ASGARDEO_BASE_URL=https://api.asgardeo.io/t/<your-org-name>
+NEXT_PUBLIC_ASGARDEO_BASE_URL=https://api.asgardeo.io/t/<your-organization-name>
 NEXT_PUBLIC_ASGARDEO_CLIENT_ID=<your-client-id>
 NEXT_PUBLIC_ASGARDEO_CLIENT_SECRET=<your-client-secret>
 ```

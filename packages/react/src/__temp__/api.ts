@@ -29,8 +29,6 @@ import {
   OIDCEndpoints,
   SignInConfig,
   SPACustomGrantConfig,
-  initializeEmbeddedSignInFlow,
-  processOpenIDScopes,
 } from '@asgardeo/browser';
 import {AuthStateInterface} from './models';
 
@@ -229,7 +227,6 @@ class AuthAPI {
   public exchangeToken(
     config: SPACustomGrantConfig,
     callback: (response: User | Response) => void,
-    dispatch: (state: AuthStateInterface) => void,
   ): Promise<User | Response> {
     return this._client
       .exchangeToken(config)
@@ -245,8 +242,6 @@ class AuthAPI {
             isSignedIn: true,
             isLoading: false,
           });
-
-          dispatch({...(response as User), isSignedIn: true, isLoading: false});
         }
 
         callback && callback(response);
@@ -326,8 +321,8 @@ class AuthAPI {
    *
    * @return {Promise<string>} - A Promise that resolves with the access token.
    */
-  public async getAccessToken(): Promise<string> {
-    return this._client.getAccessToken();
+  public async getAccessToken(sessionId?: string): Promise<string> {
+    return this._client.getAccessToken(sessionId);
   }
 
   /**

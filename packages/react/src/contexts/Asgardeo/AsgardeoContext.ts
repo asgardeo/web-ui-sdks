@@ -61,12 +61,24 @@ export type AsgardeoContextProps = {
   user: any;
   organization: Organization;
   /**
-   * Custom fetch function to make HTTP requests.
-   * @param url - The URL to fetch.
-   * @param options - Optional configuration for the HTTP request.
+   * HTTP request function to make API calls.
+   * @param requestConfig - Configuration for the HTTP request.
    * @returns A promise that resolves to the HTTP response.
    */
-  fetch: (url: string, options?: HttpRequestConfig) => Promise<HttpResponse<any>>;
+  http: {
+    /**
+     * Makes an HTTP request using the provided configuration.
+     * @param requestConfig - Configuration for the HTTP request.
+     * @returns A promise that resolves to the HTTP response.
+     */
+    request: (requestConfig?: HttpRequestConfig) => Promise<HttpResponse<any>>;
+    /**
+     * Makes multiple HTTP requests based on the provided configuration.
+     * @param requestConfigs - Set of configurations for the HTTP requests.
+     * @returns A promise that resolves to an array of HTTP responses.
+     */
+    requestAll: (requestConfigs?: HttpRequestConfig[]) => Promise<HttpResponse<any>[]>;
+  };
 };
 
 /**
@@ -88,7 +100,10 @@ const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null
   signOut: null,
   signUp: null,
   user: null,
-  fetch: () => null,
+  http: {
+    request: () => null,
+    requestAll: () => null,
+  },
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';

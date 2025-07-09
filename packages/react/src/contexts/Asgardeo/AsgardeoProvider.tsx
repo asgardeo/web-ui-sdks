@@ -18,18 +18,14 @@
 
 import {
   AsgardeoRuntimeError,
-  EmbeddedFlowExecuteRequestPayload,
-  EmbeddedFlowExecuteResponse,
   generateFlattenedUserProfile,
   Organization,
   SignInOptions,
-  SignOutOptions,
   User,
   UserProfile,
   getBrandingPreference,
   GetBrandingPreferenceConfig,
   BrandingPreference,
-  HttpRequestConfig,
 } from '@asgardeo/browser';
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, useCallback} from 'react';
 import AsgardeoContext from './AsgardeoContext';
@@ -339,22 +335,6 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     }
   };
 
-  const signUp = async (payload?: EmbeddedFlowExecuteRequestPayload): Promise<void | EmbeddedFlowExecuteResponse> => {
-    try {
-      return await asgardeo.signUp(payload);
-    } catch (error) {
-      throw new AsgardeoRuntimeError(
-        `Error while signing up: ${error.message || error}`,
-        'asgardeo-signUp-Error',
-        'react',
-        'An error occurred while trying to sign up.',
-      );
-    }
-  };
-
-  const signOut = async (options?: SignOutOptions, afterSignOut?: () => void): Promise<string> =>
-    asgardeo.signOut(options, afterSignOut);
-
   const switchOrganization = async (organization: Organization): Promise<void> => {
     try {
       setIsLoadingSync(true);
@@ -391,31 +371,49 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     }));
   };
 
-  const fetch = async (url: string, options?: HttpRequestConfig): Promise<any> => {
-    return asgardeo.fetch(url, options);
-  };
+  const value = useMemo(
+    () => ({
+      applicationId,
+      organizationHandle: config?.organizationHandle,
+      signInUrl,
+      signUpUrl,
+      afterSignInUrl,
+      baseUrl,
+      getAccessToken: asgardeo.getAccessToken.bind(asgardeo),
+      isInitialized: isInitializedSync,
+      isLoading: isLoadingSync,
+      isSignedIn: isSignedInSync,
+      organization: currentOrganization,
+      signIn,
+      signInSilently,
+      signOut: asgardeo.signOut.bind(asgardeo),
+      signUp: asgardeo.signUp.bind(asgardeo),
+      user,
+      http: {
+        request: asgardeo.request.bind(asgardeo),
+        requestAll: asgardeo.requestAll.bind(asgardeo),
+      },
+    }),
+    [
+      applicationId,
+      config?.organizationHandle,
+      signInUrl,
+      signUpUrl,
+      afterSignInUrl,
+      baseUrl,
+      isInitializedSync,
+      isLoadingSync,
+      isSignedInSync,
+      currentOrganization,
+      signIn,
+      signInSilently,
+      user,
+      asgardeo,
+    ],
+  );
 
   return (
-    <AsgardeoContext.Provider
-      value={{
-        applicationId,
-        organizationHandle: config?.organizationHandle,
-        signInUrl,
-        signUpUrl,
-        afterSignInUrl,
-        baseUrl,
-        isInitialized: isInitializedSync,
-        isLoading: isLoadingSync,
-        isSignedIn: isSignedInSync,
-        organization: currentOrganization,
-        signIn,
-        signInSilently,
-        signOut,
-        signUp,
-        user,
-        fetch,
-      }}
-    >
+    <AsgardeoContext.Provider value={value}>
       <I18nProvider preferences={preferences?.i18n}>
         <BrandingProvider
           brandingPreference={brandingPreference}

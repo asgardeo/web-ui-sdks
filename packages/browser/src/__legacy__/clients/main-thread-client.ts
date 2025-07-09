@@ -380,7 +380,7 @@ export const MainThreadClient = async (
   const getOpenIDProviderEndpoints = async (): Promise<OIDCEndpoints> =>
     _authenticationHelper.getOpenIDProviderEndpoints();
 
-  const getAccessToken = async (): Promise<string> => _authenticationHelper.getAccessToken();
+  const getAccessToken = async (sessionId?: string): Promise<string> => _authenticationHelper.getAccessToken(sessionId);
 
   const getStorageManager = async (): Promise<StorageManager<MainThreadClientConfig>> =>
     _authenticationHelper.getStorageManager();

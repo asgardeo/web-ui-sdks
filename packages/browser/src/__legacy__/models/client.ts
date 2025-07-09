@@ -64,7 +64,7 @@ export interface MainThreadClientInterface {
   getConfigData(): Promise<AuthClientConfig<MainThreadClientConfig>>;
   getIdToken(): Promise<string>;
   getOpenIDProviderEndpoints(): Promise<OIDCEndpoints>;
-  getAccessToken(): Promise<string>;
+  getAccessToken(sessionId?: string): Promise<string>;
   getStorageManager(): Promise<StorageManager<MainThreadClientConfig>>;
   isSignedIn(): Promise<boolean>;
   reInitialize(config: Partial<AuthClientConfig<MainThreadClientConfig>>): Promise<void>;

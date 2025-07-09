@@ -679,8 +679,8 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
     return this._authenticationClient.getOpenIDProviderEndpoints() as any;
   }
 
-  public async getAccessToken(): Promise<string> {
-    return this._authenticationClient.getAccessToken();
+  public async getAccessToken(sessionId?: string): Promise<string> {
+    return this._authenticationClient.getAccessToken(sessionId);
   }
 
   public async getIDPAccessToken(): Promise<string> {

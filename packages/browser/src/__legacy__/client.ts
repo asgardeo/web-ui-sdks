@@ -813,7 +813,7 @@ export class AsgardeoSPAClient {
    *
    * @preserve
    */
-  public async getAccessToken(): Promise<string> {
+  public async getAccessToken(sessionId?: string): Promise<string> {
     await this._validateMethod();
 
     if (this._storage && [(BrowserStorage.WebWorker, BrowserStorage.BrowserMemory)].includes(this._storage)) {
@@ -827,7 +827,7 @@ export class AsgardeoSPAClient {
     }
     const mainThreadClient = this._client as MainThreadClientInterface;
 
-    return mainThreadClient.getAccessToken();
+    return mainThreadClient.getAccessToken(sessionId);
   }
 
   /**

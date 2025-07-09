@@ -72,7 +72,7 @@ Create a `.env` file in your project root and add the following environment vari
 **.env**
 
 ```bash
-NEXT_PUBLIC_ASGARDEO_BASE_URL="https://api.asgardeo.io/t/<your-org-name>"
+NEXT_PUBLIC_ASGARDEO_BASE_URL="https://api.asgardeo.io/t/<your-organization-name>"
 NEXT_PUBLIC_ASGARDEO_CLIENT_ID="<your-app-client-id>"
 ASGARDEO_CLIENT_SECRET="<your-app-client-secret>"
 ```
