@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
 import {
   useFloating,
   useClick,
@@ -32,63 +32,11 @@ import {
   UseInteractionsReturn,
 } from '@floating-ui/react';
 import {cx} from '@emotion/css';
-import React, {CSSProperties, useMemo} from 'react';
+import React from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import Button from '../Button/Button';
 import {X} from '../Icons';
-
-const useStyles = () => {
-  const {theme, colorScheme} = useTheme();
-
-  return useMemo(
-    () => ({
-      overlay: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 9999,
-      } as CSSProperties,
-      content: {
-        background: theme.colors.background.surface,
-        borderRadius: theme.borderRadius.large,
-        boxShadow: `0 2px 8px ${colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
-        outline: 'none',
-        maxWidth: '90vw',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        zIndex: 10000,
-      } as CSSProperties,
-      dropdownContent: {
-        background: theme.colors.background.surface,
-        borderRadius: theme.borderRadius.large,
-        boxShadow: `0 2px 8px ${colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
-        outline: 'none',
-        maxWidth: '90vw',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        zIndex: 10000,
-      } as CSSProperties,
-      header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 4.5}px`,
-        borderBottom: `1px solid ${theme.colors.border}`,
-      } as CSSProperties,
-      headerTitle: {
-        margin: 0,
-        fontSize: '1.2rem',
-        fontWeight: 600,
-        color: theme.colors.text.primary,
-      } as CSSProperties,
-      contentBody: {
-        padding: `${theme.spacing.unit * 2}px`,
-      } as CSSProperties,
-    }),
-    [theme, colorScheme],
-  );
-};
+import useStyles from './Dialog.styles';
 
 interface DialogOptions {
   initialOpen?: boolean;
@@ -203,19 +151,19 @@ export const DialogTrigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLE
 
 export const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>((props, propRef) => {
   const {context: floatingContext, ...context} = useDialogContext();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme);
   const ref = useMergeRefs([context.refs.setFloating, propRef]);
-  const styles = useStyles();
 
   if (!floatingContext.open) return null;
 
   return (
     <FloatingPortal>
-      <FloatingOverlay className={withVendorCSSClassPrefix('popover-overlay')} style={styles.overlay} lockScroll>
+      <FloatingOverlay className={cx(withVendorCSSClassPrefix(bem('dialog', 'overlay')), styles.overlay)} lockScroll>
         <FloatingFocusManager context={floatingContext}>
           <div
             ref={ref}
-            style={styles.content}
-            className={cx(withVendorCSSClassPrefix('popover-content'), props.className)}
+            className={cx(withVendorCSSClassPrefix(bem('dialog', 'content')), styles.content, props.className)}
             aria-labelledby={context.labelId}
             aria-describedby={context.descriptionId}
             {...context.getFloatingProps(props)}
@@ -231,7 +179,8 @@ export const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLProps<HT
 export const DialogHeading = React.forwardRef<HTMLHeadingElement, React.HTMLProps<HTMLHeadingElement>>(
   ({children, ...props}, ref) => {
     const context = useDialogContext();
-    const styles = useStyles();
+    const {theme, colorScheme} = useTheme();
+    const styles = useStyles(theme, colorScheme);
     const id = useId();
 
     React.useLayoutEffect(() => {
@@ -240,8 +189,13 @@ export const DialogHeading = React.forwardRef<HTMLHeadingElement, React.HTMLProp
     }, [id, context.setLabelId]);
 
     return (
-      <div style={styles.header}>
-        <h2 {...props} ref={ref} id={id} style={styles.headerTitle}>
+      <div className={cx(withVendorCSSClassPrefix(bem('dialog', 'header')), styles.header)}>
+        <h2
+          {...props}
+          ref={ref}
+          id={id}
+          className={cx(withVendorCSSClassPrefix(bem('dialog', 'title')), styles.headerTitle)}
+        >
           {children}
         </h2>
         <Button color="tertiary" variant="text" size="small" onClick={() => context.setOpen(false)} aria-label="Close">
@@ -255,6 +209,8 @@ export const DialogHeading = React.forwardRef<HTMLHeadingElement, React.HTMLProp
 export const DialogDescription = React.forwardRef<HTMLParagraphElement, React.HTMLProps<HTMLParagraphElement>>(
   ({children, ...props}, ref) => {
     const context = useDialogContext();
+    const {theme, colorScheme} = useTheme();
+    const styles = useStyles(theme, colorScheme);
     const id = useId();
 
     React.useLayoutEffect(() => {
@@ -263,16 +219,62 @@ export const DialogDescription = React.forwardRef<HTMLParagraphElement, React.HT
     }, [id, context.setDescriptionId]);
 
     return (
-      <p {...props} ref={ref} id={id}>
+      <p
+        {...props}
+        ref={ref}
+        id={id}
+        className={cx(withVendorCSSClassPrefix(bem('dialog', 'description')), styles.description, props.className)}
+      >
         {children}
       </p>
     );
   },
 );
 
-export const DialogClose = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-  (props, ref) => {
-    const context = useDialogContext();
-    return <button type="button" {...props} ref={ref} onClick={() => context.setOpen(false)} />;
-  },
-);
+interface DialogCloseProps {
+  asChild?: boolean;
+  children?: React.ReactNode;
+}
+
+export const DialogClose = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement> & DialogCloseProps
+>(({children, asChild = false, ...props}, propRef) => {
+  const context = useDialogContext();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme);
+  const childrenRef = (children as any)?.ref;
+  const ref = useMergeRefs([propRef, childrenRef]);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    context.setOpen(false);
+    props.onClick?.(event);
+  };
+
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children, {
+      ref,
+      ...props,
+      ...(children.props as any),
+      onClick: handleClick,
+    });
+  }
+
+  return (
+    <button
+      type="button"
+      {...props}
+      ref={ref}
+      onClick={handleClick}
+      className={cx(withVendorCSSClassPrefix(bem('dialog', 'close')), styles.closeButton, props.className)}
+    >
+      {children}
+    </button>
+  );
+});
+
+DialogTrigger.displayName = 'DialogTrigger';
+DialogContent.displayName = 'DialogContent';
+DialogHeading.displayName = 'DialogHeading';
+DialogDescription.displayName = 'DialogDescription';
+DialogClose.displayName = 'DialogClose';
