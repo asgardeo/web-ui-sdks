@@ -23,12 +23,11 @@ import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
 import Alert from '../../primitives/Alert/Alert';
 import Button from '../../primitives/Button/Button';
-import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
+import Dialog from '../../primitives/Dialog/Dialog';
 import FormControl from '../../primitives/FormControl/FormControl';
 import InputLabel from '../../primitives/InputLabel/InputLabel';
 import TextField from '../../primitives/TextField/TextField';
-import Typography from '../../primitives/Typography/Typography';
-import {useStyles} from './BaseCreateOrganization.styles';
+import useStyles from './BaseCreateOrganization.styles';
 
 /**
  * Interface for organization form data.
@@ -119,7 +118,6 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
       [field]: value,
     }));
 
-    // Clear error when user starts typing
     if (formErrors[field]) {
       setFormErrors(prev => ({
         ...prev,
@@ -190,7 +188,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
         withVendorCSSClassPrefix(bem('create-organization')),
         styles.createOrganization,
         cardLayout && withVendorCSSClassPrefix(bem('create-organization', null, 'card')),
-        cardLayout && styles['createOrganization--card'],
+        cardLayout && styles.createOrganizationCard,
         className,
       )}
       style={style}
@@ -198,16 +196,16 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
       <div
         className={cx(
           withVendorCSSClassPrefix(bem('create-organization', 'content')),
-          styles.createOrganization__content,
+          styles.createOrganizationContent,
         )}
       >
         <form
           id="create-organization-form"
-          className={cx(withVendorCSSClassPrefix(bem('create-organization', 'form')), styles.createOrganization__form)}
+          className={cx(withVendorCSSClassPrefix(bem('create-organization', 'form')), styles.createOrganizationForm)}
           onSubmit={handleSubmit}
         >
           {error && (
-            <Alert variant="error" className={styles.createOrganization__errorAlert}>
+            <Alert variant="error" className={styles.createOrganizationErrorAlert}>
               <Alert.Title>Error</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>
@@ -215,7 +213,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
           <div
             className={cx(
               withVendorCSSClassPrefix(bem('create-organization', 'field-group')),
-              styles.createOrganization__fieldGroup,
+              styles.createOrganizationFieldGroup,
             )}
           >
             <TextField
@@ -228,14 +226,14 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               error={formErrors.name}
               className={cx(
                 withVendorCSSClassPrefix(bem('create-organization', 'input')),
-                styles.createOrganization__input,
+                styles.createOrganizationInput,
               )}
             />
           </div>
           <div
             className={cx(
               withVendorCSSClassPrefix(bem('create-organization', 'field-group')),
-              styles.createOrganization__fieldGroup,
+              styles.createOrganizationFieldGroup,
             )}
           >
             <TextField
@@ -249,14 +247,14 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               helperText="This will be your organization's unique identifier. Only lowercase letters, numbers, and hyphens are allowed."
               className={cx(
                 withVendorCSSClassPrefix(bem('create-organization', 'input')),
-                styles.createOrganization__input,
+                styles.createOrganizationInput,
               )}
             />
           </div>
           <div
             className={cx(
               withVendorCSSClassPrefix(bem('create-organization', 'field-group')),
-              styles.createOrganization__fieldGroup,
+              styles.createOrganizationFieldGroup,
             )}
           >
             <FormControl error={formErrors.description}>
@@ -264,9 +262,9 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               <textarea
                 className={cx(
                   withVendorCSSClassPrefix(bem('create-organization', 'textarea')),
-                  styles.createOrganization__textarea,
+                  styles.createOrganizationTextarea,
                   formErrors.description && withVendorCSSClassPrefix(bem('create-organization', 'textarea', 'error')),
-                  formErrors.description && styles['createOrganization__textarea--error'],
+                  formErrors.description && styles.createOrganizationTextareaError,
                 )}
                 placeholder={t('organization.create.description.placeholder')}
                 value={formData.description}
@@ -281,7 +279,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
         <div
           className={cx(
             withVendorCSSClassPrefix(bem('create-organization', 'actions')),
-            styles.createOrganization__actions,
+            styles.createOrganizationActions,
           )}
         >
           {onCancel && (
@@ -300,10 +298,10 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
   if (mode === 'popup') {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeading>{title}</DialogHeading>
-          <div className={styles.createOrganization__popup}>{createOrganizationContent}</div>
-        </DialogContent>
+        <Dialog.Content>
+          <Dialog.Heading>{title}</Dialog.Heading>
+          <div className={styles.createOrganizationPopup}>{createOrganizationContent}</div>
+        </Dialog.Content>
       </Dialog>
     );
   }

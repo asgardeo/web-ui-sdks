@@ -18,7 +18,7 @@
 
 import {css} from '@emotion/css';
 import {useMemo} from 'react';
-import {bem, Theme} from '@asgardeo/browser';
+import {Theme} from '@asgardeo/browser';
 
 /**
  * Creates styles for the BaseCreateOrganization component using BEM methodology
@@ -26,7 +26,7 @@ import {bem, Theme} from '@asgardeo/browser';
  * @param colorScheme - The current color scheme (used for memoization)
  * @returns Object containing CSS class names for component styling
  */
-export const useStyles = (theme: Theme, colorScheme: string) => {
+const useStyles = (theme: Theme, colorScheme: string) => {
   return useMemo(() => {
     const cssCreateOrganization = css`
       padding: calc(${theme.vars.spacing.unit} * 4);
@@ -146,23 +146,137 @@ export const useStyles = (theme: Theme, colorScheme: string) => {
       }
     `;
 
+    const cssCreateOrganizationCard = css`
+      background: ${theme.vars.colors.background.surface};
+      border-radius: ${theme.vars.borderRadius.large};
+      padding: calc(${theme.vars.spacing.unit} * 4);
+    `;
+
+    const cssCreateOrganizationContent = css`
+      display: flex;
+      flex-direction: column;
+      gap: calc(${theme.vars.spacing.unit} * 2);
+    `;
+
+    const cssCreateOrganizationForm = css`
+      display: flex;
+      flex-direction: column;
+      gap: calc(${theme.vars.spacing.unit} * 2);
+      width: 100%;
+    `;
+
+    const cssCreateOrganizationHeader = css`
+      display: flex;
+      align-items: center;
+      gap: calc(${theme.vars.spacing.unit} * 1.5);
+      margin-bottom: calc(${theme.vars.spacing.unit} * 1.5);
+    `;
+
+    const cssCreateOrganizationField = css`
+      display: flex;
+      align-items: center;
+      padding: ${theme.vars.spacing.unit} 0;
+      border-bottom: 1px solid ${theme.vars.colors.border};
+      min-height: 32px;
+    `;
+
+    const cssCreateOrganizationFieldGroup = css`
+      display: flex;
+      flex-direction: column;
+      gap: calc(${theme.vars.spacing.unit} * 0.5);
+    `;
+
+    const cssCreateOrganizationTextarea = css`
+      width: 100%;
+      padding: ${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 1.5);
+      border: 1px solid ${theme.vars.colors.border};
+      border-radius: ${theme.vars.borderRadius.medium};
+      font-size: ${theme.vars.typography.fontSizes.md};
+      color: ${theme.vars.colors.text.primary};
+      background-color: ${theme.vars.colors.background.surface};
+      font-family: inherit;
+      min-height: 80px;
+      resize: vertical;
+      outline: none;
+
+      &:focus {
+        border-color: ${theme.vars.colors.primary.main};
+        box-shadow: 0 0 0 2px ${theme.vars.colors.primary.main}20;
+      }
+
+      &:disabled {
+        background-color: ${theme.vars.colors.background.disabled};
+        color: ${theme.vars.colors.text.secondary};
+        cursor: not-allowed;
+      }
+    `;
+
+    const cssCreateOrganizationTextareaError = css`
+      border-color: ${theme.vars.colors.error.main};
+    `;
+
+    const cssCreateOrganizationInput = css`
+      /* Base input styles will be handled by TextField component */
+    `;
+
+    const cssCreateOrganizationAvatarContainer = css`
+      align-items: flex-start;
+      display: flex;
+      gap: calc(${theme.vars.spacing.unit} * 2);
+      margin-bottom: ${theme.vars.spacing.unit};
+    `;
+
+    const cssCreateOrganizationActions = css`
+      display: flex;
+      gap: ${theme.vars.spacing.unit};
+      justify-content: flex-end;
+      padding-top: calc(${theme.vars.spacing.unit} * 2);
+    `;
+
+    const cssCreateOrganizationInfoContainer = css`
+      display: flex;
+      flex-direction: column;
+      gap: ${theme.vars.spacing.unit};
+    `;
+
+    const cssCreateOrganizationValue = css`
+      color: ${theme.vars.colors.text.primary};
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: ${theme.vars.spacing.unit};
+      overflow: hidden;
+      min-height: 32px;
+      line-height: 32px;
+    `;
+
+    const cssCreateOrganizationPopup = css`
+      padding: calc(${theme.vars.spacing.unit} * 2);
+    `;
+
+    const cssCreateOrganizationErrorAlert = css`
+      margin-bottom: calc(${theme.vars.spacing.unit} * 2);
+    `;
+
     return {
       createOrganization: cssCreateOrganization,
-      'createOrganization--card': bem(cssCreateOrganization, null, 'card'),
-      createOrganization__content: bem(cssCreateOrganization, 'content'),
-      createOrganization__form: bem(cssCreateOrganization, 'form'),
-      createOrganization__header: bem(cssCreateOrganization, 'header'),
-      createOrganization__field: bem(cssCreateOrganization, 'field'),
-      createOrganization__fieldGroup: bem(cssCreateOrganization, 'field-group'),
-      createOrganization__textarea: bem(cssCreateOrganization, 'textarea'),
-      'createOrganization__textarea--error': bem(cssCreateOrganization, 'textarea', 'error'),
-      createOrganization__input: bem(cssCreateOrganization, 'input'),
-      createOrganization__avatarContainer: bem(cssCreateOrganization, 'avatar-container'),
-      createOrganization__actions: bem(cssCreateOrganization, 'actions'),
-      createOrganization__infoContainer: bem(cssCreateOrganization, 'info-container'),
-      createOrganization__value: bem(cssCreateOrganization, 'value'),
-      createOrganization__popup: bem(cssCreateOrganization, 'popup'),
-      createOrganization__errorAlert: bem(cssCreateOrganization, 'error-alert'),
+      createOrganizationCard: cssCreateOrganizationCard,
+      createOrganizationContent: cssCreateOrganizationContent,
+      createOrganizationForm: cssCreateOrganizationForm,
+      createOrganizationHeader: cssCreateOrganizationHeader,
+      createOrganizationField: cssCreateOrganizationField,
+      createOrganizationFieldGroup: cssCreateOrganizationFieldGroup,
+      createOrganizationTextarea: cssCreateOrganizationTextarea,
+      createOrganizationTextareaError: cssCreateOrganizationTextareaError,
+      createOrganizationInput: cssCreateOrganizationInput,
+      createOrganizationAvatarContainer: cssCreateOrganizationAvatarContainer,
+      createOrganizationActions: cssCreateOrganizationActions,
+      createOrganizationInfoContainer: cssCreateOrganizationInfoContainer,
+      createOrganizationValue: cssCreateOrganizationValue,
+      createOrganizationPopup: cssCreateOrganizationPopup,
+      createOrganizationErrorAlert: cssCreateOrganizationErrorAlert,
     };
   }, [theme, colorScheme]);
 };
+
+export default useStyles;
