@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,11 +16,14 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactNode} from 'react';
+import {FC, ReactNode} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {cx} from '@emotion/css';
 import {bem, withVendorCSSClassPrefix} from '@asgardeo/browser';
 import Typography from '../Typography/Typography';
+import useStyles from './FormControl.styles';
+
+export type FormControlHelperTextAlign = 'left' | 'center';
 
 export interface FormControlProps {
   /**
@@ -40,13 +43,9 @@ export interface FormControlProps {
    */
   className?: string;
   /**
-   * Custom container style
-   */
-  style?: CSSProperties;
-  /**
    * Custom alignment for helper text (default: left, center for OTP)
    */
-  helperTextAlign?: 'left' | 'center';
+  helperTextAlign?: FormControlHelperTextAlign;
   /**
    * Custom margin left for helper text (for components like Checkbox)
    */
@@ -58,34 +57,22 @@ const FormControl: FC<FormControlProps> = ({
   error,
   helperText,
   className,
-  style = {},
   helperTextAlign = 'left',
   helperTextMarginLeft,
 }) => {
-  const {theme} = useTheme();
-
-  const containerStyle: CSSProperties = {
-    textAlign: 'left',
-    marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
-    ...style,
-  };
-
-  const helperTextStyle: CSSProperties = {
-    marginTop: `calc(${theme.vars.spacing.unit} / 2)`,
-    textAlign: helperTextAlign,
-    ...(helperTextMarginLeft && {marginLeft: helperTextMarginLeft}),
-  };
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, helperTextAlign, helperTextMarginLeft, !!error);
 
   return (
-    <div style={containerStyle} className={cx(withVendorCSSClassPrefix('form-control'), className)}>
+    <div className={cx(withVendorCSSClassPrefix(bem('form-control')), styles.formControl, className)}>
       {children}
       {(error || helperText) && (
         <Typography
           variant="caption"
           color={error ? 'error' : 'textSecondary'}
-          style={helperTextStyle}
-          className={cx(withVendorCSSClassPrefix(bem('form-control', 'helper-text')), {
+          className={cx(withVendorCSSClassPrefix(bem('form-control', 'helper-text')), styles.helperText, {
             [withVendorCSSClassPrefix(bem('form-control', 'helper-text', 'error'))]: !!error,
+            [styles.helperTextError]: !!error,
           })}
         >
           {error || helperText}
