@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ReactNode, useCallback, useState, useMemo} from 'react';
+import {FC, ReactNode, useCallback, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {cx} from '@emotion/css';
 import FormControl from '../FormControl/FormControl';
@@ -24,8 +24,11 @@ import InputLabel from '../InputLabel/InputLabel';
 import TextField from '../TextField/TextField';
 import DatePicker from '../DatePicker/DatePicker';
 import Checkbox from '../Checkbox/Checkbox';
-import Button from '../Button/Button';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import useStyles from './MultiInput.styles';
+
+export type MultiInputType = 'text' | 'email' | 'tel' | 'url' | 'password' | 'date' | 'boolean';
+export type MultiInputFieldType = 'STRING' | 'DATE_TIME' | 'BOOLEAN';
 
 export interface MultiInputProps {
   /**
@@ -65,17 +68,13 @@ export interface MultiInputProps {
    */
   onChange: (values: string[]) => void;
   /**
-   * Custom style object
-   */
-  style?: CSSProperties;
-  /**
    * Input type
    */
-  type?: 'text' | 'email' | 'tel' | 'url' | 'password' | 'date' | 'boolean';
+  type?: MultiInputType;
   /**
    * Field type for different input components
    */
-  fieldType?: 'STRING' | 'DATE_TIME' | 'BOOLEAN';
+  fieldType?: MultiInputFieldType;
   /**
    * Icon to display at the start (left) of each input
    */
@@ -94,56 +93,6 @@ export interface MultiInputProps {
   maxFields?: number;
 }
 
-const useStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    () => ({
-      container: {
-        display: 'flex',
-        flexDirection: 'column' as const,
-        gap: `${theme.spacing.unit}px`,
-      },
-      inputRow: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: `${theme.spacing.unit}px`,
-        position: 'relative' as const,
-      },
-      inputWrapper: {
-        flex: 1,
-      },
-      plusIcon: {
-        background: 'var(--asgardeo-color-secondary-main)',
-        borderRadius: '50%',
-        outline: '4px var(--asgardeo-color-secondary-main) auto',
-        color: 'var(--asgardeo-color-secondary-contrastText)',
-      },
-      listContainer: {
-        display: 'flex',
-        flexDirection: 'column' as const,
-        gap: `${theme.spacing.unit * 0}px`,
-      },
-      listItem: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px`,
-        backgroundColor: theme.colors.background.surface,
-        borderRadius: theme.borderRadius.medium,
-        fontSize: '1rem',
-        color: theme.colors.text.primary,
-      },
-      removeButton: {
-        padding: `${theme.spacing.unit / 2}px`,
-        minWidth: 'auto',
-        color: theme.colors.error.main,
-      },
-    }),
-    [theme],
-  );
-};
-
 const MultiInput: FC<MultiInputProps> = ({
   label,
   error,
@@ -154,7 +103,6 @@ const MultiInput: FC<MultiInputProps> = ({
   placeholder = 'Enter value',
   values = [],
   onChange,
-  style = {},
   type = 'text',
   fieldType = 'STRING',
   startIcon,
@@ -162,35 +110,19 @@ const MultiInput: FC<MultiInputProps> = ({
   minFields = 1,
   maxFields,
 }) => {
-  const styles = useStyles();
+  const {theme, colorScheme} = useTheme();
+  const canAddMore = !maxFields || values.length < maxFields;
+  const canRemove = values.length > minFields;
+  const styles = useStyles(theme, colorScheme, !!disabled, !!error, canAddMore, canRemove);
 
-  const PlusIcon = ({style}) => (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      style={style}
-    >
+  const PlusIcon = ({className}) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" className={cx(styles.icon, className)}>
       <path d="M12 5v14M5 12h14" />
     </svg>
   );
 
-  const BinIcon = () => (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+  const BinIcon = ({className}) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" className={cx(styles.icon, className)}>
       <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14ZM10 11v6M14 11v6" />
     </svg>
   );
@@ -265,9 +197,6 @@ const MultiInput: FC<MultiInputProps> = ({
     [placeholder, disabled, startIcon, endIcon, error, fieldType, type],
   );
 
-  const canAddMore = !maxFields || values.length < maxFields;
-  const canRemove = values.length > minFields;
-
   // State for the current input value
   const [currentInputValue, setCurrentInputValue] = useState('');
 
@@ -282,22 +211,21 @@ const MultiInput: FC<MultiInputProps> = ({
     <FormControl
       error={error}
       helperText={helperText}
-      className={cx(withVendorCSSClassPrefix('multi-input'), className)}
-      style={style}
+      className={cx(withVendorCSSClassPrefix(bem('multi-input')), className)}
     >
       {label && (
         <InputLabel required={required} error={!!error}>
           {label}
         </InputLabel>
       )}
-      <div style={styles.container}>
+      <div className={cx(withVendorCSSClassPrefix(bem('multi-input', 'container')), styles.container)}>
         {/* Input field at the top */}
-        <div style={styles.inputRow}>
-          <div style={styles.inputWrapper}>
+        <div className={cx(withVendorCSSClassPrefix(bem('multi-input', 'input-row')), styles.inputRow)}>
+          <div className={cx(withVendorCSSClassPrefix(bem('multi-input', 'input-wrapper')), styles.inputWrapper)}>
             {renderInputField(
               currentInputValue,
               setCurrentInputValue,
-              canAddMore ? <PlusIcon style={styles.plusIcon} /> : undefined,
+              canAddMore ? <PlusIcon className={styles.plusIcon} /> : undefined,
               canAddMore ? handleInputSubmit : undefined,
             )}
           </div>
@@ -305,22 +233,27 @@ const MultiInput: FC<MultiInputProps> = ({
 
         {/* List of added items */}
         {values.length > 0 && (
-          <div style={styles.listContainer}>
+          <div className={cx(withVendorCSSClassPrefix(bem('multi-input', 'list-container')), styles.listContainer)}>
             {values.map((value, index) => (
-              <div key={index} style={styles.listItem}>
-                <span>{value}</span>
+              <div
+                key={index}
+                className={cx(withVendorCSSClassPrefix(bem('multi-input', 'list-item')), styles.listItem)}
+              >
+                <span
+                  className={cx(withVendorCSSClassPrefix(bem('multi-input', 'list-item-text')), styles.listItemText)}
+                >
+                  {value}
+                </span>
                 {canRemove && (
-                  <Button
-                    size="small"
-                    color="secondary"
-                    variant="text"
+                  <button
+                    type="button"
                     onClick={() => handleRemoveValue(index)}
                     disabled={disabled}
+                    className={cx(withVendorCSSClassPrefix(bem('multi-input', 'remove-button')), styles.removeButton)}
                     title="Remove value"
-                    style={styles.removeButton}
                   >
-                    <BinIcon />
-                  </Button>
+                    <BinIcon className={styles.icon} />
+                  </button>
                 )}
               </div>
             ))}
