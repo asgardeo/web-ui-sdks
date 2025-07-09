@@ -39,8 +39,8 @@ const useStyles = (
   hasEndIcon: boolean,
 ) => {
   return useMemo(() => {
-    const leftPadding = hasStartIcon ? theme.spacing.unit * 5 : theme.spacing.unit * 1.5;
-    const rightPadding = hasEndIcon ? theme.spacing.unit * 5 : theme.spacing.unit * 1.5;
+    const leftPadding = hasStartIcon ? `calc(${theme.vars.spacing.unit} * 5)` : `calc(${theme.vars.spacing.unit} * 1.5)`;
+    const rightPadding = hasEndIcon ? `calc(${theme.vars.spacing.unit} * 5)` : `calc(${theme.vars.spacing.unit} * 1.5)`;
 
     const inputContainer = css`
       position: relative;
@@ -50,18 +50,18 @@ const useStyles = (
 
     const input = css`
       width: 100%;
-      padding: ${theme.spacing.unit}px ${rightPadding}px ${theme.spacing.unit}px ${leftPadding}px;
-      border: 1px solid ${hasError ? theme.colors.error.main : theme.colors.border};
-      border-radius: ${theme.borderRadius.medium};
-      font-size: 1rem;
-      color: ${theme.colors.text.primary};
-      background-color: ${disabled ? theme.colors.background.disabled : theme.colors.background.surface};
+      padding: ${theme.vars.spacing.unit} ${rightPadding} ${theme.vars.spacing.unit} ${leftPadding};
+      border: 1px solid ${hasError ? theme.vars.colors.error.main : theme.vars.colors.border};
+      border-radius: ${theme.vars.borderRadius.medium};
+      font-size: ${theme.vars.typography.fontSizes.md};
+      color: ${theme.vars.colors.text.primary};
+      background-color: ${disabled ? theme.vars.colors.background.disabled : theme.vars.colors.background.surface};
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
       &:focus {
-        border-color: ${hasError ? theme.colors.error.main : theme.colors.primary.main};
-        box-shadow: 0 0 0 2px ${hasError ? theme.colors.error.main + '20' : theme.colors.primary.main + '20'};
+        border-color: ${hasError ? theme.vars.colors.error.main : theme.vars.colors.primary.main};
+        box-shadow: 0 0 0 2px ${hasError ? theme.vars.colors.error.main + '20' : theme.vars.colors.primary.main + '20'};
       }
 
       &:disabled {
@@ -70,30 +70,30 @@ const useStyles = (
       }
 
       &:hover:not(:disabled) {
-        border-color: ${hasError ? theme.colors.error.main : theme.colors.primary.main};
+        border-color: ${hasError ? theme.vars.colors.error.main : theme.vars.colors.primary.main};
       }
 
       &::placeholder {
-        color: ${theme.colors.text.secondary};
+        color: ${theme.vars.colors.text.secondary};
         opacity: 0.7;
       }
     `;
 
     const inputError = css`
-      border-color: ${theme.colors.error.main};
+      border-color: ${theme.vars.colors.error.main};
 
       &:focus {
-        border-color: ${theme.colors.error.main};
-        box-shadow: 0 0 0 2px ${theme.colors.error.main}20;
+        border-color: ${theme.vars.colors.error.main};
+        box-shadow: 0 0 0 2px ${theme.vars.colors.error.main}20;
       }
 
       &:hover:not(:disabled) {
-        border-color: ${theme.colors.error.main};
+        border-color: ${theme.vars.colors.error.main};
       }
     `;
 
     const inputDisabled = css`
-      background-color: ${theme.colors.background.disabled};
+      background-color: ${theme.vars.colors.background.disabled};
       opacity: 0.6;
       cursor: not-allowed;
     `;
@@ -103,34 +103,34 @@ const useStyles = (
       background: none;
       border: none;
       cursor: ${disabled ? 'not-allowed' : 'pointer'};
-      padding: ${theme.spacing.unit / 2}px;
+      padding: calc(${theme.vars.spacing.unit} / 2);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: ${theme.colors.text.secondary};
+      color: ${theme.vars.colors.text.secondary};
       opacity: ${disabled ? 0.5 : 1};
       top: 50%;
       transform: translateY(-50%);
       transition: color 0.2s ease, opacity 0.2s ease;
 
       &:hover:not(:disabled) {
-        color: ${theme.colors.text.primary};
+        color: ${theme.vars.colors.text.primary};
       }
 
       &:focus {
-        outline: 2px solid ${theme.colors.primary.main};
+        outline: 2px solid ${theme.vars.colors.primary.main};
         outline-offset: 2px;
       }
     `;
 
     const startIcon = css`
       ${icon};
-      left: ${theme.spacing.unit}px;
+      left: ${theme.vars.spacing.unit};
     `;
 
     const endIcon = css`
       ${icon};
-      right: ${theme.spacing.unit}px;
+      right: ${theme.vars.spacing.unit};
     `;
 
     return {
