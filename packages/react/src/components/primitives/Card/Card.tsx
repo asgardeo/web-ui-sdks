@@ -16,19 +16,12 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
-import {
-  CSSProperties,
-  HTMLAttributes,
-  forwardRef,
-  useMemo,
-  ReactNode,
-  ForwardRefExoticComponent,
-  RefAttributes,
-} from 'react';
+import {HTMLAttributes, forwardRef, ReactNode, ForwardRefExoticComponent, RefAttributes} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import Typography from '../Typography/Typography';
+import useStyles from './Card.styles';
 
 export type CardVariant = 'default' | 'outlined' | 'elevated';
 
@@ -93,126 +86,6 @@ export interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
   children?: ReactNode;
 }
 
-const useCardStyles = (variant: CardVariant, clickable: boolean) => {
-  const {theme} = useTheme();
-
-  return useMemo(() => {
-    const baseStyles: CSSProperties = {
-      borderRadius: theme.borderRadius.medium,
-      backgroundColor: theme.colors.background.surface,
-      transition: 'all 0.2s ease-in-out',
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden',
-      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
-    };
-
-    const variantStyles: Record<CardVariant, CSSProperties> = {
-      default: {
-        ...baseStyles,
-      },
-      outlined: {
-        ...baseStyles,
-        border: `1px solid ${theme.colors.border}`,
-      },
-      elevated: {
-        ...baseStyles,
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        border: 'none',
-      },
-    };
-
-    const clickableStyles: CSSProperties = clickable
-      ? {
-          cursor: 'pointer',
-        }
-      : {};
-
-    return {
-      ...variantStyles[variant],
-      ...clickableStyles,
-    };
-  }, [theme, variant, clickable]);
-};
-
-const useCardHeaderStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    (): CSSProperties => ({
-      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px 0`,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: `${theme.spacing.unit}px`,
-    }),
-    [theme],
-  );
-};
-
-const useCardTitleStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    (): CSSProperties => ({
-      margin: 0,
-      // Typography component will handle color, fontSize, fontWeight, lineHeight
-    }),
-    [theme],
-  );
-};
-
-const useCardDescriptionStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    (): CSSProperties => ({
-      margin: 0,
-      color: theme.colors.text.secondary,
-      fontSize: '0.875rem',
-      lineHeight: 1.5,
-    }),
-    [theme],
-  );
-};
-
-const useCardActionStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    (): CSSProperties => ({
-      marginTop: `${theme.spacing.unit}px`,
-    }),
-    [theme],
-  );
-};
-
-const useCardContentStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    (): CSSProperties => ({
-      padding: `${theme.spacing.unit * 2}px`,
-      flex: 1,
-    }),
-    [theme],
-  );
-};
-
-const useCardFooterStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    (): CSSProperties => ({
-      padding: `0 ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
-      display: 'flex',
-      alignItems: 'center',
-      gap: `${theme.spacing.unit}px`,
-    }),
-    [theme],
-  );
-};
-
 /**
  * Card component that provides a flexible container for content.
  *
@@ -238,17 +111,21 @@ const useCardFooterStyles = () => {
  */
 const Card = forwardRef<HTMLDivElement, CardProps>(
   ({variant = 'default', clickable = false, children, className, style, ...rest}, ref) => {
-    const cardStyle = useCardStyles(variant, clickable);
+    const {theme, colorScheme} = useTheme();
+    const styles = useStyles(theme, colorScheme, variant, clickable);
 
     return (
       <div
         ref={ref}
-        style={{...cardStyle, ...style}}
+        style={style}
         className={cx(
-          withVendorCSSClassPrefix('card'),
-          withVendorCSSClassPrefix(`card-${variant}`),
+          withVendorCSSClassPrefix(bem('card')),
+          styles.card,
+          styles.variant,
+          styles.clickable,
+          withVendorCSSClassPrefix(bem('card', null, variant)),
           {
-            [withVendorCSSClassPrefix('card-clickable')]: clickable,
+            [withVendorCSSClassPrefix(bem('card', null, 'clickable'))]: clickable,
           },
           className,
         )}
@@ -264,13 +141,14 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
  * Card header component that contains the title, description, and optional actions.
  */
 const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(({children, className, style, ...rest}, ref) => {
-  const headerStyle = useCardHeaderStyles();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, 'default', false);
 
   return (
     <div
       ref={ref}
-      style={{...headerStyle, ...style}}
-      className={cx(withVendorCSSClassPrefix('card-header'), className)}
+      style={style}
+      className={cx(withVendorCSSClassPrefix(bem('card', 'header')), styles.header, className)}
       {...rest}
     >
       {children}
@@ -283,9 +161,9 @@ const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(({children, class
  */
 const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
   ({children, level = 3, className, style, ...rest}, ref) => {
-    const titleStyle = useCardTitleStyles();
+    const {theme, colorScheme} = useTheme();
+    const styles = useStyles(theme, colorScheme, 'default', false);
 
-    // Map level to Typography variant
     const getVariantFromLevel = (level: number) => {
       switch (level) {
         case 1:
@@ -305,7 +183,6 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
       }
     };
 
-    // Map level to HTML element for ref forwarding
     const getComponentFromLevel = (level: number) => {
       switch (level) {
         case 1:
@@ -325,19 +202,16 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
       }
     };
 
-    // Filter out conflicting props that shouldn't be passed to Typography
     const {color, ...filteredRest} = rest;
 
     return (
       <Typography
         component={getComponentFromLevel(level)}
         variant={getVariantFromLevel(level)}
-        style={{...titleStyle, ...style}}
-        className={cx(withVendorCSSClassPrefix('card-title'), className)}
+        style={style}
+        className={cx(withVendorCSSClassPrefix(bem('card', 'title')), styles.title, className)}
         fontWeight={600}
         {...filteredRest}
-        // We can't forward ref to Typography since it doesn't use forwardRef
-        // The ref will be handled by the Typography component's underlying element
       >
         {children}
       </Typography>
@@ -350,9 +224,9 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
  */
 const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
   ({children, className, style, ...rest}, ref) => {
-    const descriptionStyle = useCardDescriptionStyles();
+    const {theme, colorScheme} = useTheme();
+    const styles = useStyles(theme, colorScheme, 'default', false);
 
-    // Filter out conflicting props that shouldn't be passed to Typography
     const {color, ...filteredRest} = rest;
 
     return (
@@ -360,8 +234,8 @@ const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
         component="p"
         variant="body2"
         color="textSecondary"
-        style={{...descriptionStyle, ...style}}
-        className={cx(withVendorCSSClassPrefix('card-description'), className)}
+        style={style}
+        className={cx(withVendorCSSClassPrefix(bem('card', 'description')), styles.description, className)}
         {...filteredRest}
       >
         {children}
@@ -374,13 +248,14 @@ const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
  * Card action component for action elements in the header.
  */
 const CardAction = forwardRef<HTMLDivElement, CardActionProps>(({children, className, style, ...rest}, ref) => {
-  const actionStyle = useCardActionStyles();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, 'default', false);
 
   return (
     <div
       ref={ref}
-      style={{...actionStyle, ...style}}
-      className={cx(withVendorCSSClassPrefix('card-action'), className)}
+      style={style}
+      className={cx(withVendorCSSClassPrefix(bem('card', 'action')), styles.action, className)}
       {...rest}
     >
       {children}
@@ -392,13 +267,14 @@ const CardAction = forwardRef<HTMLDivElement, CardActionProps>(({children, class
  * Card content component that contains the main content of the card.
  */
 const CardContent = forwardRef<HTMLDivElement, CardContentProps>(({children, className, style, ...rest}, ref) => {
-  const contentStyle = useCardContentStyles();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, 'default', false);
 
   return (
     <div
       ref={ref}
-      style={{...contentStyle, ...style}}
-      className={cx(withVendorCSSClassPrefix('card-content'), className)}
+      style={style}
+      className={cx(withVendorCSSClassPrefix(bem('card', 'content')), styles.content, className)}
       {...rest}
     >
       {children}
@@ -410,13 +286,14 @@ const CardContent = forwardRef<HTMLDivElement, CardContentProps>(({children, cla
  * Card footer component that contains footer actions or additional information.
  */
 const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(({children, className, style, ...rest}, ref) => {
-  const footerStyle = useCardFooterStyles();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, 'default', false);
 
   return (
     <div
       ref={ref}
-      style={{...footerStyle, ...style}}
-      className={cx(withVendorCSSClassPrefix('card-footer'), className)}
+      style={style}
+      className={cx(withVendorCSSClassPrefix(bem('card', 'footer')), styles.footer, className)}
       {...rest}
     >
       {children}
@@ -432,7 +309,6 @@ CardAction.displayName = 'Card.Action';
 CardContent.displayName = 'Card.Content';
 CardFooter.displayName = 'Card.Footer';
 
-// Attach subcomponents to Card for dot notation usage
 (Card as any).Header = CardHeader;
 (Card as any).Title = CardTitle;
 (Card as any).Description = CardDescription;
@@ -440,7 +316,6 @@ CardFooter.displayName = 'Card.Footer';
 (Card as any).Content = CardContent;
 (Card as any).Footer = CardFooter;
 
-// TypeScript interface augmentation for dot notation
 export interface CardComponent extends ForwardRefExoticComponent<CardProps & RefAttributes<HTMLDivElement>> {
   Action: typeof CardAction;
   Content: typeof CardContent;
