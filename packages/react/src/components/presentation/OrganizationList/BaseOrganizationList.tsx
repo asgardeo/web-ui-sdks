@@ -361,13 +361,11 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   const styles = useStyles(theme, colorScheme);
   const {t} = useTranslation();
 
-  // Combine allOrganizations with myOrganizations to determine which orgs can be switched to
   const organizationsWithSwitchAccess: OrganizationWithSwitchAccess[] = useMemo(() => {
     if (!allOrganizations?.organizations) {
       return [];
     }
 
-    // Create a Set of IDs from myOrganizations for faster lookup
     const myOrgIds = new Set(myOrganizations?.map(org => org.id) || []);
 
     return allOrganizations.organizations.map(org => ({
@@ -376,7 +374,6 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
     }));
   }, [allOrganizations?.organizations, myOrganizations]);
 
-  // Use custom renderers or defaults with styles and translations
   const renderLoadingWithStyles = renderLoading || (() => defaultRenderLoading(t, styles));
   const renderErrorWithStyles = renderError || ((error: string) => defaultRenderError(error, t, styles));
   const renderEmptyWithStyles = renderEmpty || (() => defaultRenderEmpty(t, styles));
@@ -388,7 +385,6 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
     ((org: OrganizationWithSwitchAccess) =>
       defaultRenderOrganization(org, styles, t, onOrganizationSelect, showStatus));
 
-  // Show loading state
   if (isLoading && organizationsWithSwitchAccess?.length === 0) {
     const loadingContent = (
       <div
@@ -420,7 +416,6 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
     return loadingContent;
   }
 
-  // Show error state
   if (error && organizationsWithSwitchAccess?.length === 0) {
     const errorContent = (
       <div
@@ -452,7 +447,6 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
     return errorContent;
   }
 
-  // Show empty state
   if (!isLoading && organizationsWithSwitchAccess?.length === 0) {
     const emptyContent = (
       <div

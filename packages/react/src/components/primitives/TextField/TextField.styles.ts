@@ -39,7 +39,9 @@ const useStyles = (
   hasEndIcon: boolean,
 ) => {
   return useMemo(() => {
-    const leftPadding = hasStartIcon ? `calc(${theme.vars.spacing.unit} * 5)` : `calc(${theme.vars.spacing.unit} * 1.5)`;
+    const leftPadding = hasStartIcon
+      ? `calc(${theme.vars.spacing.unit} * 5)`
+      : `calc(${theme.vars.spacing.unit} * 1.5)`;
     const rightPadding = hasEndIcon ? `calc(${theme.vars.spacing.unit} * 5)` : `calc(${theme.vars.spacing.unit} * 1.5)`;
 
     const inputContainer = css`

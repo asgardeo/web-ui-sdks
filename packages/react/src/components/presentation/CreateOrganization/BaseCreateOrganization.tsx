@@ -188,7 +188,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
         withVendorCSSClassPrefix(bem('create-organization')),
         styles.createOrganization,
         cardLayout && withVendorCSSClassPrefix(bem('create-organization', null, 'card')),
-        cardLayout && styles.createOrganizationCard,
+        cardLayout && styles['createOrganization--card'],
         className,
       )}
       style={style}
@@ -196,16 +196,16 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
       <div
         className={cx(
           withVendorCSSClassPrefix(bem('create-organization', 'content')),
-          styles.createOrganizationContent,
+          styles.createOrganization__content,
         )}
       >
         <form
           id="create-organization-form"
-          className={cx(withVendorCSSClassPrefix(bem('create-organization', 'form')), styles.createOrganizationForm)}
+          className={cx(withVendorCSSClassPrefix(bem('create-organization', 'form')), styles.createOrganization__form)}
           onSubmit={handleSubmit}
         >
           {error && (
-            <Alert variant="error" className={styles.createOrganizationErrorAlert}>
+            <Alert variant="error" className={styles.createOrganization__errorAlert}>
               <Alert.Title>Error</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>
@@ -213,7 +213,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
           <div
             className={cx(
               withVendorCSSClassPrefix(bem('create-organization', 'field-group')),
-              styles.createOrganizationFieldGroup,
+              styles.createOrganization__fieldGroup,
             )}
           >
             <TextField
@@ -226,14 +226,14 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               error={formErrors.name}
               className={cx(
                 withVendorCSSClassPrefix(bem('create-organization', 'input')),
-                styles.createOrganizationInput,
+                styles.createOrganization__input,
               )}
             />
           </div>
           <div
             className={cx(
               withVendorCSSClassPrefix(bem('create-organization', 'field-group')),
-              styles.createOrganizationFieldGroup,
+              styles.createOrganization__fieldGroup,
             )}
           >
             <TextField
@@ -247,14 +247,14 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               helperText="This will be your organization's unique identifier. Only lowercase letters, numbers, and hyphens are allowed."
               className={cx(
                 withVendorCSSClassPrefix(bem('create-organization', 'input')),
-                styles.createOrganizationInput,
+                styles.createOrganization__input,
               )}
             />
           </div>
           <div
             className={cx(
               withVendorCSSClassPrefix(bem('create-organization', 'field-group')),
-              styles.createOrganizationFieldGroup,
+              styles.createOrganization__fieldGroup,
             )}
           >
             <FormControl error={formErrors.description}>
@@ -262,9 +262,9 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               <textarea
                 className={cx(
                   withVendorCSSClassPrefix(bem('create-organization', 'textarea')),
-                  styles.createOrganizationTextarea,
+                  styles.createOrganization__textarea,
                   formErrors.description && withVendorCSSClassPrefix(bem('create-organization', 'textarea', 'error')),
-                  formErrors.description && styles.createOrganizationTextareaError,
+                  formErrors.description && styles['createOrganization__textarea--error'],
                 )}
                 placeholder={t('organization.create.description.placeholder')}
                 value={formData.description}
@@ -279,7 +279,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
         <div
           className={cx(
             withVendorCSSClassPrefix(bem('create-organization', 'actions')),
-            styles.createOrganizationActions,
+            styles.createOrganization__actions,
           )}
         >
           {onCancel && (
@@ -300,7 +300,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <Dialog.Content>
           <Dialog.Heading>{title}</Dialog.Heading>
-          <div className={styles.createOrganizationPopup}>{createOrganizationContent}</div>
+          <div className={styles.createOrganization__popup}>{createOrganizationContent}</div>
         </Dialog.Content>
       </Dialog>
     );

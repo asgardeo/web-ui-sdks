@@ -16,34 +16,17 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix, OrganizationDetails} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, OrganizationDetails, bem, formatDate} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
-import {FC, ReactElement, useMemo, CSSProperties, useState, useCallback, useRef} from 'react';
+import {FC, ReactElement, useState, useCallback, useRef} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
-import Checkbox from '../../primitives/Checkbox/Checkbox';
-import DatePicker from '../../primitives/DatePicker/DatePicker';
 import KeyValueInput from '../../primitives/KeyValueInput/KeyValueInput';
 import Dialog from '../../primitives/Dialog/Dialog';
 import TextField from '../../primitives/TextField/TextField';
 import Card from '../../primitives/Card/Card';
-
-/**
- * Formats a date string to a human-readable format
- */
-const formatDate = (dateString?: string): string => {
-  if (!dateString) return '-';
-  try {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  } catch {
-    return dateString;
-  }
-};
+import useStyles from './BaseOrganizationProfile.styles';
 
 export interface BaseOrganizationProfileProps {
   /**
@@ -238,10 +221,10 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
     },
   ],
 }): ReactElement => {
-  const {theme} = useTheme();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme);
   const [editedOrganization, setEditedOrganization] = useState(organization);
   const [editingFields, setEditingFields] = useState<Record<string, boolean>>({});
-  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const PencilIcon = () => (
     <svg
@@ -294,7 +277,6 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
       };
 
       onUpdate(payload);
-      // Exit edit mode for this field after save
       toggleFieldEdit(fieldKey);
     },
     [editedOrganization, organization, onUpdate, toggleFieldEdit],
@@ -340,9 +322,6 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
       .slice(0, 2);
   };
 
-  const styles = useStyles();
-
-  // Renders individual field in view or edit mode
   const renderField = (
     field: any,
     isEditing: boolean,
@@ -357,7 +336,6 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
 
     const renderedValue = field.render ? field.render(value, organization) : value;
 
-    // If editing, show input field
     if (isEditing && onEditValue && fieldEditable && editable) {
       const fieldValue =
         editedOrganization && key && editedOrganization[key as keyof OrganizationDetails] !== undefined
@@ -369,15 +347,15 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
         value: typeof fieldValue === 'object' ? JSON.stringify(fieldValue) : String(fieldValue || ''),
         onChange: (e: any) => onEditValue(e.target ? e.target.value : e),
         placeholder: getFieldPlaceholder(key),
-        style: {
-          marginBottom: 0,
-        },
+        className: cx(
+          withVendorCSSClassPrefix(bem('organization-profile', 'field-input')),
+          styles.organizationProfile__fieldInput,
+        ),
       };
 
       let fieldInput: ReactElement;
 
       if (key === 'attributes') {
-        // For attributes, use KeyValueInput component
         const attributesValue = typeof fieldValue === 'object' && fieldValue !== null ? fieldValue : {};
         fieldInput = (
           <KeyValueInput
@@ -421,13 +399,26 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
 
       return (
         <>
-          <span style={styles.label}>{label}</span>
-          <div style={styles.value}>{fieldInput}</div>
+          <span
+            className={cx(
+              withVendorCSSClassPrefix(bem('organization-profile', 'label')),
+              styles.organizationProfile__label,
+            )}
+          >
+            {label}
+          </span>
+          <div
+            className={cx(
+              withVendorCSSClassPrefix(bem('organization-profile', 'value')),
+              styles.organizationProfile__value,
+            )}
+          >
+            {fieldInput}
+          </div>
         </>
       );
     }
 
-    // Default: view mode
     const hasValue = value !== undefined && value !== null && value !== '';
     const isFieldEditable = editable && fieldEditable;
 
@@ -447,13 +438,21 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
 
     return (
       <>
-        <span style={styles.label}>{label}</span>
+        <span
+          className={cx(
+            withVendorCSSClassPrefix(bem('organization-profile', 'label')),
+            styles.organizationProfile__label,
+          )}
+        >
+          {label}
+        </span>
         <div
-          style={{
-            ...styles.value,
-            fontStyle: hasValue ? 'normal' : 'italic',
-            opacity: hasValue ? 1 : 0.7,
-          }}
+          className={cx(
+            withVendorCSSClassPrefix(bem('organization-profile', 'value')),
+            styles.organizationProfile__value,
+            !hasValue && withVendorCSSClassPrefix(bem('organization-profile', 'value', 'empty')),
+            !hasValue && styles['organizationProfile__value--empty'],
+          )}
         >
           {!hasValue && isFieldEditable && onStartEdit ? (
             <Button
@@ -462,13 +461,10 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
               color="secondary"
               size="small"
               title="Click to edit"
-              style={{
-                fontStyle: 'italic',
-                textDecoration: 'underline',
-                opacity: 0.7,
-                padding: 0,
-                minHeight: 'auto',
-              }}
+              className={cx(
+                withVendorCSSClassPrefix(bem('organization-profile', 'placeholder-button')),
+                styles.organizationProfile__placeholderButton,
+              )}
             >
               {displayValue}
             </Button>
@@ -490,23 +486,26 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
     const isFieldEditing = editingFields[field.key];
     const isFieldEditable = editable && field.editable !== false;
 
-    // Show field if: has value, currently editing, or is editable
     const shouldShow = hasValue || isFieldEditing || isFieldEditable;
 
     if (!shouldShow) {
       return null;
     }
 
-    const fieldStyle = {
-      ...styles.field,
-      display: 'flex',
-      alignItems: 'center',
-      gap: theme.vars.spacing.unit,
-    };
-
     return (
-      <div style={fieldStyle} key={field.key}>
-        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: theme.vars.spacing.unit}}>
+      <div
+        className={cx(
+          withVendorCSSClassPrefix(bem('organization-profile', 'field')),
+          styles.organizationProfile__field,
+        )}
+        key={field.key}
+      >
+        <div
+          className={cx(
+            withVendorCSSClassPrefix(bem('organization-profile', 'field-content')),
+            styles.organizationProfile__fieldContent,
+          )}
+        >
           {renderField(
             field,
             isFieldEditing,
@@ -519,7 +518,12 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
           )}
         </div>
         {isFieldEditable && (
-          <div style={{display: 'flex', alignItems: 'center', gap: `calc(${theme.vars.spacing.unit} / 2)`}}>
+          <div
+            className={cx(
+              withVendorCSSClassPrefix(bem('organization-profile', 'field-actions')),
+              styles.organizationProfile__fieldActions,
+            )}
+          >
             {isFieldEditing ? (
               <>
                 <Button
@@ -542,7 +546,6 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
                 </Button>
               </>
             ) : (
-              // Only show pencil icon when there's a value
               hasValue && (
                 <Button
                   onClick={() => toggleFieldEdit(field.key)}
@@ -550,11 +553,10 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
                   color="secondary"
                   size="small"
                   title="Edit field"
-                  style={{
-                    minWidth: 'auto',
-                    padding: `calc(${theme.vars.spacing.unit} / 2)`,
-                    minHeight: 'auto',
-                  }}
+                  className={cx(
+                    withVendorCSSClassPrefix(bem('organization-profile', 'edit-button')),
+                    styles.organizationProfile__editButton,
+                  )}
                 >
                   <PencilIcon />
                 </Button>
@@ -570,22 +572,58 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
     return fallback;
   }
 
-  const containerStyle = {
-    ...styles.root,
-    ...(cardLayout ? styles.card : {}),
-  };
-
   const profileContent = (
-    <Card style={containerStyle} className={cx(withVendorCSSClassPrefix('organization-profile'), className)}>
-      <div style={styles.header}>
+    <Card
+      className={cx(
+        withVendorCSSClassPrefix(bem('organization-profile')),
+        styles.organizationProfile,
+        cardLayout && withVendorCSSClassPrefix(bem('organization-profile', null, 'card')),
+        cardLayout && styles['organizationProfile--card'],
+        className,
+      )}
+    >
+      <div
+        className={cx(
+          withVendorCSSClassPrefix(bem('organization-profile', 'header')),
+          styles.organizationProfile__header,
+        )}
+      >
         <Avatar name={getOrgInitials(organization.name)} size={80} alt={`${organization.name} logo`} />
-        <div style={styles.orgInfo}>
-          <h2 style={styles.name}>{organization.name}</h2>
-          {organization.orgHandle && <p style={styles.handle}>@{organization.orgHandle}</p>}
+        <div
+          className={cx(
+            withVendorCSSClassPrefix(bem('organization-profile', 'org-info')),
+            styles.organizationProfile__orgInfo,
+          )}
+        >
+          <h2
+            className={cx(
+              withVendorCSSClassPrefix(bem('organization-profile', 'name')),
+              styles.organizationProfile__name,
+            )}
+          >
+            {organization.name}
+          </h2>
+          {organization.orgHandle && (
+            <p
+              className={cx(
+                withVendorCSSClassPrefix(bem('organization-profile', 'handle')),
+                styles.organizationProfile__handle,
+              )}
+            >
+              @{organization.orgHandle}
+            </p>
+          )}
         </div>
       </div>
 
-      <div style={styles.infoContainer}>{fields.map((field, index) => renderOrganizationField(field))}</div>
+      <div
+        className={cx(
+          withVendorCSSClassPrefix(bem('organization-profile', 'info-container')),
+          styles.organizationProfile__infoContainer,
+        )}
+      >
+        {fields.map((field, index) => renderOrganizationField(field))}
+      </div>
     </Card>
   );
 
@@ -594,134 +632,20 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <Dialog.Content>
           <Dialog.Heading>{title}</Dialog.Heading>
-          <div style={{padding: `calc(${theme.vars.spacing.unit} * 2)`}}>{profileContent}</div>
+          <div
+            className={cx(
+              withVendorCSSClassPrefix(bem('organization-profile', 'popup')),
+              styles.organizationProfile__popup,
+            )}
+          >
+            {profileContent}
+          </div>
         </Dialog.Content>
       </Dialog>
     );
   }
 
   return profileContent;
-};
-
-const useStyles = () => {
-  const {theme, colorScheme} = useTheme();
-
-  return useMemo(
-    () => ({
-      root: {
-        padding: `calc(${theme.vars.spacing.unit} * 4)`,
-        minWidth: '600px',
-        margin: '0 auto',
-      } as CSSProperties,
-      card: {
-        background: theme.vars.colors.background.surface,
-        borderRadius: theme.vars.borderRadius.large,
-      } as CSSProperties,
-      header: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: `calc(${theme.vars.spacing.unit} * 2)`,
-        marginBottom: `calc(${theme.vars.spacing.unit} * 3)`,
-        paddingBottom: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-      orgInfo: {
-        flex: 1,
-      } as CSSProperties,
-      name: {
-        fontSize: '1.5rem',
-        fontWeight: 600,
-        margin: '0 0 8px 0',
-        color: theme.vars.colors.text.primary,
-      } as CSSProperties,
-      handle: {
-        fontSize: '1rem',
-        color: theme.vars.colors.text.secondary,
-        margin: '0',
-        fontFamily: 'monospace',
-      } as CSSProperties,
-      infoContainer: {
-        display: 'flex',
-        flexDirection: 'column' as const,
-        gap: theme.vars.spacing.unit,
-      } as CSSProperties,
-      field: {
-        display: 'flex',
-        alignItems: 'flex-start',
-        padding: `calc(${theme.vars.spacing.unit} / 2) 0`,
-        borderBottom: `1px solid ${theme.vars.colors.border}`,
-        minHeight: '28px',
-      } as CSSProperties,
-      lastField: {
-        borderBottom: 'none',
-      } as CSSProperties,
-      label: {
-        fontSize: '0.875rem',
-        fontWeight: 500,
-        color: theme.vars.colors.text.secondary,
-        width: '120px',
-        flexShrink: 0,
-        lineHeight: '28px',
-      } as CSSProperties,
-      value: {
-        color: theme.vars.colors.text.primary,
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        gap: theme.vars.spacing.unit,
-        overflow: 'hidden',
-        minHeight: '28px',
-        lineHeight: '28px',
-        wordBreak: 'break-word' as const,
-      } as CSSProperties,
-      statusBadge: {
-        padding: `calc(${theme.vars.spacing.unit} / 2) ${theme.vars.spacing.unit}`,
-        borderRadius: theme.vars.borderRadius.small,
-        fontSize: '0.75rem',
-        fontWeight: 500,
-        color: 'white',
-        textTransform: 'uppercase' as const,
-        letterSpacing: '0.5px',
-      } as CSSProperties,
-      permissionsList: {
-        display: 'flex',
-        flexWrap: 'wrap' as const,
-        gap: `calc(${theme.vars.spacing.unit} / 2)`,
-      } as CSSProperties,
-      permissionBadge: {
-        padding: `calc(${theme.vars.spacing.unit} / 4) ${theme.vars.spacing.unit}`,
-        borderRadius: theme.vars.borderRadius.small,
-        fontSize: '0.75rem',
-        backgroundColor: theme.vars.colors.primary.main,
-        color: theme.vars.colors.primary.contrastText,
-        border: `1px solid ${theme.vars.colors.border}`,
-      } as CSSProperties,
-      attributesList: {
-        display: 'flex',
-        flexDirection: 'column' as const,
-        gap: `calc(${theme.vars.spacing.unit} / 4)`,
-      } as CSSProperties,
-      attributeItem: {
-        display: 'flex',
-        gap: theme.vars.spacing.unit,
-        padding: `calc(${theme.vars.spacing.unit} / 4) 0`,
-        alignItems: 'center',
-      } as CSSProperties,
-      attributeKey: {
-        fontSize: '0.75rem',
-        fontWeight: 500,
-        color: theme.vars.colors.text.secondary,
-        minWidth: '80px',
-        flexShrink: 0,
-      } as CSSProperties,
-      attributeValue: {
-        fontSize: '0.75rem',
-        color: theme.vars.colors.text.primary,
-        wordBreak: 'break-word' as const,
-        flex: 1,
-      } as CSSProperties,
-    }),
-    [theme, colorScheme],
-  );
 };
 
 export default BaseOrganizationProfile;

@@ -81,7 +81,6 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Don't render if not authenticated
   if (!isSignedIn && fallback) {
     return fallback;
   }
@@ -101,13 +100,12 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
       let result: any;
 
       if (onCreateOrganization) {
-        // Use the provided custom creation function
         result = await onCreateOrganization(payload);
       } else {
-        // Use the default API
         if (!baseUrl) {
           throw new Error('Base URL is required for organization creation');
         }
+
         result = await createOrganization({
           baseUrl,
           payload: {
@@ -117,17 +115,17 @@ export const CreateOrganization: FC<CreateOrganizationProps> = ({
         });
       }
 
-      // Refresh organizations list to include the new organization
       await revalidateMyOrganizations();
 
-      // Call success callback if provided
       if (onSuccess) {
         onSuccess(result);
       }
     } catch (createError) {
       const errorMessage: string = createError instanceof Error ? createError.message : 'Failed to create organization';
+
       setError(errorMessage);
-      throw createError; // Re-throw to allow form to handle it
+
+      throw createError;
     } finally {
       setLoading(false);
     }

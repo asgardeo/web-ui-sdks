@@ -18,7 +18,7 @@
 
 import {css} from '@emotion/css';
 import {useMemo} from 'react';
-import {Theme, bem} from '@asgardeo/browser';
+import {Theme} from '@asgardeo/browser';
 
 export type ButtonColor = 'primary' | 'secondary' | 'tertiary' | string;
 export type ButtonVariant = 'solid' | 'outline' | 'text';
