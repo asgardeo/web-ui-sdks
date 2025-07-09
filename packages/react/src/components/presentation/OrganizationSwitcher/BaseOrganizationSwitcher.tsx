@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
 import {
   useFloating,
   autoUpdate,
@@ -31,7 +31,7 @@ import {
   FloatingPortal,
 } from '@floating-ui/react';
 import {cx} from '@emotion/css';
-import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useState} from 'react';
+import {FC, ReactElement, ReactNode, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
 import {Avatar} from '../../primitives/Avatar/Avatar';
@@ -40,148 +40,7 @@ import Building from '../../primitives/Icons/Building';
 import Check from '../../primitives/Icons/Check';
 import ChevronDown from '../../primitives/Icons/ChevronDown';
 import Typography from '../../primitives/Typography/Typography';
-
-const useStyles = () => {
-  const {theme, colorScheme} = useTheme();
-
-  return useMemo(
-    () => ({
-      trigger: {
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: theme.vars.spacing.unit,
-        padding: `calc(${theme.vars.spacing.unit} * 0.75) ${theme.vars.spacing.unit}`,
-        border: `1px solid ${theme.vars.colors.border}`,
-        background: theme.vars.colors.background.surface,
-        cursor: 'pointer',
-        borderRadius: theme.vars.borderRadius.medium,
-        minWidth: '160px',
-        '&:hover': {
-          backgroundColor: theme.vars.colors.background.surface,
-        },
-      } as CSSProperties,
-      orgName: {
-        color: theme.vars.colors.text.primary,
-        fontWeight: 500,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        flex: 1,
-      } as CSSProperties,
-      dropdownContent: {
-        minWidth: '280px',
-        maxWidth: '400px',
-        backgroundColor: theme.vars.colors.background.surface,
-        borderRadius: theme.vars.borderRadius.medium,
-        boxShadow: theme.vars.shadows.medium,
-        border: `1px solid ${theme.vars.colors.border}`,
-        outline: 'none',
-        zIndex: 1000,
-      } as CSSProperties,
-      dropdownMenu: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-      } as CSSProperties,
-      menuItem: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        gap: theme.vars.spacing.unit,
-        padding: `calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 2)`,
-        width: '100%',
-        color: theme.vars.colors.text.primary,
-        textDecoration: 'none',
-        border: 'none',
-        backgroundColor: 'none',
-        cursor: 'pointer',
-        fontSize: '0.875rem',
-        textAlign: 'left',
-        borderRadius: theme.vars.borderRadius.medium,
-        transition: 'background-color 0.15s ease-in-out',
-        '&:hover': {
-          backgroundColor: theme.vars.colors.action?.hover || 'rgba(0, 0, 0, 0.04)',
-        },
-      } as CSSProperties,
-      organizationInfo: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `calc(${theme.vars.spacing.unit} / 4)`,
-        flex: 1,
-        minWidth: 0,
-        overflow: 'hidden',
-      } as CSSProperties,
-      organizationName: {
-        color: theme.vars.colors.text.primary,
-        fontSize: '0.875rem',
-        fontWeight: 500,
-        margin: 0,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      } as CSSProperties,
-      organizationMeta: {
-        color: theme.vars.colors.text.secondary,
-        fontSize: '0.75rem',
-        margin: 0,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      } as CSSProperties,
-      divider: {
-        margin: `calc(${theme.vars.spacing.unit} * 0.5) 0`,
-        borderBottom: `1px solid ${theme.vars.colors.border}`,
-      } as CSSProperties,
-      dropdownHeader: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: theme.vars.spacing.unit,
-        padding: `${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-      loadingContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '80px',
-        gap: theme.vars.spacing.unit,
-      } as CSSProperties,
-      loadingText: {
-        color: theme.vars.colors.text.secondary,
-        fontSize: '0.875rem',
-      } as CSSProperties,
-      errorContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '80px',
-        padding: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-      errorText: {
-        color: theme.vars.colors.text.secondary,
-        fontSize: '0.875rem',
-        textAlign: 'center',
-      } as CSSProperties,
-      manageButton: {
-        minWidth: 'auto',
-        marginLeft: 'auto',
-      } as CSSProperties,
-      roleCapitalized: {
-        textTransform: 'capitalize',
-      } as CSSProperties,
-      sectionHeader: {
-        textTransform: 'uppercase',
-        letterSpacing: '0.05em',
-        color: theme.vars.colors.text.secondary,
-      } as CSSProperties,
-      sectionHeaderContainer: {
-        borderTop: 'none',
-        borderBottom: 'none',
-        paddingBottom: `calc(${theme.vars.spacing.unit} / 2)`,
-      } as CSSProperties,
-    }),
-    [theme, colorScheme],
-  );
-};
+import useStyles from './BaseOrganizationSwitcher.styles';
 
 interface MenuItem {
   href?: string;
@@ -327,10 +186,10 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
   avatarSize = 24,
   fallback = null,
 }): ReactElement => {
-  const styles = useStyles();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme);
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
-  const {theme, colorScheme} = useTheme();
   const {t} = useTranslation();
 
   const {refs, floatingStyles, context} = useFloating({
@@ -377,11 +236,28 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
         size={avatarSize * 1.25}
         alt={`${organization.name} avatar`}
       />
-      <div style={styles.organizationInfo}>
-        <Typography variant="body2" fontWeight="medium" style={styles.organizationName}>
+      <div
+        className={cx(
+          withVendorCSSClassPrefix(bem('organization-switcher', 'organization-info')),
+          styles.organizationSwitcher__organizationInfo,
+        )}
+      >
+        <Typography
+          variant="body2"
+          fontWeight="medium"
+          className={cx(
+            withVendorCSSClassPrefix(bem('organization-switcher', 'organization-name')),
+            styles.organizationSwitcher__organizationName,
+          )}
+        >
           {organization.name}
         </Typography>
-        <div style={styles.organizationMeta}>
+        <div
+          className={cx(
+            withVendorCSSClassPrefix(bem('organization-switcher', 'organization-meta')),
+            styles.organizationSwitcher__organizationMeta,
+          )}
+        >
           {showMemberCount && organization.memberCount !== undefined && (
             <span>
               {organization.memberCount}{' '}
@@ -391,7 +267,16 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
           {showRole && organization.role && showMemberCount && organization.memberCount !== undefined && (
             <span> • </span>
           )}
-          {showRole && organization.role && <span style={styles.roleCapitalized}>{organization.role}</span>}
+          {showRole && organization.role && (
+            <span
+              className={cx(
+                withVendorCSSClassPrefix(bem('organization-switcher', 'role-capitalized')),
+                styles.organizationSwitcher__roleCapitalized,
+              )}
+            >
+              {organization.role}
+            </span>
+          )}
         </div>
       </div>
       {isSelected && <Check width="16" height="16" color={theme.vars.colors.text.primary} />}
@@ -399,27 +284,58 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
   );
 
   const defaultRenderLoading = () => (
-    <div style={styles.loadingContainer}>
-      <Typography variant="caption" style={styles.loadingText}>
+    <div
+      className={cx(
+        withVendorCSSClassPrefix(bem('organization-switcher', 'loading-container')),
+        styles.organizationSwitcher__loadingContainer,
+      )}
+    >
+      <Typography
+        variant="caption"
+        className={cx(
+          withVendorCSSClassPrefix(bem('organization-switcher', 'loading-text')),
+          styles.organizationSwitcher__loadingText,
+        )}
+      >
         {t('organization.switcher.loading.organizations')}
       </Typography>
     </div>
   );
 
   const defaultRenderError = (errorMessage: string) => (
-    <div style={styles.errorContainer}>
-      <Typography variant="caption" style={styles.errorText}>
+    <div
+      className={cx(
+        withVendorCSSClassPrefix(bem('organization-switcher', 'error-container')),
+        styles.organizationSwitcher__errorContainer,
+      )}
+    >
+      <Typography
+        variant="caption"
+        className={cx(
+          withVendorCSSClassPrefix(bem('organization-switcher', 'error-text')),
+          styles.organizationSwitcher__errorText,
+        )}
+      >
         {errorMessage}
       </Typography>
     </div>
   );
 
   return (
-    <div className={cx(withVendorCSSClassPrefix('organization-switcher'), className)} style={style}>
+    <div
+      className={cx(
+        withVendorCSSClassPrefix(bem('organization-switcher')),
+        styles.organizationSwitcher,
+        className,
+      )}
+      style={style}
+    >
       <Button
         ref={refs.setReference}
-        className={withVendorCSSClassPrefix('organization-switcher__trigger')}
-        style={styles.trigger}
+        className={cx(
+          withVendorCSSClassPrefix(bem('organization-switcher', 'trigger')),
+          styles.organizationSwitcher__trigger,
+        )}
         color="tertiary"
         variant="outline"
         size="medium"
@@ -437,8 +353,10 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
             {showTriggerLabel && (
               <Typography
                 variant="body2"
-                className={withVendorCSSClassPrefix('organization-switcher__trigger-label')}
-                style={styles.orgName}
+                className={cx(
+                  withVendorCSSClassPrefix(bem('organization-switcher', 'trigger-label')),
+                  styles.organizationSwitcher__triggerLabel,
+                )}
               >
                 {currentOrganization.name}
               </Typography>
@@ -450,8 +368,10 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
             {showTriggerLabel && (
               <Typography
                 variant="body2"
-                className={withVendorCSSClassPrefix('organization-switcher__trigger-label')}
-                style={styles.orgName}
+                className={cx(
+                  withVendorCSSClassPrefix(bem('organization-switcher', 'trigger-label')),
+                  styles.organizationSwitcher__triggerLabel,
+                )}
               >
                 {t('organization.switcher.select.organization')}
               </Typography>
@@ -466,15 +386,20 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
           <FloatingFocusManager context={context} modal={false}>
             <div
               ref={refs.setFloating}
-              className={withVendorCSSClassPrefix('organization-switcher__content')}
-              style={{...floatingStyles, ...styles.dropdownContent}}
+              className={cx(
+                withVendorCSSClassPrefix(bem('organization-switcher', 'content')),
+                styles.organizationSwitcher__content,
+              )}
+              style={floatingStyles}
               {...getFloatingProps()}
             >
               {/* Header - Current Organization */}
               {currentOrganization && (
                 <div
-                  className={withVendorCSSClassPrefix('organization-switcher__header')}
-                  style={styles.dropdownHeader}
+                  className={cx(
+                    withVendorCSSClassPrefix(bem('organization-switcher', 'header')),
+                    styles.organizationSwitcher__header,
+                  )}
                 >
                   <Avatar
                     variant="square"
@@ -484,19 +409,28 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                     alt={`${currentOrganization.name} avatar`}
                   />
                   <div
-                    className={withVendorCSSClassPrefix('organization-switcher__header-info')}
-                    style={styles.organizationInfo}
+                    className={cx(
+                      withVendorCSSClassPrefix(bem('organization-switcher', 'header-info')),
+                      styles.organizationSwitcher__headerInfo,
+                    )}
                   >
                     <Typography
                       noWrap
-                      className={withVendorCSSClassPrefix('organization-switcher__header-name')}
+                      className={cx(
+                        withVendorCSSClassPrefix(bem('organization-switcher', 'header-name')),
+                        styles.organizationSwitcher__headerName,
+                      )}
                       variant="body1"
                       fontWeight="medium"
-                      style={styles.organizationName}
                     >
                       {currentOrganization.name}
                     </Typography>
-                    <div style={styles.organizationMeta}>
+                    <div
+                      className={cx(
+                        withVendorCSSClassPrefix(bem('organization-switcher', 'header-meta')),
+                        styles.organizationSwitcher__headerMeta,
+                      )}
+                    >
                       {showMemberCount && currentOrganization.memberCount !== undefined && (
                         <Typography
                           noWrap
@@ -516,10 +450,12 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                         (!showMemberCount || currentOrganization.memberCount === undefined) && (
                           <Typography
                             noWrap
-                            className={withVendorCSSClassPrefix('organization-switcher__header-role')}
+                            className={cx(
+                              withVendorCSSClassPrefix(bem('organization-switcher', 'header-role')),
+                              styles.organizationSwitcher__headerRole,
+                            )}
                             variant="caption"
                             color="secondary"
-                            style={styles.roleCapitalized}
                           >
                             {currentOrganization.role}
                           </Typography>
@@ -533,7 +469,10 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                       variant="outline"
                       size="small"
                       aria-label="Manage Organization Profile"
-                      style={styles.manageButton}
+                      className={cx(
+                        withVendorCSSClassPrefix(bem('organization-switcher', 'manage-button')),
+                        styles.organizationSwitcher__manageButton,
+                      )}
                       endIcon={
                         <svg
                           width="16"
@@ -559,20 +498,36 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
               {/* Section Header for Other Organizations */}
               {organizations.length > 1 && (
                 <div
+                  className={cx(
+                    withVendorCSSClassPrefix(bem('organization-switcher', 'header')),
+                    styles.organizationSwitcher__header,
+                    withVendorCSSClassPrefix(bem('organization-switcher', 'section-header-container')),
+                    styles.organizationSwitcher__sectionHeaderContainer,
+                  )}
                   style={{
-                    ...styles.dropdownHeader,
-                    ...styles.sectionHeaderContainer,
                     borderTop: currentOrganization ? `1px solid ${theme.vars.colors.border}` : 'none',
                   }}
                 >
-                  <Typography variant="caption" fontWeight={600} style={styles.sectionHeader}>
+                  <Typography
+                    variant="caption"
+                    fontWeight={600}
+                    className={cx(
+                      withVendorCSSClassPrefix(bem('organization-switcher', 'section-header')),
+                      styles.organizationSwitcher__sectionHeader,
+                    )}
+                  >
                     {t('organization.switcher.switch.organization')}
                   </Typography>
                 </div>
               )}
 
               {/* Content */}
-              <div className={withVendorCSSClassPrefix('organization-switcher__menu')} style={styles.dropdownMenu}>
+              <div
+                className={cx(
+                  withVendorCSSClassPrefix(bem('organization-switcher', 'menu')),
+                  styles.organizationSwitcher__menu,
+                )}
+              >
                 {loading ? (
                   renderLoading ? (
                     renderLoading()
@@ -593,12 +548,14 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                         <Button
                           key={organization.id}
                           onClick={(): void => handleOrganizationSwitch(organization)}
-                          className={withVendorCSSClassPrefix('organization-switcher__menu-item')}
+                          className={cx(
+                            withVendorCSSClassPrefix(bem('organization-switcher', 'menu-item')),
+                            styles.organizationSwitcher__menuItem,
+                          )}
                           color="tertiary"
                           variant="text"
                           size="small"
                           style={{
-                            ...styles.menuItem,
                             backgroundColor:
                               hoveredItemIndex === switchableOrganizations.indexOf(organization)
                                 ? theme.vars.colors.action?.hover
@@ -618,8 +575,10 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                     {menuItems.length > 0 && (
                       <>
                         <div
-                          className={withVendorCSSClassPrefix('organization-switcher__menu-divider')}
-                          style={styles.divider}
+                          className={cx(
+                            withVendorCSSClassPrefix(bem('organization-switcher', 'menu-divider')),
+                            styles.organizationSwitcher__menuDivider,
+                          )}
                         />
                         {menuItems.map(
                           (item, index: number): ReactElement => (
@@ -628,13 +587,15 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                                 <a
                                   href={item.href}
                                   style={{
-                                    ...styles.menuItem,
                                     backgroundColor:
                                       hoveredItemIndex === switchableOrganizations.length + index
                                         ? theme.vars.colors.action?.hover
                                         : 'transparent',
                                   }}
-                                  className={withVendorCSSClassPrefix('organization-switcher__menu-item')}
+                                  className={cx(
+                                    withVendorCSSClassPrefix(bem('organization-switcher', 'menu-item')),
+                                    styles.organizationSwitcher__menuItem,
+                                  )}
                                   onMouseEnter={(): void => setHoveredItemIndex(switchableOrganizations.length + index)}
                                   onMouseLeave={(): void => setHoveredItemIndex(null)}
                                   onFocus={(): void => setHoveredItemIndex(switchableOrganizations.length + index)}
@@ -647,13 +608,15 @@ export const BaseOrganizationSwitcher: FC<BaseOrganizationSwitcherProps> = ({
                                 <Button
                                   onClick={(): void => handleMenuItemClick(item)}
                                   style={{
-                                    ...styles.menuItem,
                                     backgroundColor:
                                       hoveredItemIndex === switchableOrganizations.length + index
                                         ? theme.vars.colors.action?.hover
                                         : 'transparent',
                                   }}
-                                  className={withVendorCSSClassPrefix('organization-switcher__menu-item')}
+                                  className={cx(
+                                    withVendorCSSClassPrefix(bem('organization-switcher', 'menu-item')),
+                                    styles.organizationSwitcher__menuItem,
+                                  )}
                                   color="tertiary"
                                   variant="text"
                                   size="small"
