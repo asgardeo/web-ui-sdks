@@ -16,13 +16,14 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
-import {FC, ReactElement, useState, useCallback, CSSProperties} from 'react';
+import {FC, ReactElement, useState, useCallback} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import Button from '../Button/Button';
 import TextField from '../TextField/TextField';
 import {Plus, X} from '../Icons';
+import useStyles from './KeyValueInput.styles';
 
 export interface KeyValuePair {
   key: string;
@@ -163,7 +164,8 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
   valueLabel = 'Value',
   valuePlaceholder = 'Enter value',
 }): ReactElement => {
-  const {theme} = useTheme();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, disabled, readOnly, !!error);
 
   // Convert value to array format
   const initialPairs: KeyValuePair[] = Array.isArray(value)
@@ -234,145 +236,56 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
   const canAddMore = !maxPairs || pairs.length < maxPairs;
   const isAddDisabled = disabled || readOnly || !canAddMore || !newKey.trim() || !newValue.trim();
 
-  const styles = {
-    container: {
-      display: 'flex',
-      flexDirection: 'column' as const,
-      gap: `calc(${theme.vars.spacing.unit} / 2)`,
-    } as CSSProperties,
-    label: {
-      fontSize: '0.875rem',
-      fontWeight: 500,
-      color: theme.vars.colors.text.primary,
-      marginBottom: `calc(${theme.vars.spacing.unit} / 2)`,
-    } as CSSProperties,
-    pairsList: {
-      display: 'flex',
-      flexDirection: 'column' as const,
-      gap: `calc(${theme.vars.spacing.unit} / 4)`,
-    } as CSSProperties,
-    pairRow: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: `calc(${theme.vars.spacing.unit} / 2)`,
-      padding: `calc(${theme.vars.spacing.unit} / 2)`,
-      borderRadius: theme.vars.borderRadius.small,
-      backgroundColor: 'transparent',
-      border: 'none',
-      '&:hover': {
-        backgroundColor: theme.vars.colors.action.hover,
-      },
-    } as CSSProperties,
-    pairInput: {
-      flex: 1,
-      minWidth: 0,
-    } as CSSProperties,
-    addRow: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: `calc(${theme.vars.spacing.unit} / 2)`,
-      padding: `calc(${theme.vars.spacing.unit} / 2)`,
-      border: 'none',
-      borderRadius: theme.vars.borderRadius.small,
-      backgroundColor: 'transparent',
-      marginTop: `calc(${theme.vars.spacing.unit} / 2)`,
-    } as CSSProperties,
-    removeButton: {
-      minWidth: 'auto',
-      width: '24px',
-      height: '24px',
-      padding: '0',
-      backgroundColor: 'transparent',
-      color: theme.vars.colors.text.secondary,
-      border: 'none',
-      borderRadius: theme.vars.borderRadius.small,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      '&:hover': {
-        backgroundColor: theme.vars.colors.action.hover,
-        color: theme.vars.colors.error.main,
-      },
-    } as CSSProperties,
-    addButton: {
-      minWidth: 'auto',
-      width: '24px',
-      height: '24px',
-      padding: '0',
-      backgroundColor: 'transparent',
-      color: theme.vars.colors.primary.main,
-      border: 'none',
-      borderRadius: theme.vars.borderRadius.small,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      '&:hover': {
-        backgroundColor: theme.vars.colors.primary.main,
-        color: theme.vars.colors.primary.contrastText,
-      },
-    } as CSSProperties,
-    helperText: {
-      fontSize: '0.75rem',
-      color: error ? theme.vars.colors.error.main : theme.vars.colors.text.secondary,
-      marginTop: `calc(${theme.vars.spacing.unit} / 2)`,
-    } as CSSProperties,
-    emptyState: {
-      padding: theme.vars.spacing.unit,
-      textAlign: 'center' as const,
-      color: theme.vars.colors.text.secondary,
-      fontStyle: 'italic',
-      fontSize: '0.75rem',
-    } as CSSProperties,
-    readOnlyPair: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: `calc(${theme.vars.spacing.unit} / 2)`,
-      padding: `calc(${theme.vars.spacing.unit} / 4) 0`,
-      minHeight: '20px',
-    } as CSSProperties,
-    readOnlyKey: {
-      fontSize: '0.75rem',
-      fontWeight: 500,
-      color: theme.vars.colors.text.secondary,
-      minWidth: '80px',
-      flexShrink: 0,
-    } as CSSProperties,
-    readOnlyValue: {
-      fontSize: '0.75rem',
-      color: theme.vars.colors.text.primary,
-      wordBreak: 'break-word' as const,
-      flex: 1,
-    } as CSSProperties,
-  };
-
   return (
-    <div className={cx(withVendorCSSClassPrefix('key-value-input'), className)} style={styles.container}>
+    <div className={cx(withVendorCSSClassPrefix(bem('key-value-input')), styles.container, className)}>
       {label && (
-        <label style={styles.label}>
+        <label className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'label')), styles.label)}>
           {label}
-          {required && <span style={{color: theme.vars.colors.error.main}}> *</span>}
+          {required && (
+            <span
+              className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'required')), styles.requiredIndicator)}
+            >
+              {' *'}
+            </span>
+          )}
         </label>
       )}
 
-      <div style={styles.pairsList}>
+      <div className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'pairs-list')), styles.pairsList)}>
         {pairs.length === 0 && readOnly ? (
-          <div style={styles.emptyState}>No attributes defined</div>
+          <div className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'empty-state')), styles.emptyState)}>
+            No attributes defined
+          </div>
         ) : readOnly ? (
           pairs.map((pair, index) => (
-            <div key={`${pair.key}-${index}`} style={styles.readOnlyPair}>
-              <span style={styles.readOnlyKey}>{pair.key}:</span>
-              <span style={styles.readOnlyValue}>{pair.value}</span>
+            <div
+              key={`${pair.key}-${index}`}
+              className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'readonly-pair')), styles.readOnlyPair)}
+            >
+              <span
+                className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'readonly-key')), styles.readOnlyKey)}
+              >
+                {pair.key}:
+              </span>
+              <span
+                className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'readonly-value')), styles.readOnlyValue)}
+              >
+                {pair.value}
+              </span>
             </div>
           ))
         ) : (
           pairs.map((pair, index) => (
-            <div key={`${pair.key}-${index}`} style={styles.pairRow}>
+            <div
+              key={`${pair.key}-${index}`}
+              className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'pair-row')), styles.pairRow)}
+            >
               <TextField
                 placeholder={keyPlaceholder}
                 value={pair.key}
                 onChange={e => handleUpdatePair(index, 'key', e.target.value)}
                 disabled={disabled || readOnly}
-                style={styles.pairInput}
+                className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'pair-input')), styles.pairInput)}
                 aria-label={`${keyLabel} ${index + 1}`}
               />
               <TextField
@@ -380,33 +293,32 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
                 value={pair.value}
                 onChange={e => handleUpdatePair(index, 'value', e.target.value)}
                 disabled={disabled || readOnly}
-                style={styles.pairInput}
+                className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'pair-input')), styles.pairInput)}
                 aria-label={`${valueLabel} ${index + 1}`}
               />
               {!readOnly && (
-                <Button
-                  variant="outline"
-                  size="small"
+                <button
+                  type="button"
                   onClick={() => handleRemovePair(index)}
                   disabled={disabled}
-                  style={styles.removeButton}
+                  className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'remove-button')), styles.removeButton)}
                   aria-label={`${removeButtonText} ${pair.key}`}
                 >
                   <X width={16} height={16} />
-                </Button>
+                </button>
               )}
             </div>
           ))
         )}
 
         {!readOnly && (
-          <div style={styles.addRow}>
+          <div className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'add-row')), styles.addRow)}>
             <TextField
               placeholder={keyPlaceholder}
               value={newKey}
               onChange={e => setNewKey(e.target.value)}
               disabled={disabled}
-              style={styles.pairInput}
+              className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'pair-input')), styles.pairInput)}
               aria-label="New key"
             />
             <TextField
@@ -414,7 +326,7 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
               value={newValue}
               onChange={e => setNewValue(e.target.value)}
               disabled={disabled}
-              style={styles.pairInput}
+              className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'pair-input')), styles.pairInput)}
               aria-label="New value"
               onKeyPress={e => {
                 if (e.key === 'Enter' && !isAddDisabled) {
@@ -422,24 +334,27 @@ const KeyValueInput: FC<KeyValueInputProps> = ({
                 }
               }}
             />
-            <Button
-              variant="solid"
-              size="small"
+            <button
+              type="button"
               onClick={handleAddPair}
               disabled={isAddDisabled}
-              style={styles.addButton}
+              className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'add-button')), styles.addButton)}
               aria-label="Add new key-value pair"
             >
               <Plus width={16} height={16} />
-            </Button>
+            </button>
           </div>
         )}
       </div>
 
-      {(helperText || error) && <div style={styles.helperText}>{error || helperText}</div>}
+      {(helperText || error) && (
+        <div className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'helper-text')), styles.helperText)}>
+          {error || helperText}
+        </div>
+      )}
 
       {maxPairs && (
-        <div style={styles.helperText}>
+        <div className={cx(withVendorCSSClassPrefix(bem('key-value-input', 'counter')), styles.counterText)}>
           {pairs.length} of {maxPairs} pairs used
         </div>
       )}
