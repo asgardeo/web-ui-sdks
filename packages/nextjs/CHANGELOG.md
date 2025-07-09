@@ -1,5 +1,18 @@
 # @asgardeo/nextjs
 
+## 0.1.9
+
+### Patch Changes
+
+- [#100](https://github.com/asgardeo/web-ui-sdks/pull/100)
+  [`399a2e1`](https://github.com/asgardeo/web-ui-sdks/commit/399a2e14473c545a3c549aa626a028f1640f227f) Thanks
+  [@brionmario](https://github.com/brionmario)! - Expose `http` module instead of `fetch`
+
+- Updated dependencies
+  [[`399a2e1`](https://github.com/asgardeo/web-ui-sdks/commit/399a2e14473c545a3c549aa626a028f1640f227f)]:
+  - @asgardeo/react@0.5.10
+  - @asgardeo/node@0.0.8
+
 ## 0.1.8
 
 ### Patch Changes
