@@ -16,12 +16,15 @@
  * under the License.
  */
 
-import {CSSProperties, FC, KeyboardEvent, ChangeEvent, useRef, useEffect, useState} from 'react';
+import {FC, KeyboardEvent, ChangeEvent, useRef, useEffect, useState, CSSProperties} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {cx} from '@emotion/css';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import useStyles from './OtpField.styles';
+
+export type OtpFieldType = 'text' | 'number' | 'password';
 
 export interface OtpInputProps {
   /**
@@ -67,7 +70,7 @@ export interface OtpInputProps {
   /**
    * Type of input (text, number, password)
    */
-  type?: 'text' | 'number' | 'password';
+  type?: OtpFieldType;
   /**
    * Placeholder character for each input field
    */
@@ -103,16 +106,15 @@ const OtpField: FC<OtpInputProps> = ({
   autoFocus = false,
   pattern,
 }) => {
-  const {theme} = useTheme();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, !!disabled, !!error, length);
   const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
-  // Initialize refs array
   useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, length);
   }, [length]);
 
-  // Update internal state when value prop changes
   useEffect(() => {
     if (value) {
       const newOtp = value.split('').slice(0, length);
@@ -125,66 +127,33 @@ const OtpField: FC<OtpInputProps> = ({
     }
   }, [value, length]);
 
-  // Auto focus first input
   useEffect(() => {
     if (autoFocus && inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
   }, [autoFocus]);
 
-  const inputContainerStyle: CSSProperties = {
-    display: 'flex',
-    gap: theme.vars.spacing.unit,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  };
-
-  const inputStyle: CSSProperties = {
-    width: `calc(${theme.vars.spacing.unit} * 6)`,
-    height: `calc(${theme.vars.spacing.unit} * 6)`,
-    textAlign: 'center',
-    fontSize: theme.vars.typography.fontSizes.xl,
-    fontWeight: 500,
-    border: `2px solid ${error ? theme.vars.colors.error.main : theme.vars.colors.border}`,
-    borderRadius: theme.vars.borderRadius.medium,
-    color: theme.vars.colors.text.primary,
-    backgroundColor: disabled ? theme.vars.colors.background.disabled : theme.vars.colors.background.surface,
-    outline: 'none',
-    transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-  };
-
-  const focusedInputStyle: CSSProperties = {
-    borderColor: error ? theme.vars.colors.error.main : theme.vars.colors.primary.main,
-    boxShadow: `0 0 0 2px ${error ? theme.vars.colors.error.main + '20' : theme.vars.colors.primary.main + '20'}`,
-  };
-
   const handleChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
 
-    // Only allow single character
     if (newValue.length > 1) return;
 
-    // For numeric type, only allow numbers
     if (type === 'number' && newValue && !/^\d$/.test(newValue)) return;
 
-    // Apply pattern if provided
     if (pattern && newValue && !new RegExp(pattern).test(newValue)) return;
 
     const newOtp = [...otp];
     newOtp[index] = newValue;
     setOtp(newOtp);
 
-    // Call onChange callback
     const otpValue = newOtp.join('');
+
     onChange?.({target: {value: otpValue}});
 
-    // Auto-focus next input if value is entered
     if (newValue && index < length - 1) {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Call onComplete when all fields are filled
     if (newOtp.every(digit => digit !== '') && onComplete) {
       onComplete(otpValue);
     }
@@ -193,15 +162,15 @@ const OtpField: FC<OtpInputProps> = ({
   const handleKeyDown = (index: number, event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Backspace') {
       if (!otp[index] && index > 0) {
-        // If current field is empty, clear previous field and focus it
         const newOtp = [...otp];
+
         newOtp[index - 1] = '';
         setOtp(newOtp);
         inputRefs.current[index - 1]?.focus();
         onChange?.({target: {value: newOtp.join('')}});
       } else if (otp[index]) {
-        // Clear current field
         const newOtp = [...otp];
+
         newOtp[index] = '';
         setOtp(newOtp);
         onChange?.({target: {value: newOtp.join('')}});
@@ -212,6 +181,7 @@ const OtpField: FC<OtpInputProps> = ({
       inputRefs.current[index + 1]?.focus();
     } else if (event.key === 'Enter') {
       event.preventDefault();
+
       if (otp.every(digit => digit !== '') && onComplete) {
         onComplete(otp.join(''));
       }
@@ -220,10 +190,11 @@ const OtpField: FC<OtpInputProps> = ({
 
   const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
     event.preventDefault();
+
     const pastedData = event.clipboardData.getData('text').slice(0, length);
 
-    // Validate pasted data
     let validData = '';
+
     for (const char of pastedData) {
       if (type === 'number' && !/^\d$/.test(char)) continue;
       if (pattern && !new RegExp(pattern).test(char)) continue;
@@ -231,6 +202,7 @@ const OtpField: FC<OtpInputProps> = ({
     }
 
     const newOtp = Array(length).fill('');
+
     for (let i = 0; i < Math.min(validData.length, length); i++) {
       newOtp[i] = validData[i];
     }
@@ -238,12 +210,11 @@ const OtpField: FC<OtpInputProps> = ({
     setOtp(newOtp);
     onChange?.({target: {value: newOtp.join('')}});
 
-    // Focus next empty field or last field
     const nextEmptyIndex = newOtp.findIndex(digit => digit === '');
     const focusIndex = nextEmptyIndex !== -1 ? nextEmptyIndex : length - 1;
+
     inputRefs.current[focusIndex]?.focus();
 
-    // Call onComplete if all fields are filled
     if (newOtp.every(digit => digit !== '') && onComplete) {
       onComplete(newOtp.join(''));
     }
@@ -253,16 +224,16 @@ const OtpField: FC<OtpInputProps> = ({
     <FormControl
       error={error}
       helperText={helperText}
-      className={cx(withVendorCSSClassPrefix('otp-input'), className)}
-      style={style}
+      className={cx(withVendorCSSClassPrefix(bem('otp-field')), className)}
       helperTextAlign="center"
+      style={style}
     >
       {label && (
         <InputLabel required={required} error={!!error}>
           {label}
         </InputLabel>
       )}
-      <div style={inputContainerStyle}>
+      <div className={cx(withVendorCSSClassPrefix(bem('otp-field', 'input-container')), styles.inputContainer)}>
         {Array.from({length}, (_, index) => (
           <input
             key={index}
@@ -275,17 +246,12 @@ const OtpField: FC<OtpInputProps> = ({
             onChange={event => handleChange(index, event)}
             onKeyDown={event => handleKeyDown(index, event)}
             onPaste={handlePaste}
-            onFocus={event => {
-              event.target.style.borderColor = error ? theme.vars.colors.error.main : theme.vars.colors.primary.main;
-              event.target.style.boxShadow = `0 0 0 2px ${
-                error ? theme.vars.colors.error.main + '20' : theme.vars.colors.primary.main + '20'
-              }`;
-            }}
-            onBlur={event => {
-              event.target.style.borderColor = error ? theme.vars.colors.error.main : theme.vars.colors.border;
-              event.target.style.boxShadow = 'none';
-            }}
-            style={inputStyle}
+            className={cx(withVendorCSSClassPrefix(bem('otp-field', 'input')), styles.input, {
+              [withVendorCSSClassPrefix(bem('otp-field', 'input', 'error'))]: !!error,
+              [styles.inputError]: !!error,
+              [withVendorCSSClassPrefix(bem('otp-field', 'input', 'disabled'))]: !!disabled,
+              [styles.inputDisabled]: !!disabled,
+            })}
             maxLength={1}
             placeholder={placeholder}
             disabled={disabled}
