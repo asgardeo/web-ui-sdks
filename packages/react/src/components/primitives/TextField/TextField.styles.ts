@@ -81,7 +81,7 @@ const useStyles = (
 
     const inputError = css`
       border-color: ${theme.colors.error.main};
-      
+
       &:focus {
         border-color: ${theme.colors.error.main};
         box-shadow: 0 0 0 2px ${theme.colors.error.main}20;

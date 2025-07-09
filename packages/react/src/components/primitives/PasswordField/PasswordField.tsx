@@ -36,13 +36,7 @@ export interface PasswordFieldProps extends Omit<TextFieldProps, 'type' | 'endIc
  * Password field component with show/hide toggle functionality.
  * This component extends TextField and adds password visibility toggle functionality.
  */
-const PasswordField: FC<PasswordFieldProps> = ({
-  onChange,
-  className,
-  disabled,
-  error,
-  ...textFieldProps
-}) => {
+const PasswordField: FC<PasswordFieldProps> = ({onChange, className, disabled, error, ...textFieldProps}) => {
   const {theme, colorScheme} = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const styles = useStyles(theme, colorScheme, showPassword, !!disabled, !!error);
@@ -58,10 +52,7 @@ const PasswordField: FC<PasswordFieldProps> = ({
   return (
     <TextField
       {...textFieldProps}
-      className={cx(
-        withVendorCSSClassPrefix(bem('password-field')),
-        className,
-      )}
+      className={cx(withVendorCSSClassPrefix(bem('password-field')), className)}
       type={showPassword ? 'text' : 'password'}
       onChange={e => onChange(e.target.value)}
       autoComplete="current-password"

@@ -95,20 +95,11 @@ const TextField: FC<TextFieldProps> = ({
     disabled && styles.inputDisabled,
   );
 
-  const containerClassName = cx(
-    withVendorCSSClassPrefix(bem('text-field', 'container')),
-    styles.inputContainer,
-  );
+  const containerClassName = cx(withVendorCSSClassPrefix(bem('text-field', 'container')), styles.inputContainer);
 
-  const startIconClassName = cx(
-    withVendorCSSClassPrefix(bem('text-field', 'start-icon')),
-    styles.startIcon,
-  );
+  const startIconClassName = cx(withVendorCSSClassPrefix(bem('text-field', 'start-icon')), styles.startIcon);
 
-  const endIconClassName = cx(
-    withVendorCSSClassPrefix(bem('text-field', 'end-icon')),
-    styles.endIcon,
-  );
+  const endIconClassName = cx(withVendorCSSClassPrefix(bem('text-field', 'end-icon')), styles.endIcon);
 
   return (
     <FormControl

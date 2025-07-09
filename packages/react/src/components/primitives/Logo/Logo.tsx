@@ -60,8 +60,6 @@ const Logo: FC<LogoProps> = ({className, src, alt, title, size = 'medium'}) => {
   const {theme, colorScheme} = useTheme();
   const styles = useStyles(theme, colorScheme, size);
 
-  // Get logo configuration from theme - use actual values, not CSS variables
-  // Access the actual theme config values, not the CSS variable references from .vars
   const logoConfig = theme.images?.logo;
 
   const logoSrc = src || logoConfig?.url;

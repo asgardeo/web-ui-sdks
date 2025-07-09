@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {FC, ReactNode, useCallback, useState} from 'react';
+import {CSSProperties, FC, ReactNode, useCallback, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {cx} from '@emotion/css';
 import FormControl from '../FormControl/FormControl';
@@ -91,6 +91,10 @@ export interface MultiInputProps {
    * Maximum number of fields to allow (default: unlimited)
    */
   maxFields?: number;
+  /**
+   * Custom style object
+   */
+  style?: CSSProperties;
 }
 
 const MultiInput: FC<MultiInputProps> = ({
@@ -109,6 +113,7 @@ const MultiInput: FC<MultiInputProps> = ({
   endIcon,
   minFields = 1,
   maxFields,
+  style = {},
 }) => {
   const {theme, colorScheme} = useTheme();
   const canAddMore = !maxFields || values.length < maxFields;
@@ -212,6 +217,7 @@ const MultiInput: FC<MultiInputProps> = ({
       error={error}
       helperText={helperText}
       className={cx(withVendorCSSClassPrefix(bem('multi-input')), className)}
+      style={style}
     >
       {label && (
         <InputLabel required={required} error={!!error}>

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {FC, ReactNode} from 'react';
+import {CSSProperties, FC, ReactNode} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {cx} from '@emotion/css';
 import {bem, withVendorCSSClassPrefix} from '@asgardeo/browser';
@@ -50,6 +50,10 @@ export interface FormControlProps {
    * Custom margin left for helper text (for components like Checkbox)
    */
   helperTextMarginLeft?: string;
+  /**
+   * Custom container style
+   */
+  style?: CSSProperties;
 }
 
 const FormControl: FC<FormControlProps> = ({

@@ -29,13 +29,7 @@ import {Theme} from '@asgardeo/browser';
  * @param hasError - Whether the component has an error
  * @returns Object containing CSS class names for component styling
  */
-const useStyles = (
-  theme: Theme,
-  colorScheme: string,
-  showPassword: boolean,
-  disabled: boolean,
-  hasError: boolean,
-) => {
+const useStyles = (theme: Theme, colorScheme: string, showPassword: boolean, disabled: boolean, hasError: boolean) => {
   return useMemo(() => {
     const toggleIcon = css`
       cursor: ${disabled ? 'not-allowed' : 'pointer'};

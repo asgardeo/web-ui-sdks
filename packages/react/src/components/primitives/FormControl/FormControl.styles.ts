@@ -51,7 +51,7 @@ const useStyles = (
     `;
 
     const helperTextError = css`
-      color: ${theme.vars.colors.error};
+      color: ${theme.vars.colors.error.main};
     `;
 
     return {
