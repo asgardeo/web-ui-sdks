@@ -16,11 +16,12 @@
  * under the License.
  */
 
-import {CSSProperties, FC, ButtonHTMLAttributes, forwardRef, useMemo} from 'react';
+import {ButtonHTMLAttributes, forwardRef} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
 import Spinner, {SpinnerSize} from '../Spinner/Spinner';
+import useStyles from './Button.styles';
 
 export type ButtonColor = 'primary' | 'secondary' | 'tertiary' | string;
 export type ButtonVariant = 'solid' | 'outline' | 'text';
@@ -56,203 +57,6 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
    */
   endIcon?: React.ReactNode;
 }
-
-const useButtonStyles = (
-  color: ButtonColor,
-  variant: ButtonVariant,
-  size: ButtonSize,
-  fullWidth: boolean,
-  disabled: boolean,
-  loading: boolean,
-) => {
-  const {theme} = useTheme();
-
-  return useMemo(() => {
-    // Size configurations
-    const sizeConfig = {
-      small: {
-        padding: `calc(${theme.vars.spacing.unit} * 0.5) calc(${theme.vars.spacing.unit} * 1)`,
-        fontSize: theme.vars.typography.fontSizes.sm,
-        minHeight: `calc(${theme.vars.spacing.unit} * 3)`,
-      },
-      medium: {
-        padding: `calc(${theme.vars.spacing.unit} * 1) calc(${theme.vars.spacing.unit} * 2)`,
-        fontSize: theme.vars.typography.fontSizes.md,
-        minHeight: `calc(${theme.vars.spacing.unit} * 4)`,
-      },
-      large: {
-        padding: `calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 3)`,
-        fontSize: theme.vars.typography.fontSizes.lg,
-        minHeight: `calc(${theme.vars.spacing.unit} * 5)`,
-      },
-    };
-
-    // Color configurations based on color and variant
-    const getColorConfig = () => {
-      switch (color) {
-        case 'primary':
-          switch (variant) {
-            case 'solid':
-              return {
-                backgroundColor: theme.vars.colors.primary.main,
-                color: theme.vars.colors.primary.contrastText,
-                border: `1px solid ${theme.vars.colors.primary.main}`,
-                '&:hover': {
-                  backgroundColor: theme.vars.colors.primary.main,
-                  opacity: 0.9,
-                },
-                '&:active': {
-                  backgroundColor: theme.vars.colors.primary.main,
-                  opacity: 0.8,
-                },
-              };
-            case 'outline':
-              return {
-                backgroundColor: 'transparent',
-                color: theme.vars.colors.primary.main,
-                border: `1px solid ${theme.vars.colors.primary.main}`,
-                '&:hover': {
-                  backgroundColor: theme.vars.colors.primary.main,
-                  color: theme.vars.colors.primary.contrastText,
-                },
-                '&:active': {
-                  backgroundColor: theme.vars.colors.primary.main,
-                  color: theme.vars.colors.primary.contrastText,
-                  opacity: 0.9,
-                },
-              };
-            case 'text':
-              return {
-                backgroundColor: 'transparent',
-                color: theme.vars.colors.primary.main,
-                border: '1px solid transparent',
-                '&:hover': {
-                  backgroundColor: theme.vars.colors.action.hover,
-                },
-                '&:active': {
-                  backgroundColor: theme.vars.colors.action.selected,
-                },
-              };
-          }
-          break;
-        case 'secondary':
-          switch (variant) {
-            case 'solid':
-              return {
-                backgroundColor: theme.vars.colors.secondary.main,
-                color: theme.vars.colors.secondary.contrastText,
-                border: `1px solid ${theme.vars.colors.secondary.main}`,
-                '&:hover': {
-                  backgroundColor: theme.vars.colors.secondary.main,
-                  opacity: 0.9,
-                },
-                '&:active': {
-                  backgroundColor: theme.vars.colors.secondary.main,
-                  opacity: 0.8,
-                },
-              };
-            case 'outline':
-              return {
-                backgroundColor: 'transparent',
-                color: theme.vars.colors.secondary.main,
-                border: `1px solid ${theme.vars.colors.secondary.main}`,
-                '&:hover': {
-                  backgroundColor: theme.vars.colors.secondary.main,
-                  color: theme.vars.colors.secondary.contrastText,
-                },
-                '&:active': {
-                  backgroundColor: theme.vars.colors.secondary.main,
-                  color: theme.vars.colors.secondary.contrastText,
-                  opacity: 0.9,
-                },
-              };
-            case 'text':
-              return {
-                backgroundColor: 'transparent',
-                color: theme.vars.colors.secondary.main,
-                border: '1px solid transparent',
-                '&:hover': {
-                  backgroundColor: theme.vars.colors.action.hover,
-                },
-                '&:active': {
-                  backgroundColor: theme.vars.colors.action.selected,
-                },
-              };
-          }
-          break;
-        case 'tertiary':
-          switch (variant) {
-            case 'solid':
-              return {
-                backgroundColor: theme.vars.colors.text.secondary,
-                color: theme.vars.colors.background.surface,
-                border: `1px solid ${theme.vars.colors.text.secondary}`,
-                '&:hover': {
-                  backgroundColor: theme.vars.colors.text.primary,
-                  color: theme.vars.colors.background.surface,
-                },
-                '&:active': {
-                  backgroundColor: theme.vars.colors.text.primary,
-                  color: theme.vars.colors.background.surface,
-                  opacity: 0.9,
-                },
-              };
-            case 'outline':
-              return {
-                backgroundColor: 'transparent',
-                color: theme.vars.colors.text.secondary,
-                border: `1px solid ${theme.vars.colors.border}`,
-                '&:hover': {
-                  backgroundColor: theme.vars.colors.action.hover,
-                  borderColor: theme.vars.colors.text.secondary,
-                },
-                '&:active': {
-                  backgroundColor: theme.vars.colors.action.selected,
-                  borderColor: theme.vars.colors.text.primary,
-                },
-              };
-            case 'text':
-              return {
-                backgroundColor: 'transparent',
-                color: theme.vars.colors.text.secondary,
-                border: '1px solid transparent',
-                '&:hover': {
-                  backgroundColor: theme.vars.colors.action.hover,
-                  color: theme.vars.colors.text.primary,
-                },
-                '&:active': {
-                  backgroundColor: theme.vars.colors.action.selected,
-                  color: theme.vars.colors.text.primary,
-                },
-              };
-          }
-          break;
-        default:
-          return {};
-      }
-    };
-
-    const baseStyle: CSSProperties = {
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: `calc(${theme.vars.spacing.unit} * 1)`,
-      borderRadius: theme.vars.borderRadius.medium,
-      fontWeight: 500,
-      cursor: disabled || loading ? 'not-allowed' : 'pointer',
-      transition: 'all 0.2s ease-in-out',
-      outline: 'none',
-      textDecoration: 'none',
-      whiteSpace: 'nowrap',
-      width: fullWidth ? '100%' : 'auto',
-      opacity: disabled || loading ? 0.6 : 1,
-      ...sizeConfig[size],
-      ...getColorConfig(),
-    };
-
-    return baseStyle;
-  }, [theme, color, variant, size, fullWidth, disabled, loading]);
-};
 
 /**
  * Button component with multiple variants and types.
@@ -302,50 +106,58 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
-    const {theme} = useTheme();
-    const buttonStyle = useButtonStyles(color, variant, size, fullWidth, disabled || false, loading);
+    const {theme, colorScheme} = useTheme();
+    const styles = useStyles(theme, colorScheme, color, variant, size, fullWidth, disabled || false, loading);
 
     return (
       <button
         ref={ref}
-        style={{...buttonStyle, ...style}}
+        style={style}
         className={cx(
-          withVendorCSSClassPrefix('button'),
-          withVendorCSSClassPrefix(`button-${color}`),
-          withVendorCSSClassPrefix(`button-${variant}`),
-          withVendorCSSClassPrefix(`button-${size}`),
-          {
-            [withVendorCSSClassPrefix('button-full-width')]: fullWidth,
-            [withVendorCSSClassPrefix('button-loading')]: loading,
-          },
+          withVendorCSSClassPrefix(bem('button')),
+          styles.button,
+          styles.size,
+          styles.variant,
+          styles.fullWidth,
+          styles.loading,
           className,
         )}
         disabled={disabled || loading}
         {...rest}
       >
         {loading && (
-          <Spinner
-            size={size as SpinnerSize}
-            color="currentColor"
-            style={{
-              width:
-                size === 'small'
-                  ? `calc(${theme.vars.spacing.unit} * 1.5)`
-                  : size === 'medium'
-                  ? `calc(${theme.vars.spacing.unit} * 2)`
-                  : `calc(${theme.vars.spacing.unit} * 2.5)`,
-              height:
-                size === 'small'
-                  ? `calc(${theme.vars.spacing.unit} * 1.5)`
-                  : size === 'medium'
-                  ? `calc(${theme.vars.spacing.unit} * 2)`
-                  : `calc(${theme.vars.spacing.unit} * 2.5)`,
-            }}
-          />
+          <span className={cx(withVendorCSSClassPrefix(bem('button', 'spinner')), styles.spinner)}>
+            <Spinner
+              size={size as SpinnerSize}
+              color="currentColor"
+              style={{
+                width:
+                  size === 'small'
+                    ? `calc(${theme.vars.spacing.unit} * 1.5)`
+                    : size === 'medium'
+                    ? `calc(${theme.vars.spacing.unit} * 2)`
+                    : `calc(${theme.vars.spacing.unit} * 2.5)`,
+                height:
+                  size === 'small'
+                    ? `calc(${theme.vars.spacing.unit} * 1.5)`
+                    : size === 'medium'
+                    ? `calc(${theme.vars.spacing.unit} * 2)`
+                    : `calc(${theme.vars.spacing.unit} * 2.5)`,
+              }}
+            />
+          </span>
         )}
-        {!loading && startIcon && <span>{startIcon}</span>}
-        {children && <>{children}</>}
-        {!loading && endIcon && <span>{endIcon}</span>}
+        {!loading && startIcon && (
+          <span className={cx(withVendorCSSClassPrefix(bem('button', 'start-icon')), styles.startIcon)}>
+            {startIcon}
+          </span>
+        )}
+        {children && (
+          <span className={cx(withVendorCSSClassPrefix(bem('button', 'content')), styles.content)}>{children}</span>
+        )}
+        {!loading && endIcon && (
+          <span className={cx(withVendorCSSClassPrefix(bem('button', 'end-icon')), styles.endIcon)}>{endIcon}</span>
+        )}
       </button>
     );
   },
