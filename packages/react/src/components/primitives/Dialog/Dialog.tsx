@@ -278,3 +278,20 @@ DialogContent.displayName = 'DialogContent';
 DialogHeading.displayName = 'DialogHeading';
 DialogDescription.displayName = 'DialogDescription';
 DialogClose.displayName = 'DialogClose';
+
+// Attach subcomponents to Dialog
+(Dialog as any).Trigger = DialogTrigger;
+(Dialog as any).Content = DialogContent;
+(Dialog as any).Heading = DialogHeading;
+(Dialog as any).Description = DialogDescription;
+(Dialog as any).Close = DialogClose;
+
+export interface DialogComponent extends React.FC<{children: React.ReactNode} & DialogOptions> {
+  Trigger: typeof DialogTrigger;
+  Content: typeof DialogContent;
+  Heading: typeof DialogHeading;
+  Description: typeof DialogDescription;
+  Close: typeof DialogClose;
+}
+
+export default Dialog as DialogComponent;

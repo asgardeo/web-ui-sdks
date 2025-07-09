@@ -21,7 +21,7 @@ import {cx} from '@emotion/css';
 import {FC, ReactElement, ReactNode, useMemo, CSSProperties} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
-import {Dialog, DialogContent, DialogHeading} from '../../primitives/Dialog/Dialog';
+import Dialog from '../../primitives/Dialog/Dialog';
 import Avatar from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
 import Typography from '../../primitives/Typography/Typography';
@@ -402,8 +402,8 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
     if (mode === 'popup') {
       return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-          <DialogContent>
-            <DialogHeading>{title}</DialogHeading>
+          <Dialog.Content>
+            <Dialog.Heading>{title}</Dialog.Heading>
             <div
               className={cx(
                 withVendorCSSClassPrefix(bem('organization-list', 'popup-content')),
@@ -412,7 +412,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
             >
               {loadingContent}
             </div>
-          </DialogContent>
+          </Dialog.Content>
         </Dialog>
       );
     }
@@ -434,8 +434,8 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
     if (mode === 'popup') {
       return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-          <DialogContent>
-            <DialogHeading>{title}</DialogHeading>
+          <Dialog.Content>
+            <Dialog.Heading>{title}</Dialog.Heading>
             <div
               className={cx(
                 withVendorCSSClassPrefix(bem('organization-list', 'popup-content')),
@@ -444,7 +444,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
             >
               {errorContent}
             </div>
-          </DialogContent>
+          </Dialog.Content>
         </Dialog>
       );
     }
@@ -466,8 +466,8 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
     if (mode === 'popup') {
       return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-          <DialogContent>
-            <DialogHeading>{title}</DialogHeading>
+          <Dialog.Content>
+            <Dialog.Heading>{title}</Dialog.Heading>
             <div
               className={cx(
                 withVendorCSSClassPrefix(bem('organization-list', 'popup-content')),
@@ -476,7 +476,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
             >
               {emptyContent}
             </div>
-          </DialogContent>
+          </Dialog.Content>
         </Dialog>
       );
     }
@@ -570,8 +570,8 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   if (mode === 'popup') {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeading>{title}</DialogHeading>
+        <Dialog.Content>
+          <Dialog.Heading>{title}</Dialog.Heading>
           <div
             className={cx(
               withVendorCSSClassPrefix(bem('organization-list', 'popup-content')),
@@ -580,7 +580,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
           >
             {organizationListContent}
           </div>
-        </DialogContent>
+        </Dialog.Content>
       </Dialog>
     );
   }

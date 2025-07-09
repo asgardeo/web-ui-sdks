@@ -25,7 +25,7 @@ import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
 import Checkbox from '../../primitives/Checkbox/Checkbox';
 import DatePicker from '../../primitives/DatePicker/DatePicker';
-import {Dialog, DialogContent, DialogHeading} from '../../primitives/Dialog/Dialog';
+import Dialog from '../../primitives/Dialog/Dialog';
 import TextField from '../../primitives/TextField/TextField';
 import MultiInput from '../../primitives/MultiInput/MultiInput';
 import Card from '../../primitives/Card/Card';
@@ -693,10 +693,10 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   if (mode === 'popup') {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeading>{title}</DialogHeading>
+        <Dialog.Content>
+          <Dialog.Heading>{title}</Dialog.Heading>
           <div style={{padding: `calc(${theme.vars.spacing.unit} * 2)`}}>{profileContent}</div>
-        </DialogContent>
+        </Dialog.Content>
       </Dialog>
     );
   }
