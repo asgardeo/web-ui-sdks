@@ -16,11 +16,12 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
-import {FC, HTMLAttributes, useMemo} from 'react';
+import {FC, HTMLAttributes} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import Typography from '../Typography/Typography';
+import useStyles from './Divider.styles';
 
 export type DividerOrientation = 'horizontal' | 'vertical';
 export type DividerVariant = 'solid' | 'dashed' | 'dotted';
@@ -46,55 +47,6 @@ export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
    */
   variant?: DividerVariant;
 }
-
-const useStyles = (orientation: DividerOrientation, variant: DividerVariant, color?: string, hasChildren?: boolean) => {
-  const {theme} = useTheme();
-
-  return useMemo(() => {
-    const baseColor = color || theme.colors.border;
-    const borderStyle = variant === 'solid' ? 'solid' : variant === 'dashed' ? 'dashed' : 'dotted';
-
-    const styles = `
-      .${withVendorCSSClassPrefix('divider')} {
-        margin: calc(${theme.vars.spacing.unit} * 2) 0;
-      }
-
-      .${withVendorCSSClassPrefix('divider--vertical')} {
-        display: inline-block;
-        height: 100%;
-        min-height: calc(${theme.vars.spacing.unit} * 2);
-        width: 1px;
-        border-left: 1px ${borderStyle} ${baseColor};
-        margin: 0 calc(${theme.vars.spacing.unit} * 1);
-      }
-
-      .${withVendorCSSClassPrefix('divider--horizontal')} {
-        display: flex;
-        align-items: center;
-        width: 100%;
-      }
-
-      .${withVendorCSSClassPrefix('divider--horizontal')}:not(.${withVendorCSSClassPrefix('divider--with-text')}) {
-        height: 1px;
-        border-top: 1px ${borderStyle} ${baseColor};
-      }
-
-      .${withVendorCSSClassPrefix('divider__line')} {
-        flex: 1;
-        height: 1px;
-        border-top: 1px ${borderStyle} ${baseColor};
-      }
-
-      .${withVendorCSSClassPrefix('divider__text')} {
-        background-color: ${theme.vars.colors.background.surface};
-        padding: 0 calc(${theme.vars.spacing.unit} * 1);
-        white-space: nowrap;
-      }
-    `;
-
-    return styles;
-  }, [orientation, variant, color, hasChildren, theme]);
-};
 
 /**
  * Divider component for separating content sections.
@@ -123,73 +75,71 @@ const Divider: FC<DividerProps> = ({
   style,
   ...rest
 }) => {
-  const styles = useStyles(orientation, variant, color, !!children);
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, orientation, variant, color, !!children);
 
   if (orientation === 'vertical') {
     return (
-      <>
-        <style>{styles}</style>
-        <div
-          className={cx(
-            withVendorCSSClassPrefix('divider'),
-            withVendorCSSClassPrefix('divider--vertical'),
-            className,
-          )}
-          style={style}
-          role="separator"
-          aria-orientation="vertical"
-          {...rest}
-        />
-      </>
+      <div
+        className={cx(
+          withVendorCSSClassPrefix(bem('divider')),
+          withVendorCSSClassPrefix(bem('divider', 'vertical')),
+          styles.divider,
+          styles.vertical,
+          className,
+        )}
+        style={style}
+        role="separator"
+        aria-orientation="vertical"
+        {...rest}
+      />
     );
   }
 
   if (children) {
     return (
-      <>
-        <style>{styles}</style>
-        <div
-          className={cx(
-            withVendorCSSClassPrefix('divider'),
-            withVendorCSSClassPrefix('divider--horizontal'),
-            withVendorCSSClassPrefix('divider--with-text'),
-            className,
-          )}
-          style={style}
-          role="separator"
-          aria-orientation="horizontal"
-          {...rest}
-        >
-          <div className={withVendorCSSClassPrefix('divider__line')} />
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            className={withVendorCSSClassPrefix('divider__text')}
-            inline
-          >
-            {children}
-          </Typography>
-          <div className={withVendorCSSClassPrefix('divider__line')} />
-        </div>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <style>{styles}</style>
       <div
         className={cx(
-          withVendorCSSClassPrefix('divider'),
-          withVendorCSSClassPrefix('divider--horizontal'),
+          withVendorCSSClassPrefix(bem('divider')),
+          withVendorCSSClassPrefix(bem('divider', 'horizontal')),
+          withVendorCSSClassPrefix(bem('divider', 'with-text')),
+          styles.divider,
+          styles.horizontal,
           className,
         )}
         style={style}
         role="separator"
         aria-orientation="horizontal"
         {...rest}
-      />
-    </>
+      >
+        <div className={cx(withVendorCSSClassPrefix(bem('divider', 'line')), styles.line)} />
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          className={cx(withVendorCSSClassPrefix(bem('divider', 'text')), styles.text)}
+          inline
+        >
+          {children}
+        </Typography>
+        <div className={cx(withVendorCSSClassPrefix(bem('divider', 'line')), styles.line)} />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={cx(
+        withVendorCSSClassPrefix(bem('divider')),
+        withVendorCSSClassPrefix(bem('divider', 'horizontal')),
+        styles.divider,
+        styles.horizontal,
+        className,
+      )}
+      style={style}
+      role="separator"
+      aria-orientation="horizontal"
+      {...rest}
+    />
   );
 };
 
