@@ -55,7 +55,6 @@ const useStyles = (
       border-radius: ${theme.vars.borderRadius.medium};
       font-weight: 500;
       cursor: ${disabled || loading ? 'not-allowed' : 'pointer'};
-      transition: all 0.2s ease-in-out;
       outline: none;
       text-decoration: none;
       white-space: nowrap;
