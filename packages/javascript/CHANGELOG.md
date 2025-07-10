@@ -1,5 +1,13 @@
 # @asgardeo/javascript
 
+## 0.1.6
+
+### Patch Changes
+
+- [#100](https://github.com/asgardeo/web-ui-sdks/pull/100)
+  [`399a2e1`](https://github.com/asgardeo/web-ui-sdks/commit/399a2e14473c545a3c549aa626a028f1640f227f) Thanks
+  [@brionmario](https://github.com/brionmario)! - Expose `http` module instead of `fetch`
+
 ## 0.1.5
 
 ### Patch Changes
