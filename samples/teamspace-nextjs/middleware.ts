@@ -1,6 +1,19 @@
-import {asgardeoMiddleware} from '@asgardeo/nextjs';
+import {asgardeoMiddleware, createRouteMatcher} from '@asgardeo/nextjs';
 
-export default asgardeoMiddleware();
+const isProtectedRoute = createRouteMatcher([
+  '/dashboard',
+  '/dashboard/(.*)',
+]);
+
+export default asgardeoMiddleware(async (asgardeo, req) => {
+  if (isProtectedRoute(req)) {
+    const protectionResult = await asgardeo.protectRoute();
+
+    if (protectionResult) {
+      return protectionResult;
+    }
+  }
+});
 
 export const config = {
   matcher: [

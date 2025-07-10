@@ -17,24 +17,54 @@
  */
 
 import {NextRequest, NextResponse} from 'next/server';
-import AsgardeoNextClient from '../AsgardeoNextClient';
+import {CookieConfig} from '@asgardeo/node';
 import {AsgardeoNextConfig} from '../models/config';
 
-export interface AsgardeoMiddlewareOptions extends Partial<AsgardeoNextConfig> {
-  debug?: boolean;
-}
+export type AsgardeoMiddlewareOptions = Partial<AsgardeoNextConfig>;
 
-type AsgardeoAuth = {
-  protect: (options?: {redirect?: string}) => Promise<NextResponse | void>;
-  isSignedIn: () => Promise<boolean>;
-  getUser: () => Promise<any | null>;
-  redirectToSignIn: (afterSignInUrl?: string) => NextResponse;
+export type AsgardeoMiddlewareContext = {
+  /**
+   * Protect a route by redirecting unauthenticated users.
+   * Redirect URL fallback order:
+   * 1. options.redirect
+   * 2. resolvedOptions.signInUrl
+   * 3. resolvedOptions.defaultRedirect
+   * 4. referer (if from same origin)
+   * If none are available, throws an error.
+   */
+  protectRoute: (options?: {redirect?: string}) => Promise<NextResponse | void>;
+  /** Check if the current request has a valid Asgardeo session */
+  isSignedIn: () => boolean;
+  /** Get the session ID from the current request */
+  getSessionId: () => string | undefined;
 };
 
 type AsgardeoMiddlewareHandler = (
-  auth: AsgardeoAuth,
+  asgardeo: AsgardeoMiddlewareContext,
   req: NextRequest,
 ) => Promise<NextResponse | void> | NextResponse | void;
+
+/**
+ * Checks if a request has a valid session ID in cookies.
+ * This is a lightweight check that can be used in middleware.
+ *
+ * @param request - The Next.js request object
+ * @returns True if a session ID exists, false otherwise
+ */
+const hasValidSession = (request: NextRequest): boolean => {
+  const sessionId = request.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+  return Boolean(sessionId && sessionId.trim().length > 0);
+};
+
+/**
+ * Gets the session ID from the request cookies.
+ *
+ * @param request - The Next.js request object
+ * @returns The session ID if it exists, undefined otherwise
+ */
+const getSessionIdFromRequest = (request: NextRequest): string | undefined => {
+  return request.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+};
 
 /**
  * Asgardeo middleware that integrates authentication into your Next.js application.
@@ -46,7 +76,7 @@ type AsgardeoMiddlewareHandler = (
  *
  * @example
  * ```typescript
- * // middleware.ts
+ * // middleware.ts - Basic usage
  * import { asgardeoMiddleware } from '@asgardeo/nextjs';
  *
  * export default asgardeoMiddleware();
@@ -54,15 +84,41 @@ type AsgardeoMiddlewareHandler = (
  *
  * @example
  * ```typescript
- * // With protection
+ * // With route protection
  * import { asgardeoMiddleware, createRouteMatcher } from '@asgardeo/nextjs';
  *
  * const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
  *
- * export default asgardeoMiddleware(async (auth, req) => {
+ * export default asgardeoMiddleware(async (asgardeo, req) => {
  *   if (isProtectedRoute(req)) {
- *     await auth.protect();
+ *     await asgardeo.protectRoute();
  *   }
+ * });
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // Advanced usage with custom logic
+ * import { asgardeoMiddleware, createRouteMatcher } from '@asgardeo/nextjs';
+ *
+ * const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
+ * const isAuthRoute = createRouteMatcher(['/sign-in', '/sign-up']);
+ *
+ * export default asgardeoMiddleware(async (asgardeo, req) => {
+ *   // Skip protection for auth routes
+ *   if (isAuthRoute(req)) return;
+ *
+ *   // Protect specified routes
+ *   if (isProtectedRoute(req)) {
+ *     await asgardeo.protectRoute({ redirect: '/sign-in' });
+ *   }
+ *
+ *   // Check authentication status
+ *   if (asgardeo.isSignedIn()) {
+ *     console.log('User is authenticated with session:', asgardeo.getSessionId());
+ *   }
+ * }, {
+ *   defaultRedirect: '/sign-in'
  * });
  * ```
  */
@@ -71,78 +127,53 @@ const asgardeoMiddleware = (
   options?: AsgardeoMiddlewareOptions | ((req: NextRequest) => AsgardeoMiddlewareOptions),
 ): ((request: NextRequest) => Promise<NextResponse>) => {
   return async (request: NextRequest): Promise<NextResponse> => {
-    // Resolve options - can be static or dynamic based on request
     const resolvedOptions = typeof options === 'function' ? options(request) : options || {};
 
-    const asgardeoClient = AsgardeoNextClient.getInstance();
+    const sessionId = request.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+    const isAuthenticated = hasValidSession(request);
 
-    // // Initialize client if not already done
-    // if (!asgardeoClient.isInitialized && resolvedOptions) {
-    //   asgardeoClient.initialize(resolvedOptions);
-    // }
+    const asgardeo: AsgardeoMiddlewareContext = {
+      protectRoute: async (options?: {redirect?: string}): Promise<NextResponse | void> => {
+        if (!isAuthenticated) {
+          const referer = request.headers.get('referer');
+          // TODO: Make this configurable or call the signIn() from here.
+          let fallbackRedirect: string = '/';
 
-    // // Debug logging
-    // if (resolvedOptions.debug) {
-    //   console.log(`[Asgardeo Middleware] Processing request: ${request.nextUrl.pathname}`);
-    // }
+          // If referer exists and is from the same origin, use it as fallback
+          if (referer) {
+            try {
+              const refererUrl = new URL(referer);
+              const requestUrl = new URL(request.url);
 
-    // // Handle auth API routes automatically
-    // if (request.nextUrl.pathname.startsWith('/api/auth/asgardeo')) {
-    //   if (resolvedOptions.debug) {
-    //     console.log(`[Asgardeo Middleware] Handling auth route: ${request.nextUrl.pathname}`);
-    //   }
-    //   return await asgardeoClient.handleAuthRequest(request);
-    // }
+              if (refererUrl.origin === requestUrl.origin) {
+                fallbackRedirect = refererUrl.pathname + refererUrl.search;
+              }
+            } catch (error) {
+              // Invalid referer URL, ignore it
+            }
+          }
 
-    // // Create auth object for the handler
-    // const auth: AsgardeoAuth = {
-    //   protect: async (options?: {redirect?: string}) => {
-    //     const isSignedIn = await asgardeoClient.isSignedIn(request);
-    //     if (!isSignedIn) {
-    //       const afterSignInUrl = options?.redirect || '/api/auth/asgardeo/signin';
-    //       return NextResponse.redirect(new URL(afterSignInUrl, request.url));
-    //     }
-    //   },
+          // Fallback chain: options.redirect -> resolvedOptions.signInUrl -> resolvedOptions.defaultRedirect -> referer (same origin only)
+          const redirectUrl: string = (resolvedOptions?.signInUrl as string) || fallbackRedirect;
 
-    //   isSignedIn: async () => {
-    //     return await asgardeoClient.isSignedIn(request);
-    //   },
+          const signInUrl = new URL(redirectUrl, request.url);
 
-    //   getUser: async () => {
-    //     return await asgardeoClient.getUser(request);
-    //   },
+          return NextResponse.redirect(signInUrl);
+        }
 
-    //   redirectToSignIn: (afterSignInUrl?: string) => {
-    //     const signInUrl = afterSignInUrl || '/api/auth/asgardeo/signin';
-    //     return NextResponse.redirect(new URL(signInUrl, request.url));
-    //   },
-    // };
+        // Session exists, allow access
+        return;
+      },
+      isSignedIn: () => isAuthenticated,
+      getSessionId: () => sessionId,
+    };
 
-    // // Execute user-provided handler if present
-    // let handlerResponse: NextResponse | void;
-    // if (handler) {
-    //   handlerResponse = await handler(auth, request);
-    // }
-
-    // // If handler returned a response, use it
-    // if (handlerResponse) {
-    //   return handlerResponse;
-    // }
-
-    // // Otherwise, continue with default behavior
-    // const response = NextResponse.next();
-
-    // // Add authentication context to response headers
-    // const isSignedIn = await asgardeoClient.isSignedIn(request);
-    // if (isSignedIn) {
-    //   response.headers.set('x-asgardeo-authenticated', 'true');
-    //   const user = await asgardeoClient.getUser(request);
-    //   if (user?.sub) {
-    //     response.headers.set('x-asgardeo-user-id', user.sub);
-    //   }
-    // }
-
-    // return response;
+    if (handler) {
+      const result = await handler(asgardeo, request);
+      if (result) {
+        return result;
+      }
+    }
 
     return NextResponse.next();
   };
