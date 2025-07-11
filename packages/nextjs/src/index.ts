@@ -68,3 +68,7 @@ export type {UserProfileProps} from './client/components/presentation/UserProfil
 export {default as AsgardeoNext} from './AsgardeoNextClient';
 
 export {default as asgardeoMiddleware} from './middleware/asgardeoMiddleware';
+export * from './middleware/asgardeoMiddleware';
+
+export {default as createRouteMatcher} from './middleware/createRouteMatcher';
+export * from './middleware/createRouteMatcher';
