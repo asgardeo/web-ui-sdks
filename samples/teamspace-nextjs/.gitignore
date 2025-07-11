@@ -18,6 +18,8 @@ yarn-error.log*
 
 # env files
 .env*
+# allow .env.local.example to be committed with sample values.
+!.env.local.example
 
 # vercel
 .vercel
