@@ -19,6 +19,12 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {CookieConfig} from '@asgardeo/node';
 import {AsgardeoNextConfig} from '../models/config';
+import SessionManager, {SessionTokenPayload} from '../utils/SessionManager';
+import {
+  hasValidSession as hasValidJWTSession,
+  getSessionFromRequest,
+  getSessionIdFromRequest,
+} from '../utils/sessionUtils';
 
 export type AsgardeoMiddlewareOptions = Partial<AsgardeoNextConfig>;
 
@@ -37,6 +43,8 @@ export type AsgardeoMiddlewareContext = {
   isSignedIn: () => boolean;
   /** Get the session ID from the current request */
   getSessionId: () => string | undefined;
+  /** Get the session payload from JWT session if available */
+  getSession: () => Promise<SessionTokenPayload | undefined>;
 };
 
 type AsgardeoMiddlewareHandler = (
@@ -45,25 +53,43 @@ type AsgardeoMiddlewareHandler = (
 ) => Promise<NextResponse | void> | NextResponse | void;
 
 /**
- * Checks if a request has a valid session ID in cookies.
+ * Legacy function: Checks if a request has a valid session ID in cookies.
  * This is a lightweight check that can be used in middleware.
  *
+ * @deprecated Use hasValidJWTSession for JWT-based sessions
  * @param request - The Next.js request object
  * @returns True if a session ID exists, false otherwise
  */
-const hasValidSession = (request: NextRequest): boolean => {
+const hasValidSessionLegacy = (request: NextRequest): boolean => {
   const sessionId = request.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
   return Boolean(sessionId && sessionId.trim().length > 0);
 };
 
 /**
+ * Enhanced session validation that checks both JWT and legacy sessions
+ *
+ * @param request - The Next.js request object
+ * @returns True if a valid session exists, false otherwise
+ */
+const hasValidSession = async (request: NextRequest): Promise<boolean> => {
+  try {
+    // Try JWT session first
+    return await hasValidJWTSession(request);
+  } catch {
+    // Fall back to legacy session check
+    return hasValidSessionLegacy(request);
+  }
+};
+
+/**
  * Gets the session ID from the request cookies.
+ * Supports both JWT and legacy session formats.
  *
  * @param request - The Next.js request object
  * @returns The session ID if it exists, undefined otherwise
  */
-const getSessionIdFromRequest = (request: NextRequest): string | undefined => {
-  return request.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+const getSessionIdFromRequestMiddleware = async (request: NextRequest): Promise<string | undefined> => {
+  return await getSessionIdFromRequest(request);
 };
 
 /**
@@ -129,8 +155,8 @@ const asgardeoMiddleware = (
   return async (request: NextRequest): Promise<NextResponse> => {
     const resolvedOptions = typeof options === 'function' ? options(request) : options || {};
 
-    const sessionId = request.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
-    const isAuthenticated = hasValidSession(request);
+    const sessionId = await getSessionIdFromRequestMiddleware(request);
+    const isAuthenticated = await hasValidSession(request);
 
     const asgardeo: AsgardeoMiddlewareContext = {
       protectRoute: async (options?: {redirect?: string}): Promise<NextResponse | void> => {
@@ -166,6 +192,13 @@ const asgardeoMiddleware = (
       },
       isSignedIn: () => isAuthenticated,
       getSessionId: () => sessionId,
+      getSession: async () => {
+        try {
+          return await getSessionFromRequest(request);
+        } catch {
+          return undefined;
+        }
+      },
     };
 
     if (handler) {

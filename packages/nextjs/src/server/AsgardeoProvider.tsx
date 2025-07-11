@@ -27,6 +27,7 @@ import getBrandingPreference from './actions/getBrandingPreference';
 import getCurrentOrganizationAction from './actions/getCurrentOrganizationAction';
 import getMyOrganizations from './actions/getMyOrganizations';
 import getSessionId from './actions/getSessionId';
+import getSessionPayload from './actions/getSessionPayload';
 import getUserAction from './actions/getUserAction';
 import getUserProfileAction from './actions/getUserProfileAction';
 import handleOAuthCallbackAction from './actions/handleOAuthCallbackAction';
@@ -88,8 +89,10 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
     return <></>;
   }
 
-  const sessionId: string = (await getSessionId()) as string;
-  const _isSignedIn: boolean = await isSignedIn(sessionId);
+  // Try to get session information from JWT first, then fall back to legacy
+  const sessionPayload = await getSessionPayload();
+  const sessionId: string = sessionPayload?.sessionId || (await getSessionId()) || '';
+  const _isSignedIn: boolean = sessionPayload ? true : await isSignedIn(sessionId);
 
   let user: User = {};
   let userProfile: UserProfile = {
@@ -106,24 +109,43 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
   let brandingPreference: BrandingPreference | null = null;
 
   if (_isSignedIn) {
-    // Check if there's a `user_org` claim in the ID token to determine if this is an organization login
-    const idToken = await asgardeoClient.getDecodedIdToken(sessionId);
     let updatedBaseUrl = config?.baseUrl;
 
-    if (idToken?.['user_org']) {
-      // Treat this login as an organization login and modify the base URL
+    if (sessionPayload?.organizationId) {
       updatedBaseUrl = `${config?.baseUrl}/o`;
       config = {...config, baseUrl: updatedBaseUrl};
+    } else if (sessionId) {
+      try {
+        const idToken = await asgardeoClient.getDecodedIdToken(sessionId);
+        if (idToken?.['user_org']) {
+          updatedBaseUrl = `${config?.baseUrl}/o`;
+          config = {...config, baseUrl: updatedBaseUrl};
+        }
+      } catch {
+        // Continue without organization info
+      }
     }
 
-    const userResponse = await getUserAction(sessionId);
-    const userProfileResponse = await getUserProfileAction(sessionId);
-    const currentOrganizationResponse = await getCurrentOrganizationAction(sessionId);
-    myOrganizations = await getMyOrganizations({}, sessionId);
+    try {
+      const userResponse = await getUserAction(sessionId);
+      const userProfileResponse = await getUserProfileAction(sessionId);
+      const currentOrganizationResponse = await getCurrentOrganizationAction(sessionId);
 
-    user = userResponse.data?.user || {};
-    userProfile = userProfileResponse.data?.userProfile;
-    currentOrganization = currentOrganizationResponse?.data?.organization as Organization;
+      if (sessionId) {
+        myOrganizations = await getMyOrganizations({}, sessionId);
+      } else {
+        console.warn('[AsgardeoServerProvider] No session ID available, skipping organization fetch');
+      }
+
+      user = userResponse.data?.user || {};
+      userProfile = userProfileResponse.data?.userProfile;
+      currentOrganization = currentOrganizationResponse?.data?.organization as Organization;
+    } catch (error) {
+      user = {};
+      userProfile = {schemas: [], profile: {}, flattenedProfile: {}};
+      currentOrganization = {id: '', name: '', orgHandle: ''};
+      myOrganizations = [];
+    }
   }
 
   // Fetch branding preference if branding is enabled in config

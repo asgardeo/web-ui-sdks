@@ -18,16 +18,35 @@
 
 'use server';
 
-import {NextRequest, NextResponse} from 'next/server';
+import {cookies} from 'next/headers';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
-import deleteSessionId from './deleteSessionId';
+import SessionManager from '../../utils/SessionManager';
+import getSessionId from './getSessionId';
 
+/**
+ * Server action for signing out a user.
+ * Clears both JWT and legacy session cookies.
+ *
+ * @returns Promise that resolves with success status and optional after sign-out URL
+ */
 const signOutAction = async (): Promise<{success: boolean; data?: {afterSignOutUrl?: string}; error?: unknown}> => {
   try {
     const client = AsgardeoNextClient.getInstance();
-    const afterSignOutUrl: string = await client.signOut();
+    const sessionId = await getSessionId();
 
-    await deleteSessionId();
+    let afterSignOutUrl: string = '/';
+
+    if (sessionId) {
+      afterSignOutUrl = await client.signOut({}, sessionId);
+    }
+
+    const cookieStore = await cookies();
+
+    cookieStore.delete(SessionManager.getSessionCookieName());
+
+    cookieStore.delete(SessionManager.getTempSessionCookieName());
+
+    await import('./deleteSessionId').then(module => module.default());
 
     return {success: true, data: {afterSignOutUrl}};
   } catch (error) {

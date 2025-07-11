@@ -18,33 +18,29 @@
 
 'use server';
 
-import {CookieConfig} from '@asgardeo/node';
 import {ReadonlyRequestCookies} from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 import {cookies} from 'next/headers';
-import SessionManager from '../../utils/SessionManager';
+import SessionManager, {SessionTokenPayload} from '../../utils/SessionManager';
 
 /**
- * Get the session ID from cookies.
- * Tries JWT session first, then falls back to legacy session ID.
+ * Get the session payload from JWT session cookie.
+ * This includes user ID, session ID, scopes, and organization ID.
  *
- * @returns The session ID if it exists, undefined otherwise
+ * @returns The session payload if valid JWT session exists, undefined otherwise
  */
-const getSessionId = async (): Promise<string | undefined> => {
+const getSessionPayload = async (): Promise<SessionTokenPayload | undefined> => {
   const cookieStore: ReadonlyRequestCookies = await cookies();
 
   const sessionToken = cookieStore.get(SessionManager.getSessionCookieName())?.value;
-
-  if (sessionToken) {
-    try {
-      const sessionPayload = await SessionManager.verifySessionToken(sessionToken);
-
-      return sessionPayload.sessionId;
-    } catch (error) {
-      return undefined;
-    }
+  if (!sessionToken) {
+    return undefined;
   }
 
-  return undefined;
+  try {
+    return await SessionManager.verifySessionToken(sessionToken);
+  } catch {
+    return undefined;
+  }
 };
 
-export default getSessionId;
+export default getSessionPayload;

@@ -28,6 +28,7 @@ import {
   EmbeddedSignInFlowInitiateResponse,
 } from '@asgardeo/node';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
+import SessionManager from '../../utils/SessionManager';
 
 /**
  * Server action for signing in a user.
@@ -54,11 +55,46 @@ const signInAction = async (
     const client = AsgardeoNextClient.getInstance();
     const cookieStore = await cookies();
 
-    let userId: string | undefined = cookieStore.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+    let sessionId: string | undefined;
+    let userId: string | undefined;
 
-    if (!userId) {
-      userId = generateSessionId();
-      cookieStore.set(CookieConfig.SESSION_COOKIE_NAME, userId, {
+    const existingSessionToken = cookieStore.get(SessionManager.getSessionCookieName())?.value;
+
+    if (existingSessionToken) {
+      try {
+        const sessionPayload = await SessionManager.verifySessionToken(existingSessionToken);
+        sessionId = sessionPayload.sessionId;
+        userId = sessionPayload.sub;
+      } catch {
+        // Invalid session token, will create new temp session
+      }
+    }
+
+    if (!sessionId) {
+      const tempSessionToken = cookieStore.get(SessionManager.getTempSessionCookieName())?.value;
+
+      if (tempSessionToken) {
+        try {
+          const tempSession = await SessionManager.verifyTempSession(tempSessionToken);
+          sessionId = tempSession.sessionId;
+        } catch {
+          // Invalid temp session, will create new one
+        }
+      }
+    }
+
+    if (!sessionId) {
+      sessionId = generateSessionId();
+
+      const tempSessionToken = await SessionManager.createTempSession(sessionId);
+
+      cookieStore.set(
+        SessionManager.getTempSessionCookieName(),
+        tempSessionToken,
+        SessionManager.getTempSessionCookieOptions(),
+      );
+
+      cookieStore.set(CookieConfig.SESSION_COOKIE_NAME, sessionId, {
         httpOnly: CookieConfig.DEFAULT_HTTP_ONLY,
         maxAge: CookieConfig.DEFAULT_MAX_AGE,
         sameSite: CookieConfig.DEFAULT_SAME_SITE,
@@ -67,33 +103,48 @@ const signInAction = async (
     }
 
     // If no payload provided, redirect to sign-in URL for redirect-based sign-in.
-    // If there's a payload, handle the embedded sign-in flow.
     if (!payload) {
-      const defaultSignInUrl = await client.getAuthorizeRequestUrl({}, userId);
-
+      const defaultSignInUrl = await client.getAuthorizeRequestUrl({}, sessionId);
       return {success: true, data: {signInUrl: String(defaultSignInUrl)}};
-    } else {
-      const response: any = await client.signIn(payload, request!, userId);
+    }
 
-      if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
-        // Complete the sign-in process
-        await client.signIn(
-          {
-            code: response?.authData?.code,
-            session_state: response?.authData?.session_state,
-            state: response?.authData?.state,
-          } as any,
-          {},
-          userId,
+    // Handle embedded sign-in flow
+    const response: any = await client.signIn(payload, request!, sessionId);
+
+    if (response.flowStatus === EmbeddedSignInFlowStatus.SuccessCompleted) {
+      const signInResult = await client.signIn(
+        {
+          code: response?.authData?.code,
+          session_state: response?.authData?.session_state,
+          state: response?.authData?.state,
+        } as any,
+        {},
+        sessionId,
+      );
+
+      if (signInResult) {
+        const idToken = await client.getDecodedIdToken(sessionId);
+        const userIdFromToken = idToken['sub'] || signInResult['sub'] || sessionId;
+        const scopes = idToken['scope'] ? idToken['scope'].split(' ') : [];
+        const organizationId = idToken['user_org'] || idToken['organization_id'];
+
+        const sessionToken = await SessionManager.createSessionToken(
+          userIdFromToken,
+          sessionId,
+          scopes,
+          organizationId,
         );
 
-        const afterSignInUrl = await (await client.getStorageManager()).getConfigDataParameter('afterSignInUrl');
+        cookieStore.set(SessionManager.getSessionCookieName(), sessionToken, SessionManager.getSessionCookieOptions());
 
-        return {success: true, data: {afterSignInUrl: String(afterSignInUrl)}};
+        cookieStore.delete(SessionManager.getTempSessionCookieName());
       }
 
-      return {success: true, data: response as EmbeddedSignInFlowInitiateResponse};
+      const afterSignInUrl = await (await client.getStorageManager()).getConfigDataParameter('afterSignInUrl');
+      return {success: true, data: {afterSignInUrl: String(afterSignInUrl)}};
     }
+
+    return {success: true, data: response as EmbeddedSignInFlowInitiateResponse};
   } catch (error) {
     console.error('[signInAction] Error during sign-in:', error);
     return {success: false, error: String(error)};
