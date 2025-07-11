@@ -18,13 +18,13 @@
 
 import {NextRequest, NextResponse} from 'next/server';
 import {CookieConfig} from '@asgardeo/node';
-import {AsgardeoNextConfig} from '../models/config';
-import SessionManager, {SessionTokenPayload} from '../utils/SessionManager';
+import {AsgardeoNextConfig} from '../../models/config';
+import SessionManager, {SessionTokenPayload} from '../../utils/SessionManager';
 import {
   hasValidSession as hasValidJWTSession,
   getSessionFromRequest,
   getSessionIdFromRequest,
-} from '../utils/sessionUtils';
+} from '../../utils/sessionUtils';
 
 export type AsgardeoMiddlewareOptions = Partial<AsgardeoNextConfig>;
 
