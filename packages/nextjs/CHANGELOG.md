@@ -1,5 +1,14 @@
 # @asgardeo/nextjs
 
+## 0.1.10
+
+### Patch Changes
+
+- [#102](https://github.com/asgardeo/web-ui-sdks/pull/102)
+  [`6dd960a`](https://github.com/asgardeo/web-ui-sdks/commit/6dd960a7cb26b770aabb9c297f50544c264e2bcc) Thanks
+  [@brionmario](https://github.com/brionmario)! - Enhance route protection with createRouteMatcher and session
+  validation
+
 ## 0.1.9
 
 ### Patch Changes
