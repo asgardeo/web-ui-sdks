@@ -44,6 +44,7 @@ import {
 import {useRouter, useSearchParams} from 'next/navigation';
 import {FC, PropsWithChildren, RefObject, useEffect, useMemo, useRef, useState} from 'react';
 import AsgardeoContext, {AsgardeoContextProps} from './AsgardeoContext';
+import logger from '../../../utils/logger';
 
 /**
  * Props interface of {@link AsgardeoClientProvider}
@@ -248,21 +249,32 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
   };
 
   const handleSignOut = async () => {
+    logger.debug('[AsgardeoClientProvider][handleSignOut] `handleSignOut` called.');
+
     try {
       const result = await signOut();
 
+      logger.debug('[AsgardeoClientProvider][handleSignOut] Sign out result:', result);
+
       if (result?.data?.afterSignOutUrl) {
         router.push(result.data.afterSignOutUrl);
+
         return {redirected: true, location: result.data.afterSignOutUrl};
       }
 
       if (result?.error) {
-        throw new Error(result.error);
+        logger.error(
+          '[AsgardeoClientProvider][handleSignOut] Error result was returned during signing the user out with a button click:',
+          result.error,
+        );
       }
 
       return result?.data ?? result;
     } catch (error) {
-      throw error;
+      logger.error(
+        '[AsgardeoClientProvider][handleSignOut] Error occurred during signing the user out with a button click:',
+        error,
+      );
     }
   };
 

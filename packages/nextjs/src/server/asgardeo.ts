@@ -16,25 +16,12 @@
  * under the License.
  */
 
-import {build} from 'esbuild';
+import AsgardeoNextClient from '../AsgardeoNextClient';
 
-const commonOptions = {
-  bundle: false,
-  entryPoints: ['src/index.ts', 'src/server/index.ts'],
-  platform: 'node',
-  target: ['node18'],
-};
-
-await build({
-  ...commonOptions,
-  format: 'esm',
-  outdir: 'dist/esm',
-  sourcemap: true,
-});
-
-await build({
-  ...commonOptions,
-  format: 'cjs',
-  outdir: 'dist/cjs',
-  sourcemap: true,
-});
+/**
+ * Server-only singleton for API access.
+ * Usage:
+ *   import { asgardeo } from '@asgardeo/nextjs/server';
+ *   const token = await asgardeo.getAccessToken();
+ */
+export const asgardeo = AsgardeoNextClient.getInstance();

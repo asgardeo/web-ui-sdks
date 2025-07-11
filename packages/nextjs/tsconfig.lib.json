@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "outDir": "dist",
-    "declarationDir": "dist",
+    "declarationDir": "dist/types",
     "types": ["node"]
   },
   "exclude": [

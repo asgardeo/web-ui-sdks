@@ -16,16 +16,10 @@
  * under the License.
  */
 
-'use server';
+import {createLogger} from '@asgardeo/node';
 
-import {CookieConfig} from '@asgardeo/node';
-import {ReadonlyRequestCookies} from 'next/dist/server/web/spec-extension/adapters/request-cookies';
-import {cookies} from 'next/headers';
+const logger: any = createLogger({
+  level: 'error',
+});
 
-const deleteSessionId = async (): Promise<void> => {
-  const cookieStore: ReadonlyRequestCookies = await cookies();
-
-  await cookieStore.delete(CookieConfig.SESSION_COOKIE_NAME);
-};
-
-export default deleteSessionId;
+export default logger;

@@ -18,10 +18,10 @@
 
 'use client';
 
-import {FC, forwardRef, PropsWithChildren, ReactElement, Ref, useState, MouseEvent} from 'react';
+import {FC, forwardRef, ReactElement, Ref, useState, MouseEvent} from 'react';
 import {BaseSignOutButton, BaseSignOutButtonProps, useTranslation} from '@asgardeo/react';
-import {AsgardeoRuntimeError} from '@asgardeo/node';
 import useAsgardeo from '../../../../client/contexts/Asgardeo/useAsgardeo';
+import logger from '../../../../utils/logger';
 
 /**
  * Interface for SignInButton component props.
@@ -46,7 +46,10 @@ export type SignOutButtonProps = BaseSignOutButtonProps;
  * ```
  */
 const SignOutButton = forwardRef<HTMLButtonElement, SignOutButtonProps>(
-  ({className, style, preferences, onClick, children, ...rest}: SignOutButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+  (
+    {className, style, preferences, onClick, children, ...rest}: SignOutButtonProps,
+    ref: Ref<HTMLButtonElement>,
+  ): ReactElement => {
     const {signOut} = useAsgardeo();
     const {t} = useTranslation(preferences?.i18n);
 
@@ -55,31 +58,23 @@ const SignOutButton = forwardRef<HTMLButtonElement, SignOutButtonProps>(
     const handleOnClick = async (e: MouseEvent<HTMLButtonElement>): Promise<void> => {
       try {
         setIsLoading(true);
+
+        logger.debug('[SignOutButton] Initiating a sign-out from a button click');
+
         await signOut();
 
         if (onClick) {
           onClick(e);
         }
       } catch (error) {
-        throw new AsgardeoRuntimeError(
-          `Sign out failed: ${error instanceof Error ? error.message : String(error)}`,
-          'SignOutButton-handleOnClick-RuntimeError-001',
-          'next',
-          'Something went wrong while trying to sign out. Please try again later.',
-        );
+        logger.error('[SignOutButton] Error occurred initiating sign-out from a button click:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
     return (
-      <BaseSignOutButton
-        ref={ref}
-        onClick={handleOnClick}
-        isLoading={isLoading}
-        preferences={preferences}
-        {...rest}
-      >
+      <BaseSignOutButton ref={ref} onClick={handleOnClick} isLoading={isLoading} preferences={preferences} {...rest}>
         {children ?? t('elements.buttons.signOut')}
       </BaseSignOutButton>
     );
