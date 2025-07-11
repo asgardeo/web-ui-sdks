@@ -46,8 +46,6 @@ const signOutAction = async (): Promise<{success: boolean; data?: {afterSignOutU
 
     cookieStore.delete(SessionManager.getTempSessionCookieName());
 
-    await import('./deleteSessionId').then(module => module.default());
-
     return {success: true, data: {afterSignOutUrl}};
   } catch (error) {
     return {success: false, error};

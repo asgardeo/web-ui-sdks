@@ -93,13 +93,6 @@ const signInAction = async (
         tempSessionToken,
         SessionManager.getTempSessionCookieOptions(),
       );
-
-      cookieStore.set(CookieConfig.SESSION_COOKIE_NAME, sessionId, {
-        httpOnly: CookieConfig.DEFAULT_HTTP_ONLY,
-        maxAge: CookieConfig.DEFAULT_MAX_AGE,
-        sameSite: CookieConfig.DEFAULT_SAME_SITE,
-        secure: CookieConfig.DEFAULT_SECURE,
-      });
     }
 
     // If no payload provided, redirect to sign-in URL for redirect-based sign-in.
@@ -130,7 +123,7 @@ const signInAction = async (
 
         const sessionToken = await SessionManager.createSessionToken(
           userIdFromToken,
-          sessionId,
+          sessionId as string,
           scopes,
           organizationId,
         );

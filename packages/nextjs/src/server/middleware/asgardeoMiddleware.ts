@@ -53,19 +53,6 @@ type AsgardeoMiddlewareHandler = (
 ) => Promise<NextResponse | void> | NextResponse | void;
 
 /**
- * Legacy function: Checks if a request has a valid session ID in cookies.
- * This is a lightweight check that can be used in middleware.
- *
- * @deprecated Use hasValidJWTSession for JWT-based sessions
- * @param request - The Next.js request object
- * @returns True if a session ID exists, false otherwise
- */
-const hasValidSessionLegacy = (request: NextRequest): boolean => {
-  const sessionId = request.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
-  return Boolean(sessionId && sessionId.trim().length > 0);
-};
-
-/**
  * Enhanced session validation that checks both JWT and legacy sessions
  *
  * @param request - The Next.js request object
@@ -73,11 +60,9 @@ const hasValidSessionLegacy = (request: NextRequest): boolean => {
  */
 const hasValidSession = async (request: NextRequest): Promise<boolean> => {
   try {
-    // Try JWT session first
     return await hasValidJWTSession(request);
   } catch {
-    // Fall back to legacy session check
-    return hasValidSessionLegacy(request);
+    return Promise.resolve(false);
   }
 };
 

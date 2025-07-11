@@ -16,8 +16,12 @@
  * under the License.
  */
 
+import {VendorConstants} from '@asgardeo/javascript';
+
 class CookieConfig {
-  static readonly SESSION_COOKIE_NAME: string = 'ASGARDEO_SESSION_ID';
+  static readonly SESSION_COOKIE_NAME: string = `__${VendorConstants.VENDOR_PREFIX}__session`;
+
+  static readonly TEMP_SESSION_COOKIE_NAME: string = `__${VendorConstants.VENDOR_PREFIX}__temp.session`;
 
   static readonly DEFAULT_MAX_AGE: number = 3600;
 
