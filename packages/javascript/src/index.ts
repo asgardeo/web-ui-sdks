@@ -132,4 +132,19 @@ export {default as processOpenIDScopes} from './utils/processOpenIDScopes';
 export {default as withVendorCSSClassPrefix} from './utils/withVendorCSSClassPrefix';
 export {default as transformBrandingPreferenceToTheme} from './utils/transformBrandingPreferenceToTheme';
 
+export {
+  default as logger,
+  createLogger,
+  createComponentLogger,
+  createPackageLogger,
+  createPackageComponentLogger,
+  LogLevel,
+  configure as configureLogger,
+  debug,
+  info,
+  warn,
+  error,
+} from './utils/logger';
+export type {LoggerConfig} from './utils/logger';
+
 export {default as StorageManager} from './StorageManager';
