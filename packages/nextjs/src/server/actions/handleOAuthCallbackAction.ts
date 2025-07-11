@@ -18,9 +18,9 @@
 
 'use server';
 
-import { cookies } from 'next/headers';
-import { CookieConfig } from '@asgardeo/node';
+import {cookies} from 'next/headers';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
+import SessionManager from '../../utils/SessionManager';
 
 /**
  * Server action to handle OAuth callback with authorization code.
@@ -35,7 +35,7 @@ import AsgardeoNextClient from '../../AsgardeoNextClient';
 const handleOAuthCallbackAction = async (
   code: string,
   state: string,
-  sessionState?: string
+  sessionState?: string,
 ): Promise<{
   success: boolean;
   error?: string;
@@ -45,56 +45,87 @@ const handleOAuthCallbackAction = async (
     if (!code || !state) {
       return {
         success: false,
-        error: 'Missing required OAuth parameters: code and state are required'
+        error: 'Missing required OAuth parameters: code and state are required',
       };
     }
 
-    // Get the Asgardeo client instance
     const asgardeoClient = AsgardeoNextClient.getInstance();
 
     if (!asgardeoClient.isInitialized) {
       return {
         success: false,
-        error: 'Asgardeo client is not initialized'
+        error: 'Asgardeo client is not initialized',
       };
     }
 
-    // Get the session ID from cookies
     const cookieStore = await cookies();
-    const sessionId = cookieStore.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+    let sessionId: string | undefined;
+
+    const tempSessionToken = cookieStore.get(SessionManager.getTempSessionCookieName())?.value;
+
+    if (tempSessionToken) {
+      try {
+        const tempSession = await SessionManager.verifyTempSession(tempSessionToken);
+        sessionId = tempSession.sessionId;
+      } catch {
+        // TODO: Invalid temp session, throw error.
+      }
+    }
 
     if (!sessionId) {
       return {
         success: false,
-        error: 'No session found. Please start the authentication flow again.'
+        error: 'No session found. Please start the authentication flow again.',
       };
     }
 
     // Exchange the authorization code for tokens
-    await asgardeoClient.signIn(
+    const signInResult = await asgardeoClient.signIn(
       {
         code,
         session_state: sessionState,
         state,
       } as any,
       {},
-      sessionId
+      sessionId,
     );
 
-    // Get the after sign-in URL from configuration
+    if (signInResult) {
+      try {
+        const idToken = await asgardeoClient.getDecodedIdToken(sessionId);
+        const userIdFromToken = idToken.sub || signInResult['sub'] || sessionId;
+        const scopes = idToken['scope'] ? idToken['scope'].split(' ') : [];
+        const organizationId = idToken['user_org'] || idToken['organization_id'];
+
+        const sessionToken = await SessionManager.createSessionToken(
+          userIdFromToken,
+          sessionId,
+          scopes,
+          organizationId,
+        );
+
+        cookieStore.set(SessionManager.getSessionCookieName(), sessionToken, SessionManager.getSessionCookieOptions());
+
+        cookieStore.delete(SessionManager.getTempSessionCookieName());
+      } catch (error) {
+        console.warn(
+          '[handleOAuthCallbackAction] Failed to create JWT session, continuing with legacy session:',
+          error,
+        );
+      }
+    }
+
     const config = await asgardeoClient.getConfiguration();
     const afterSignInUrl = config.afterSignInUrl || '/';
 
     return {
       success: true,
-      redirectUrl: afterSignInUrl
+      redirectUrl: afterSignInUrl,
     };
   } catch (error) {
-    console.error('[handleOAuthCallbackAction] OAuth callback error:', error);
-    
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Authentication failed'
+      error: error instanceof Error ? error.message : 'Authentication failed',
     };
   }
 };

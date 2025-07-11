@@ -20,12 +20,51 @@
 
 import AsgardeoNextClient from '../../AsgardeoNextClient';
 import getSessionId from './getSessionId';
+import getSessionPayload from './getSessionPayload';
 
-const isSignedIn = async (sessionId: string): Promise<boolean> => {
-  const client = AsgardeoNextClient.getInstance();
-  const accessToken: string | undefined = await client.getAccessToken(sessionId);
+/**
+ * Check if the user is currently signed in.
+ * First tries JWT session validation, then falls back to legacy session check.
+ *
+ * @param sessionId - Optional session ID to check (if not provided, gets from cookies)
+ * @returns True if user is signed in, false otherwise
+ */
+const isSignedIn = async (sessionId?: string): Promise<boolean> => {
+  try {
+    const sessionPayload = await getSessionPayload();
 
-  return !!accessToken;
+    if (sessionPayload) {
+      const resolvedSessionId = sessionPayload.sessionId;
+
+      if (resolvedSessionId) {
+        const client = AsgardeoNextClient.getInstance();
+        try {
+          const accessToken = await client.getAccessToken(resolvedSessionId);
+          return !!accessToken;
+        } catch (error) {
+          return false;
+        }
+      }
+    }
+
+    const resolvedSessionId = sessionId || (await getSessionId());
+
+    if (!resolvedSessionId) {
+      return false;
+    }
+
+    const client = AsgardeoNextClient.getInstance();
+
+    try {
+      const accessToken = await client.getAccessToken(resolvedSessionId);
+
+      return !!accessToken;
+    } catch (error) {
+      return false;
+    }
+  } catch {
+    return false;
+  }
 };
 
 export default isSignedIn;

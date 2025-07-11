@@ -378,7 +378,18 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
   }
 
   getAccessToken(sessionId?: string): Promise<string> {
-    return this.asgardeo.getAccessToken(sessionId as string);
+    if (!sessionId) {
+      return Promise.reject(new Error('Session ID is required to get access token'));
+    }
+
+    return this.asgardeo.getAccessToken(sessionId as string).then(
+      token => {
+        return token;
+      },
+      error => {
+        throw error;
+      },
+    );
   }
 
   /**

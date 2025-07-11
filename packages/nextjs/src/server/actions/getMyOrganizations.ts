@@ -27,7 +27,47 @@ import AsgardeoNextClient from '../../AsgardeoNextClient';
 const getMyOrganizations = async (options?: any, sessionId?: string | undefined): Promise<Organization[]> => {
   try {
     const client = AsgardeoNextClient.getInstance();
-    return await client.getMyOrganizations(options, sessionId);
+
+    // Get session ID if not provided
+    let resolvedSessionId = sessionId;
+    if (!resolvedSessionId) {
+      // Import getSessionId locally to avoid circular dependencies
+      const {default: getSessionId} = await import('./getSessionId');
+      resolvedSessionId = await getSessionId();
+    }
+
+    if (!resolvedSessionId) {
+      throw new AsgardeoAPIError(
+        'No session ID available for fetching organizations',
+        'getMyOrganizations-SessionError-001',
+        'nextjs',
+        401,
+      );
+    }
+
+    // Check if user is signed in by trying to get access token
+    try {
+      const accessToken = await client.getAccessToken(resolvedSessionId);
+
+      if (!accessToken) {
+        throw new AsgardeoAPIError(
+          'No access token available - user is not signed in',
+          'getMyOrganizations-NoAccessToken-001',
+          'nextjs',
+          401,
+        );
+      }
+    } catch (error) {
+      console.error('[getMyOrganizations] Failed to get access token:', error);
+      throw new AsgardeoAPIError(
+        'User is not signed in - access token retrieval failed',
+        'getMyOrganizations-NotSignedIn-001',
+        'nextjs',
+        401,
+      );
+    }
+
+    return await client.getMyOrganizations(options, resolvedSessionId);
   } catch (error) {
     throw new AsgardeoAPIError(
       `Failed to get the organizations for the user: ${error instanceof Error ? error.message : String(error)}`,
