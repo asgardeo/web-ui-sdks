@@ -1,5 +1,14 @@
 # @asgardeo/javascript
 
+## 0.1.7
+
+### Patch Changes
+
+- [#104](https://github.com/asgardeo/web-ui-sdks/pull/104)
+  [`ee3b7c6`](https://github.com/asgardeo/web-ui-sdks/commit/ee3b7c669dc4a3c401569ed2b1861256d8df90da) Thanks
+  [@brionmario](https://github.com/brionmario)! - Move to a session cookie to give the ability to do route level scope
+  based authorization.
+
 ## 0.1.6
 
 ### Patch Changes
