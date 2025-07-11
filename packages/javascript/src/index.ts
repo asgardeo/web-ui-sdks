@@ -112,6 +112,7 @@ export {default as AsgardeoJavaScriptClient} from './AsgardeoJavaScriptClient';
 export {default as createTheme} from './theme/createTheme';
 export {ThemeColors, ThemeConfig, Theme, ThemeMode, ThemeDetection} from './theme/types';
 
+export {default as bem} from './utils/bem';
 export {default as processUsername} from './utils/processUsername';
 export {default as deepMerge} from './utils/deepMerge';
 export {default as deriveOrganizationHandleFromBaseUrl} from './utils/deriveOrganizationHandleFromBaseUrl';

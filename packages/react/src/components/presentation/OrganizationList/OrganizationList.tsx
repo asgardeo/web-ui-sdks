@@ -16,11 +16,14 @@
  * under the License.
  */
 
-import {AllOrganizationsApiResponse, Organization} from '@asgardeo/browser';
+import {AllOrganizationsApiResponse, Organization, withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import {cx} from '@emotion/css';
 import {FC, ReactElement, useEffect, useState} from 'react';
 import {BaseOrganizationListProps, OrganizationWithSwitchAccess} from './BaseOrganizationList';
 import BaseOrganizationList from './BaseOrganizationList';
 import useOrganization from '../../../contexts/Organization/useOrganization';
+import useTheme from '../../../contexts/Theme/useTheme';
+import useStyles from './OrganizationList.styles';
 
 /**
  * Configuration options for the OrganizationList component.
@@ -113,8 +116,12 @@ export const OrganizationList: FC<OrganizationListProps> = ({
   limit = 10,
   onOrganizationSelect,
   recursive = false,
+  className = '',
+  style,
   ...baseProps
 }: OrganizationListProps): ReactElement => {
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme);
   const {getAllOrganizations, error, isLoading, myOrganizations} = useOrganization();
 
   const [allOrganizations, setAllOrganizations] = useState<AllOrganizationsApiResponse>({
@@ -128,14 +135,30 @@ export const OrganizationList: FC<OrganizationListProps> = ({
   }, []);
 
   return (
-    <BaseOrganizationList
-      allOrganizations={allOrganizations}
-      myOrganizations={myOrganizations}
-      error={error}
-      isLoading={isLoading}
-      onOrganizationSelect={onOrganizationSelect}
-      {...baseProps}
-    />
+    <div
+      className={cx(
+        withVendorCSSClassPrefix(bem('organization-list-wrapper')),
+        styles.organizationListWrapper,
+        className,
+      )}
+      style={style}
+    >
+      <div
+        className={cx(
+          withVendorCSSClassPrefix(bem('organization-list-wrapper', 'container')),
+          styles.organizationListWrapper__container,
+        )}
+      >
+        <BaseOrganizationList
+          allOrganizations={allOrganizations}
+          myOrganizations={myOrganizations}
+          error={error}
+          isLoading={isLoading}
+          onOrganizationSelect={onOrganizationSelect}
+          {...baseProps}
+        />
+      </div>
+    </div>
   );
 };
 
