@@ -51,6 +51,7 @@ import {
   AllOrganizationsApiResponse,
   extractUserClaimsFromIdToken,
   TokenResponse,
+  Storage,
 } from '@asgardeo/node';
 import {AsgardeoNextConfig} from './models/config';
 import getSessionId from './server/actions/getSessionId';
@@ -99,7 +100,7 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     }
   }
 
-  override async initialize(config: T): Promise<boolean> {
+  override async initialize(config: T, storage?: Storage): Promise<boolean> {
     if (this.isInitialized) {
       return Promise.resolve(true);
     }
@@ -126,18 +127,21 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
 
     const origin: string = await getClientOrigin();
 
-    return this.asgardeo.initialize({
-      organizationHandle: resolvedOrganizationHandle,
-      baseUrl,
-      clientId,
-      clientSecret,
-      signInUrl,
-      signUpUrl,
-      afterSignInUrl: afterSignInUrl ?? origin,
-      afterSignOutUrl: afterSignOutUrl ?? origin,
-      enablePKCE: false,
-      ...rest,
-    } as any);
+    return this.asgardeo.initialize(
+      {
+        organizationHandle: resolvedOrganizationHandle,
+        baseUrl,
+        clientId,
+        clientSecret,
+        signInUrl,
+        signUpUrl,
+        afterSignInUrl: afterSignInUrl ?? origin,
+        afterSignOutUrl: afterSignOutUrl ?? origin,
+        enablePKCE: false,
+        ...rest,
+      } as any,
+      storage,
+    );
   }
 
   override async getUser(userId?: string): Promise<User> {

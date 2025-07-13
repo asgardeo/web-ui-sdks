@@ -19,6 +19,7 @@
 import {AllOrganizationsApiResponse} from './models/organization';
 import {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './models/client';
 import {Config} from './models/config';
+import {Storage} from './models/store';
 import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './models/embedded-flow';
 import {EmbeddedSignInFlowHandleRequestPayload} from './models/embedded-signin-flow';
 import {TokenResponse} from './models/token';
@@ -34,7 +35,7 @@ import {User, UserProfile} from './models/user';
 abstract class AsgardeoJavaScriptClient<T = Config> implements AsgardeoClient<T> {
   abstract switchOrganization(organization: Organization, sessionId?: string): Promise<TokenResponse | Response>;
 
-  abstract initialize(config: T): Promise<boolean>;
+  abstract initialize(config: T, storage?: Storage): Promise<boolean>;
 
   abstract getUser(options?: any): Promise<User>;
 

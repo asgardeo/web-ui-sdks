@@ -41,6 +41,7 @@ import {
   TokenResponse,
   HttpRequestConfig,
   HttpResponse,
+  Storage,
 } from '@asgardeo/browser';
 import AuthAPI from './__temp__/api';
 import getMeOrganizations from './api/getMeOrganizations';
@@ -89,7 +90,7 @@ class AsgardeoReactClient<T extends AsgardeoReactConfig = AsgardeoReactConfig> e
     }
   }
 
-  override initialize(config: AsgardeoReactConfig): Promise<boolean> {
+  override initialize(config: AsgardeoReactConfig, storage?: Storage): Promise<boolean> {
     let resolvedOrganizationHandle: string | undefined = config?.organizationHandle;
 
     if (!resolvedOrganizationHandle) {

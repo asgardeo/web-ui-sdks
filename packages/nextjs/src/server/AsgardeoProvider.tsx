@@ -40,6 +40,7 @@ import updateUserProfileAction from './actions/updateUserProfileAction';
 import AsgardeoNextClient from '../AsgardeoNextClient';
 import AsgardeoClientProvider from '../client/contexts/Asgardeo/AsgardeoProvider';
 import {AsgardeoNextConfig} from '../models/config';
+import logger from '../utils/logger';
 
 /**
  * Props interface of {@link AsgardeoServerProvider}
@@ -75,8 +76,13 @@ const AsgardeoServerProvider: FC<PropsWithChildren<AsgardeoServerProviderProps>>
 
   try {
     await asgardeoClient.initialize(_config as AsgardeoNextConfig);
+
+    logger.debug('[AsgardeoServerProvider] Asgardeo client initialized successfully.');
+
     config = await asgardeoClient.getConfiguration();
   } catch (error) {
+    logger.error('[AsgardeoServerProvider] Failed to initialize Asgardeo client:', error?.toString());
+
     throw new AsgardeoRuntimeError(
       `Failed to initialize Asgardeo client: ${error?.toString()}`,
       'next-ConfigurationError-001',
