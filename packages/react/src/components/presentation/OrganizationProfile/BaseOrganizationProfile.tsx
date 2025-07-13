@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix, OrganizationDetails, bem, formatDate} from '@asgardeo/browser';
+import {OrganizationDetails, formatDate} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
-import {FC, ReactElement, useState, useCallback, useRef} from 'react';
+import {FC, ReactElement, useState, useCallback} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {Avatar} from '../../primitives/Avatar/Avatar';
 import Button from '../../primitives/Button/Button';
@@ -293,25 +293,6 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
     [organization, toggleFieldEdit],
   );
 
-  const formatLabel = (key: string): string =>
-    key
-      .split(/(?=[A-Z])|_/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
-
-  const getStatusColor = (status?: string): string => {
-    switch (status?.toUpperCase()) {
-      case 'ACTIVE':
-        return theme.vars.colors.success.main;
-      case 'INACTIVE':
-        return theme.vars.colors.warning.main;
-      case 'SUSPENDED':
-        return theme.vars.colors.error.main;
-      default:
-        return theme.vars.colors.text.secondary;
-    }
-  };
-
   const getOrgInitials = (name?: string): string => {
     if (!name) return 'ORG';
     return name
@@ -347,10 +328,7 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
         value: typeof fieldValue === 'object' ? JSON.stringify(fieldValue) : String(fieldValue || ''),
         onChange: (e: any) => onEditValue(e.target ? e.target.value : e),
         placeholder: getFieldPlaceholder(key),
-        className: cx(
-          withVendorCSSClassPrefix(bem('organization-profile', 'field-input')),
-          styles.organizationProfile__fieldInput,
-        ),
+        className: cx(styles.fieldInput),
       };
 
       let fieldInput: ReactElement;
@@ -399,22 +377,8 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
 
       return (
         <>
-          <span
-            className={cx(
-              withVendorCSSClassPrefix(bem('organization-profile', 'label')),
-              styles.organizationProfile__label,
-            )}
-          >
-            {label}
-          </span>
-          <div
-            className={cx(
-              withVendorCSSClassPrefix(bem('organization-profile', 'value')),
-              styles.organizationProfile__value,
-            )}
-          >
-            {fieldInput}
-          </div>
+          <span className={cx(styles.label)}>{label}</span>
+          <div className={cx(styles.value)}>{fieldInput}</div>
         </>
       );
     }
@@ -438,22 +402,8 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
 
     return (
       <>
-        <span
-          className={cx(
-            withVendorCSSClassPrefix(bem('organization-profile', 'label')),
-            styles.organizationProfile__label,
-          )}
-        >
-          {label}
-        </span>
-        <div
-          className={cx(
-            withVendorCSSClassPrefix(bem('organization-profile', 'value')),
-            styles.organizationProfile__value,
-            !hasValue && withVendorCSSClassPrefix(bem('organization-profile', 'value', 'empty')),
-            !hasValue && styles['organizationProfile__value--empty'],
-          )}
-        >
+        <span className={cx(styles.label)}>{label}</span>
+        <div className={cx(styles.value, !hasValue && styles.valueEmpty)}>
           {!hasValue && isFieldEditable && onStartEdit ? (
             <Button
               onClick={onStartEdit}
@@ -461,10 +411,7 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
               color="secondary"
               size="small"
               title="Click to edit"
-              className={cx(
-                withVendorCSSClassPrefix(bem('organization-profile', 'placeholder-button')),
-                styles.organizationProfile__placeholderButton,
-              )}
+              className={cx(styles.placeholderButton)}
             >
               {displayValue}
             </Button>
@@ -493,19 +440,8 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
     }
 
     return (
-      <div
-        className={cx(
-          withVendorCSSClassPrefix(bem('organization-profile', 'field')),
-          styles.organizationProfile__field,
-        )}
-        key={field.key}
-      >
-        <div
-          className={cx(
-            withVendorCSSClassPrefix(bem('organization-profile', 'field-content')),
-            styles.organizationProfile__fieldContent,
-          )}
-        >
+      <div className={cx(styles.field)} key={field.key}>
+        <div className={cx(styles.fieldContent)}>
           {renderField(
             field,
             isFieldEditing,
@@ -518,12 +454,7 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
           )}
         </div>
         {isFieldEditable && (
-          <div
-            className={cx(
-              withVendorCSSClassPrefix(bem('organization-profile', 'field-actions')),
-              styles.organizationProfile__fieldActions,
-            )}
-          >
+          <div className={cx(styles.fieldActions)}>
             {isFieldEditing ? (
               <>
                 <Button
@@ -553,10 +484,7 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
                   color="secondary"
                   size="small"
                   title="Edit field"
-                  className={cx(
-                    withVendorCSSClassPrefix(bem('organization-profile', 'edit-button')),
-                    styles.organizationProfile__editButton,
-                  )}
+                  className={cx(styles.editButton)}
                 >
                   <PencilIcon />
                 </Button>
@@ -573,57 +501,16 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
   }
 
   const profileContent = (
-    <Card
-      className={cx(
-        withVendorCSSClassPrefix(bem('organization-profile')),
-        styles.organizationProfile,
-        cardLayout && withVendorCSSClassPrefix(bem('organization-profile', null, 'card')),
-        cardLayout && styles['organizationProfile--card'],
-        className,
-      )}
-    >
-      <div
-        className={cx(
-          withVendorCSSClassPrefix(bem('organization-profile', 'header')),
-          styles.organizationProfile__header,
-        )}
-      >
+    <Card className={cx(styles.root, cardLayout && styles.card, className)}>
+      <div className={cx(styles.header)}>
         <Avatar name={getOrgInitials(organization.name)} size={80} alt={`${organization.name} logo`} />
-        <div
-          className={cx(
-            withVendorCSSClassPrefix(bem('organization-profile', 'org-info')),
-            styles.organizationProfile__orgInfo,
-          )}
-        >
-          <h2
-            className={cx(
-              withVendorCSSClassPrefix(bem('organization-profile', 'name')),
-              styles.organizationProfile__name,
-            )}
-          >
-            {organization.name}
-          </h2>
-          {organization.orgHandle && (
-            <p
-              className={cx(
-                withVendorCSSClassPrefix(bem('organization-profile', 'handle')),
-                styles.organizationProfile__handle,
-              )}
-            >
-              @{organization.orgHandle}
-            </p>
-          )}
+        <div className={cx(styles.orgInfo)}>
+          <h2 className={cx(styles.name)}>{organization.name}</h2>
+          {organization.orgHandle && <p className={cx(styles.handle)}>@{organization.orgHandle}</p>}
         </div>
       </div>
 
-      <div
-        className={cx(
-          withVendorCSSClassPrefix(bem('organization-profile', 'info-container')),
-          styles.organizationProfile__infoContainer,
-        )}
-      >
-        {fields.map((field, index) => renderOrganizationField(field))}
-      </div>
+      <div className={cx(styles.infoContainer)}>{fields.map((field, index) => renderOrganizationField(field))}</div>
     </Card>
   );
 
@@ -632,14 +519,7 @@ const BaseOrganizationProfile: FC<BaseOrganizationProfileProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <Dialog.Content>
           <Dialog.Heading>{title}</Dialog.Heading>
-          <div
-            className={cx(
-              withVendorCSSClassPrefix(bem('organization-profile', 'popup')),
-              styles.organizationProfile__popup,
-            )}
-          >
-            {profileContent}
-          </div>
+          <div className={cx(styles.popup)}>{profileContent}</div>
         </Dialog.Content>
       </Dialog>
     );

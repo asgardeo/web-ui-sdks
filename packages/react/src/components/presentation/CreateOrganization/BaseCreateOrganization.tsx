@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix, CreateOrganizationPayload, bem} from '@asgardeo/browser';
+import {CreateOrganizationPayload} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
 import {ChangeEvent, CSSProperties, FC, ReactElement, ReactNode, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
@@ -183,39 +183,16 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
   };
 
   const createOrganizationContent = (
-    <div
-      className={cx(
-        withVendorCSSClassPrefix(bem('create-organization')),
-        styles.createOrganization,
-        cardLayout && withVendorCSSClassPrefix(bem('create-organization', null, 'card')),
-        cardLayout && styles['createOrganization--card'],
-        className,
-      )}
-      style={style}
-    >
-      <div
-        className={cx(
-          withVendorCSSClassPrefix(bem('create-organization', 'content')),
-          styles.createOrganization__content,
-        )}
-      >
-        <form
-          id="create-organization-form"
-          className={cx(withVendorCSSClassPrefix(bem('create-organization', 'form')), styles.createOrganization__form)}
-          onSubmit={handleSubmit}
-        >
+    <div className={cx(styles.root, cardLayout && styles.card, className)} style={style}>
+      <div className={cx(styles.content)}>
+        <form id="create-organization-form" className={cx(styles.form)} onSubmit={handleSubmit}>
           {error && (
-            <Alert variant="error" className={styles.createOrganization__errorAlert}>
+            <Alert variant="error" className={styles.errorAlert}>
               <Alert.Title>Error</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>
           )}
-          <div
-            className={cx(
-              withVendorCSSClassPrefix(bem('create-organization', 'field-group')),
-              styles.createOrganization__fieldGroup,
-            )}
-          >
+          <div className={cx(styles.fieldGroup)}>
             <TextField
               label={`${t('organization.create.name.label')}`}
               placeholder={t('organization.create.name.placeholder')}
@@ -224,18 +201,10 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               disabled={loading}
               required
               error={formErrors.name}
-              className={cx(
-                withVendorCSSClassPrefix(bem('create-organization', 'input')),
-                styles.createOrganization__input,
-              )}
+              className={cx(styles.input)}
             />
           </div>
-          <div
-            className={cx(
-              withVendorCSSClassPrefix(bem('create-organization', 'field-group')),
-              styles.createOrganization__fieldGroup,
-            )}
-          >
+          <div className={cx(styles.fieldGroup)}>
             <TextField
               label={`${t('organization.create.handle.label') || 'Organization Handle'}`}
               placeholder={t('organization.create.handle.placeholder') || 'my-organization'}
@@ -245,27 +214,14 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               required
               error={formErrors.handle}
               helperText="This will be your organization's unique identifier. Only lowercase letters, numbers, and hyphens are allowed."
-              className={cx(
-                withVendorCSSClassPrefix(bem('create-organization', 'input')),
-                styles.createOrganization__input,
-              )}
+              className={cx(styles.input)}
             />
           </div>
-          <div
-            className={cx(
-              withVendorCSSClassPrefix(bem('create-organization', 'field-group')),
-              styles.createOrganization__fieldGroup,
-            )}
-          >
+          <div className={cx(styles.fieldGroup)}>
             <FormControl error={formErrors.description}>
               <InputLabel required>{t('organization.create.description.label')}</InputLabel>
               <textarea
-                className={cx(
-                  withVendorCSSClassPrefix(bem('create-organization', 'textarea')),
-                  styles.createOrganization__textarea,
-                  formErrors.description && withVendorCSSClassPrefix(bem('create-organization', 'textarea', 'error')),
-                  formErrors.description && styles['createOrganization__textarea--error'],
-                )}
+                className={cx(styles.textarea, formErrors.description && styles.textareaError)}
                 placeholder={t('organization.create.description.placeholder')}
                 value={formData.description}
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange('description', e.target.value)}
@@ -276,12 +232,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
           </div>
           {renderAdditionalFields && renderAdditionalFields()}
         </form>
-        <div
-          className={cx(
-            withVendorCSSClassPrefix(bem('create-organization', 'actions')),
-            styles.createOrganization__actions,
-          )}
-        >
+        <div className={cx(styles.actions)}>
           {onCancel && (
             <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
               {t('organization.create.cancel')}
@@ -300,7 +251,7 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <Dialog.Content>
           <Dialog.Heading>{title}</Dialog.Heading>
-          <div className={styles.createOrganization__popup}>{createOrganizationContent}</div>
+          <div className={styles.popup}>{createOrganizationContent}</div>
         </Dialog.Content>
       </Dialog>
     );

@@ -18,7 +18,7 @@
 
 import {User, withVendorCSSClassPrefix, WellKnownSchemaIds} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
-import {CSSProperties, FC, ReactElement, useMemo, useState, useCallback, useRef} from 'react';
+import {FC, ReactElement, useState, useCallback, useRef} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 import {Avatar} from '../../primitives/Avatar/Avatar';
@@ -29,6 +29,7 @@ import Dialog from '../../primitives/Dialog/Dialog';
 import TextField from '../../primitives/TextField/TextField';
 import MultiInput from '../../primitives/MultiInput/MultiInput';
 import Card from '../../primitives/Card/Card';
+import useStyles from './BaseUserProfile.styles';
 
 interface ExtendedFlatSchema {
   path?: string;
@@ -120,7 +121,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   saveButtonText = 'Save Changes',
   cancelButtonText = 'Cancel',
 }): ReactElement => {
-  const {theme} = useTheme();
+  const {theme, colorScheme} = useTheme();
   const [editedUser, setEditedUser] = useState(flattenedProfile || profile);
   const [editingFields, setEditingFields] = useState<Record<string, boolean>>({});
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -150,10 +151,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const getFieldPlaceholder = useCallback((schema: Schema): string => {
     const {type, displayName, description, name} = schema;
 
-    // Use the best available label for the field
     const fieldLabel = displayName || description || name || 'value';
 
-    // Generate appropriate placeholder based on field type
     switch (type) {
       case 'DATE_TIME':
         return `Enter your ${fieldLabel.toLowerCase()}`;
@@ -162,7 +161,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       case 'COMPLEX':
         return `Enter ${fieldLabel.toLowerCase()} details`;
       default:
-        // For STRING and other types, use generic placeholder
         return `Enter your ${fieldLabel.toLowerCase()}`;
     }
   }, []);
@@ -195,11 +193,9 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
 
-      // If last key, set the value
       if (i === keys.length - 1) {
         current[key] = value;
       } else {
-        // If the next level does not exist or is not an object, create an object
         if (!current[key] || typeof current[key] !== 'object') {
           current[key] = {};
         }
@@ -220,7 +216,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           ? flattenedProfile[fieldName]
           : '';
 
-      // Filter out empty values for arrays when saving
       if (Array.isArray(fieldValue)) {
         fieldValue = fieldValue.filter(v => v !== undefined && v !== null && v !== '');
       }
@@ -246,7 +241,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       }
 
       onUpdate(payload);
-      // Exit edit mode for this field after save
+
       toggleFieldEdit(fieldName);
     },
     [editedUser, flattenedProfile, onUpdate, toggleFieldEdit],
@@ -273,7 +268,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     [],
   );
 
-  const styles = useStyles();
+  const styles = useStyles(theme, colorScheme);
 
   const defaultAttributeMappings = {
     picture: ['profile', 'profileUrl', 'picture', 'URL'],
@@ -285,7 +280,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
   const mergedMappings = {...defaultAttributeMappings, ...attributeMapping};
 
-  // Combines label and value/field rendering for both view and edit modes
   const renderSchemaField = (
     schema: Schema,
     isEditing: boolean,
@@ -296,14 +290,13 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     const {value, displayName, description, name, type, required, mutability, subAttributes, multiValued} = schema;
     const label = displayName || description || name || '';
 
-    // If complex or subAttributes, fallback to original renderSchemaValue
     if (subAttributes && Array.isArray(subAttributes)) {
       return (
         <>
           {subAttributes.map((subAttr, index) => (
-            <div key={index} style={styles.field}>
-              <span style={styles.label}>{subAttr.displayName || subAttr.description || ''}</span>
-              <div style={styles.value}>
+            <div key={index} className={styles.field}>
+              <span className={styles.label}>{subAttr.displayName || subAttr.description || ''}</span>
+              <div className={styles.value}>
                 {Array.isArray(subAttr.value)
                   ? subAttr.value
                       .map(item => (typeof item === 'object' ? JSON.stringify(item) : String(item)))
@@ -318,14 +311,11 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       );
     }
 
-    // Handle multi-valued fields (either array values or multiValued property)
     if (Array.isArray(value) || multiValued) {
       const hasValues = Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && value !== '';
       const isEditable = editable && mutability !== 'READ_ONLY' && !readonlyFields.includes(name || '');
 
-      // If editing, show multi-valued input
       if (isEditing && onEditValue && isEditable) {
-        // Use editedUser value if available, then flattenedProfile, then schema value
         const currentValue =
           editedUser && name && editedUser[name] !== undefined
             ? editedUser[name]
@@ -344,17 +334,14 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
         return (
           <>
-            <span style={styles.label}>{label}</span>
-            <div style={styles.value}>
+            <span className={styles.label}>{label}</span>
+            <div className={styles.value}>
               <MultiInput
                 values={fieldValues}
                 onChange={newValues => {
-                  // Don't filter out empty values during editing - only when saving
-                  // This allows users to type and keeps empty fields for adding new values
                   if (multiValued || Array.isArray(currentValue)) {
                     onEditValue(newValues);
                   } else {
-                    // Single value field, just take the first value (including empty for typing)
                     onEditValue(newValues[0] || '');
                   }
                 }}
@@ -371,7 +358,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         );
       }
 
-      // View mode for multi-valued fields
       let displayValue: string;
       if (hasValues) {
         if (Array.isArray(value)) {
@@ -387,8 +373,14 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
       return (
         <>
-          <span style={styles.label}>{label}</span>
-          <div style={{...styles.value, fontStyle: hasValues ? 'normal' : 'italic', opacity: hasValues ? 1 : 0.7}}>
+          <span className={styles.label}>{label}</span>
+          <div
+            className={styles.value}
+            style={{
+              fontStyle: hasValues ? 'normal' : 'italic',
+              opacity: hasValues ? 1 : 0.7,
+            }}
+          >
             {!hasValues && isEditable && onStartEdit ? (
               <Button
                 onClick={onStartEdit}
@@ -416,9 +408,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     if (type === 'COMPLEX' && typeof value === 'object') {
       return <ObjectDisplay data={value} />;
     }
-    // If editing, show field instead of value
+
     if (isEditing && onEditValue && mutability !== 'READ_ONLY' && !readonlyFields.includes(name || '')) {
-      // Use editedUser value if available, then flattenedProfile, then schema value
       const fieldValue =
         editedUser && name && editedUser[name] !== undefined
           ? editedUser[name]
@@ -427,7 +418,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           : value || '';
 
       const commonProps = {
-        label: undefined, // Don't show label in field, we render it outside
+        label: undefined,
         required,
         value: fieldValue,
         onChange: (e: any) => onEditValue(e.target ? e.target.value : e),
@@ -448,7 +439,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           field = <Checkbox {...commonProps} checked={!!fieldValue} onChange={e => onEditValue(e.target.checked)} />;
           break;
         case 'COMPLEX':
-          // For complex types, use a textarea
           field = (
             <textarea
               value={fieldValue}
@@ -472,12 +462,12 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       }
       return (
         <>
-          <span style={styles.label}>{label}</span>
-          <div style={styles.value}>{field}</div>
+          <span className={styles.label}>{label}</span>
+          <div className={styles.value}>{field}</div>
         </>
       );
     }
-    // Default: view mode
+
     const hasValue = value !== undefined && value !== null && value !== '';
     const isEditable = editable && mutability !== 'READ_ONLY' && !readonlyFields.includes(name || '');
 
@@ -492,8 +482,14 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
     return (
       <>
-        <span style={styles.label}>{label}</span>
-        <div style={{...styles.value, fontStyle: hasValue ? 'normal' : 'italic', opacity: hasValue ? 1 : 0.7}}>
+        <span className={styles.label}>{label}</span>
+        <div
+          className={styles.value}
+          style={{
+            fontStyle: hasValue ? 'normal' : 'italic',
+            opacity: hasValue ? 1 : 0.7,
+          }}
+        >
           {!hasValue && isEditable && onStartEdit ? (
             <Button
               onClick={onStartEdit}
@@ -522,12 +518,10 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const renderUserInfo = (schema: Schema) => {
     if (!schema || !schema.name) return null;
 
-    // Skip fields with undefined or empty values unless editing or editable
     const hasValue = schema.value !== undefined && schema.value !== '' && schema.value !== null;
     const isFieldEditing = editingFields[schema.name];
     const isReadonlyField = readonlyFields.includes(schema.name);
 
-    // Show field if: has value, currently editing, or is editable and READ_WRITE
     const shouldShow = hasValue || isFieldEditing || (editable && schema.mutability === 'READ_WRITE');
 
     if (!shouldShow) {
@@ -535,14 +529,13 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     }
 
     const fieldStyle = {
-      ...styles.field,
       display: 'flex',
       alignItems: 'center',
       gap: theme.vars.spacing.unit,
     };
 
     return (
-      <div style={fieldStyle}>
+      <div className={styles.field} style={fieldStyle}>
         <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: theme.vars.spacing.unit}}>
           {renderSchemaField(
             schema,
@@ -609,24 +602,24 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     return fallback;
   }
 
-  const containerStyle = {
-    ...styles.root,
-    ...(cardLayout ? styles.card : {}),
-  };
+  const containerClasses = cx(
+    styles.root,
+    cardLayout ? styles.card : '',
+    withVendorCSSClassPrefix('user-profile'),
+    className,
+  );
 
   const currentUser = flattenedProfile || profile;
   const avatarAttributes = ['picture'];
   const excludedProps = avatarAttributes.map(attr => mergedMappings[attr] || attr);
 
-  // Function to render profile fields when schemas are not available
   const renderProfileWithoutSchemas = () => {
     if (!currentUser) return null;
 
     const profileEntries = Object.entries(currentUser)
       .filter(([key, value]) => {
-        // Skip fields that are in the fieldsToSkip array
         if (fieldsToSkip.includes(key)) return false;
-        // Skip empty values
+
         return value !== undefined && value !== '' && value !== null;
       })
       .sort(([a], [b]) => a.localeCompare(b)); // Sort alphabetically
@@ -634,9 +627,11 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     return (
       <>
         {profileEntries.map(([key, value]) => (
-          <div key={key} style={styles.field}>
-            <span style={styles.label}>{formatLabel(key)}</span>
-            <div style={styles.value}>{typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}</div>
+          <div key={key} className={styles.field}>
+            <span className={styles.label}>{formatLabel(key)}</span>
+            <div className={styles.value}>
+              {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}
+            </div>
           </div>
         ))}
       </>
@@ -644,8 +639,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   };
 
   const profileContent = (
-    <Card style={containerStyle} className={cx(withVendorCSSClassPrefix('user-profile'), className)}>
-      <div style={styles.header}>
+    <Card className={containerClasses}>
+      <div className={styles.header}>
         <Avatar
           imageUrl={getMappedUserProfileValue('picture', mergedMappings, currentUser)}
           name={getDisplayName()}
@@ -653,15 +648,12 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           alt={`${getDisplayName()}'s avatar`}
         />
       </div>
-      <div style={styles.infoContainer}>
+      <div className={styles.infoContainer}>
         {schemas && schemas.length > 0
-          ? // Render with schemas when available
-            schemas
+          ? schemas
               .filter(schema => {
-                // Skip fields that are in the fieldsToSkip array
                 if (fieldsToSkip.includes(schema.name)) return false;
 
-                // For non-editable mode, only show fields with values
                 if (!editable) {
                   const value = flattenedProfile && schema.name ? flattenedProfile[schema.name] : undefined;
                   return value !== undefined && value !== '' && value !== null;
@@ -675,7 +667,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 return orderA - orderB;
               })
               .map((schema, index) => {
-                // Get the value from flattenedProfile
                 const value = flattenedProfile && schema.name ? flattenedProfile[schema.name] : undefined;
                 const schemaWithValue = {
                   ...schema,
@@ -684,8 +675,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
                 return <div key={schema.name || index}>{renderUserInfo(schemaWithValue)}</div>;
               })
-          : // Fallback: render profile fields directly when schemas are not available
-            renderProfileWithoutSchemas()}
+          : renderProfileWithoutSchemas()}
       </div>
     </Card>
   );
@@ -702,89 +692,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   }
 
   return profileContent;
-};
-
-const useStyles = () => {
-  const {theme, colorScheme} = useTheme();
-
-  return useMemo(
-    () => ({
-      root: {
-        padding: `calc(${theme.vars.spacing.unit} * 4)`,
-        minWidth: '600px',
-        margin: '0 auto',
-      } as CSSProperties,
-      card: {
-        background: theme.vars.colors.background.surface,
-        borderRadius: theme.vars.borderRadius.large,
-      } as CSSProperties,
-      header: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: `calc(${theme.vars.spacing.unit} * 1.5)`,
-        marginBottom: `calc(${theme.vars.spacing.unit} * 1.5)`,
-      } as CSSProperties,
-      profileInfo: {
-        flex: 1,
-      } as CSSProperties,
-      name: {
-        fontSize: '1.5rem',
-        fontWeight: 600,
-        margin: '0',
-        color: theme.vars.colors.text.primary,
-      } as CSSProperties,
-      infoContainer: {
-        display: 'flex',
-        flexDirection: 'column' as const,
-        gap: theme.vars.spacing.unit,
-      } as CSSProperties,
-      field: {
-        display: 'flex',
-        alignItems: 'flex-start',
-        padding: `calc(${theme.vars.spacing.unit} / 2) 0`,
-        borderBottom: `1px solid ${theme.vars.colors.border}`,
-        minHeight: '28px',
-      } as CSSProperties,
-      lastField: {
-        borderBottom: 'none',
-      } as CSSProperties,
-      label: {
-        fontSize: '0.875rem',
-        fontWeight: 500,
-        color: theme.vars.colors.text.secondary,
-        width: '120px',
-        flexShrink: 0,
-        lineHeight: '28px',
-      } as CSSProperties,
-      value: {
-        color: theme.vars.colors.text.primary,
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        gap: theme.vars.spacing.unit,
-        overflow: 'hidden',
-        minHeight: '28px',
-        '& input': {
-          height: '32px',
-          margin: 0,
-        },
-        lineHeight: '28px',
-        wordBreak: 'break-word' as const,
-        '& table': {
-          backgroundColor: theme.vars.colors.background.surface,
-          borderRadius: theme.vars.borderRadius.medium,
-          whiteSpace: 'normal',
-        },
-        '& td': {
-          borderColor: theme.vars.colors.border,
-        },
-      } as CSSProperties,
-      popup: {
-        padding: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-    }),
-    [theme, colorScheme],
-  );
 };
 
 export default BaseUserProfile;

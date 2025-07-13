@@ -41,7 +41,8 @@ const useStyles = (theme: Theme, colorScheme: string) => {
       border-radius: ${theme.vars.borderRadius.large};
       box-shadow: 0 2px 8px ${colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'};
       outline: none;
-      max-width: 90vw;
+      max-width: 50vw;
+      min-width: 50vw;
       max-height: 90vh;
       overflow-y: auto;
       z-index: 10000;

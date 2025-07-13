@@ -18,7 +18,7 @@
 
 import {css} from '@emotion/css';
 import {useMemo} from 'react';
-import {bem, Theme} from '@asgardeo/browser';
+import {Theme} from '@asgardeo/browser';
 
 /**
  * Creates styles for the BaseOrganizationSwitcher component using BEM methodology
@@ -26,230 +26,249 @@ import {bem, Theme} from '@asgardeo/browser';
  * @param colorScheme - The current color scheme (used for memoization)
  * @returns Object containing CSS class names for component styling
  */
+
 const useStyles = (theme: Theme, colorScheme: string) => {
   return useMemo(() => {
-    const cssOrganizationSwitcher = css`
-      /* Base styles for the organization switcher component */
+    const root = css`
       display: inline-block;
       position: relative;
+    `;
 
-      &__trigger {
-        display: inline-flex;
-        align-items: center;
+    const trigger = css`
+      display: inline-flex;
+      align-items: center;
+      gap: ${theme.vars.spacing.unit};
+      padding: calc(${theme.vars.spacing.unit} * 0.75) ${theme.vars.spacing.unit};
+      border: 1px solid ${theme.vars.colors.border};
+      background: ${theme.vars.colors.background.surface};
+      cursor: pointer;
+      border-radius: ${theme.vars.borderRadius.medium};
+      min-width: 160px;
+
+      > span {
+        width: 100%;
         gap: ${theme.vars.spacing.unit};
-        padding: calc(${theme.vars.spacing.unit} * 0.75) ${theme.vars.spacing.unit};
-        border: 1px solid ${theme.vars.colors.border};
-        background: ${theme.vars.colors.background.surface};
-        cursor: pointer;
-        border-radius: ${theme.vars.borderRadius.medium};
-        min-width: 160px;
-
-        &:hover {
-          background-color: ${theme.vars.colors.background.surface};
-        }
       }
 
-      &__trigger-label {
-        color: ${theme.vars.colors.text.primary};
-        font-weight: 500;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex: 1;
-      }
-
-      &__content {
-        min-width: 280px;
-        max-width: 400px;
+      &:hover {
         background-color: ${theme.vars.colors.background.surface};
-        border-radius: ${theme.vars.borderRadius.medium};
-        box-shadow: ${theme.vars.shadows.medium};
-        border: 1px solid ${theme.vars.colors.border};
-        outline: none;
-        z-index: 1000;
-      }
-
-      &__header {
-        display: flex;
-        align-items: center;
-        gap: ${theme.vars.spacing.unit};
-        padding: ${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 2);
-      }
-
-      &__header-info {
-        display: flex;
-        flex-direction: column;
-        gap: calc(${theme.vars.spacing.unit} / 4);
-        flex: 1;
-        min-width: 0;
-        overflow: hidden;
-      }
-
-      &__header-name {
-        color: ${theme.vars.colors.text.primary};
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      &__header-meta {
-        color: ${theme.vars.colors.text.secondary};
-        font-size: 0.75rem;
-        margin: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      &__header-role {
-        color: ${theme.vars.colors.text.secondary};
-        font-size: 0.75rem;
-        margin: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        text-transform: capitalize;
-      }
-
-      &__manage-button {
-        min-width: auto;
-        margin-left: auto;
-      }
-
-      &__menu {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-      }
-
-      &__menu-item {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: ${theme.vars.spacing.unit};
-        padding: calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 2);
-        width: 100%;
-        color: ${theme.vars.colors.text.primary};
-        text-decoration: none;
-        border: none;
-        background-color: transparent;
-        cursor: pointer;
-        font-size: 0.875rem;
-        text-align: left;
-        border-radius: ${theme.vars.borderRadius.medium};
-        transition: background-color 0.15s ease-in-out;
-
-        &:hover {
-          background-color: ${theme.vars.colors.action?.hover || 'rgba(0, 0, 0, 0.04)'};
-        }
-      }
-
-      &__menu-divider {
-        margin: calc(${theme.vars.spacing.unit} * 0.5) 0;
-        border-bottom: 1px solid ${theme.vars.colors.border};
-      }
-
-      &__organization-info {
-        display: flex;
-        flex-direction: column;
-        gap: calc(${theme.vars.spacing.unit} / 4);
-        flex: 1;
-        min-width: 0;
-        overflow: hidden;
-      }
-
-      &__organization-name {
-        color: ${theme.vars.colors.text.primary};
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      &__organization-meta {
-        color: ${theme.vars.colors.text.secondary};
-        font-size: 0.75rem;
-        margin: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      &__loading-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 80px;
-        gap: ${theme.vars.spacing.unit};
-      }
-
-      &__loading-text {
-        color: ${theme.vars.colors.text.secondary};
-        font-size: 0.875rem;
-      }
-
-      &__error-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 80px;
-        padding: calc(${theme.vars.spacing.unit} * 2);
-      }
-
-      &__error-text {
-        color: ${theme.vars.colors.text.secondary};
-        font-size: 0.875rem;
-        text-align: center;
-      }
-
-      &__section-header {
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: ${theme.vars.colors.text.secondary};
-      }
-
-      &__section-header-container {
-        border-top: none;
-        border-bottom: none;
-        padding-bottom: calc(${theme.vars.spacing.unit} / 2);
-      }
-
-      &__role-capitalized {
-        text-transform: capitalize;
       }
     `;
 
+    const triggerLabel = css`
+      color: ${theme.vars.colors.text.primary};
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    `;
+
+    const content = css`
+      min-width: 280px;
+      max-width: 400px;
+      background-color: ${theme.vars.colors.background.surface};
+      border-radius: ${theme.vars.borderRadius.medium};
+      box-shadow: ${theme.vars.shadows.medium};
+      border: 1px solid ${theme.vars.colors.border};
+      outline: none;
+      z-index: 1000;
+    `;
+
+    const header = css`
+      display: flex;
+      align-items: center;
+      gap: ${theme.vars.spacing.unit};
+      padding: ${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 2);
+    `;
+
+    const headerInfo = css`
+      display: flex;
+      flex-direction: column;
+      gap: calc(${theme.vars.spacing.unit} / 4);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    `;
+
+    const headerName = css`
+      color: ${theme.vars.colors.text.primary};
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    `;
+
+    const headerMeta = css`
+      color: ${theme.vars.colors.text.secondary};
+      font-size: 0.75rem;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    `;
+
+    const headerRole = css`
+      color: ${theme.vars.colors.text.secondary};
+      font-size: 0.75rem;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-transform: capitalize;
+    `;
+
+    const manageButton = css`
+      min-width: auto;
+      margin-left: auto;
+    `;
+
+    const menu = css`
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    `;
+
+    const menuItem = css`
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: ${theme.vars.spacing.unit};
+      padding: calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 2);
+      width: 100%;
+      color: ${theme.vars.colors.text.primary};
+      text-decoration: none;
+      border: none;
+      background-color: transparent;
+      cursor: pointer;
+      font-size: 0.875rem;
+      text-align: left;
+      border-radius: ${theme.vars.borderRadius.medium};
+      transition: background-color 0.15s ease-in-out;
+
+      > span {
+        gap: ${theme.vars.spacing.unit};
+      }
+
+      &:hover {
+        background-color: ${theme.vars.colors.action?.hover || 'rgba(0, 0, 0, 0.04)'};
+      }
+    `;
+
+    const menuDivider = css`
+      margin: calc(${theme.vars.spacing.unit} * 0.5) 0;
+      border-bottom: 1px solid ${theme.vars.colors.border};
+    `;
+
+    const organizationInfo = css`
+      display: flex;
+      flex-direction: column;
+      gap: calc(${theme.vars.spacing.unit} / 4);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    `;
+
+    const organizationName = css`
+      color: ${theme.vars.colors.text.primary};
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    `;
+
+    const organizationMeta = css`
+      color: ${theme.vars.colors.text.secondary};
+      font-size: 0.75rem;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    `;
+
+    const loadingContainer = css`
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      gap: ${theme.vars.spacing.unit};
+    `;
+
+    const loadingText = css`
+      color: ${theme.vars.colors.text.secondary};
+      font-size: 0.875rem;
+    `;
+
+    const errorContainer = css`
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      padding: calc(${theme.vars.spacing.unit} * 2);
+    `;
+
+    const errorText = css`
+      color: ${theme.vars.colors.text.secondary};
+      font-size: 0.875rem;
+      text-align: center;
+    `;
+
+    const sectionHeader = css`
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: ${theme.vars.colors.text.secondary};
+    `;
+
+    const sectionHeaderContainer = css`
+      border-top: none;
+      border-bottom: none;
+      padding-bottom: calc(${theme.vars.spacing.unit} / 2);
+    `;
+
+    const roleCapitalized = css`
+      text-transform: capitalize;
+    `;
+
     return {
-      organizationSwitcher: cssOrganizationSwitcher,
-      organizationSwitcher__trigger: bem(cssOrganizationSwitcher, 'trigger'),
-      organizationSwitcher__triggerLabel: bem(cssOrganizationSwitcher, 'trigger-label'),
-      organizationSwitcher__content: bem(cssOrganizationSwitcher, 'content'),
-      organizationSwitcher__header: bem(cssOrganizationSwitcher, 'header'),
-      organizationSwitcher__headerInfo: bem(cssOrganizationSwitcher, 'header-info'),
-      organizationSwitcher__headerName: bem(cssOrganizationSwitcher, 'header-name'),
-      organizationSwitcher__headerMeta: bem(cssOrganizationSwitcher, 'header-meta'),
-      organizationSwitcher__headerRole: bem(cssOrganizationSwitcher, 'header-role'),
-      organizationSwitcher__manageButton: bem(cssOrganizationSwitcher, 'manage-button'),
-      organizationSwitcher__menu: bem(cssOrganizationSwitcher, 'menu'),
-      organizationSwitcher__menuItem: bem(cssOrganizationSwitcher, 'menu-item'),
-      organizationSwitcher__menuDivider: bem(cssOrganizationSwitcher, 'menu-divider'),
-      organizationSwitcher__organizationInfo: bem(cssOrganizationSwitcher, 'organization-info'),
-      organizationSwitcher__organizationName: bem(cssOrganizationSwitcher, 'organization-name'),
-      organizationSwitcher__organizationMeta: bem(cssOrganizationSwitcher, 'organization-meta'),
-      organizationSwitcher__loadingContainer: bem(cssOrganizationSwitcher, 'loading-container'),
-      organizationSwitcher__loadingText: bem(cssOrganizationSwitcher, 'loading-text'),
-      organizationSwitcher__errorContainer: bem(cssOrganizationSwitcher, 'error-container'),
-      organizationSwitcher__errorText: bem(cssOrganizationSwitcher, 'error-text'),
-      organizationSwitcher__sectionHeader: bem(cssOrganizationSwitcher, 'section-header'),
-      organizationSwitcher__sectionHeaderContainer: bem(cssOrganizationSwitcher, 'section-header-container'),
-      organizationSwitcher__roleCapitalized: bem(cssOrganizationSwitcher, 'role-capitalized'),
+      root,
+      trigger,
+      triggerLabel,
+      content,
+      header,
+      headerInfo,
+      headerName,
+      headerMeta,
+      headerRole,
+      manageButton,
+      menu,
+      menuItem,
+      menuDivider,
+      organizationInfo,
+      organizationName,
+      organizationMeta,
+      loadingContainer,
+      loadingText,
+      errorContainer,
+      errorText,
+      sectionHeader,
+      sectionHeaderContainer,
+      roleCapitalized,
     };
-  }, [theme, colorScheme]);
+  }, [
+    theme.vars.colors.background.surface,
+    theme.vars.colors.text.primary,
+    theme.vars.colors.text.secondary,
+    theme.vars.colors.border,
+    theme.vars.borderRadius.medium,
+    theme.vars.shadows.medium,
+    theme.vars.spacing.unit,
+    theme.vars.colors.action?.hover,
+    colorScheme,
+  ]);
 };
 
 export default useStyles;

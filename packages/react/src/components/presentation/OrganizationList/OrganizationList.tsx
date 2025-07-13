@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AllOrganizationsApiResponse, Organization, withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import {AllOrganizationsApiResponse, Organization} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
 import {FC, ReactElement, useEffect, useState} from 'react';
 import {BaseOrganizationListProps, OrganizationWithSwitchAccess} from './BaseOrganizationList';
@@ -135,20 +135,8 @@ export const OrganizationList: FC<OrganizationListProps> = ({
   }, []);
 
   return (
-    <div
-      className={cx(
-        withVendorCSSClassPrefix(bem('organization-list-wrapper')),
-        styles.organizationListWrapper,
-        className,
-      )}
-      style={style}
-    >
-      <div
-        className={cx(
-          withVendorCSSClassPrefix(bem('organization-list-wrapper', 'container')),
-          styles.organizationListWrapper__container,
-        )}
-      >
+    <div className={cx(styles.root, className)} style={style}>
+      <div className={cx(styles.container)}>
         <BaseOrganizationList
           allOrganizations={allOrganizations}
           myOrganizations={myOrganizations}

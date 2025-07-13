@@ -18,7 +18,7 @@
 
 import {css} from '@emotion/css';
 import {useMemo} from 'react';
-import {bem, Theme} from '@asgardeo/browser';
+import {Theme} from '@asgardeo/browser';
 
 /**
  * Creates styles for the OrganizationList component using BEM methodology
@@ -62,10 +62,32 @@ const useStyles = (theme: Theme, colorScheme: string) => {
     `;
 
     return {
-      organizationListWrapper: cssOrganizationListWrapper,
-      organizationListWrapper__container: bem(cssOrganizationListWrapper, 'container'),
-      organizationListWrapper__errorState: bem(cssOrganizationListWrapper, 'error-state'),
-      organizationListWrapper__loadingOverlay: bem(cssOrganizationListWrapper, 'loading-overlay'),
+      root: cssOrganizationListWrapper,
+      container: css`
+        position: relative;
+        width: 100%;
+      `,
+      errorState: css`
+        padding: calc(${theme.vars.spacing.unit} * 2);
+        background-color: color-mix(in srgb, ${theme.vars.colors.error.main} 10%, transparent);
+        border: 1px solid ${theme.vars.colors.error.main};
+        border-radius: ${theme.vars.borderRadius.medium};
+        color: ${theme.vars.colors.error.main};
+        text-align: center;
+      `,
+      loadingOverlay: css`
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: color-mix(in srgb, ${theme.vars.colors.background.surface} 80%, transparent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: ${theme.vars.borderRadius.large};
+        backdrop-filter: blur(2px);
+      `,
     };
   }, [theme, colorScheme]);
 };

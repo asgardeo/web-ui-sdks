@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {AllOrganizationsApiResponse, Organization, withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import {AllOrganizationsApiResponse, Organization} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
 import {FC, ReactElement, ReactNode, useMemo, CSSProperties} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
@@ -133,65 +133,23 @@ const defaultRenderOrganization = (
   showStatus?: boolean,
 ): ReactNode => {
   return (
-    <div
-      key={organization.id}
-      className={cx(
-        withVendorCSSClassPrefix(bem('organization-list', 'organization-item')),
-        styles.organizationList__organizationItem,
-      )}
-    >
-      <div
-        className={cx(
-          withVendorCSSClassPrefix(bem('organization-list', 'organization-content')),
-          styles.organizationList__organizationContent,
-        )}
-      >
+    <div key={organization.id} className={cx(styles.organizationItem)}>
+      <div className={cx(styles.organizationContent)}>
         <Avatar variant="square" name={organization.name} size={48} alt={`${organization.name} logo`} />
-        <div
-          className={cx(
-            withVendorCSSClassPrefix(bem('organization-list', 'organization-info')),
-            styles.organizationList__organizationInfo,
-          )}
-        >
-          <Typography
-            variant="h6"
-            className={cx(
-              withVendorCSSClassPrefix(bem('organization-list', 'organization-name')),
-              styles.organizationList__organizationName,
-            )}
-          >
+        <div className={cx(styles.organizationInfo)}>
+          <Typography variant="h6" className={cx(styles.organizationName)}>
             {organization.name}
           </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            className={cx(
-              withVendorCSSClassPrefix(bem('organization-list', 'organization-handle')),
-              styles.organizationList__organizationHandle,
-            )}
-          >
+          <Typography variant="body2" color="textSecondary" className={cx(styles.organizationHandle)}>
             @{organization.orgHandle}
           </Typography>
           {showStatus && (
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              className={cx(
-                withVendorCSSClassPrefix(bem('organization-list', 'organization-status')),
-                styles.organizationList__organizationStatus,
-              )}
-            >
+            <Typography variant="body2" color="textSecondary" className={cx(styles.organizationStatus)}>
               {t('organization.switcher.status.label')}{' '}
               <span
                 className={cx(
-                  withVendorCSSClassPrefix(bem('organization-list', 'status-text')),
-                  styles.organizationList__statusText,
-                  organization.status === 'ACTIVE'
-                    ? withVendorCSSClassPrefix(bem('organization-list', 'status-text', 'active'))
-                    : withVendorCSSClassPrefix(bem('organization-list', 'status-text', 'inactive')),
-                  organization.status === 'ACTIVE'
-                    ? styles['organizationList__statusText--active']
-                    : styles['organizationList__statusText--inactive'],
+                  styles.statusText,
+                  organization.status === 'ACTIVE' ? styles.statusTextActive : styles.statusTextInactive,
                 )}
               >
                 {organization.status}
@@ -201,12 +159,7 @@ const defaultRenderOrganization = (
         </div>
       </div>
       {organization.canSwitch && (
-        <div
-          className={cx(
-            withVendorCSSClassPrefix(bem('organization-list', 'organization-actions')),
-            styles.organizationList__organizationActions,
-          )}
-        >
+        <div className={cx(styles.organizationActions)}>
           <Button
             onClick={e => {
               e.stopPropagation();
@@ -230,21 +183,9 @@ const defaultRenderLoading = (
   t: (key: string, params?: Record<string, string | number>) => string,
   styles: any,
 ): ReactNode => (
-  <div
-    className={cx(
-      withVendorCSSClassPrefix(bem('organization-list', 'loading-container')),
-      styles.organizationList__loadingContainer,
-    )}
-  >
+  <div className={cx(styles.loadingContainer)}>
     <Spinner size="medium" />
-    <Typography
-      variant="body1"
-      color="textSecondary"
-      className={cx(
-        withVendorCSSClassPrefix(bem('organization-list', 'loading-text')),
-        styles.organizationList__loadingText,
-      )}
-    >
+    <Typography variant="body1" color="textSecondary" className={cx(styles.loadingText)}>
       {t('organization.switcher.loading.organizations')}
     </Typography>
   </div>
@@ -258,12 +199,7 @@ const defaultRenderError = (
   t: (key: string, params?: Record<string, string | number>) => string,
   styles: any,
 ): ReactNode => (
-  <div
-    className={cx(
-      withVendorCSSClassPrefix(bem('organization-list', 'error-container')),
-      styles.organizationList__errorContainer,
-    )}
-  >
+  <div className={cx(styles.errorContainer)}>
     <Typography variant="body1" color="error">
       <strong>{t('organization.switcher.error.prefix')}</strong> {error}
     </Typography>
@@ -279,16 +215,7 @@ const defaultRenderLoadMore = (
   t: (key: string, params?: Record<string, string | number>) => string,
   styles: any,
 ): ReactNode => (
-  <Button
-    onClick={onLoadMore}
-    disabled={isLoading}
-    className={cx(
-      withVendorCSSClassPrefix(bem('organization-list', 'load-more-button')),
-      styles.organizationList__loadMoreButton,
-    )}
-    type="button"
-    fullWidth
-  >
+  <Button onClick={onLoadMore} disabled={isLoading} className={cx(styles.loadMoreButton)} type="button" fullWidth>
     {isLoading ? t('organization.switcher.loading.more') : t('organization.switcher.load.more')}
   </Button>
 );
@@ -300,20 +227,8 @@ const defaultRenderEmpty = (
   t: (key: string, params?: Record<string, string | number>) => string,
   styles: any,
 ): ReactNode => (
-  <div
-    className={cx(
-      withVendorCSSClassPrefix(bem('organization-list', 'empty-container')),
-      styles.organizationList__emptyContainer,
-    )}
-  >
-    <Typography
-      variant="body1"
-      color="textSecondary"
-      className={cx(
-        withVendorCSSClassPrefix(bem('organization-list', 'empty-text')),
-        styles.organizationList__emptyText,
-      )}
-    >
+  <div className={cx(styles.emptyContainer)}>
+    <Typography variant="body1" color="textSecondary" className={cx(styles.emptyText)}>
       {t('organization.switcher.no.organizations')}
     </Typography>
   </div>
@@ -387,10 +302,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
 
   if (isLoading && organizationsWithSwitchAccess?.length === 0) {
     const loadingContent = (
-      <div
-        className={cx(withVendorCSSClassPrefix(bem('organization-list')), styles.organizationList, className)}
-        style={style}
-      >
+      <div className={cx(styles.root, className)} style={style}>
         {renderLoadingWithStyles()}
       </div>
     );
@@ -400,14 +312,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
           <Dialog.Content>
             <Dialog.Heading>{title}</Dialog.Heading>
-            <div
-              className={cx(
-                withVendorCSSClassPrefix(bem('organization-list', 'popup-content')),
-                styles.organizationList__popupContent,
-              )}
-            >
-              {loadingContent}
-            </div>
+            <div className={cx(styles.popupContent)}>{loadingContent}</div>
           </Dialog.Content>
         </Dialog>
       );
@@ -418,10 +323,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
 
   if (error && organizationsWithSwitchAccess?.length === 0) {
     const errorContent = (
-      <div
-        className={cx(withVendorCSSClassPrefix(bem('organization-list')), styles.organizationList, className)}
-        style={style}
-      >
+      <div className={cx(styles.root, className)} style={style}>
         {renderErrorWithStyles(error)}
       </div>
     );
@@ -431,14 +333,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
           <Dialog.Content>
             <Dialog.Heading>{title}</Dialog.Heading>
-            <div
-              className={cx(
-                withVendorCSSClassPrefix(bem('organization-list', 'popup-content')),
-                styles.organizationList__popupContent,
-              )}
-            >
-              {errorContent}
-            </div>
+            <div className={cx(styles.popupContent)}>{errorContent}</div>
           </Dialog.Content>
         </Dialog>
       );
@@ -449,10 +344,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
 
   if (!isLoading && organizationsWithSwitchAccess?.length === 0) {
     const emptyContent = (
-      <div
-        className={cx(withVendorCSSClassPrefix(bem('organization-list')), styles.organizationList, className)}
-        style={style}
-      >
+      <div className={cx(styles.root, className)} style={style}>
         {renderEmptyWithStyles()}
       </div>
     );
@@ -462,14 +354,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
           <Dialog.Content>
             <Dialog.Heading>{title}</Dialog.Heading>
-            <div
-              className={cx(
-                withVendorCSSClassPrefix(bem('organization-list', 'popup-content')),
-                styles.organizationList__popupContent,
-              )}
-            >
-              {emptyContent}
-            </div>
+            <div className={cx(styles.popupContent)}>{emptyContent}</div>
           </Dialog.Content>
         </Dialog>
       );
@@ -479,28 +364,11 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
   }
 
   const organizationListContent = (
-    <div
-      className={cx(withVendorCSSClassPrefix(bem('organization-list')), styles.organizationList, className)}
-      style={style}
-    >
+    <div className={cx(styles.root, className)} style={style}>
       {/* Header with total count and refresh button */}
-      <div
-        className={cx(withVendorCSSClassPrefix(bem('organization-list', 'header')), styles.organizationList__header)}
-      >
-        <div
-          className={cx(
-            withVendorCSSClassPrefix(bem('organization-list', 'header-info')),
-            styles.organizationList__headerInfo,
-          )}
-        >
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            className={cx(
-              withVendorCSSClassPrefix(bem('organization-list', 'subtitle')),
-              styles.organizationList__subtitle,
-            )}
-          >
+      <div className={cx(styles.header)}>
+        <div className={cx(styles.headerInfo)}>
+          <Typography variant="body2" color="textSecondary" className={cx(styles.subtitle)}>
             {t('organization.switcher.showing.count', {
               showing: organizationsWithSwitchAccess?.length,
               total: allOrganizations?.organizations?.length || 0,
@@ -508,28 +376,14 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
           </Typography>
         </div>
         {onRefresh && (
-          <Button
-            onClick={onRefresh}
-            className={cx(
-              withVendorCSSClassPrefix(bem('organization-list', 'refresh-button')),
-              styles.organizationList__refreshButton,
-            )}
-            type="button"
-            variant="outline"
-            size="small"
-          >
+          <Button onClick={onRefresh} className={cx(styles.refreshButton)} type="button" variant="outline" size="small">
             {t('organization.switcher.refresh.button')}
           </Button>
         )}
       </div>
 
       {/* Organizations list */}
-      <div
-        className={cx(
-          withVendorCSSClassPrefix(bem('organization-list', 'list-container')),
-          styles.organizationList__listContainer,
-        )}
-      >
+      <div className={cx(styles.listContainer)}>
         {organizationsWithSwitchAccess?.map((organization: OrganizationWithSwitchAccess, index: number) =>
           renderOrganizationWithStyles(organization, index),
         )}
@@ -537,26 +391,12 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
 
       {/* Error message for additional data */}
       {error && organizationsWithSwitchAccess?.length > 0 && (
-        <div
-          className={cx(
-            withVendorCSSClassPrefix(bem('organization-list', 'error-margin')),
-            styles.organizationList__errorMargin,
-          )}
-        >
-          {renderErrorWithStyles(error)}
-        </div>
+        <div className={cx(styles.errorMargin)}>{renderErrorWithStyles(error)}</div>
       )}
 
       {/* Load more button */}
       {hasMore && fetchMore && (
-        <div
-          className={cx(
-            withVendorCSSClassPrefix(bem('organization-list', 'load-more-margin')),
-            styles.organizationList__loadMoreMargin,
-          )}
-        >
-          {renderLoadMoreWithStyles(fetchMore, isLoadingMore)}
-        </div>
+        <div className={cx(styles.loadMoreMargin)}>{renderLoadMoreWithStyles(fetchMore, isLoadingMore)}</div>
       )}
     </div>
   );
@@ -566,14 +406,7 @@ export const BaseOrganizationList: FC<BaseOrganizationListProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <Dialog.Content>
           <Dialog.Heading>{title}</Dialog.Heading>
-          <div
-            className={cx(
-              withVendorCSSClassPrefix(bem('organization-list', 'popup-content')),
-              styles.organizationList__popupContent,
-            )}
-          >
-            {organizationListContent}
-          </div>
+          <div className={cx(styles.popupContent)}>{organizationListContent}</div>
         </Dialog.Content>
       </Dialog>
     );

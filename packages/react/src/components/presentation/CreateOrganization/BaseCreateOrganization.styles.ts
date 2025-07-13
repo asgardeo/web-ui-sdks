@@ -18,7 +18,7 @@
 
 import {css} from '@emotion/css';
 import {useMemo} from 'react';
-import {bem, Theme} from '@asgardeo/browser';
+import {Theme} from '@asgardeo/browser';
 
 /**
  * Creates styles for the BaseCreateOrganization component using BEM methodology
@@ -28,143 +28,152 @@ import {bem, Theme} from '@asgardeo/browser';
  */
 const useStyles = (theme: Theme, colorScheme: string) => {
   return useMemo(() => {
-    const cssCreateOrganization = css`
+    const root = css`
       padding: calc(${theme.vars.spacing.unit} * 4);
       min-width: 600px;
       margin: 0 auto;
+    `;
 
-      &--card {
-        background: ${theme.vars.colors.background.surface};
-        border-radius: ${theme.vars.borderRadius.large};
-        padding: calc(${theme.vars.spacing.unit} * 4);
+    const card = css`
+      background: ${theme.vars.colors.background.surface};
+      border-radius: ${theme.vars.borderRadius.large};
+      padding: calc(${theme.vars.spacing.unit} * 4);
+    `;
+
+    const content = css`
+      display: flex;
+      flex-direction: column;
+      gap: calc(${theme.vars.spacing.unit} * 2);
+    `;
+
+    const form = css`
+      display: flex;
+      flex-direction: column;
+      gap: calc(${theme.vars.spacing.unit} * 2);
+      width: 100%;
+    `;
+
+    const header = css`
+      display: flex;
+      align-items: center;
+      gap: calc(${theme.vars.spacing.unit} * 1.5);
+      margin-bottom: calc(${theme.vars.spacing.unit} * 1.5);
+    `;
+
+    const field = css`
+      display: flex;
+      align-items: center;
+      padding: ${theme.vars.spacing.unit} 0;
+      border-bottom: 1px solid ${theme.vars.colors.border};
+      min-height: 32px;
+    `;
+
+    const fieldGroup = css`
+      display: flex;
+      flex-direction: column;
+      gap: calc(${theme.vars.spacing.unit} * 0.5);
+    `;
+
+    const textarea = css`
+      width: 100%;
+      padding: ${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 1.5);
+      border: 1px solid ${theme.vars.colors.border};
+      border-radius: ${theme.vars.borderRadius.medium};
+      font-size: ${theme.vars.typography.fontSizes.md};
+      color: ${theme.vars.colors.text.primary};
+      background-color: ${theme.vars.colors.background.surface};
+      font-family: inherit;
+      min-height: 80px;
+      resize: vertical;
+      outline: none;
+      &:focus {
+        border-color: ${theme.vars.colors.primary.main};
+        box-shadow: 0 0 0 2px ${theme.vars.colors.primary.main}20;
       }
-
-      &__content {
-        display: flex;
-        flex-direction: column;
-        gap: calc(${theme.vars.spacing.unit} * 2);
-      }
-
-      &__form {
-        display: flex;
-        flex-direction: column;
-        gap: calc(${theme.vars.spacing.unit} * 2);
-        width: 100%;
-      }
-
-      &__header {
-        display: flex;
-        align-items: center;
-        gap: calc(${theme.vars.spacing.unit} * 1.5);
-        margin-bottom: calc(${theme.vars.spacing.unit} * 1.5);
-      }
-
-      &__field {
-        display: flex;
-        align-items: center;
-        padding: ${theme.vars.spacing.unit} 0;
-        border-bottom: 1px solid ${theme.vars.colors.border};
-        min-height: 32px;
-      }
-
-      &__field-group {
-        display: flex;
-        flex-direction: column;
-        gap: calc(${theme.vars.spacing.unit} * 0.5);
-      }
-
-      &__textarea {
-        width: 100%;
-        padding: ${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 1.5);
-        border: 1px solid ${theme.vars.colors.border};
-        border-radius: ${theme.vars.borderRadius.medium};
-        font-size: ${theme.vars.typography.fontSizes.md};
-        color: ${theme.vars.colors.text.primary};
-        background-color: ${theme.vars.colors.background.surface};
-        font-family: inherit;
-        min-height: 80px;
-        resize: vertical;
-        outline: none;
-
-        &:focus {
-          border-color: ${theme.vars.colors.primary.main};
-          box-shadow: 0 0 0 2px ${theme.vars.colors.primary.main}20;
-        }
-
-        &:disabled {
-          background-color: ${theme.vars.colors.background.disabled};
-          color: ${theme.vars.colors.text.secondary};
-          cursor: not-allowed;
-        }
-
-        &--error {
-          border-color: ${theme.vars.colors.error.main};
-        }
-      }
-
-      &__input {
-        /* Base input styles will be handled by TextField component */
-      }
-
-      &__avatar-container {
-        align-items: flex-start;
-        display: flex;
-        gap: calc(${theme.vars.spacing.unit} * 2);
-        margin-bottom: ${theme.vars.spacing.unit};
-      }
-
-      &__actions {
-        display: flex;
-        gap: ${theme.vars.spacing.unit};
-        justify-content: flex-end;
-        padding-top: calc(${theme.vars.spacing.unit} * 2);
-      }
-
-      &__info-container {
-        display: flex;
-        flex-direction: column;
-        gap: ${theme.vars.spacing.unit};
-      }
-
-      &__value {
-        color: ${theme.vars.colors.text.primary};
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: ${theme.vars.spacing.unit};
-        overflow: hidden;
-        min-height: 32px;
-        line-height: 32px;
-      }
-
-      &__popup {
-        padding: calc(${theme.vars.spacing.unit} * 2);
-      }
-
-      &__error-alert {
-        margin-bottom: calc(${theme.vars.spacing.unit} * 2);
+      &:disabled {
+        background-color: ${theme.vars.colors.background.disabled};
+        color: ${theme.vars.colors.text.secondary};
+        cursor: not-allowed;
       }
     `;
 
+    const textareaError = css`
+      border-color: ${theme.vars.colors.error.main};
+    `;
+
+    const input = css``;
+
+    const avatarContainer = css`
+      align-items: flex-start;
+      display: flex;
+      gap: calc(${theme.vars.spacing.unit} * 2);
+      margin-bottom: ${theme.vars.spacing.unit};
+    `;
+
+    const actions = css`
+      display: flex;
+      gap: ${theme.vars.spacing.unit};
+      justify-content: flex-end;
+      padding-top: calc(${theme.vars.spacing.unit} * 2);
+    `;
+
+    const infoContainer = css`
+      display: flex;
+      flex-direction: column;
+      gap: ${theme.vars.spacing.unit};
+    `;
+
+    const value = css`
+      color: ${theme.vars.colors.text.primary};
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: ${theme.vars.spacing.unit};
+      overflow: hidden;
+      min-height: 32px;
+      line-height: 32px;
+    `;
+
+    const popup = css`
+      padding: calc(${theme.vars.spacing.unit} * 2);
+    `;
+
+    const errorAlert = css`
+      margin-bottom: calc(${theme.vars.spacing.unit} * 2);
+    `;
+
     return {
-      createOrganization: cssCreateOrganization,
-      'createOrganization--card': bem(cssCreateOrganization, null, 'card'),
-      createOrganization__content: bem(cssCreateOrganization, 'content'),
-      createOrganization__form: bem(cssCreateOrganization, 'form'),
-      createOrganization__header: bem(cssCreateOrganization, 'header'),
-      createOrganization__field: bem(cssCreateOrganization, 'field'),
-      createOrganization__fieldGroup: bem(cssCreateOrganization, 'field-group'),
-      createOrganization__textarea: bem(cssCreateOrganization, 'textarea'),
-      'createOrganization__textarea--error': bem(cssCreateOrganization, 'textarea', 'error'),
-      createOrganization__input: bem(cssCreateOrganization, 'input'),
-      createOrganization__avatarContainer: bem(cssCreateOrganization, 'avatar-container'),
-      createOrganization__actions: bem(cssCreateOrganization, 'actions'),
-      createOrganization__infoContainer: bem(cssCreateOrganization, 'info-container'),
-      createOrganization__value: bem(cssCreateOrganization, 'value'),
-      createOrganization__popup: bem(cssCreateOrganization, 'popup'),
-      createOrganization__errorAlert: bem(cssCreateOrganization, 'error-alert'),
+      root,
+      card,
+      content,
+      form,
+      header,
+      field,
+      fieldGroup,
+      textarea,
+      textareaError,
+      input,
+      avatarContainer,
+      actions,
+      infoContainer,
+      value,
+      popup,
+      errorAlert,
     };
-  }, [theme, colorScheme]);
+  }, [
+    theme.vars.spacing.unit,
+    theme.vars.colors.background.surface,
+    theme.vars.colors.border,
+    theme.vars.borderRadius.large,
+    theme.vars.borderRadius.medium,
+    theme.vars.typography.fontSizes.md,
+    theme.vars.colors.text.primary,
+    theme.vars.colors.primary.main,
+    theme.vars.colors.background.disabled,
+    theme.vars.colors.text.secondary,
+    theme.vars.colors.error.main,
+    colorScheme,
+  ]);
 };
 
 export default useStyles;

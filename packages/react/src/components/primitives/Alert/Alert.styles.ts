@@ -57,9 +57,9 @@ const useStyles = (theme: Theme, colorScheme: string, variant: AlertVariant) => 
         color: ${theme.vars.colors.warning.main};
       `,
       info: css`
-        background-color: ${theme.vars.colors.primary.main};
-        border-color: ${theme.vars.colors.primary.main};
-        color: ${theme.vars.colors.primary.main};
+        background-color: ${theme.vars.colors.info.main};
+        border-color: ${theme.vars.colors.info.main};
+        color: ${theme.vars.colors.info.main};
       `,
     };
 

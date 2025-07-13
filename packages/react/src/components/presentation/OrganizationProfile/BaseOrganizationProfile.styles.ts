@@ -18,7 +18,7 @@
 
 import {css} from '@emotion/css';
 import {useMemo} from 'react';
-import {bem, Theme} from '@asgardeo/browser';
+import {Theme} from '@asgardeo/browser';
 
 /**
  * Creates styles for the BaseOrganizationProfile component using BEM methodology
@@ -28,84 +28,74 @@ import {bem, Theme} from '@asgardeo/browser';
  */
 const useStyles = (theme: Theme, colorScheme: string) => {
   return useMemo(() => {
-    const cssOrganizationProfile = css`
-      padding: calc(${theme.vars.spacing.unit} * 4);
-      min-width: 600px;
-      margin: 0 auto;
-
-      &--card {
+    return {
+      root: css`
+        padding: calc(${theme.vars.spacing.unit} * 4);
+        min-width: 600px;
+        margin: 0 auto;
+      `,
+      card: css`
         background: ${theme.vars.colors.background.surface};
         border-radius: ${theme.vars.borderRadius.large};
-      }
-
-      &__header {
+      `,
+      header: css`
         display: flex;
         align-items: center;
         gap: calc(${theme.vars.spacing.unit} * 2);
         margin-bottom: calc(${theme.vars.spacing.unit} * 3);
         padding-bottom: calc(${theme.vars.spacing.unit} * 2);
-      }
-
-      &__org-info {
+      `,
+      orgInfo: css`
         flex: 1;
-      }
-
-      &__name {
+      `,
+      name: css`
         font-size: 1.5rem;
         font-weight: 600;
         margin: 0 0 8px 0;
         color: ${theme.vars.colors.text.primary};
-      }
-
-      &__handle {
+      `,
+      handle: css`
         font-size: 1rem;
         color: ${theme.vars.colors.text.secondary};
         margin: 0;
         font-family: monospace;
-      }
-
-      &__info-container {
+      `,
+      infoContainer: css`
         display: flex;
         flex-direction: column;
         gap: ${theme.vars.spacing.unit};
-      }
-
-      &__field {
+      `,
+      field: css`
         display: flex;
         align-items: flex-start;
         padding: calc(${theme.vars.spacing.unit} / 2) 0;
         border-bottom: 1px solid ${theme.vars.colors.border};
         min-height: 28px;
         gap: ${theme.vars.spacing.unit};
-
-        &--last {
-          border-bottom: none;
-        }
-      }
-
-      &__field-content {
+      `,
+      fieldLast: css`
+        border-bottom: none;
+      `,
+      fieldContent: css`
         flex: 1;
         display: flex;
         align-items: center;
         gap: ${theme.vars.spacing.unit};
-      }
-
-      &__field-actions {
+      `,
+      fieldActions: css`
         display: flex;
         align-items: center;
         gap: calc(${theme.vars.spacing.unit} / 2);
-      }
-
-      &__label {
+      `,
+      label: css`
         font-size: 0.875rem;
         font-weight: 500;
         color: ${theme.vars.colors.text.secondary};
         width: 120px;
         flex-shrink: 0;
         line-height: 28px;
-      }
-
-      &__value {
+      `,
+      value: css`
         color: ${theme.vars.colors.text.primary};
         flex: 1;
         display: flex;
@@ -115,14 +105,12 @@ const useStyles = (theme: Theme, colorScheme: string) => {
         min-height: 28px;
         line-height: 28px;
         word-break: break-word;
-
-        &--empty {
-          font-style: italic;
-          opacity: 0.7;
-        }
-      }
-
-      &__status-badge {
+      `,
+      valueEmpty: css`
+        font-style: italic;
+        opacity: 0.7;
+      `,
+      statusBadge: css`
         padding: calc(${theme.vars.spacing.unit} / 2) ${theme.vars.spacing.unit};
         border-radius: ${theme.vars.borderRadius.small};
         font-size: 0.75rem;
@@ -130,100 +118,62 @@ const useStyles = (theme: Theme, colorScheme: string) => {
         color: white;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-      }
-
-      &__permissions-list {
+      `,
+      permissionsList: css`
         display: flex;
         flex-wrap: wrap;
         gap: calc(${theme.vars.spacing.unit} / 2);
-      }
-
-      &__permission-badge {
+      `,
+      permissionBadge: css`
         padding: calc(${theme.vars.spacing.unit} / 4) ${theme.vars.spacing.unit};
         border-radius: ${theme.vars.borderRadius.small};
         font-size: 0.75rem;
         background-color: ${theme.vars.colors.primary.main};
         color: ${theme.vars.colors.primary.contrastText};
         border: 1px solid ${theme.vars.colors.border};
-      }
-
-      &__attributes-list {
+      `,
+      attributesList: css`
         display: flex;
         flex-direction: column;
         gap: calc(${theme.vars.spacing.unit} / 4);
-      }
-
-      &__attribute-item {
+      `,
+      attributeItem: css`
         display: flex;
         gap: ${theme.vars.spacing.unit};
         padding: calc(${theme.vars.spacing.unit} / 4) 0;
         align-items: center;
-      }
-
-      &__attribute-key {
+      `,
+      attributeKey: css`
         font-size: 0.75rem;
         font-weight: 500;
         color: ${theme.vars.colors.text.secondary};
         min-width: 80px;
         flex-shrink: 0;
-      }
-
-      &__attribute-value {
+      `,
+      attributeValue: css`
         font-size: 0.75rem;
         color: ${theme.vars.colors.text.primary};
         word-break: break-word;
         flex: 1;
-      }
-
-      &__popup {
+      `,
+      popup: css`
         padding: calc(${theme.vars.spacing.unit} * 2);
-      }
-
-      &__edit-button {
+      `,
+      editButton: css`
         min-width: auto;
         padding: calc(${theme.vars.spacing.unit} / 2);
         min-height: auto;
-      }
-
-      &__placeholder-button {
+      `,
+      placeholderButton: css`
         font-style: italic;
         text-decoration: underline;
         opacity: 0.7;
         padding: 0;
         min-height: auto;
-      }
-
-      &__field-input {
+      `,
+      fieldInput: css`
         margin-bottom: 0;
-      }
-    `;
-
-    return {
-      organizationProfile: cssOrganizationProfile,
-      'organizationProfile--card': bem(cssOrganizationProfile, null, 'card'),
-      organizationProfile__header: bem(cssOrganizationProfile, 'header'),
-      organizationProfile__orgInfo: bem(cssOrganizationProfile, 'org-info'),
-      organizationProfile__name: bem(cssOrganizationProfile, 'name'),
-      organizationProfile__handle: bem(cssOrganizationProfile, 'handle'),
-      organizationProfile__infoContainer: bem(cssOrganizationProfile, 'info-container'),
-      organizationProfile__field: bem(cssOrganizationProfile, 'field'),
-      'organizationProfile__field--last': bem(cssOrganizationProfile, 'field', 'last'),
-      organizationProfile__fieldContent: bem(cssOrganizationProfile, 'field-content'),
-      organizationProfile__fieldActions: bem(cssOrganizationProfile, 'field-actions'),
-      organizationProfile__label: bem(cssOrganizationProfile, 'label'),
-      organizationProfile__value: bem(cssOrganizationProfile, 'value'),
-      'organizationProfile__value--empty': bem(cssOrganizationProfile, 'value', 'empty'),
-      organizationProfile__statusBadge: bem(cssOrganizationProfile, 'status-badge'),
-      organizationProfile__permissionsList: bem(cssOrganizationProfile, 'permissions-list'),
-      organizationProfile__permissionBadge: bem(cssOrganizationProfile, 'permission-badge'),
-      organizationProfile__attributesList: bem(cssOrganizationProfile, 'attributes-list'),
-      organizationProfile__attributeItem: bem(cssOrganizationProfile, 'attribute-item'),
-      organizationProfile__attributeKey: bem(cssOrganizationProfile, 'attribute-key'),
-      organizationProfile__attributeValue: bem(cssOrganizationProfile, 'attribute-value'),
-      organizationProfile__popup: bem(cssOrganizationProfile, 'popup'),
-      organizationProfile__editButton: bem(cssOrganizationProfile, 'edit-button'),
-      organizationProfile__placeholderButton: bem(cssOrganizationProfile, 'placeholder-button'),
-      organizationProfile__fieldInput: bem(cssOrganizationProfile, 'field-input'),
+      `,
     };
   }, [theme, colorScheme]);
 };

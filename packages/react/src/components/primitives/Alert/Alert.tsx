@@ -16,7 +16,15 @@
  * under the License.
  */
 
-import {forwardRef, HTMLAttributes, ReactNode, RefAttributes, ForwardRefExoticComponent} from 'react';
+import {
+  forwardRef,
+  HTMLAttributes,
+  ReactNode,
+  RefAttributes,
+  ForwardRefExoticComponent,
+  createContext,
+  useContext,
+} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
@@ -73,6 +81,10 @@ const getDefaultIcon = (variant: AlertVariant) => {
   }
 };
 
+const AlertVariantContext = createContext<AlertVariant>('info');
+
+export const useAlertVariant = () => useContext(AlertVariantContext);
+
 /**
  * Alert component that displays important information with different severity levels.
  *
@@ -93,26 +105,28 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
     const IconComponent = getDefaultIcon(variant);
 
     return (
-      <div
-        ref={ref}
-        role="alert"
-        style={style}
-        className={cx(
-          withVendorCSSClassPrefix(bem('alert')),
-          styles.alert,
-          styles.variant,
-          withVendorCSSClassPrefix(bem('alert', null, variant)),
-          className,
-        )}
-        {...rest}
-      >
-        {showIcon && (
-          <div className={cx(withVendorCSSClassPrefix(bem('alert', 'icon')), styles.icon)}>
-            <IconComponent />
-          </div>
-        )}
-        <div className={cx(withVendorCSSClassPrefix(bem('alert', 'content')), styles.content)}>{children}</div>
-      </div>
+      <AlertVariantContext.Provider value={variant}>
+        <div
+          ref={ref}
+          role="alert"
+          style={style}
+          className={cx(
+            withVendorCSSClassPrefix(bem('alert')),
+            styles.alert,
+            styles.variant,
+            withVendorCSSClassPrefix(bem('alert', null, variant)),
+            className,
+          )}
+          {...rest}
+        >
+          {showIcon && (
+            <div className={cx(withVendorCSSClassPrefix(bem('alert', 'icon')), styles.icon)}>
+              <IconComponent />
+            </div>
+          )}
+          <div className={cx(withVendorCSSClassPrefix(bem('alert', 'content')), styles.content)}>{children}</div>
+        </div>
+      </AlertVariantContext.Provider>
     );
   },
 );
@@ -122,7 +136,8 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
  */
 const AlertTitle = forwardRef<HTMLHeadingElement, AlertTitleProps>(({children, className, style, ...rest}, ref) => {
   const {theme, colorScheme} = useTheme();
-  const styles = useStyles(theme, colorScheme, 'info');
+  const variant = useAlertVariant();
+  const styles = useStyles(theme, colorScheme, variant);
 
   const {color, ...filteredRest} = rest;
 
@@ -146,7 +161,8 @@ const AlertTitle = forwardRef<HTMLHeadingElement, AlertTitleProps>(({children, c
 const AlertDescription = forwardRef<HTMLParagraphElement, AlertDescriptionProps>(
   ({children, className, style, ...rest}, ref) => {
     const {theme, colorScheme} = useTheme();
-    const styles = useStyles(theme, colorScheme, 'info');
+    const variant = useAlertVariant();
+    const styles = useStyles(theme, colorScheme, variant);
 
     const {color, ...filteredRest} = rest;
 
