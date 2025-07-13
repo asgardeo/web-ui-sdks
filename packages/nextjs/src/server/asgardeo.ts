@@ -17,11 +17,22 @@
  */
 
 import AsgardeoNextClient from '../AsgardeoNextClient';
+import getSessionIdAction from './actions/getSessionId';
 
-/**
- * Server-only singleton for API access.
- * Usage:
- *   import { asgardeo } from '@asgardeo/nextjs/server';
- *   const token = await asgardeo.getAccessToken();
- */
-export const asgardeo = AsgardeoNextClient.getInstance();
+const asgardeo = async () => {
+  const getAccessToken = async (id: string) => {
+    const client: AsgardeoNextClient = AsgardeoNextClient.getInstance();
+    return await client.getAccessToken(id);
+  };
+
+  const getSessionId = async () => {
+    return await getSessionIdAction();
+  };
+
+  return {
+    getAccessToken,
+    getSessionId,
+  };
+};
+
+export default asgardeo;

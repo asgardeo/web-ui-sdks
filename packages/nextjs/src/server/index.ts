@@ -18,6 +18,8 @@
 
 // @asgardeo/nextjs/server exports.
 
+export {default as asgardeo} from './asgardeo';
+
 export {default as AsgardeoProvider} from './AsgardeoProvider';
 export * from './AsgardeoProvider';
 
