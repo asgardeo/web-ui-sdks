@@ -175,6 +175,10 @@ export interface ThemeVars {
       main: string;
       contrastText: string;
     };
+    info: {
+      contrastText: string;
+      main: string;
+    };
     success: {
       main: string;
       contrastText: string;

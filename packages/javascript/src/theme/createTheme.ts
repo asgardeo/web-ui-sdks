@@ -314,6 +314,14 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
     cssVars[`--${prefix}-color-warning-contrastText`] = theme.colors.warning.contrastText;
   }
 
+  // Colors - Info
+  if (theme.colors?.info?.main) {
+    cssVars[`--${prefix}-color-info-main`] = theme.colors.info.main;
+  }
+  if (theme.colors?.info?.contrastText) {
+    cssVars[`--${prefix}-color-info-contrastText`] = theme.colors.info.contrastText;
+  }
+
   // Colors - Text
   if (theme.colors?.text?.primary) {
     cssVars[`--${prefix}-color-text-primary`] = theme.colors.text.primary;
@@ -462,6 +470,10 @@ const toThemeVars = (theme: ThemeConfig): ThemeVars => {
       error: {
         main: `var(--${prefix}-color-error-main)`,
         contrastText: `var(--${prefix}-color-error-contrastText)`,
+      },
+      info: {
+        contrastText: `var(--${prefix}-color-info-contrastText)`,
+        main: `var(--${prefix}-color-info-main)`,
       },
       success: {
         main: `var(--${prefix}-color-success-main)`,
