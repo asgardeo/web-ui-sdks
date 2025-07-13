@@ -19,13 +19,7 @@
 /**
  * Log levels enum
  */
-export enum LogLevel {
-  DEBUG = 0,
-  INFO = 1,
-  WARN = 2,
-  ERROR = 3,
-  SILENT = 4,
-}
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 /**
  * Logger configuration interface
@@ -49,7 +43,7 @@ const PREFIX: string = '🛡️ Asgardeo';
  * Default logger configuration
  */
 const DEFAULT_CONFIG: LoggerConfig = {
-  level: LogLevel.INFO,
+  level: 'info',
   prefix: `${PREFIX}`,
   timestamps: true,
   showLevel: true,
@@ -140,13 +134,13 @@ class Logger {
    */
   private getLevelString(level: LogLevel): string {
     switch (level) {
-      case LogLevel.DEBUG:
+      case 'debug':
         return 'DEBUG';
-      case LogLevel.INFO:
+      case 'info':
         return 'INFO';
-      case LogLevel.WARN:
+      case 'warn':
         return 'WARN';
-      case LogLevel.ERROR:
+      case 'error':
         return 'ERROR';
       default:
         return 'UNKNOWN';
@@ -175,16 +169,16 @@ class Logger {
       let coloredLevel: string;
 
       switch (level) {
-        case LogLevel.DEBUG:
+        case 'debug':
           coloredLevel = `${COLORS.gray}[${levelStr}]${COLORS.reset}`;
           break;
-        case LogLevel.INFO:
+        case 'info':
           coloredLevel = `${COLORS.blue}[${levelStr}]${COLORS.reset}`;
           break;
-        case LogLevel.WARN:
+        case 'warn':
           coloredLevel = `${COLORS.yellow}[${levelStr}]${COLORS.reset}`;
           break;
-        case LogLevel.ERROR:
+        case 'error':
           coloredLevel = `${COLORS.red}[${levelStr}]${COLORS.reset}`;
           break;
         default:
@@ -248,16 +242,16 @@ class Logger {
       parts.push(`%c[${levelStr}]`);
 
       switch (level) {
-        case LogLevel.DEBUG:
+        case 'debug':
           styles.push(BROWSER_STYLES.debug);
           break;
-        case LogLevel.INFO:
+        case 'info':
           styles.push(BROWSER_STYLES.info);
           break;
-        case LogLevel.WARN:
+        case 'warn':
           styles.push(BROWSER_STYLES.warn);
           break;
-        case LogLevel.ERROR:
+        case 'error':
           styles.push(BROWSER_STYLES.error);
           break;
         default:
@@ -272,16 +266,16 @@ class Logger {
 
     // Use appropriate console method
     switch (level) {
-      case LogLevel.DEBUG:
+      case 'debug':
         console.debug(formattedMessage, ...styles, ...args);
         break;
-      case LogLevel.INFO:
+      case 'info':
         console.info(formattedMessage, ...styles, ...args);
         break;
-      case LogLevel.WARN:
+      case 'warn':
         console.warn(formattedMessage, ...styles, ...args);
         break;
-      case LogLevel.ERROR:
+      case 'error':
         console.error(formattedMessage, ...styles, ...args);
         break;
       default:
@@ -297,16 +291,16 @@ class Logger {
 
     // Use appropriate console method
     switch (level) {
-      case LogLevel.DEBUG:
+      case 'debug':
         console.debug(formattedMessage, ...args);
         break;
-      case LogLevel.INFO:
+      case 'info':
         console.info(formattedMessage, ...args);
         break;
-      case LogLevel.WARN:
+      case 'warn':
         console.warn(formattedMessage, ...args);
         break;
-      case LogLevel.ERROR:
+      case 'error':
         console.error(formattedMessage, ...args);
         break;
       default:
@@ -318,28 +312,28 @@ class Logger {
    * Log debug message
    */
   debug(message: string, ...args: any[]): void {
-    this.logMessage(LogLevel.DEBUG, message, ...args);
+    this.logMessage('debug', message, ...args);
   }
 
   /**
    * Log info message
    */
   info(message: string, ...args: any[]): void {
-    this.logMessage(LogLevel.INFO, message, ...args);
+    this.logMessage('info', message, ...args);
   }
 
   /**
    * Log warning message
    */
   warn(message: string, ...args: any[]): void {
-    this.logMessage(LogLevel.WARN, message, ...args);
+    this.logMessage('warn', message, ...args);
   }
 
   /**
    * Log error message
    */
   error(message: string, ...args: any[]): void {
-    this.logMessage(LogLevel.ERROR, message, ...args);
+    this.logMessage('error', message, ...args);
   }
 
   /**
@@ -411,7 +405,7 @@ export const createComponentLogger = (component: string) => {
 export const createPackageLogger = (packageName: string) => {
   return createLogger({
     prefix: `${PREFIX} - ${packageName}`,
-    level: LogLevel.INFO,
+    level: 'info',
     timestamps: true,
     showLevel: true,
   });
