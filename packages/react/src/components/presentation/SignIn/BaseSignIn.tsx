@@ -335,6 +335,13 @@ const BaseSignIn: FC<BaseSignInProps> = props => {
 };
 
 /**
+ * `T3JnYW5pemF0aW9uQXV0aGVudGljYXRvcjpTU08` - OrganizationSSO
+ *    Currently, `App-Native Authentication` doesn't support organization SSO.
+ *    Tracker: TODO: Create `product-is` issue for this.
+ */
+const HIDDEN_AUTHENTICATORS: string[] = ['T3JnYW5pemF0aW9uQXV0aGVudGljYXRvcjpTU08'];
+
+/**
  * Internal component that consumes FlowContext and renders the sign-in UI.
  */
 const BaseSignInContent: FC<BaseSignInProps> = ({
@@ -1128,7 +1135,9 @@ const BaseSignInContent: FC<BaseSignInProps> = ({
         (auth.idp === 'LOCAL' && auth.metadata?.params && auth.metadata.params.length > 0),
     );
 
-    const optionAuthenticators = availableAuthenticators.filter(auth => !userPromptAuthenticators.includes(auth));
+    const optionAuthenticators = availableAuthenticators
+      .filter(auth => !userPromptAuthenticators.includes(auth))
+      .filter(authenticator => !HIDDEN_AUTHENTICATORS.includes(authenticator.authenticatorId));
 
     return (
       <Card className={cx(containerClasses, styles.card)} variant={variant}>
