@@ -118,10 +118,12 @@ const signInAction = async (
       if (signInResult) {
         const idToken = await client.getDecodedIdToken(sessionId);
         const userIdFromToken = idToken['sub'] || signInResult['sub'] || sessionId;
-        const scopes = idToken['scope'] ? idToken['scope'].split(' ') : [];
+        const accessToken = signInResult['accessToken'];
+        const scopes = signInResult['scope'];
         const organizationId = idToken['user_org'] || idToken['organization_id'];
 
         const sessionToken = await SessionManager.createSessionToken(
+          accessToken,
           userIdFromToken,
           sessionId as string,
           scopes,

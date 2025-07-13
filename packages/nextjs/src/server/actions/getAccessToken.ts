@@ -23,12 +23,11 @@ import {cookies} from 'next/headers';
 import SessionManager from '../../utils/SessionManager';
 
 /**
- * Get the session ID from cookies.
- * Tries JWT session first, then falls back to legacy session ID.
+ * Get the access token from the session cookie.
  *
- * @returns The session ID if it exists, undefined otherwise
+ * @returns The access token if it exists, undefined otherwise
  */
-const getSessionId = async (): Promise<string | undefined> => {
+const getAccessToken = async (): Promise<string | undefined> => {
   const cookieStore: ReadonlyRequestCookies = await cookies();
 
   const sessionToken = cookieStore.get(SessionManager.getSessionCookieName())?.value;
@@ -37,7 +36,7 @@ const getSessionId = async (): Promise<string | undefined> => {
     try {
       const sessionPayload = await SessionManager.verifySessionToken(sessionToken);
 
-      return sessionPayload.sessionId;
+      return sessionPayload['accessToken'] as string;
     } catch (error) {
       return undefined;
     }
@@ -46,4 +45,4 @@ const getSessionId = async (): Promise<string | undefined> => {
   return undefined;
 };
 
-export default getSessionId;
+export default getAccessToken;

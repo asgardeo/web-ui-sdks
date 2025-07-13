@@ -89,15 +89,17 @@ class SessionManager {
    * Create a session cookie with user information
    */
   static async createSessionToken(
+    accessToken: string,
     userId: string,
     sessionId: string,
-    scopes: string[],
+    scopes: string,
     organizationId?: string,
     expirySeconds: number = this.DEFAULT_EXPIRY_SECONDS,
   ): Promise<string> {
     const secret = this.getSecret();
 
     const jwt = await new SignJWT({
+      accessToken,
       sessionId,
       scopes,
       organizationId,

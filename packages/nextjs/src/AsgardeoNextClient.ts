@@ -381,27 +381,33 @@ class AsgardeoNextClient<T extends AsgardeoNextConfig = AsgardeoNextConfig> exte
     return this.asgardeo.isSignedIn(sessionId as string);
   }
 
-  getAccessToken(sessionId?: string): Promise<string> {
-    if (!sessionId) {
-      return Promise.reject(new Error('Session ID is required to get access token'));
+  /**
+   * Gets the access token from the session cookie if no sessionId is provided,
+   * otherwise falls back to legacy client method.
+   */
+  async getAccessToken(sessionId?: string): Promise<string> {
+    const {default: getAccessToken} = await import('./server/actions/getAccessToken');
+    const token = await getAccessToken();
+
+    if (typeof token !== 'string' || !token) {
+      throw new Error('Access token not found');
+      throw new AsgardeoRuntimeError(
+        'Failed to get access token.',
+        'AsgardeoNextClient-getAccessToken-RuntimeError-003',
+        'nextjs',
+        'An error occurred while obtaining the access token. Please check your configuration and network connection.',
+      );
     }
 
-    return this.asgardeo.getAccessToken(sessionId as string).then(
-      token => {
-        return token;
-      },
-      error => {
-        throw error;
-      },
-    );
+    return token;
   }
 
   /**
    * Get the decoded ID token for a session
    */
-  async getDecodedIdToken(sessionId?: string): Promise<IdToken> {
+  async getDecodedIdToken(sessionId?: string, idToken?: string): Promise<IdToken> {
     await this.ensureInitialized();
-    return this.asgardeo.getDecodedIdToken(sessionId as string);
+    return this.asgardeo.getDecodedIdToken(sessionId as string, idToken);
   }
 
   override getConfiguration(): T {
