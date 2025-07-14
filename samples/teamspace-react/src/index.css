@@ -21,19 +21,6 @@
   background: #94a3b8;
 }
 
-/* Smooth transitions */
-* {
-  transition: colors 0.15s ease-in-out;
-}
-
-/* Focus styles */
-button:focus,
-input:focus,
-textarea:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
