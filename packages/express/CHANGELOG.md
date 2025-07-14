@@ -1,5 +1,13 @@
 # @asgardeo/express
 
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7e8ea1c`](https://github.com/asgardeo/web-ui-sdks/commit/7e8ea1ca9219c1c95404933e8261b2abfbcad767)]:
+  - @asgardeo/node@0.0.10
+
 ## 0.0.8
 
 ### Patch Changes
