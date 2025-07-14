@@ -1,5 +1,16 @@
 # @asgardeo/react
 
+## 0.5.12
+
+### Patch Changes
+
+- [#106](https://github.com/asgardeo/web-ui-sdks/pull/106)
+  [`7e8ea1c`](https://github.com/asgardeo/web-ui-sdks/commit/7e8ea1ca9219c1c95404933e8261b2abfbcad767) Thanks
+  [@brionmario](https://github.com/brionmario)! - Fix `getAccessToken` imperative usage
+
+- Updated dependencies []:
+  - @asgardeo/browser@0.1.8
+
 ## 0.5.11
 
 ### Patch Changes

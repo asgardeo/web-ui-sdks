@@ -1,5 +1,17 @@
 # @asgardeo/node
 
+## 0.0.10
+
+### Patch Changes
+
+- [#106](https://github.com/asgardeo/web-ui-sdks/pull/106)
+  [`7e8ea1c`](https://github.com/asgardeo/web-ui-sdks/commit/7e8ea1ca9219c1c95404933e8261b2abfbcad767) Thanks
+  [@brionmario](https://github.com/brionmario)! - Fix `getAccessToken` imperative usage
+
+- Updated dependencies
+  [[`7e8ea1c`](https://github.com/asgardeo/web-ui-sdks/commit/7e8ea1ca9219c1c95404933e8261b2abfbcad767)]:
+  - @asgardeo/javascript@0.1.8
+
 ## 0.0.9
 
 ### Patch Changes
