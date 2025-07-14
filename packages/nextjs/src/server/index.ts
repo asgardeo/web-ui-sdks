@@ -16,25 +16,15 @@
  * under the License.
  */
 
-import {build} from 'esbuild';
+// @asgardeo/nextjs/server exports.
 
-const commonOptions = {
-  bundle: false,
-  entryPoints: ['src/index.ts', 'src/server/index.ts'],
-  platform: 'node',
-  target: ['node18'],
-};
+export {default as asgardeo} from './asgardeo';
 
-await build({
-  ...commonOptions,
-  format: 'esm',
-  outdir: 'dist/esm',
-  sourcemap: true,
-});
+export {default as AsgardeoProvider} from './AsgardeoProvider';
+export * from './AsgardeoProvider';
 
-await build({
-  ...commonOptions,
-  format: 'cjs',
-  outdir: 'dist/cjs',
-  sourcemap: true,
-});
+export {default as asgardeoMiddleware} from './middleware/asgardeoMiddleware';
+export * from './middleware/asgardeoMiddleware';
+
+export {default as createRouteMatcher} from './middleware/createRouteMatcher';
+export * from './middleware/createRouteMatcher';

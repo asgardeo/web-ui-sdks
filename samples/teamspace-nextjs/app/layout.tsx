@@ -3,7 +3,7 @@ import type {Metadata} from 'next';
 import {Inter} from 'next/font/google';
 import './globals.css';
 import {ThemeProvider} from '@/components/ThemeProvider';
-import {AsgardeoProvider} from '@asgardeo/nextjs';
+import {AsgardeoProvider} from '@asgardeo/nextjs/server';
 
 const inter = Inter({subsets: ['latin']});
 

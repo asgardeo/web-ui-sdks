@@ -93,11 +93,13 @@ const handleOAuthCallbackAction = async (
     if (signInResult) {
       try {
         const idToken = await asgardeoClient.getDecodedIdToken(sessionId);
+        const accessToken: string = signInResult['access_token'];
         const userIdFromToken = idToken.sub || signInResult['sub'] || sessionId;
         const scopes = idToken['scope'] ? idToken['scope'].split(' ') : [];
         const organizationId = idToken['user_org'] || idToken['organization_id'];
 
         const sessionToken = await SessionManager.createSessionToken(
+          accessToken,
           userIdFromToken,
           sessionId,
           scopes,

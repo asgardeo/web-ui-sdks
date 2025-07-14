@@ -16,25 +16,10 @@
  * under the License.
  */
 
-import {build} from 'esbuild';
+import {createLogger} from '@asgardeo/node';
 
-const commonOptions = {
-  bundle: false,
-  entryPoints: ['src/index.ts', 'src/server/index.ts'],
-  platform: 'node',
-  target: ['node18'],
-};
-
-await build({
-  ...commonOptions,
-  format: 'esm',
-  outdir: 'dist/esm',
-  sourcemap: true,
+const logger: any = createLogger({
+  level: 'error',
 });
 
-await build({
-  ...commonOptions,
-  format: 'cjs',
-  outdir: 'dist/cjs',
-  sourcemap: true,
-});
+export default logger;

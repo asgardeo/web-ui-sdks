@@ -18,7 +18,6 @@
 
 'use server';
 
-import {CookieConfig} from '@asgardeo/node';
 import {ReadonlyRequestCookies} from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 import {cookies} from 'next/headers';
 import SessionManager from '../../utils/SessionManager';

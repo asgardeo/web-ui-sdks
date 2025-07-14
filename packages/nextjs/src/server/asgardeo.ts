@@ -16,25 +16,23 @@
  * under the License.
  */
 
-import {build} from 'esbuild';
+import AsgardeoNextClient from '../AsgardeoNextClient';
+import getSessionIdAction from './actions/getSessionId';
 
-const commonOptions = {
-  bundle: false,
-  entryPoints: ['src/index.ts', 'src/server/index.ts'],
-  platform: 'node',
-  target: ['node18'],
+const asgardeo = async () => {
+  const getAccessToken = async (id: string) => {
+    const client: AsgardeoNextClient = AsgardeoNextClient.getInstance();
+    return await client.getAccessToken(id);
+  };
+
+  const getSessionId = async () => {
+    return await getSessionIdAction();
+  };
+
+  return {
+    getAccessToken,
+    getSessionId,
+  };
 };
 
-await build({
-  ...commonOptions,
-  format: 'esm',
-  outdir: 'dist/esm',
-  sourcemap: true,
-});
-
-await build({
-  ...commonOptions,
-  format: 'cjs',
-  outdir: 'dist/cjs',
-  sourcemap: true,
-});
+export default asgardeo;

@@ -17,7 +17,7 @@
  */
 
 import {SignJWT, jwtVerify, JWTPayload} from 'jose';
-import {AsgardeoRuntimeError} from '@asgardeo/node';
+import {AsgardeoRuntimeError, CookieConfig} from '@asgardeo/node';
 
 /**
  * Session token payload interface
@@ -41,9 +41,7 @@ export interface SessionTokenPayload extends JWTPayload {
  * Session management utility class for JWT-based session cookies
  */
 class SessionManager {
-  private static readonly SESSION_COOKIE_NAME = 'asgardeo_session';
-  private static readonly TEMP_SESSION_COOKIE_NAME = 'asgardeo_temp_session';
-  private static readonly DEFAULT_EXPIRY_SECONDS = 3600; // 1 hour
+  private static readonly DEFAULT_EXPIRY_SECONDS = 3600;
 
   /**
    * Get the signing secret from environment variable
@@ -81,7 +79,7 @@ class SessionManager {
     })
       .setProtectedHeader({alg: 'HS256'})
       .setIssuedAt()
-      .setExpirationTime('15m') // Temporary sessions expire in 15 minutes
+      .setExpirationTime('15m')
       .sign(secret);
 
     return jwt;
@@ -91,15 +89,17 @@ class SessionManager {
    * Create a session cookie with user information
    */
   static async createSessionToken(
+    accessToken: string,
     userId: string,
     sessionId: string,
-    scopes: string[],
+    scopes: string,
     organizationId?: string,
     expirySeconds: number = this.DEFAULT_EXPIRY_SECONDS,
   ): Promise<string> {
     const secret = this.getSecret();
 
     const jwt = await new SignJWT({
+      accessToken,
       sessionId,
       scopes,
       organizationId,
@@ -178,7 +178,7 @@ class SessionManager {
       secure: process.env['NODE_ENV'] === 'production',
       sameSite: 'lax' as const,
       path: '/',
-      maxAge: 15 * 60, // 15 minutes
+      maxAge: 15 * 60,
     };
   }
 
@@ -186,14 +186,14 @@ class SessionManager {
    * Get session cookie name
    */
   static getSessionCookieName(): string {
-    return this.SESSION_COOKIE_NAME;
+    return CookieConfig.SESSION_COOKIE_NAME;
   }
 
   /**
    * Get temporary session cookie name
    */
   static getTempSessionCookieName(): string {
-    return this.TEMP_SESSION_COOKIE_NAME;
+    return CookieConfig.TEMP_SESSION_COOKIE_NAME;
   }
 }
 

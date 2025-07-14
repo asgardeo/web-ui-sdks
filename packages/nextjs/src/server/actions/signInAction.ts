@@ -93,13 +93,6 @@ const signInAction = async (
         tempSessionToken,
         SessionManager.getTempSessionCookieOptions(),
       );
-
-      cookieStore.set(CookieConfig.SESSION_COOKIE_NAME, sessionId, {
-        httpOnly: CookieConfig.DEFAULT_HTTP_ONLY,
-        maxAge: CookieConfig.DEFAULT_MAX_AGE,
-        sameSite: CookieConfig.DEFAULT_SAME_SITE,
-        secure: CookieConfig.DEFAULT_SECURE,
-      });
     }
 
     // If no payload provided, redirect to sign-in URL for redirect-based sign-in.
@@ -125,12 +118,14 @@ const signInAction = async (
       if (signInResult) {
         const idToken = await client.getDecodedIdToken(sessionId);
         const userIdFromToken = idToken['sub'] || signInResult['sub'] || sessionId;
-        const scopes = idToken['scope'] ? idToken['scope'].split(' ') : [];
+        const accessToken = signInResult['accessToken'];
+        const scopes = signInResult['scope'];
         const organizationId = idToken['user_org'] || idToken['organization_id'];
 
         const sessionToken = await SessionManager.createSessionToken(
+          accessToken,
           userIdFromToken,
-          sessionId,
+          sessionId as string,
           scopes,
           organizationId,
         );

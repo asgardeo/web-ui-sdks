@@ -242,8 +242,8 @@ export class AsgardeoNodeClient<T> {
    * @memberof AsgardeoNodeClient
    *
    */
-  public async getDecodedIdToken(userId?: string): Promise<IdToken> {
-    return this._authCore.getDecodedIdToken(userId);
+  public async getDecodedIdToken(userId?: string, idToken?: string): Promise<IdToken> {
+    return this._authCore.getDecodedIdToken(userId, idToken);
   }
 
   /**

@@ -15,13 +15,19 @@
   "author": "WSO2",
   "license": "Apache-2.0",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "main": "dist/esm/index.js",
+  "module": "dist/esm/index.js",
   "commonjs": "dist/cjs/index.js",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js"
+    },
+    "./server": {
+      "types": "./dist/types/server/index.d.ts",
+      "import": "./dist/esm/server/index.js",
+      "require": "./dist/cjs/server/index.js"
     }
   },
   "files": [
@@ -36,7 +42,7 @@
     "directory": "packages/next"
   },
   "scripts": {
-    "build": "pnpm clean && node esbuild.config.mjs && tsc -p tsconfig.lib.json --outDir dist",
+    "build": "pnpm clean && node esbuild.config.mjs && tsc -p tsconfig.lib.json --outDir dist/esm",
     "clean": "rimraf dist",
     "fix:lint": "eslint . --ext .js,.jsx,.ts,.tsx,.cjs,.mjs",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.cjs,.mjs",

@@ -70,17 +70,15 @@ export const getSessionFromRequest = async (request: NextRequest): Promise<Sessi
  */
 export const getSessionIdFromRequest = async (request: NextRequest): Promise<string | undefined> => {
   try {
-    // Try JWT session first
     const sessionPayload = await getSessionFromRequest(request);
+
     if (sessionPayload) {
       return sessionPayload.sessionId;
     }
 
-    // Fall back to legacy session ID cookie for backward compatibility
-    return request.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+    return Promise.resolve(undefined);
   } catch {
-    // Fall back to legacy session ID cookie
-    return request.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
+    return Promise.resolve(undefined);
   }
 };
 
@@ -102,17 +100,4 @@ export const getTempSessionFromRequest = async (request: NextRequest): Promise<s
   } catch {
     return undefined;
   }
-};
-
-/**
- * Legacy function for backward compatibility.
- * Checks if a request has a valid session ID in cookies.
- *
- * @deprecated Use hasValidSession instead for JWT-based sessions
- * @param request - The Next.js request object
- * @returns True if a session ID exists, false otherwise
- */
-export const hasValidSessionLegacy = (request: NextRequest): boolean => {
-  const sessionId = request.cookies.get(CookieConfig.SESSION_COOKIE_NAME)?.value;
-  return Boolean(sessionId && sessionId.trim().length > 0);
 };

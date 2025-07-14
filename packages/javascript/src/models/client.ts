@@ -26,6 +26,7 @@ import {EmbeddedSignInFlowHandleRequestPayload} from './embedded-signin-flow';
 import {Organization} from './organization';
 import {User, UserProfile} from './user';
 import {TokenResponse} from './token';
+import {Storage} from './store';
 
 export type SignInOptions = Record<string, unknown>;
 export type SignOutOptions = Record<string, unknown>;
@@ -87,9 +88,10 @@ export interface AsgardeoClient<T> {
    * Initializes the authentication client with provided configuration.
    *
    * @param config - SDK Client instance configuration options.
+   * @param storage - Optional storage instance to persist data (e.g., session, user profile).
    * @returns Promise resolving to boolean indicating success.
    */
-  initialize(config: T): Promise<boolean>;
+  initialize(config: T, storage?: Storage): Promise<boolean>;
 
   /**
    * Checks if the client is currently loading.

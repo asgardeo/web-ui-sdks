@@ -18,14 +18,31 @@
 
 'use server';
 
-import {CookieConfig} from '@asgardeo/node';
 import {ReadonlyRequestCookies} from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 import {cookies} from 'next/headers';
+import SessionManager from '../../utils/SessionManager';
 
-const deleteSessionId = async (): Promise<void> => {
+/**
+ * Get the access token from the session cookie.
+ *
+ * @returns The access token if it exists, undefined otherwise
+ */
+const getAccessToken = async (): Promise<string | undefined> => {
   const cookieStore: ReadonlyRequestCookies = await cookies();
 
-  await cookieStore.delete(CookieConfig.SESSION_COOKIE_NAME);
+  const sessionToken = cookieStore.get(SessionManager.getSessionCookieName())?.value;
+
+  if (sessionToken) {
+    try {
+      const sessionPayload = await SessionManager.verifySessionToken(sessionToken);
+
+      return sessionPayload['accessToken'] as string;
+    } catch (error) {
+      return undefined;
+    }
+  }
+
+  return undefined;
 };
 
-export default deleteSessionId;
+export default getAccessToken;
