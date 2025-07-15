@@ -16,12 +16,13 @@
  * under the License.
  */
 
-import {CSSProperties, FC, InputHTMLAttributes, ReactNode} from 'react';
+import {FC, InputHTMLAttributes, ReactNode} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import useStyles from './TextField.styles';
 
 export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className'> {
   /**
@@ -81,73 +82,41 @@ const TextField: FC<TextFieldProps> = ({
   style = {},
   ...rest
 }) => {
-  const {theme} = useTheme();
-
-  // Calculate padding based on icons
+  const {theme, colorScheme} = useTheme();
+  const hasError = !!error;
   const hasStartIcon = !!startIcon;
   const hasEndIcon = !!endIcon;
-  const leftPadding = hasStartIcon ? theme.spacing.unit * 5 : theme.spacing.unit * 1.5;
-  const rightPadding = hasEndIcon ? theme.spacing.unit * 5 : theme.spacing.unit * 1.5;
+  const styles = useStyles(theme, colorScheme, disabled, hasError, hasStartIcon, hasEndIcon);
 
-  const inputStyle: CSSProperties = {
-    width: '100%',
-    padding: `${theme.spacing.unit}px ${rightPadding}px ${theme.spacing.unit}px ${leftPadding}px`,
-    border: `1px solid ${error ? theme.colors.error.main : theme.colors.border}`,
-    borderRadius: theme.borderRadius.medium,
-    fontSize: '1rem',
-    color: theme.colors.text.primary,
-    backgroundColor: disabled ? theme.colors.background.disabled : theme.colors.background.surface,
-    outline: 'none',
-    transition: 'border-color 0.2s ease',
-  };
+  const inputClassName = cx(
+    withVendorCSSClassPrefix(bem('text-field', 'input')),
+    styles.input,
+    hasError && styles.inputError,
+    disabled && styles.inputDisabled,
+  );
 
-  const inputContainerStyle: CSSProperties = {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-  };
+  const containerClassName = cx(withVendorCSSClassPrefix(bem('text-field', 'container')), styles.inputContainer);
 
-  const iconButtonStyle: CSSProperties = {
-    position: 'absolute',
-    background: 'none',
-    border: 'none',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    padding: theme.spacing.unit / 2,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: theme.colors.text.secondary,
-    opacity: disabled ? 0.5 : 1,
-    top: '50%',
-    transform: 'translateY(-50%)',
-  };
+  const startIconClassName = cx(withVendorCSSClassPrefix(bem('text-field', 'start-icon')), styles.startIcon);
 
-  const startIconStyle: CSSProperties = {
-    ...iconButtonStyle,
-    left: theme.spacing.unit,
-  };
-
-  const endIconStyle: CSSProperties = {
-    ...iconButtonStyle,
-    right: theme.spacing.unit,
-  };
+  const endIconClassName = cx(withVendorCSSClassPrefix(bem('text-field', 'end-icon')), styles.endIcon);
 
   return (
     <FormControl
       error={error}
       helperText={helperText}
-      className={clsx(withVendorCSSClassPrefix('text-field'), className)}
+      className={cx(withVendorCSSClassPrefix(bem('text-field')), className)}
       style={style}
     >
       {label && (
-        <InputLabel required={required} error={!!error}>
+        <InputLabel required={required} error={hasError}>
           {label}
         </InputLabel>
       )}
-      <div style={inputContainerStyle}>
+      <div className={containerClassName}>
         {startIcon && (
           <div
-            style={startIconStyle}
+            className={startIconClassName}
             onClick={onStartIconClick}
             role={onStartIconClick ? 'button' : undefined}
             tabIndex={onStartIconClick && !disabled ? 0 : undefined}
@@ -157,16 +126,16 @@ const TextField: FC<TextFieldProps> = ({
           </div>
         )}
         <input
-          style={inputStyle}
+          className={inputClassName}
           type={type}
           disabled={disabled}
-          aria-invalid={!!error}
+          aria-invalid={hasError}
           aria-required={required}
           {...rest}
         />
         {endIcon && (
           <div
-            style={endIconStyle}
+            className={endIconClassName}
             onClick={onEndIconClick}
             role={onEndIconClick ? 'button' : undefined}
             tabIndex={onEndIconClick && !disabled ? 0 : undefined}

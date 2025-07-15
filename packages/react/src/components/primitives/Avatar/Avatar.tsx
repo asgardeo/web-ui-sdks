@@ -16,10 +16,11 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import clsx from 'clsx';
-import {CSSProperties, FC, JSX, useMemo} from 'react';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import {cx} from '@emotion/css';
+import {FC, JSX, useMemo} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
+import useStyles from './Avatar.styles';
 
 export interface AvatarProps {
   /**
@@ -57,47 +58,6 @@ export interface AvatarProps {
   variant?: 'circular' | 'square';
 }
 
-const useStyles = ({
-  size,
-  variant,
-  backgroundColor,
-}: {
-  size: number;
-  variant: 'circular' | 'square';
-  backgroundColor?: string;
-}): {
-  avatar: CSSProperties;
-  image: CSSProperties;
-} => {
-  const {theme, colorScheme} = useTheme();
-
-  return useMemo(
-    () => ({
-      avatar: {
-        alignItems: 'center',
-        background: backgroundColor || theme.vars.colors.background.surface,
-        border: backgroundColor ? 'none' : `1px solid ${theme.vars.colors.border}`,
-        borderRadius: variant === 'circular' ? '50%' : '8px',
-        color: backgroundColor ? '#ffffff' : theme.vars.colors.text.primary,
-        display: 'flex',
-        fontSize: `${size * 0.4}px`,
-        fontWeight: 600,
-        height: `${size}px`,
-        justifyContent: 'center',
-        overflow: 'hidden',
-        textShadow: backgroundColor ? '0 1px 2px rgba(0, 0, 0, 0.1)' : 'none',
-        width: `${size}px`,
-      } as CSSProperties,
-      image: {
-        height: '100%',
-        objectFit: 'cover',
-        width: '100%',
-      } as CSSProperties,
-    }),
-    [size, theme, colorScheme, variant, backgroundColor],
-  );
-};
-
 export const Avatar: FC<AvatarProps> = ({
   alt = 'User avatar',
   background = 'random',
@@ -107,6 +67,8 @@ export const Avatar: FC<AvatarProps> = ({
   size = 64,
   variant = 'circular',
 }): JSX.Element => {
+  const {theme, colorScheme} = useTheme();
+
   const generateBackgroundColor = (inputString: string): string => {
     const hash = inputString.split('').reduce((acc, char) => {
       const charCode = char.charCodeAt(0);
@@ -148,11 +110,7 @@ export const Avatar: FC<AvatarProps> = ({
     return background;
   }, [background, name, imageUrl]);
 
-  const styles: {avatar: CSSProperties; image: CSSProperties} = useStyles({
-    size,
-    variant,
-    backgroundColor,
-  });
+  const styles = useStyles(theme, colorScheme, size, variant, backgroundColor);
 
   const getInitials = (fullName: string): string =>
     fullName
@@ -164,41 +122,27 @@ export const Avatar: FC<AvatarProps> = ({
 
   const renderContent = (): JSX.Element | string => {
     if (imageUrl) {
-      return <img src={imageUrl} alt={alt} style={styles.image} />;
+      return (
+        <img src={imageUrl} alt={alt} className={cx(withVendorCSSClassPrefix(bem('avatar', 'image')), styles.image)} />
+      );
     }
     if (name) {
       return getInitials(name);
     }
 
-    // Skeleton loading animation
-    return (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
-          backgroundSize: '200% 100%',
-          animation: 'skeleton-loading 1.5s infinite',
-          borderRadius: variant === 'circular' ? '50%' : '8px',
-        }}
-      />
-    );
+    return <div className={cx(withVendorCSSClassPrefix(bem('avatar', 'skeleton')), styles.skeleton)} />;
   };
 
   return (
-    <div style={styles.avatar} className={clsx(withVendorCSSClassPrefix('avatar'), className)}>
-      <style>
-        {`
-          @keyframes skeleton-loading {
-            0% {
-              background-position: -200% 0;
-            }
-            100% {
-              background-position: 200% 0;
-            }
-          }
-        `}
-      </style>
+    <div
+      className={cx(
+        withVendorCSSClassPrefix(bem('avatar')),
+        styles.avatar,
+        styles.variant,
+        withVendorCSSClassPrefix(bem('avatar', null, variant)),
+        className,
+      )}
+    >
       {renderContent()}
     </div>
   );

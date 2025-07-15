@@ -30,8 +30,8 @@ import {
   FloatingFocusManager,
   FloatingPortal,
 } from '@floating-ui/react';
-import clsx from 'clsx';
-import {CSSProperties, FC, ReactElement, ReactNode, useMemo, useRef, useState} from 'react';
+import {cx} from '@emotion/css';
+import {FC, ReactElement, ReactNode, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import getMappedUserProfileValue from '../../../utils/getMappedUserProfileValue';
 import {Avatar} from '../../primitives/Avatar/Avatar';
@@ -39,135 +39,7 @@ import Button from '../../primitives/Button/Button';
 import LogOut from '../../primitives/Icons/LogOut';
 import User from '../../primitives/Icons/User';
 import Typography from '../../primitives/Typography/Typography';
-
-const useStyles = () => {
-  const {theme, colorScheme} = useTheme();
-
-  return useMemo(
-    () => ({
-      trigger: {
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: theme.vars.spacing.unit,
-        padding: `calc(${theme.vars.spacing.unit} * 0.5)`,
-        border: 'none',
-        backgroundColor: 'none',
-        cursor: 'pointer',
-        borderRadius: theme.vars.borderRadius.medium,
-        '&:hover': {
-          backgroundColor: theme.vars.colors.background.surface,
-        },
-      } as CSSProperties,
-      userName: {
-        color: theme.vars.colors.text.primary,
-        fontWeight: 500,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        maxWidth: '120px',
-      } as CSSProperties,
-      dropdownContent: {
-        minWidth: '270px',
-        maxWidth: '500px',
-        backgroundColor: theme.vars.colors.background.surface,
-        borderRadius: theme.vars.borderRadius.medium,
-        boxShadow: theme.vars.shadows.medium,
-        border: `1px solid ${theme.vars.colors.border}`,
-        outline: 'none',
-        zIndex: 1000,
-      } as CSSProperties,
-      dropdownMenu: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-      } as CSSProperties,
-      menuItem: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        gap: theme.vars.spacing.unit,
-        padding: `calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 2)`,
-        width: '100%',
-        color: theme.vars.colors.text.primary,
-        textDecoration: 'none',
-        border: 'none',
-        backgroundColor: 'none',
-        cursor: 'pointer',
-        fontSize: '0.875rem',
-        textAlign: 'left',
-        borderRadius: theme.vars.borderRadius.medium,
-        transition: 'background-color 0.15s ease-in-out',
-      } as CSSProperties,
-      menuItemAnchor: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        gap: theme.vars.spacing.unit,
-        padding: `calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 2)`,
-        width: '100%',
-        color: theme.vars.colors.text.primary,
-        textDecoration: 'none',
-        border: 'none',
-        background: 'none',
-        cursor: 'pointer',
-        fontSize: '0.875rem',
-        textAlign: 'left',
-        borderRadius: theme.vars.borderRadius.medium,
-        transition: 'background-color 0.15s ease-in-out',
-      } as CSSProperties,
-      divider: {
-        margin: `calc(${theme.vars.spacing.unit} * 0.5) 0`,
-        borderBottom: `1px solid ${theme.vars.colors.border}`,
-      } as CSSProperties,
-      dropdownHeader: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: theme.vars.spacing.unit,
-        padding: `calc(${theme.vars.spacing.unit} * 1.5)`,
-        borderBottom: `1px solid ${theme.vars.colors.border}`,
-      } as CSSProperties,
-      headerInfo: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `calc(${theme.vars.spacing.unit} / 4)`,
-        flex: 1,
-        minWidth: 0,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      } as CSSProperties,
-      headerName: {
-        color: theme.vars.colors.text.primary,
-        fontSize: '1rem',
-        fontWeight: 500,
-        margin: 0,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      } as CSSProperties,
-      headerEmail: {
-        color: theme.vars.colors.text.secondary,
-        fontSize: '0.875rem',
-        margin: 0,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      } as CSSProperties,
-      loadingContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '80px',
-        gap: theme.vars.spacing.unit,
-      } as CSSProperties,
-      loadingText: {
-        color: theme.vars.colors.text.secondary,
-        fontSize: '0.875rem',
-      } as CSSProperties,
-    }),
-    [theme, colorScheme],
-  );
-};
+import useStyles from './BaseUserDropdown.styles';
 
 interface MenuItem {
   href?: string;
@@ -252,10 +124,10 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
   onSignOut,
   attributeMapping = {},
 }): ReactElement => {
-  const styles = useStyles();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme);
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
-  const {theme, colorScheme} = useTheme();
 
   const {refs, floatingStyles, context} = useFloating({
     open: isOpen,
@@ -303,7 +175,6 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
     setIsOpen(false);
   };
 
-  // Create default menu items
   const defaultMenuItems: MenuItem[] = [];
 
   if (onManageProfile) {
@@ -322,22 +193,21 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
     });
   }
 
-  // Merge custom menu items with default ones
   const allMenuItems = [...menuItems];
+
   if (defaultMenuItems.length > 0) {
-    // Add divider before default items if there are custom items
     if (menuItems.length > 0) {
-      allMenuItems.push({label: '', onClick: undefined}); // Divider placeholder
+      allMenuItems.push({label: '', onClick: undefined});
     }
+
     allMenuItems.push(...defaultMenuItems);
   }
 
   return (
-    <div className={clsx(withVendorCSSClassPrefix('user-dropdown'), className)}>
+    <div className={cx(withVendorCSSClassPrefix('user-dropdown'), className)}>
       <Button
         ref={refs.setReference}
-        className={withVendorCSSClassPrefix('user-dropdown__trigger')}
-        style={styles.trigger}
+        className={cx(withVendorCSSClassPrefix('user-dropdown__trigger'), styles.trigger)}
         color="tertiary"
         variant="text"
         size="medium"
@@ -352,8 +222,7 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
         {showTriggerLabel && (
           <Typography
             variant="body2"
-            className={withVendorCSSClassPrefix('user-dropdown__trigger-label')}
-            style={styles.userName}
+            className={cx(withVendorCSSClassPrefix('user-dropdown__trigger-label'), styles.userName)}
           >
             {getDisplayName()}
           </Typography>
@@ -365,18 +234,18 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
           <FloatingFocusManager context={context} modal={false}>
             <div
               ref={refs.setFloating}
-              className={withVendorCSSClassPrefix('user-dropdown__content')}
-              style={{...floatingStyles, ...styles.dropdownContent}}
+              className={cx(withVendorCSSClassPrefix('user-dropdown__content'), styles.dropdownContent)}
+              style={floatingStyles}
               {...getFloatingProps()}
             >
-              <div className={withVendorCSSClassPrefix('user-dropdown__header')} style={styles.dropdownHeader}>
+              <div className={cx(withVendorCSSClassPrefix('user-dropdown__header'), styles.dropdownHeader)}>
                 <Avatar
                   imageUrl={getMappedUserProfileValue('picture', mergedMappings, user)}
                   name={getDisplayName()}
                   size={avatarSize * 1.25}
                   alt={`${getDisplayName()}'s avatar`}
                 />
-                <div className={withVendorCSSClassPrefix('user-dropdown__header-info')} style={styles.headerInfo}>
+                <div className={cx(withVendorCSSClassPrefix('user-dropdown__header-info'), styles.headerInfo)}>
                   <Typography
                     noWrap
                     className={withVendorCSSClassPrefix('user-dropdown__header-name')}
@@ -396,20 +265,18 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                   </Typography>
                 </div>
               </div>
-              <div className={withVendorCSSClassPrefix('user-dropdown__menu')} style={styles.dropdownMenu}>
+              <div className={cx(withVendorCSSClassPrefix('user-dropdown__menu'), styles.dropdownMenu)}>
                 {allMenuItems.map((item, index) => (
                   <div key={index}>
                     {item.label === '' ? (
-                      // Render divider for empty label placeholder
-                      <div className={withVendorCSSClassPrefix('user-dropdown__menu-divider')} style={styles.divider} />
+                      <div className={cx(withVendorCSSClassPrefix('user-dropdown__menu-divider'), styles.divider)} />
                     ) : item.href ? (
                       <a
                         href={item.href}
                         style={{
-                          ...styles.menuItemAnchor,
                           backgroundColor: hoveredItemIndex === index ? theme.vars.colors.action?.hover : 'transparent',
                         }}
-                        className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
+                        className={cx(withVendorCSSClassPrefix('user-dropdown__menu-item'), styles.menuItemAnchor)}
                         onMouseEnter={() => setHoveredItemIndex(index)}
                         onMouseLeave={() => setHoveredItemIndex(null)}
                         onFocus={() => setHoveredItemIndex(index)}
@@ -422,10 +289,9 @@ export const BaseUserDropdown: FC<BaseUserDropdownProps> = ({
                       <Button
                         onClick={() => handleMenuItemClick(item)}
                         style={{
-                          ...styles.menuItem,
                           backgroundColor: hoveredItemIndex === index ? theme.vars.colors.action?.hover : 'transparent',
                         }}
-                        className={withVendorCSSClassPrefix('user-dropdown__menu-item')}
+                        className={cx(withVendorCSSClassPrefix('user-dropdown__menu-item'), styles.menuItem)}
                         color="tertiary"
                         variant="text"
                         size="small"

@@ -55,7 +55,7 @@ const UsernamePassword: FC<BaseSignInOptionProps> = ({
   return (
     <>
       {formFields.map(param => (
-        <div key={param.param} style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
+        <div key={param.param}>
           {createField({
             name: param.param,
             type:

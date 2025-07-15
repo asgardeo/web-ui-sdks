@@ -17,9 +17,13 @@
  */
 
 import {FC, useState} from 'react';
+import {cx} from '@emotion/css';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import useTheme from '../../../contexts/Theme/useTheme';
 import TextField, {TextFieldProps} from '../TextField/TextField';
 import Eye from '../Icons/Eye';
 import EyeOff from '../Icons/EyeOff';
+import useStyles from './PasswordField.styles';
 
 export interface PasswordFieldProps extends Omit<TextFieldProps, 'type' | 'endIcon' | 'onEndIconClick' | 'onChange'> {
   /**
@@ -32,20 +36,40 @@ export interface PasswordFieldProps extends Omit<TextFieldProps, 'type' | 'endIc
  * Password field component with show/hide toggle functionality.
  * This component extends TextField and adds password visibility toggle functionality.
  */
-const PasswordField: FC<PasswordFieldProps> = ({
-  onChange,
-  ...textFieldProps
-}) => {
+const PasswordField: FC<PasswordFieldProps> = ({onChange, className, disabled, error, ...textFieldProps}) => {
+  const {theme, colorScheme} = useTheme();
   const [showPassword, setShowPassword] = useState(false);
+  const styles = useStyles(theme, colorScheme, showPassword, !!disabled, !!error);
+
+  const togglePasswordVisibility = () => {
+    if (!disabled) {
+      setShowPassword(!showPassword);
+    }
+  };
+
+  const IconComponent = showPassword ? EyeOff : Eye;
 
   return (
     <TextField
       {...textFieldProps}
+      className={cx(withVendorCSSClassPrefix(bem('password-field')), className)}
       type={showPassword ? 'text' : 'password'}
       onChange={e => onChange(e.target.value)}
       autoComplete="current-password"
-      endIcon={showPassword ? <EyeOff width={16} height={16} /> : <Eye width={16} height={16} />}
-      onEndIconClick={() => setShowPassword(!showPassword)}
+      disabled={disabled}
+      error={error}
+      endIcon={
+        <IconComponent
+          width={16}
+          height={16}
+          className={cx(
+            withVendorCSSClassPrefix(bem('password-field', 'toggle-icon')),
+            styles.toggleIcon,
+            showPassword ? styles.visibleIcon : styles.hiddenIcon,
+          )}
+        />
+      }
+      onEndIconClick={togglePasswordVisibility}
     />
   );
 };

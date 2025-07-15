@@ -16,12 +16,13 @@
  * under the License.
  */
 
-import {CSSProperties, FC, InputHTMLAttributes} from 'react';
+import {FC, InputHTMLAttributes} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import clsx from 'clsx';
+import {cx} from '@emotion/css';
 import FormControl from '../FormControl/FormControl';
 import InputLabel from '../InputLabel/InputLabel';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import useStyles from './Checkbox.styles';
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'type'> {
   /**
@@ -47,39 +48,35 @@ export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement
 }
 
 const Checkbox: FC<CheckboxProps> = ({label, error, className, required, helperText, style = {}, ...rest}) => {
-  const {theme} = useTheme();
-
-  const containerStyle: CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    ...style,
-  };
-
-  const inputStyle: CSSProperties = {
-    width: `calc(${theme.vars.spacing.unit} * 2.5)`,
-    height: `calc(${theme.vars.spacing.unit} * 2.5)`,
-    marginRight: theme.vars.spacing.unit,
-    accentColor: theme.vars.colors.primary.main,
-  };
+  const {theme, colorScheme} = useTheme();
+  const hasError = !!error;
+  const styles = useStyles(theme, colorScheme, hasError, !!required);
 
   return (
     <FormControl
       error={error}
       helperText={helperText}
-      className={clsx(withVendorCSSClassPrefix('checkbox'), className)}
+      className={cx(withVendorCSSClassPrefix(bem('checkbox')), className)}
       helperTextMarginLeft={`calc(${theme.vars.spacing.unit} * 3.5)`}
     >
-      <div style={containerStyle}>
-        <input type="checkbox" style={inputStyle} aria-invalid={!!error} aria-required={required} {...rest} />
+      <div style={style} className={cx(withVendorCSSClassPrefix(bem('checkbox', 'container')), styles.container)}>
+        <input
+          type="checkbox"
+          className={cx(withVendorCSSClassPrefix(bem('checkbox', 'input')), styles.input, styles.errorInput, {
+            [withVendorCSSClassPrefix(bem('checkbox', 'input', 'error'))]: hasError,
+          })}
+          aria-invalid={hasError}
+          aria-required={required}
+          {...rest}
+        />
         {label && (
           <InputLabel
             required={required}
-            error={!!error}
+            error={hasError}
             variant="inline"
-            style={{
-              color: error ? theme.vars.colors.error.main : theme.vars.colors.text.primary,
-              fontSize: '0.875rem',
-            }}
+            className={cx(withVendorCSSClassPrefix(bem('checkbox', 'label')), styles.label, styles.errorLabel, {
+              [withVendorCSSClassPrefix(bem('checkbox', 'label', 'error'))]: hasError,
+            })}
           >
             {label}
           </InputLabel>

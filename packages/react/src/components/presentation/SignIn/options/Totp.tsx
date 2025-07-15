@@ -62,7 +62,7 @@ const Totp: FC<BaseSignInOptionProps> = ({
         const isTotpParam = param.param.toLowerCase().includes('totp') || param.param.toLowerCase().includes('token');
 
         return (
-          <div key={param.param} style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
+          <div key={param.param}>
             {isTotpParam && hasTotpField ? (
               <OtpField
                 length={6}

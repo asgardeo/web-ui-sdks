@@ -18,6 +18,11 @@
 
 import {CSSProperties, FC, LabelHTMLAttributes, ReactNode} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
+import {cx} from '@emotion/css';
+import {bem, withVendorCSSClassPrefix} from '@asgardeo/browser';
+import useStyles from './InputLabel.styles';
+
+export type InputLabelVariant = 'block' | 'inline';
 
 export interface InputLabelProps extends Omit<LabelHTMLAttributes<HTMLLabelElement>, 'style'> {
   /**
@@ -39,37 +44,52 @@ export interface InputLabelProps extends Omit<LabelHTMLAttributes<HTMLLabelEleme
   /**
    * Display type for label positioning
    */
-  variant?: 'block' | 'inline';
+  variant?: InputLabelVariant;
   /**
    * Custom margin bottom (useful for different form layouts)
    */
   marginBottom?: string;
+  /**
+   * Additional CSS class names
+   */
+  className?: string;
 }
 
 const InputLabel: FC<InputLabelProps> = ({
   children,
-  required,
-  error,
-  style = {},
+  required = false,
+  error = false,
   variant = 'block',
   marginBottom,
+  className,
+  style = {},
   ...rest
 }) => {
-  const {theme} = useTheme();
-
-  const labelStyle: CSSProperties = {
-    display: variant,
-    marginBottom: marginBottom || (variant === 'block' ? `calc(${theme.vars.spacing.unit} + 1px)` : '0'),
-    color: error ? theme.vars.colors.error.main : theme.vars.colors.text.secondary,
-    fontSize: theme.vars.typography.fontSizes.sm,
-    fontWeight: variant === 'block' ? 500 : 'normal',
-    ...style,
-  };
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, variant, error, marginBottom);
 
   return (
-    <label style={labelStyle} {...rest}>
+    <label
+      className={cx(
+        withVendorCSSClassPrefix(bem('input-label')),
+        withVendorCSSClassPrefix(bem('input-label', variant)),
+        styles.label,
+        variant === 'block' ? styles.block : styles.inline,
+        {
+          [withVendorCSSClassPrefix(bem('input-label', 'error'))]: error,
+          [styles.error]: error,
+        },
+        className,
+      )}
+      style={style}
+      {...rest}
+    >
       {children}
-      {required && <span style={{color: theme.vars.colors.error.main}}> *</span>}
+      {required && (
+        <span className={cx(withVendorCSSClassPrefix(bem('input-label', 'required')), styles.requiredIndicator)}>
+          {' *'}
+        </span>
+      )}
     </label>
   );
 };

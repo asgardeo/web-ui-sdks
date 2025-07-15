@@ -82,9 +82,13 @@ const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Part
         main: extractColorValue(colors?.alerts?.error),
         contrastText: extractContrastText(colors?.alerts?.error),
       },
-      success: {
+      info: {
         main: extractColorValue(colors?.alerts?.info),
         contrastText: extractContrastText(colors?.alerts?.info),
+      },
+      success: {
+        main: extractColorValue(colors?.alerts?.neutral),
+        contrastText: extractContrastText(colors?.alerts?.neutral),
       },
       warning: {
         main: extractColorValue(colors?.alerts?.warning),
