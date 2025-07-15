@@ -1,5 +1,14 @@
 # @asgardeo/nextjs
 
+## 0.1.13
+
+### Patch Changes
+
+- [#108](https://github.com/asgardeo/javascript/pull/108)
+  [`593f5d4`](https://github.com/asgardeo/javascript/commit/593f5d442f4a1ffc937e1831aaadf455464e28d0) Thanks
+  [@brionmario](https://github.com/brionmario)! - Enhance OAuth handling with improved error logging and state
+  management
+
 ## 0.1.12
 
 ### Patch Changes
