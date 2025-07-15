@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {User, withVendorCSSClassPrefix, WellKnownSchemaIds} from '@asgardeo/browser';
+import {User, withVendorCSSClassPrefix, WellKnownSchemaIds, bem} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
 import {FC, ReactElement, useState, useCallback, useRef} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
@@ -96,6 +96,7 @@ const fieldsToSkip: string[] = [
   'verifiedEmailAddresses',
   'phoneNumbers.mobile',
   'emailAddresses',
+  'preferredMFAOption',
 ];
 
 // Fields that should be readonly
@@ -109,7 +110,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   schemas = [],
   flattenedProfile,
   mode = 'inline',
-  title = 'User Profile',
+  title,
   attributeMapping = {},
   editable = true,
   onOpenChange,
@@ -170,7 +171,9 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         <tbody>
           {Object.entries(data).map(([key, value]) => (
             <tr key={key}>
-              <td className={styles.objectKey}><strong>{formatLabel(key)}:</strong></td>
+              <td className={styles.objectKey}>
+                <strong>{formatLabel(key)}:</strong>
+              </td>
               <td className={styles.objectValue}>
                 {typeof value === 'object' ? <ObjectDisplay data={value} /> : String(value)}
               </td>
@@ -367,9 +370,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       return (
         <>
           <span className={styles.label}>{label}</span>
-          <div
-            className={cx(styles.value, !hasValues ? styles.valuePlaceholder : '')}
-          >
+          <div className={cx(styles.value, !hasValues ? styles.valuePlaceholder : '')}>
             {!hasValues && isEditable && onStartEdit ? (
               <Button
                 onClick={onStartEdit}
@@ -456,13 +457,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     return (
       <>
         <span className={styles.label}>{label}</span>
-        <div
-          className={styles.value}
-          style={{
-            fontStyle: hasValue ? 'normal' : 'italic',
-            opacity: hasValue ? 1 : 0.7,
-          }}
-        >
+        <div className={cx(styles.value, !hasValue ? styles.valuePlaceholder : '')}>
           {!hasValue && isEditable && onStartEdit ? (
             <Button
               onClick={onStartEdit}
@@ -470,13 +465,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
               color="secondary"
               size="small"
               title="Click to edit"
-              style={{
-                fontStyle: 'italic',
-                textDecoration: 'underline',
-                opacity: 0.7,
-                padding: 0,
-                minHeight: 'auto',
-              }}
+              className={styles.editButton}
             >
               {displayValue}
             </Button>
@@ -605,7 +594,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const profileContent = (
     <Card className={containerClasses}>
       {error && (
-        <Alert variant="error">
+        <Alert variant="error" className={cx(withVendorCSSClassPrefix(bem('user-profile', 'alert')), styles.alert)}>
           <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
           <Alert.Description>{error}</Alert.Description>
         </Alert>
@@ -643,7 +632,11 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                   value,
                 };
 
-                return <div key={schema.name || index}>{renderUserInfo(schemaWithValue)}</div>;
+                return (
+                  <div key={schema.name || index} className={styles.info}>
+                    {renderUserInfo(schemaWithValue)}
+                  </div>
+                );
               })
           : renderProfileWithoutSchemas()}
       </div>
@@ -654,7 +647,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <Dialog.Content>
-          <Dialog.Heading>{title}</Dialog.Heading>
+          <Dialog.Heading>{title ?? t('user.profile.title')}</Dialog.Heading>
           <div className={styles.popup}>{profileContent}</div>
         </Dialog.Content>
       </Dialog>

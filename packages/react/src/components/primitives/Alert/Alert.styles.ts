@@ -42,22 +42,22 @@ const useStyles = (theme: Theme, colorScheme: string, variant: AlertVariant) => 
 
     const variantStyles = {
       success: css`
-        background-color: ${theme.vars.colors.success.main};
+        background-color: color-mix(in srgb, ${theme.vars.colors.success.main} 20%, white);
         border-color: ${theme.vars.colors.success.main};
         color: ${theme.vars.colors.success.main};
       `,
       error: css`
-        background-color: ${theme.vars.colors.error.main};
+        background-color: color-mix(in srgb, ${theme.vars.colors.error.main} 20%, white);
         border-color: ${theme.vars.colors.error.main};
         color: ${theme.vars.colors.error.main};
       `,
       warning: css`
-        background-color: ${theme.vars.colors.warning.main};
+        background-color: color-mix(in srgb, ${theme.vars.colors.warning.main} 20%, white);
         border-color: ${theme.vars.colors.warning.main};
         color: ${theme.vars.colors.warning.main};
       `,
       info: css`
-        background-color: ${theme.vars.colors.info.main};
+        background-color: color-mix(in srgb, ${theme.vars.colors.info.main} 20%, white);
         border-color: ${theme.vars.colors.info.main};
         color: ${theme.vars.colors.info.main};
       `,
