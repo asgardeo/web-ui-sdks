@@ -21,6 +21,7 @@
 import {cookies} from 'next/headers';
 import AsgardeoNextClient from '../../AsgardeoNextClient';
 import SessionManager from '../../utils/SessionManager';
+import logger from '../../utils/logger';
 
 /**
  * Server action to handle OAuth callback with authorization code.
@@ -68,11 +69,15 @@ const handleOAuthCallbackAction = async (
         const tempSession = await SessionManager.verifyTempSession(tempSessionToken);
         sessionId = tempSession.sessionId;
       } catch {
-        // TODO: Invalid temp session, throw error.
+        logger.error(
+          '[handleOAuthCallbackAction] Invalid temporary session token, falling back to session ID from cookies.',
+        );
       }
     }
 
     if (!sessionId) {
+      logger.error('[handleOAuthCallbackAction] No session ID found in cookies or temporary session token.');
+
       return {
         success: false,
         error: 'No session found. Please start the authentication flow again.',
@@ -92,10 +97,13 @@ const handleOAuthCallbackAction = async (
 
     if (signInResult) {
       try {
-        const idToken = await asgardeoClient.getDecodedIdToken(sessionId);
-        const accessToken: string = signInResult['access_token'];
+        const idToken = await asgardeoClient.getDecodedIdToken(
+          sessionId,
+          signInResult['id_token'] || signInResult['idToken'],
+        );
+        const accessToken: string = signInResult['accessToken'] || signInResult['access_token'];
         const userIdFromToken = idToken.sub || signInResult['sub'] || sessionId;
-        const scopes = idToken['scope'] ? idToken['scope'].split(' ') : [];
+        const scopes = signInResult['scope'];
         const organizationId = idToken['user_org'] || idToken['organization_id'];
 
         const sessionToken = await SessionManager.createSessionToken(
@@ -110,9 +118,9 @@ const handleOAuthCallbackAction = async (
 
         cookieStore.delete(SessionManager.getTempSessionCookieName());
       } catch (error) {
-        console.warn(
-          '[handleOAuthCallbackAction] Failed to create JWT session, continuing with legacy session:',
-          error,
+        logger.error(
+          `[handleOAuthCallbackAction] Failed to create JWT session, continuing with legacy session:
+          ${typeof error === 'string' ? error : JSON.stringify(error)}`,
         );
       }
     }

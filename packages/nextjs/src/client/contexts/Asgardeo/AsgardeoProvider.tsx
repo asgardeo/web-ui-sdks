@@ -119,10 +119,22 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
 
   // Handle OAuth callback automatically
   useEffect(() => {
+    // React 18.x Strict.Mode has a new check for `Ensuring reusable state` to facilitate an upcoming react feature.
+    // https://reactjs.org/docs/strict-mode.html#ensuring-reusable-state
+    // This will remount all the useEffects to ensure that there are no unexpected side effects.
+    // When react remounts the signIn hook of the AuthProvider, it will cause a race condition. Hence, we have to
+    // prevent the re-render of this hook as suggested in the following discussion.
+    // https://github.com/reactwg/react-18/discussions/18#discussioncomment-795623
+    if (reRenderCheckRef.current) {
+      return;
+    }
+
+    reRenderCheckRef.current = true;
+
     // Don't handle callback if already signed in
     if (isSignedIn) return;
 
-    const processOAuthCallback = async () => {
+    (async () => {
       try {
         const code = searchParams.get('code');
         const state = searchParams.get('state');
@@ -132,13 +144,8 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
 
         // Check for OAuth errors first
         if (error) {
-          console.error('[AsgardeoClientProvider] OAuth error:', error, errorDescription);
-          // Redirect to sign-in page with error
-          router.push(
-            `/signin?error=${encodeURIComponent(error)}&error_description=${encodeURIComponent(
-              errorDescription || '',
-            )}`,
-          );
+          logger.error('[AsgardeoClientProvider] An error was received for the initiated sign-in request.');
+
           return;
         }
 
@@ -157,21 +164,16 @@ const AsgardeoClientProvider: FC<PropsWithChildren<AsgardeoClientProviderProps>>
               window.location.reload();
             }
           } else {
-            router.push(
-              `/signin?error=authentication_failed&error_description=${encodeURIComponent(
-                result.error || 'Authentication failed',
-              )}`,
+            logger.error(
+              `[AsgardeoClientProvider] An error occurred while signing in: ${result.error || 'Authentication failed'}`,
             );
           }
         }
       } catch (error) {
-        console.error('[AsgardeoClientProvider] Failed to handle OAuth callback:', error);
-        router.push('/signin?error=authentication_failed');
+        logger.error('[AsgardeoClientProvider] Failed to handle OAuth callback:', error);
       }
-    };
-
-    processOAuthCallback();
-  }, [searchParams, router, isSignedIn, handleOAuthCallback]);
+    })();
+  }, []);
 
   useEffect(() => {
     if (!preferences?.theme?.mode || preferences.theme.mode === 'system') {

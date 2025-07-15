@@ -18,5 +18,8 @@
 
 export {default as AsgardeoNext} from './AsgardeoNextClient';
 
+// TODO: Remove this export once the docs are live.
+export * from './server';
+
 // @asgardeo/nextjs exports.
 export * from './client';
