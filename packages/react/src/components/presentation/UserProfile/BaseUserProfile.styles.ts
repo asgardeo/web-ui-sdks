@@ -27,6 +27,52 @@ import {Theme} from '@asgardeo/browser';
  * @returns Object containing CSS class names for component styling
  */
 const useStyles = (theme: Theme, colorScheme: string) => {
+    // Additional styles for moved inline styles
+    const valuePlaceholder = css`
+      font-style: italic;
+      opacity: 0.7;
+    `;
+
+    const editButton = css`
+      font-style: italic;
+      text-decoration: underline;
+      opacity: 0.7;
+      padding: 0;
+      min-height: auto;
+    `;
+
+    const fieldInner = css`
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: ${theme.vars.spacing.unit};
+    `;
+
+    const fieldActions = css`
+      display: flex;
+      gap: calc(${theme.vars.spacing.unit} / 2);
+      align-items: center;
+      margin-left: ${theme.vars.spacing.unit};
+    `;
+
+    const complexTextarea = css`
+      min-height: 60px;
+      width: 100%;
+      padding: 8px;
+      border: 1px solid ${theme.vars.colors.border};
+      border-radius: ${theme.vars.borderRadius.small};
+      resize: vertical;
+    `;
+
+    // For ObjectDisplay table cells
+    const objectKey = css`
+      padding: ${theme.vars.spacing.unit};
+      vertical-align: top;
+    `;
+    const objectValue = css`
+      padding: ${theme.vars.spacing.unit};
+      vertical-align: top;
+    `;
   return useMemo(() => {
     const root = css`
       padding: calc(${theme.vars.spacing.unit} * 4);
@@ -127,6 +173,13 @@ const useStyles = (theme: Theme, colorScheme: string) => {
       label,
       value,
       popup,
+    valuePlaceholder,
+    editButton,
+    fieldInner,
+    fieldActions,
+    complexTextarea,
+    objectKey,
+    objectValue,
     };
   }, [
     theme.vars.colors.background.surface,

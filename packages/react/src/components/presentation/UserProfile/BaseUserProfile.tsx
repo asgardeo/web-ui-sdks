@@ -164,15 +164,14 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   const ObjectDisplay: FC<{data: unknown}> = ({data}) => {
     if (!data || typeof data !== 'object') return null;
 
+    // Use styles from .styles.ts for table and td
     return (
-      <table style={{width: '100%', borderCollapse: 'collapse'}}>
+      <table className={styles.value}>
         <tbody>
           {Object.entries(data).map(([key, value]) => (
-            <tr key={key} style={{borderBottom: `1px solid ${theme.vars.colors.border}`}}>
-              <td style={{padding: theme.vars.spacing.unit, verticalAlign: 'top'}}>
-                <strong>{formatLabel(key)}:</strong>
-              </td>
-              <td style={{padding: theme.vars.spacing.unit, verticalAlign: 'top'}}>
+            <tr key={key}>
+              <td className={styles.objectKey}><strong>{formatLabel(key)}:</strong></td>
+              <td className={styles.objectValue}>
                 {typeof value === 'object' ? <ObjectDisplay data={value} /> : String(value)}
               </td>
             </tr>
@@ -345,9 +344,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 fieldType={type as 'STRING' | 'DATE_TIME' | 'BOOLEAN'}
                 type={type === 'DATE_TIME' ? 'date' : type === 'STRING' ? 'text' : 'text'}
                 required={required}
-                style={{
-                  marginBottom: 0,
-                }}
+                // Removed inline style, use .styles.ts for marginBottom if needed
               />
             </div>
           </>
@@ -371,11 +368,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         <>
           <span className={styles.label}>{label}</span>
           <div
-            className={styles.value}
-            style={{
-              fontStyle: hasValues ? 'normal' : 'italic',
-              opacity: hasValues ? 1 : 0.7,
-            }}
+            className={cx(styles.value, !hasValues ? styles.valuePlaceholder : '')}
           >
             {!hasValues && isEditable && onStartEdit ? (
               <Button
@@ -384,13 +377,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 color="secondary"
                 size="small"
                 title="Click to edit"
-                style={{
-                  fontStyle: 'italic',
-                  textDecoration: 'underline',
-                  opacity: 0.7,
-                  padding: 0,
-                  minHeight: 'auto',
-                }}
+                className={styles.editButton}
               >
                 {displayValue}
               </Button>
@@ -419,9 +406,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         value: fieldValue,
         onChange: (e: any) => onEditValue(e.target ? e.target.value : e),
         placeholder: getFieldPlaceholder(schema),
-        style: {
-          marginBottom: 0,
-        },
+        // Removed inline style, use .styles.ts for marginBottom if needed
       };
       let field: ReactElement;
       switch (type) {
@@ -441,15 +426,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
               onChange={e => onEditValue(e.target.value)}
               placeholder={getFieldPlaceholder(schema)}
               required={required}
-              style={{
-                ...commonProps.style,
-                minHeight: '60px',
-                width: '100%',
-                padding: '8px',
-                border: `1px solid ${theme.vars.colors.border}`,
-                borderRadius: theme.vars.borderRadius.small,
-                resize: 'vertical',
-              }}
+              className={styles.complexTextarea}
             />
           );
           break;
@@ -531,8 +508,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     };
 
     return (
-      <div className={styles.field} style={fieldStyle}>
-        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: theme.vars.spacing.unit}}>
+      <div className={styles.field}>
+        <div className={styles.fieldInner}>
           {renderSchemaField(
             schema,
             isFieldEditing,
@@ -545,14 +522,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           )}
         </div>
         {editable && schema.mutability !== 'READ_ONLY' && !isReadonlyField && (
-          <div
-            style={{
-              display: 'flex',
-              gap: `calc(${theme.vars.spacing.unit} / 2)`,
-              alignItems: 'center',
-              marginLeft: theme.vars.spacing.unit,
-            }}
-          >
+          <div className={styles.fieldActions}>
             {isFieldEditing && (
               <>
                 <Button size="small" color="primary" variant="solid" onClick={() => handleFieldSave(schema)}>
@@ -570,9 +540,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 variant="text"
                 onClick={() => toggleFieldEdit(schema.name!)}
                 title="Edit"
-                style={{
-                  padding: `calc(${theme.vars.spacing.unit} / 2)`,
-                }}
+                className={styles.editButton}
               >
                 <PencilIcon />
               </Button>
@@ -687,7 +655,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <Dialog.Content>
           <Dialog.Heading>{title}</Dialog.Heading>
-          <div style={{padding: `calc(${theme.vars.spacing.unit} * 2)`}}>{profileContent}</div>
+          <div className={styles.popup}>{profileContent}</div>
         </Dialog.Content>
       </Dialog>
     );
