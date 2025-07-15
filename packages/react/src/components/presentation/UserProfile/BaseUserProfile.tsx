@@ -30,6 +30,8 @@ import TextField from '../../primitives/TextField/TextField';
 import MultiInput from '../../primitives/MultiInput/MultiInput';
 import Card from '../../primitives/Card/Card';
 import useStyles from './BaseUserProfile.styles';
+import useTranslation from '../../../hooks/useTranslation';
+import Alert from '../../primitives/Alert/Alert';
 
 interface ExtendedFlatSchema {
   path?: string;
@@ -60,22 +62,19 @@ export interface BaseUserProfileProps {
     picture?: string | string[];
     username?: string | string[];
   };
-  cancelButtonText?: string;
   cardLayout?: boolean;
   className?: string;
   editable?: boolean;
   fallback?: ReactElement;
   flattenedProfile?: User;
   mode?: 'inline' | 'popup';
-  onChange?: (field: string, value: any) => void;
   onOpenChange?: (open: boolean) => void;
-  onSubmit?: (data: any) => void;
   onUpdate?: (payload: any) => Promise<void>;
   open?: boolean;
   profile?: User;
-  saveButtonText?: string;
   schemas?: Schema[];
   title?: string;
+  error?: string | null;
 }
 
 // Fields to skip based on schema.name
@@ -113,18 +112,15 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   title = 'User Profile',
   attributeMapping = {},
   editable = true,
-  onChange,
   onOpenChange,
-  onSubmit,
   onUpdate,
   open = false,
-  saveButtonText = 'Save Changes',
-  cancelButtonText = 'Cancel',
+  error = null,
 }): ReactElement => {
   const {theme, colorScheme} = useTheme();
   const [editedUser, setEditedUser] = useState(flattenedProfile || profile);
   const [editingFields, setEditingFields] = useState<Record<string, boolean>>({});
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const {t} = useTranslation();
 
   const PencilIcon = () => (
     <svg
@@ -640,6 +636,12 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
   const profileContent = (
     <Card className={containerClasses}>
+      {error && (
+        <Alert variant="error">
+          <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
+          <Alert.Description>{error}</Alert.Description>
+        </Alert>
+      )}
       <div className={styles.header}>
         <Avatar
           imageUrl={getMappedUserProfileValue('picture', mergedMappings, currentUser)}

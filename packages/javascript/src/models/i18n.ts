@@ -77,6 +77,13 @@ export interface I18nTranslations {
   'username.password.subtitle': string;
 
   /* |---------------------------------------------------------------| */
+  /* |                          User Profile                         | */
+  /* |---------------------------------------------------------------| */
+
+  'user.profile.title': string;
+  'user.profile.update.generic.error': string;
+
+  /* |---------------------------------------------------------------| */
   /* |                     Organization Switcher                     | */
   /* |---------------------------------------------------------------| */
 
