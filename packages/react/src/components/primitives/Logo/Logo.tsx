@@ -17,9 +17,12 @@
  */
 
 import {FC} from 'react';
-import {clsx} from 'clsx';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
+import {cx} from '@emotion/css';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
 import useTheme from '../../../contexts/Theme/useTheme';
+import useStyles from './Logo.styles';
+
+export type LogoSize = 'small' | 'medium' | 'large';
 
 /**
  * Props for the Logo component.
@@ -44,11 +47,7 @@ export interface LogoProps {
   /**
    * Size of the logo.
    */
-  size?: 'small' | 'medium' | 'large';
-  /**
-   * Custom style object.
-   */
-  style?: React.CSSProperties;
+  size?: LogoSize;
 }
 
 /**
@@ -57,11 +56,10 @@ export interface LogoProps {
  * @param props - The props for the Logo component.
  * @returns The rendered Logo component.
  */
-const Logo: FC<LogoProps> = ({className, src, alt, title, size = 'medium', style}) => {
-  const {theme} = useTheme();
+const Logo: FC<LogoProps> = ({className, src, alt, title, size = 'medium'}) => {
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, size);
 
-  // Get logo configuration from theme - use actual values, not CSS variables
-  // Access the actual theme config values, not the CSS variable references from .vars
   const logoConfig = theme.images?.logo;
 
   const logoSrc = src || logoConfig?.url;
@@ -70,35 +68,24 @@ const Logo: FC<LogoProps> = ({className, src, alt, title, size = 'medium', style
 
   const logoTitle = title || logoConfig?.title;
 
-  const logoClasses = clsx(withVendorCSSClassPrefix('logo'), withVendorCSSClassPrefix(`logo--${size}`), className);
-
-  const sizeStyles: Record<string, React.CSSProperties> = {
-    small: {
-      height: '32px',
-      maxWidth: '120px',
-    },
-    medium: {
-      height: '48px',
-      maxWidth: '180px',
-    },
-    large: {
-      height: '64px',
-      maxWidth: '240px',
-    },
-  };
-
-  const defaultStyles: React.CSSProperties = {
-    width: 'auto',
-    objectFit: 'contain',
-    ...sizeStyles[size],
-    ...style,
-  };
-
   if (!logoSrc) {
     return null;
   }
 
-  return <img src={logoSrc} alt={logoAlt} title={logoTitle} className={logoClasses} style={defaultStyles} />;
+  return (
+    <img
+      src={logoSrc}
+      alt={logoAlt}
+      title={logoTitle}
+      className={cx(
+        withVendorCSSClassPrefix(bem('logo')),
+        withVendorCSSClassPrefix(bem('logo', size)),
+        styles.logo,
+        styles.size,
+        className,
+      )}
+    />
+  );
 };
 
 export default Logo;

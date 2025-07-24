@@ -79,6 +79,13 @@ const translations: I18nTranslations = {
   'username.password.subtitle': 'Enter your username and password to continue.',
 
   /* |---------------------------------------------------------------| */
+  /* |                          User Profile                         | */
+  /* |---------------------------------------------------------------| */
+
+  'user.profile.title': 'User Profile',
+  'user.profile.update.generic.error': 'An error occurred while updating your profile. Please try again.',
+
+  /* |---------------------------------------------------------------| */
   /* |                     Organization Switcher                     | */
   /* |---------------------------------------------------------------| */
 
@@ -114,6 +121,15 @@ const translations: I18nTranslations = {
   'organization.create.button': 'Create Organization',
   'organization.create.creating': 'Creating...',
   'organization.create.cancel': 'Cancel',
+
+  /* |---------------------------------------------------------------| */
+  /* |                        User Creation                          | */
+  /* |---------------------------------------------------------------| */
+
+  'user.create.cancel': 'Cancel',
+  'user.create.submit': 'Create User',
+  'user.create.submitting': 'Creating...',
+  'user.create.generic.error': 'An error occurred while creating the user. Please try again.',
 
   /* |---------------------------------------------------------------| */
   /* |                        Messages                               | */

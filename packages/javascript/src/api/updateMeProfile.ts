@@ -147,10 +147,11 @@ const updateMeProfile = async ({
     }
 
     throw new AsgardeoAPIError(
-      `Network or parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      error?.response?.data?.detail ||
+        'An error occurred while updating the user profile. Please try again.',
       'updateMeProfile-NetworkError-001',
       'javascript',
-      0,
+      error?.data?.status,
       'Network Error',
     );
   }

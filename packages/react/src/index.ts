@@ -109,14 +109,14 @@ export * from './components/actions/SignUpButton/BaseSignUpButton';
 export {default as SignUpButton} from './components/actions/SignUpButton/SignUpButton';
 export * from './components/actions/SignUpButton/SignUpButton';
 
-export {default as SignedIn} from './components/control/SignedIn';
-export * from './components/control/SignedIn';
+export {default as SignedIn} from './components/control/SignedIn/SignedIn';
+export * from './components/control/SignedIn/SignedIn';
 
-export {default as SignedOut} from './components/control/SignedOut';
-export * from './components/control/SignedOut';
+export {default as SignedOut} from './components/control/SignedOut/SignedOut';
+export * from './components/control/SignedOut/SignedOut';
 
-export {default as AsgardeoLoading} from './components/control/AsgardeoLoading';
-export * from './components/control/AsgardeoLoading';
+export {default as Loading} from './components/control/Loading/Loading';
+export * from './components/control/Loading/Loading';
 
 export {default as BaseSignIn} from './components/presentation/SignIn/BaseSignIn';
 export * from './components/presentation/SignIn/BaseSignIn';
@@ -129,6 +129,9 @@ export * from './components/presentation/SignUp/BaseSignUp';
 
 export {default as SignUp} from './components/presentation/SignUp/SignUp';
 export * from './components/presentation/SignUp/SignUp';
+
+export {default as CreateUser} from './components/presentation/CreateUser/CreateUser';
+export * from './components/presentation/CreateUser/CreateUser';
 
 // Sign-In Options
 export {default as IdentifierFirst} from './components/presentation/SignIn/options/IdentifierFirst';

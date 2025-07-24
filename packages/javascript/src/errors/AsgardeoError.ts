@@ -55,12 +55,7 @@ export default class AsgardeoError extends Error {
 
   constructor(message: string, code: string, origin: string) {
     const _origin: string = AsgardeoError.resolveOrigin(origin);
-    const prefix: string = `🛡️ Asgardeo - ${_origin}:`;
-    const regex: RegExp = new RegExp(`🛡️\\s*Asgardeo\\s*-\\s*${_origin}:`, 'i');
-    const sanitized: string = message.replace(regex, '');
-    const _message: string = `${prefix} ${sanitized.trim()}\n\n(code="${code}")\n`;
-
-    super(_message);
+    super(message);
 
     this.name = new.target.name;
     this.code = code;
@@ -72,6 +67,7 @@ export default class AsgardeoError extends Error {
   }
 
   public override toString(): string {
-    return `[${this.name}]\nMessage: ${this.message}`;
+    const prefix: string = `🛡️ Asgardeo - ${this.origin}:`;
+    return `[${this.name}]\n${prefix} ${this.message}\n(code=\"${this.code}\")`;
   }
 }
