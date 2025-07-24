@@ -198,7 +198,14 @@ export const DialogHeading = React.forwardRef<HTMLHeadingElement, React.HTMLProp
         >
           {children}
         </h2>
-        <Button color="tertiary" variant="text" size="small" onClick={() => context.setOpen(false)} aria-label="Close">
+        <Button
+          color="tertiary"
+          variant="icon"
+          size="small"
+          shape="round"
+          onClick={() => context.setOpen(false)}
+          aria-label="Close"
+        >
           <X width={16} height={16} />
         </Button>
       </div>
@@ -261,15 +268,15 @@ export const DialogClose = React.forwardRef<
   }
 
   return (
-    <button
-      type="button"
+    <Button
       {...props}
       ref={ref}
       onClick={handleClick}
-      className={cx(withVendorCSSClassPrefix(bem('dialog', 'close')), styles.closeButton, props.className)}
+      className={cx(withVendorCSSClassPrefix(bem('dialog', 'close')), props.className)}
+      variant="text"
     >
       {children}
-    </button>
+    </Button>
   );
 });
 

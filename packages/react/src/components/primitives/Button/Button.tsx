@@ -24,7 +24,7 @@ import Spinner, {SpinnerSize} from '../Spinner/Spinner';
 import useStyles from './Button.styles';
 
 export type ButtonColor = 'primary' | 'secondary' | 'tertiary' | string;
-export type ButtonVariant = 'solid' | 'outline' | 'text';
+export type ButtonVariant = 'solid' | 'outline' | 'text' | 'icon';
 export type ButtonSize = 'small' | 'medium' | 'large';
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
@@ -56,6 +56,10 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
    * Icon to display after the button text
    */
   endIcon?: React.ReactNode;
+  /**
+   * The shape of the button: square or round
+   */
+  shape?: 'square' | 'round';
 }
 
 /**
@@ -102,12 +106,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       disabled,
       style,
+      shape = 'square',
       ...rest
     },
     ref,
   ) => {
     const {theme, colorScheme} = useTheme();
-    const styles = useStyles(theme, colorScheme, color, variant, size, fullWidth, disabled || false, loading);
+    const styles = useStyles(theme, colorScheme, color, variant, size, fullWidth, disabled || false, loading, shape);
+
+    const isIconVariant = variant === 'icon';
 
     return (
       <button
@@ -115,11 +122,19 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         style={style}
         className={cx(
           withVendorCSSClassPrefix(bem('button')),
+          withVendorCSSClassPrefix(bem('button', variant)),
+          withVendorCSSClassPrefix(bem('button', color)),
+          withVendorCSSClassPrefix(bem('button', size)),
+          withVendorCSSClassPrefix(bem('button', shape)),
+          fullWidth ? withVendorCSSClassPrefix(bem('button', 'fullWidth')) : undefined,
+          loading ? withVendorCSSClassPrefix(bem('button', 'loading')) : undefined,
+          disabled || loading ? withVendorCSSClassPrefix(bem('button', 'disabled')) : undefined,
           styles.button,
           styles.size,
           styles.variant,
           styles.fullWidth,
           styles.loading,
+          styles.shape,
           className,
         )}
         disabled={disabled || loading}
@@ -147,15 +162,20 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             />
           </span>
         )}
-        {!loading && startIcon && (
+        {!loading && isIconVariant && (
+          <span className={cx(withVendorCSSClassPrefix(bem('button', 'icon')), styles.icon)}>
+            {children || startIcon || endIcon}
+          </span>
+        )}
+        {!loading && !isIconVariant && startIcon && (
           <span className={cx(withVendorCSSClassPrefix(bem('button', 'start-icon')), styles.startIcon)}>
             {startIcon}
           </span>
         )}
-        {children && (
+        {!isIconVariant && children && (
           <span className={cx(withVendorCSSClassPrefix(bem('button', 'content')), styles.content)}>{children}</span>
         )}
-        {!loading && endIcon && (
+        {!loading && !isIconVariant && endIcon && (
           <span className={cx(withVendorCSSClassPrefix(bem('button', 'end-icon')), styles.endIcon)}>{endIcon}</span>
         )}
       </button>

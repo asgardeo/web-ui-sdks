@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {User, withVendorCSSClassPrefix, WellKnownSchemaIds} from '@asgardeo/browser';
+import {User, withVendorCSSClassPrefix, WellKnownSchemaIds, bem} from '@asgardeo/browser';
 import {cx} from '@emotion/css';
 import {FC, ReactElement, useState, useCallback, useRef} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
@@ -30,6 +30,8 @@ import TextField from '../../primitives/TextField/TextField';
 import MultiInput from '../../primitives/MultiInput/MultiInput';
 import Card from '../../primitives/Card/Card';
 import useStyles from './BaseUserProfile.styles';
+import useTranslation from '../../../hooks/useTranslation';
+import Alert from '../../primitives/Alert/Alert';
 
 interface ExtendedFlatSchema {
   path?: string;
@@ -60,22 +62,19 @@ export interface BaseUserProfileProps {
     picture?: string | string[];
     username?: string | string[];
   };
-  cancelButtonText?: string;
   cardLayout?: boolean;
   className?: string;
   editable?: boolean;
   fallback?: ReactElement;
   flattenedProfile?: User;
   mode?: 'inline' | 'popup';
-  onChange?: (field: string, value: any) => void;
   onOpenChange?: (open: boolean) => void;
-  onSubmit?: (data: any) => void;
   onUpdate?: (payload: any) => Promise<void>;
   open?: boolean;
   profile?: User;
-  saveButtonText?: string;
   schemas?: Schema[];
   title?: string;
+  error?: string | null;
 }
 
 // Fields to skip based on schema.name
@@ -97,6 +96,7 @@ const fieldsToSkip: string[] = [
   'verifiedEmailAddresses',
   'phoneNumbers.mobile',
   'emailAddresses',
+  'preferredMFAOption',
 ];
 
 // Fields that should be readonly
@@ -110,21 +110,18 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
   schemas = [],
   flattenedProfile,
   mode = 'inline',
-  title = 'User Profile',
+  title,
   attributeMapping = {},
   editable = true,
-  onChange,
   onOpenChange,
-  onSubmit,
   onUpdate,
   open = false,
-  saveButtonText = 'Save Changes',
-  cancelButtonText = 'Cancel',
+  error = null,
 }): ReactElement => {
   const {theme, colorScheme} = useTheme();
   const [editedUser, setEditedUser] = useState(flattenedProfile || profile);
   const [editingFields, setEditingFields] = useState<Record<string, boolean>>({});
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const {t} = useTranslation();
 
   const PencilIcon = () => (
     <svg
@@ -169,14 +166,14 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     if (!data || typeof data !== 'object') return null;
 
     return (
-      <table style={{width: '100%', borderCollapse: 'collapse'}}>
+      <table className={styles.value}>
         <tbody>
           {Object.entries(data).map(([key, value]) => (
-            <tr key={key} style={{borderBottom: `1px solid ${theme.vars.colors.border}`}}>
-              <td style={{padding: theme.vars.spacing.unit, verticalAlign: 'top'}}>
+            <tr key={key}>
+              <td className={styles.objectKey}>
                 <strong>{formatLabel(key)}:</strong>
               </td>
-              <td style={{padding: theme.vars.spacing.unit, verticalAlign: 'top'}}>
+              <td className={styles.objectValue}>
                 {typeof value === 'object' ? <ObjectDisplay data={value} /> : String(value)}
               </td>
             </tr>
@@ -349,9 +346,6 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 fieldType={type as 'STRING' | 'DATE_TIME' | 'BOOLEAN'}
                 type={type === 'DATE_TIME' ? 'date' : type === 'STRING' ? 'text' : 'text'}
                 required={required}
-                style={{
-                  marginBottom: 0,
-                }}
               />
             </div>
           </>
@@ -374,13 +368,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
       return (
         <>
           <span className={styles.label}>{label}</span>
-          <div
-            className={styles.value}
-            style={{
-              fontStyle: hasValues ? 'normal' : 'italic',
-              opacity: hasValues ? 1 : 0.7,
-            }}
-          >
+          <div className={cx(styles.value, !hasValues ? styles.valuePlaceholder : '')}>
             {!hasValues && isEditable && onStartEdit ? (
               <Button
                 onClick={onStartEdit}
@@ -388,13 +376,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 color="secondary"
                 size="small"
                 title="Click to edit"
-                style={{
-                  fontStyle: 'italic',
-                  textDecoration: 'underline',
-                  opacity: 0.7,
-                  padding: 0,
-                  minHeight: 'auto',
-                }}
+                className={styles.editButton}
               >
                 {displayValue}
               </Button>
@@ -423,9 +405,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
         value: fieldValue,
         onChange: (e: any) => onEditValue(e.target ? e.target.value : e),
         placeholder: getFieldPlaceholder(schema),
-        style: {
-          marginBottom: 0,
-        },
+        // Removed inline style, use .styles.ts for marginBottom if needed
       };
       let field: ReactElement;
       switch (type) {
@@ -445,15 +425,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
               onChange={e => onEditValue(e.target.value)}
               placeholder={getFieldPlaceholder(schema)}
               required={required}
-              style={{
-                ...commonProps.style,
-                minHeight: '60px',
-                width: '100%',
-                padding: '8px',
-                border: `1px solid ${theme.vars.colors.border}`,
-                borderRadius: theme.vars.borderRadius.small,
-                resize: 'vertical',
-              }}
+              className={styles.complexTextarea}
             />
           );
           break;
@@ -483,13 +455,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     return (
       <>
         <span className={styles.label}>{label}</span>
-        <div
-          className={styles.value}
-          style={{
-            fontStyle: hasValue ? 'normal' : 'italic',
-            opacity: hasValue ? 1 : 0.7,
-          }}
-        >
+        <div className={cx(styles.value, !hasValue ? styles.valuePlaceholder : '')}>
           {!hasValue && isEditable && onStartEdit ? (
             <Button
               onClick={onStartEdit}
@@ -497,13 +463,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
               color="secondary"
               size="small"
               title="Click to edit"
-              style={{
-                fontStyle: 'italic',
-                textDecoration: 'underline',
-                opacity: 0.7,
-                padding: 0,
-                minHeight: 'auto',
-              }}
+              className={styles.editButton}
             >
               {displayValue}
             </Button>
@@ -535,8 +495,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     };
 
     return (
-      <div className={styles.field} style={fieldStyle}>
-        <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: theme.vars.spacing.unit}}>
+      <div className={styles.field}>
+        <div className={styles.fieldInner}>
           {renderSchemaField(
             schema,
             isFieldEditing,
@@ -549,14 +509,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
           )}
         </div>
         {editable && schema.mutability !== 'READ_ONLY' && !isReadonlyField && (
-          <div
-            style={{
-              display: 'flex',
-              gap: `calc(${theme.vars.spacing.unit} / 2)`,
-              alignItems: 'center',
-              marginLeft: theme.vars.spacing.unit,
-            }}
-          >
+          <div className={styles.fieldActions}>
             {isFieldEditing && (
               <>
                 <Button size="small" color="primary" variant="solid" onClick={() => handleFieldSave(schema)}>
@@ -574,9 +527,7 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 variant="text"
                 onClick={() => toggleFieldEdit(schema.name!)}
                 title="Edit"
-                style={{
-                  padding: `calc(${theme.vars.spacing.unit} / 2)`,
-                }}
+                className={styles.editButton}
               >
                 <PencilIcon />
               </Button>
@@ -640,6 +591,12 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
 
   const profileContent = (
     <Card className={containerClasses}>
+      {error && (
+        <Alert variant="error" className={cx(withVendorCSSClassPrefix(bem('user-profile', 'alert')), styles.alert)}>
+          <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
+          <Alert.Description>{error}</Alert.Description>
+        </Alert>
+      )}
       <div className={styles.header}>
         <Avatar
           imageUrl={getMappedUserProfileValue('picture', mergedMappings, currentUser)}
@@ -673,7 +630,11 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                   value,
                 };
 
-                return <div key={schema.name || index}>{renderUserInfo(schemaWithValue)}</div>;
+                return (
+                  <div key={schema.name || index} className={styles.info}>
+                    {renderUserInfo(schemaWithValue)}
+                  </div>
+                );
               })
           : renderProfileWithoutSchemas()}
       </div>
@@ -684,8 +645,8 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <Dialog.Content>
-          <Dialog.Heading>{title}</Dialog.Heading>
-          <div style={{padding: `calc(${theme.vars.spacing.unit} * 2)`}}>{profileContent}</div>
+          <Dialog.Heading>{title ?? t('user.profile.title')}</Dialog.Heading>
+          <div className={styles.popup}>{profileContent}</div>
         </Dialog.Content>
       </Dialog>
     );
