@@ -1,5 +1,22 @@
 # @asgardeo/react
 
+## 0.5.13
+
+### Patch Changes
+
+- [#96](https://github.com/asgardeo/javascript/pull/96)
+  [`a1a6afe`](https://github.com/asgardeo/javascript/commit/a1a6afe776a527d7485920f3ee448131196300aa) Thanks
+  [@brionmario](https://github.com/brionmario)! - - Fix import path for useAsgardeo in SignedOut component
+
+  - Rename `AsgardeoLoading` -> `Loading`
+
+- [#96](https://github.com/asgardeo/javascript/pull/96)
+  [`a175ecf`](https://github.com/asgardeo/javascript/commit/a175ecf37a89e7c03e3fd45bb92a684c18dc5cf3) Thanks
+  [@brionmario](https://github.com/brionmario)! - Fix `getAccessToken` imperative usage
+
+- Updated dependencies []:
+  - @asgardeo/browser@0.1.9
+
 ## 0.5.12
 
 ### Patch Changes

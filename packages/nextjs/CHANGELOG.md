@@ -1,5 +1,19 @@
 # @asgardeo/nextjs
 
+## 0.1.14
+
+### Patch Changes
+
+- [#96](https://github.com/asgardeo/javascript/pull/96)
+  [`a175ecf`](https://github.com/asgardeo/javascript/commit/a175ecf37a89e7c03e3fd45bb92a684c18dc5cf3) Thanks
+  [@brionmario](https://github.com/brionmario)! - Fix `getAccessToken` imperative usage
+
+- Updated dependencies
+  [[`a1a6afe`](https://github.com/asgardeo/javascript/commit/a1a6afe776a527d7485920f3ee448131196300aa),
+  [`a175ecf`](https://github.com/asgardeo/javascript/commit/a175ecf37a89e7c03e3fd45bb92a684c18dc5cf3)]:
+  - @asgardeo/react@0.5.13
+  - @asgardeo/node@0.0.11
+
 ## 0.1.13
 
 ### Patch Changes
