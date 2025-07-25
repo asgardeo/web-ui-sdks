@@ -62,7 +62,7 @@ const SmsOtp: FC<BaseSignInOptionProps> = ({
         const isOtpParam = param.param.toLowerCase().includes('otp') || param.param.toLowerCase().includes('code');
 
         return (
-          <div key={param.param} style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
+          <div key={param.param}>
             {isOtpParam && hasOtpField ? (
               <OtpField
                 length={6}

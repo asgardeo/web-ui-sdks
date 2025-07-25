@@ -16,50 +16,49 @@
  * under the License.
  */
 
+'use client';
+
 import {FC, PropsWithChildren, ReactNode} from 'react';
-import useAsgardeo from '../../contexts/Asgardeo/useAsgardeo';
+import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 
 /**
- * Props for the SignedOut component.
+ * Props for the Loading component.
  */
-export interface SignedOutProps {
+export interface LoadingProps {
   /**
-   * Content to show when the user is signed in.
+   * Content to show when the user is not signed in.
    */
   fallback?: ReactNode;
 }
 
 /**
- * A component that only renders its children when the user is signed out.
+ * A component that only renders its children when the Asgardeo is loading.
  *
  * @remarks This component is only supported in browser based React applications (CSR).
  *
  * @example
  * ```tsx
- * import { SignedOut } from '@asgardeo/auth-react';
+ * import { Loading } from '@asgardeo/auth-react';
  *
  * const App = () => {
  *   return (
- *     <SignedOut fallback={<p>You are already signed in</p>}>
- *       <p>Please sign in to continue</p>
- *     </SignedOut>
+ *     <Loading fallback={<p>Finished Loading...</p>}>
+ *       <p>Loading...</p>
+ *     </Loading>
  *   );
  * }
  * ```
  */
-const SignedOut: FC<PropsWithChildren<SignedOutProps>> = ({
-  children,
-  fallback = null,
-}: PropsWithChildren<SignedOutProps>) => {
-  const {isSignedIn} = useAsgardeo();
+const Loading: FC<PropsWithChildren<LoadingProps>> = ({children, fallback = null}: PropsWithChildren<LoadingProps>) => {
+  const {isLoading} = useAsgardeo();
 
-  if (!isSignedIn) {
-    return <>{children}</>;
+  if (!isLoading) {
+    return <>{fallback}</>;
   }
 
-  return <>{fallback}</>;
+  return <>{children}</>;
 };
 
-SignedOut.displayName = 'SignedOut';
+Loading.displayName = 'Loading';
 
-export default SignedOut;
+export default Loading;

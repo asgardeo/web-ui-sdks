@@ -16,12 +16,13 @@
  * under the License.
  */
 
-import {FC, ReactElement} from 'react';
+import {FC, ReactElement, useState} from 'react';
 import BaseUserProfile, {BaseUserProfileProps} from './BaseUserProfile';
 import updateMeProfile from '../../../api/updateMeProfile';
 import useAsgardeo from '../../../contexts/Asgardeo/useAsgardeo';
 import useUser from '../../../contexts/User/useUser';
-import {User} from '@asgardeo/browser';
+import {AsgardeoError, User} from '@asgardeo/browser';
+import useTranslation from '../../../hooks/useTranslation';
 
 /**
  * Props for the UserProfile component.
@@ -55,11 +56,25 @@ export type UserProfileProps = Omit<BaseUserProfileProps, 'user' | 'profile' | '
 const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactElement => {
   const {baseUrl} = useAsgardeo();
   const {profile, flattenedProfile, schemas, onUpdateProfile} = useUser();
+  const {t} = useTranslation();
+
+  const [error, setError] = useState<string | null>(null);
 
   const handleProfileUpdate = async (payload: any): Promise<void> => {
-    const response: User = await updateMeProfile({baseUrl, payload});
+    setError(null);
 
-    onUpdateProfile(response);
+    try {
+      const response: User = await updateMeProfile({baseUrl, payload});
+      onUpdateProfile(response);
+    } catch (error: unknown) {
+      let message: string = t('user.profile.update.generic.error');
+
+      if (error instanceof AsgardeoError) {
+        message = error?.message;
+      }
+
+      setError(message);
+    }
   };
 
   return (
@@ -68,6 +83,7 @@ const UserProfile: FC<UserProfileProps> = ({...rest}: UserProfileProps): ReactEl
       flattenedProfile={flattenedProfile}
       schemas={schemas}
       onUpdate={handleProfileUpdate}
+      error={error}
       {...rest}
     />
   );

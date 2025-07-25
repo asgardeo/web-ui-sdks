@@ -16,114 +16,18 @@
  * under the License.
  */
 
-import {withVendorCSSClassPrefix, CreateOrganizationPayload} from '@asgardeo/browser';
-import clsx from 'clsx';
-import {ChangeEvent, CSSProperties, FC, ReactElement, ReactNode, useMemo, useState} from 'react';
+import {CreateOrganizationPayload} from '@asgardeo/browser';
+import {cx} from '@emotion/css';
+import {ChangeEvent, CSSProperties, FC, ReactElement, ReactNode, useState} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
 import useTranslation from '../../../hooks/useTranslation';
 import Alert from '../../primitives/Alert/Alert';
 import Button from '../../primitives/Button/Button';
-import {Dialog, DialogContent, DialogHeading} from '../../primitives/Popover/Popover';
+import Dialog from '../../primitives/Dialog/Dialog';
 import FormControl from '../../primitives/FormControl/FormControl';
 import InputLabel from '../../primitives/InputLabel/InputLabel';
 import TextField from '../../primitives/TextField/TextField';
-import Typography from '../../primitives/Typography/Typography';
-
-const useStyles = () => {
-  const {theme, colorScheme} = useTheme();
-
-  return useMemo(
-    () => ({
-      root: {
-        padding: `calc(${theme.vars.spacing.unit} * 4)`,
-        minWidth: '600px',
-        margin: '0 auto',
-      } as CSSProperties,
-      card: {
-        background: theme.vars.colors.background.surface,
-        borderRadius: theme.vars.borderRadius.large,
-        padding: `calc(${theme.vars.spacing.unit} * 4)`,
-      } as CSSProperties,
-      content: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-      form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `calc(${theme.vars.spacing.unit} * 2)`,
-        width: '100%',
-      } as CSSProperties,
-      header: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: `calc(${theme.vars.spacing.unit} * 1.5)`,
-        marginBottom: `calc(${theme.vars.spacing.unit} * 1.5)`,
-      } as CSSProperties,
-      field: {
-        display: 'flex',
-        alignItems: 'center',
-        padding: `${theme.vars.spacing.unit} 0`,
-        borderBottom: `1px solid ${theme.vars.colors.border}`,
-        minHeight: '32px',
-      } as CSSProperties,
-      textarea: {
-        width: '100%',
-        padding: `${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 1.5)`,
-        border: `1px solid ${theme.vars.colors.border}`,
-        borderRadius: theme.vars.borderRadius.medium,
-        fontSize: theme.vars.typography.fontSizes.md,
-        color: theme.vars.colors.text.primary,
-        backgroundColor: theme.vars.colors.background.surface,
-        fontFamily: 'inherit',
-        minHeight: '80px',
-        resize: 'vertical',
-        outline: 'none',
-        '&:focus': {
-          borderColor: theme.vars.colors.primary.main,
-          boxShadow: `0 0 0 2px ${theme.vars.colors.primary.main}20`,
-        },
-        '&:disabled': {
-          backgroundColor: theme.vars.colors.background.disabled,
-          color: theme.vars.colors.text.secondary,
-          cursor: 'not-allowed',
-        },
-      } as CSSProperties,
-      avatarContainer: {
-        alignItems: 'flex-start',
-        display: 'flex',
-        gap: `calc(${theme.vars.spacing.unit} * 2)`,
-        marginBottom: theme.vars.spacing.unit,
-      } as CSSProperties,
-      actions: {
-        display: 'flex',
-        gap: theme.vars.spacing.unit,
-        justifyContent: 'flex-end',
-        paddingTop: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-      infoContainer: {
-        display: 'flex',
-        flexDirection: 'column' as const,
-        gap: theme.vars.spacing.unit,
-      } as CSSProperties,
-      value: {
-        color: theme.vars.colors.text.primary,
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        gap: theme.vars.spacing.unit,
-        overflow: 'hidden',
-        minHeight: '32px',
-        lineHeight: '32px',
-      } as CSSProperties,
-      popup: {
-        padding: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-    }),
-    [theme, colorScheme],
-  );
-};
+import useStyles from './BaseCreateOrganization.styles';
 
 /**
  * Interface for organization form data.
@@ -176,8 +80,8 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
   style,
   title = 'Create Organization',
 }): ReactElement => {
-  const styles = useStyles();
-  const {theme} = useTheme();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme);
   const {t} = useTranslation();
   const [formData, setFormData] = useState<OrganizationFormData>({
     description: '',
@@ -214,7 +118,6 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
       [field]: value,
     }));
 
-    // Clear error when user starts typing
     if (formErrors[field]) {
       setFormErrors(prev => ({
         ...prev,
@@ -223,23 +126,34 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
     }
   };
 
+  /**
+   * Handles changes to the organization name input.
+   * Automatically generates the organization handle based on the name if the handle is not set or matches
+   *
+   * @param value - The new value for the organization name.
+   */
   const handleNameChange = (value: string): void => {
     handleInputChange('name', value);
 
-    // Auto-generate handle from name if handle is empty or matches previous auto-generated value
     if (!formData.handle || formData.handle === generateHandleFromName(formData.name)) {
       const newHandle = generateHandleFromName(value);
       handleInputChange('handle', newHandle);
     }
   };
 
+  /**
+   * Removes special characters except space and hyphen from the organization name
+   * and generates a valid handle.
+   * @param name
+   * @returns
+   */
   const generateHandleFromName = (name: string): string => {
     return name
       .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
   };
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
@@ -268,33 +182,17 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
     }
   };
 
-  const containerStyle = {
-    ...styles.root,
-    ...(cardLayout ? styles.card : {}),
-  };
-
   const createOrganizationContent = (
-    <div
-      className={clsx(withVendorCSSClassPrefix('create-organization'), className)}
-      style={{...containerStyle, ...style}}
-    >
-      <div className={withVendorCSSClassPrefix('create-organization__content')} style={styles.content}>
-        <form
-          id="create-organization-form"
-          className={withVendorCSSClassPrefix('create-organization__form')}
-          style={styles.form}
-          onSubmit={handleSubmit}
-        >
-          {/* Error Alert */}
+    <div className={cx(styles.root, cardLayout && styles.card, className)} style={style}>
+      <div className={cx(styles.content)}>
+        <form id="create-organization-form" className={cx(styles.form)} onSubmit={handleSubmit}>
           {error && (
-            <Alert variant="error" style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}>
+            <Alert variant="error" className={styles.errorAlert}>
               <Alert.Title>Error</Alert.Title>
               <Alert.Description>{error}</Alert.Description>
             </Alert>
           )}
-
-          {/* Organization Name */}
-          <div className={withVendorCSSClassPrefix('create-organization__field-group')}>
+          <div className={cx(styles.fieldGroup)}>
             <TextField
               label={`${t('organization.create.name.label')}`}
               placeholder={t('organization.create.name.placeholder')}
@@ -303,12 +201,10 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               disabled={loading}
               required
               error={formErrors.name}
-              className={withVendorCSSClassPrefix('create-organization__input')}
+              className={cx(styles.input)}
             />
           </div>
-
-          {/* Organization Handle */}
-          <div className={withVendorCSSClassPrefix('create-organization__field-group')}>
+          <div className={cx(styles.fieldGroup)}>
             <TextField
               label={`${t('organization.create.handle.label') || 'Organization Handle'}`}
               placeholder={t('organization.create.handle.placeholder') || 'my-organization'}
@@ -318,20 +214,14 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               required
               error={formErrors.handle}
               helperText="This will be your organization's unique identifier. Only lowercase letters, numbers, and hyphens are allowed."
-              className={withVendorCSSClassPrefix('create-organization__input')}
+              className={cx(styles.input)}
             />
           </div>
-
-          {/* Organization Description */}
-          <div className={withVendorCSSClassPrefix('create-organization__field-group')}>
+          <div className={cx(styles.fieldGroup)}>
             <FormControl error={formErrors.description}>
               <InputLabel required>{t('organization.create.description.label')}</InputLabel>
               <textarea
-                className={withVendorCSSClassPrefix('create-organization__textarea')}
-                style={{
-                  ...styles.textarea,
-                  borderColor: formErrors.description ? theme.vars.colors.error.main : theme.vars.colors.border,
-                }}
+                className={cx(styles.textarea, formErrors.description && styles.textareaError)}
                 placeholder={t('organization.create.description.placeholder')}
                 value={formData.description}
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange('description', e.target.value)}
@@ -340,13 +230,9 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
               />
             </FormControl>
           </div>
-
-          {/* Additional Fields */}
           {renderAdditionalFields && renderAdditionalFields()}
         </form>
-
-        {/* Actions */}
-        <div className={withVendorCSSClassPrefix('create-organization__actions')} style={styles.actions}>
+        <div className={cx(styles.actions)}>
           {onCancel && (
             <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
               {t('organization.create.cancel')}
@@ -363,10 +249,10 @@ export const BaseCreateOrganization: FC<BaseCreateOrganizationProps> = ({
   if (mode === 'popup') {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeading>{title}</DialogHeading>
-          <div style={{padding: `calc(${theme.vars.spacing.unit} * 2)`}}>{createOrganizationContent}</div>
-        </DialogContent>
+        <Dialog.Content>
+          <Dialog.Heading>{title}</Dialog.Heading>
+          <div className={styles.popup}>{createOrganizationContent}</div>
+        </Dialog.Content>
       </Dialog>
     );
   }

@@ -23,7 +23,13 @@ import createTheme from '../theme/createTheme';
 /**
  * Safely extracts a color value from the branding preference structure
  */
-const extractColorValue = (colorVariant?: {main?: string; contrastText?: string}) => {
+type ColorVariant = {main?: string; dark?: string; contrastText?: string};
+type TextColors = {primary?: string; secondary?: string; dark?: string};
+
+const extractColorValue = (colorVariant?: ColorVariant, preferDark = false): string | undefined => {
+  if (preferDark && colorVariant?.dark && colorVariant.dark.trim()) {
+    return colorVariant.dark;
+  }
   return colorVariant?.main;
 };
 
@@ -59,36 +65,50 @@ const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Part
         activatedOpacity: 0.12,
       },
       primary: {
-        main: extractColorValue(colors?.primary),
+        main: extractColorValue(colors?.primary as ColorVariant, isDark),
         contrastText: extractContrastText(colors?.primary),
+        dark: colors?.primary?.dark || (colors?.primary as ColorVariant)?.main,
       },
       secondary: {
-        main: extractColorValue(colors?.secondary),
+        main: extractColorValue(colors?.secondary as ColorVariant, isDark),
         contrastText: extractContrastText(colors?.secondary),
+        dark: colors?.secondary?.dark || (colors?.secondary as ColorVariant)?.main,
       },
       background: {
-        surface: extractColorValue(colors?.background?.surface),
-        disabled: extractColorValue(colors?.background?.surface),
+        surface: extractColorValue(colors?.background?.surface as ColorVariant, isDark),
+        disabled: extractColorValue(colors?.background?.surface as ColorVariant, isDark),
+        dark:
+          (colors?.background?.surface as ColorVariant)?.dark || (colors?.background?.surface as ColorVariant)?.main,
         body: {
-          main: extractColorValue(colors?.background?.body),
+          main: extractColorValue(colors?.background?.body as ColorVariant, isDark),
+          dark: (colors?.background?.body as ColorVariant)?.dark || (colors?.background?.body as ColorVariant)?.main,
         },
       },
       text: {
-        primary: colors?.text?.primary,
-        secondary: colors?.text?.secondary,
+        primary: (colors?.text as TextColors)?.primary,
+        secondary: (colors?.text as TextColors)?.secondary,
+        dark: (colors?.text as TextColors)?.dark || (colors?.text as TextColors)?.primary,
       },
       border: colors?.outlined?.default,
       error: {
-        main: extractColorValue(colors?.alerts?.error),
+        main: extractColorValue(colors?.alerts?.error as ColorVariant, isDark),
         contrastText: extractContrastText(colors?.alerts?.error),
+        dark: (colors?.alerts?.error as ColorVariant)?.dark || (colors?.alerts?.error as ColorVariant)?.main,
+      },
+      info: {
+        main: extractColorValue(colors?.alerts?.info as ColorVariant, isDark),
+        contrastText: extractContrastText(colors?.alerts?.info),
+        dark: (colors?.alerts?.info as ColorVariant)?.dark || (colors?.alerts?.info as ColorVariant)?.main,
       },
       success: {
-        main: extractColorValue(colors?.alerts?.info),
-        contrastText: extractContrastText(colors?.alerts?.info),
+        main: extractColorValue(colors?.alerts?.neutral as ColorVariant, isDark),
+        contrastText: extractContrastText(colors?.alerts?.neutral),
+        dark: (colors?.alerts?.neutral as ColorVariant)?.dark || (colors?.alerts?.neutral as ColorVariant)?.main,
       },
       warning: {
-        main: extractColorValue(colors?.alerts?.warning),
+        main: extractColorValue(colors?.alerts?.warning as ColorVariant, isDark),
         contrastText: extractContrastText(colors?.alerts?.warning),
+        dark: (colors?.alerts?.warning as ColorVariant)?.dark || (colors?.alerts?.warning as ColorVariant)?.main,
       },
     },
     // Extract border radius from buttons or inputs

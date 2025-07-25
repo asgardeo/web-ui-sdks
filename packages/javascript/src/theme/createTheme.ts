@@ -54,33 +54,46 @@ const lightTheme: ThemeConfig = {
     primary: {
       main: '#1a73e8',
       contrastText: '#ffffff',
+      dark: '#174ea6',
     },
     secondary: {
       main: '#424242',
       contrastText: '#ffffff',
+      dark: '#212121',
     },
     background: {
       surface: '#ffffff',
       disabled: '#f0f0f0',
+      dark: '#212121',
       body: {
         main: '#1a1a1a',
+        dark: '#212121',
       },
     },
     error: {
       main: '#d32f2f',
-      contrastText: '#ffffff',
+      contrastText: '#d52828',
+      dark: '#b71c1c',
+    },
+    info: {
+      main: '#bbebff',
+      contrastText: '#43aeda',
+      dark: '#01579b',
     },
     success: {
       main: '#4caf50',
-      contrastText: '#ffffff',
+      contrastText: '#00a807',
+      dark: '#388e3c',
     },
     warning: {
       main: '#ff9800',
-      contrastText: '#ffffff',
+      contrastText: '#be7100',
+      dark: '#f57c00',
     },
     text: {
       primary: '#1a1a1a',
       secondary: '#666666',
+      dark: '#212121',
     },
     border: '#e0e0e0',
   },
@@ -144,33 +157,46 @@ const darkTheme: ThemeConfig = {
     primary: {
       main: '#1a73e8',
       contrastText: '#ffffff',
+      dark: '#174ea6',
     },
     secondary: {
       main: '#424242',
       contrastText: '#ffffff',
+      dark: '#212121',
     },
     background: {
       surface: '#121212',
       disabled: '#1f1f1f',
+      dark: '#212121',
       body: {
         main: '#ffffff',
+        dark: '#212121',
       },
     },
     error: {
       main: '#d32f2f',
-      contrastText: '#ffffff',
+      contrastText: '#d52828',
+      dark: '#b71c1c',
+    },
+    info: {
+      main: '#bbebff',
+      contrastText: '#43aeda',
+      dark: '#01579b',
     },
     success: {
       main: '#4caf50',
-      contrastText: '#ffffff',
+      contrastText: '#00a807',
+      dark: '#388e3c',
     },
     warning: {
       main: '#ff9800',
-      contrastText: '#ffffff',
+      contrastText: '#be7100',
+      dark: '#f57c00',
     },
     text: {
       primary: '#ffffff',
       secondary: '#b3b3b3',
+      dark: '#212121',
     },
     border: '#404040',
   },
@@ -304,6 +330,14 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
   }
   if (theme.colors?.warning?.contrastText) {
     cssVars[`--${prefix}-color-warning-contrastText`] = theme.colors.warning.contrastText;
+  }
+
+  // Colors - Info
+  if (theme.colors?.info?.main) {
+    cssVars[`--${prefix}-color-info-main`] = theme.colors.info.main;
+  }
+  if (theme.colors?.info?.contrastText) {
+    cssVars[`--${prefix}-color-info-contrastText`] = theme.colors.info.contrastText;
   }
 
   // Colors - Text
@@ -454,6 +488,10 @@ const toThemeVars = (theme: ThemeConfig): ThemeVars => {
       error: {
         main: `var(--${prefix}-color-error-main)`,
         contrastText: `var(--${prefix}-color-error-contrastText)`,
+      },
+      info: {
+        contrastText: `var(--${prefix}-color-info-contrastText)`,
+        main: `var(--${prefix}-color-info-main)`,
       },
       success: {
         main: `var(--${prefix}-color-success-main)`,

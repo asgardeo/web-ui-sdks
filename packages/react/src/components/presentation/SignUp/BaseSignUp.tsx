@@ -25,8 +25,8 @@ import {
   withVendorCSSClassPrefix,
   AsgardeoAPIError,
 } from '@asgardeo/browser';
-import {clsx} from 'clsx';
-import {FC, ReactElement, FormEvent, useEffect, useState, useCallback, useRef, useMemo, CSSProperties} from 'react';
+import {cx} from '@emotion/css';
+import {FC, ReactElement, useEffect, useState, useCallback, useRef} from 'react';
 import {renderSignUpComponents} from './options/SignUpOptionFactory';
 import FlowProvider from '../../../contexts/Flow/FlowProvider';
 import useFlow from '../../../contexts/Flow/useFlow';
@@ -37,7 +37,7 @@ import Alert from '../../primitives/Alert/Alert';
 import Card, {CardProps} from '../../primitives/Card/Card';
 import Logo from '../../primitives/Logo/Logo';
 import Spinner from '../../primitives/Spinner/Spinner';
-import Typography from '../../primitives/Typography/Typography';
+import useStyles from './BaseSignUp.styles';
 
 /**
  * Props for the BaseSignUp component.
@@ -123,72 +123,6 @@ export interface BaseSignUpProps {
 }
 
 /**
- * Custom hook for managing component styles
- */
-const useStyles = () => {
-  const {theme} = useTheme();
-
-  return useMemo(
-    () => ({
-      card: {
-        gap: `calc(${theme.vars.spacing.unit} * 2)`,
-        minWidth: '420px',
-      } as CSSProperties,
-      header: {
-        gap: 0,
-      } as CSSProperties,
-      subtitle: {
-        marginTop: `calc(${theme.vars.spacing.unit} * 1)`,
-      } as CSSProperties,
-      messagesContainer: {
-        marginTop: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-      messageItem: {
-        marginBottom: `calc(${theme.vars.spacing.unit} * 1)`,
-      } as CSSProperties,
-      errorContainer: {
-        marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-      contentContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-      loadingContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: `calc(${theme.vars.spacing.unit} * 4)`,
-      } as CSSProperties,
-      loadingText: {
-        marginTop: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-      divider: {
-        margin: `calc(${theme.vars.spacing.unit} * 1) 0`,
-      } as CSSProperties,
-      logoContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginBottom: `calc(${theme.vars.spacing.unit} * 3)`,
-      } as CSSProperties,
-      centeredContainer: {
-        textAlign: 'center',
-        padding: `calc(${theme.vars.spacing.unit} * 4)`,
-      } as CSSProperties,
-      passkeyContainer: {
-        marginBottom: `calc(${theme.vars.spacing.unit} * 2)`,
-      } as CSSProperties,
-      passkeyText: {
-        marginTop: `calc(${theme.vars.spacing.unit} * 1)`,
-        color: theme.vars.colors.text.secondary,
-      } as CSSProperties,
-    }),
-    [theme.vars.spacing.unit, theme.vars.colors.text.secondary],
-  );
-};
-
-/**
  * Base SignUp component that provides embedded sign-up flow.
  * This component handles both the presentation layer and sign-up flow logic.
  * It accepts API functions as props to maintain framework independence.
@@ -224,12 +158,12 @@ const useStyles = () => {
  * ```
  */
 const BaseSignUp: FC<BaseSignUpProps> = props => {
-  const {theme} = useTheme();
-  const styles = useStyles();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme);
 
   return (
     <div>
-      <div style={styles.logoContainer}>
+      <div className={styles.logoContainer}>
         <Logo size="large" />
       </div>
       <FlowProvider>
@@ -258,10 +192,10 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   variant = 'outlined',
   isInitialized,
 }) => {
-  const {theme} = useTheme();
+  const {theme, colorScheme} = useTheme();
   const {t} = useTranslation();
   const {subtitle: flowSubtitle, title: flowTitle, messages: flowMessages} = useFlow();
-  const styles = useStyles();
+  const styles = useStyles(theme, colorScheme);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isFlowInitialized, setIsFlowInitialized] = useState(false);
@@ -269,7 +203,6 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<Record<string, any>>({});
 
-  // Ref to track if initialization has been attempted to prevent multiple calls
   const initializationAttemptedRef = useRef(false);
 
   /**
@@ -352,10 +285,8 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
         initialValues[field.name] = field.initialValue || '';
       });
 
-      // Reset form with new values
       resetForm();
 
-      // Set initial values for all fields
       Object.keys(initialValues).forEach(key => {
         setFormValue(key, initialValues[key]);
       });
@@ -409,7 +340,6 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
       }
 
       if (response.flowStatus === EmbeddedFlowStatus.Incomplete) {
-        // Check if the response contains a redirection URL and redirect if needed
         if (handleRedirectionIfNeeded(response, component)) {
           return;
         }
@@ -592,8 +522,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     return false;
   };
 
-  // Generate CSS classes
-  const containerClasses = clsx(
+  const containerClasses = cx(
     [
       withVendorCSSClassPrefix('signup'),
       withVendorCSSClassPrefix(`signup--${size}`),
@@ -602,7 +531,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     className,
   );
 
-  const inputClasses = clsx(
+  const inputClasses = cx(
     [
       withVendorCSSClassPrefix('signup__input'),
       size === 'small' && withVendorCSSClassPrefix('signup__input--small'),
@@ -611,7 +540,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     inputClassName,
   );
 
-  const buttonClasses = clsx(
+  const buttonClasses = cx(
     [
       withVendorCSSClassPrefix('signup__button'),
       size === 'small' && withVendorCSSClassPrefix('signup__button--small'),
@@ -620,9 +549,9 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     buttonClassName,
   );
 
-  const errorClasses = clsx([withVendorCSSClassPrefix('signup__error')], errorClassName);
+  const errorClasses = cx([withVendorCSSClassPrefix('signup__error')], errorClassName);
 
-  const messageClasses = clsx([withVendorCSSClassPrefix('signup__messages')], messageClassName);
+  const messageClasses = cx([withVendorCSSClassPrefix('signup__messages')], messageClassName);
 
   /**
    * Render form components based on flow data using the factory
@@ -666,8 +595,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
     if (isInitialized && !isFlowInitialized && !initializationAttemptedRef.current) {
       initializationAttemptedRef.current = true;
 
-      // Inline initialization to avoid dependency issues
-      const performInitialization = async () => {
+      (async () => {
         setIsLoading(true);
         setError(null);
 
@@ -694,9 +622,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
         } finally {
           setIsLoading(false);
         }
-      };
-
-      performInitialization();
+      })();
     }
   }, [
     isInitialized,
@@ -712,9 +638,9 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
 
   if (!isFlowInitialized && isLoading) {
     return (
-      <Card className={containerClasses} style={styles.card} variant={variant}>
+      <Card className={cx(containerClasses, styles.card)} variant={variant}>
         <Card.Content>
-          <div style={{display: 'flex', justifyContent: 'center', padding: `calc(${theme.vars.spacing.unit} * 4)`}}>
+          <div className={styles.loadingContainer}>
             <Spinner size="medium" />
           </div>
         </Card.Content>
@@ -724,7 +650,7 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
 
   if (!currentFlow) {
     return (
-      <Card className={containerClasses} style={styles.card} variant={variant}>
+      <Card className={cx(containerClasses, styles.card)} variant={variant}>
         <Card.Content>
           <Alert variant="error" className={errorClasses}>
             <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
@@ -736,16 +662,15 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
   }
 
   return (
-    <Card className={containerClasses} style={styles.card} variant={variant}>
+    <Card className={cx(containerClasses, styles.card)} variant={variant}>
       {flowMessages && flowMessages.length > 0 && (
-        <Card.Header style={styles.header}>
-          <div style={{marginTop: `calc(${theme.vars.spacing.unit} * 2)`}}>
+        <Card.Header className={styles.header}>
+          <div className={styles.messagesContainer}>
             {flowMessages.map((message: any, index: number) => (
               <Alert
                 key={message.id || index}
                 variant={message.type?.toLowerCase() === 'error' ? 'error' : 'info'}
-                style={{marginBottom: `calc(${theme.vars.spacing.unit} * 1)`}}
-                className={messageClasses}
+                className={cx(styles.messageItem, messageClasses)}
               >
                 <Alert.Description>{message.message}</Alert.Description>
               </Alert>
@@ -755,17 +680,13 @@ const BaseSignUpContent: FC<BaseSignUpProps> = ({
       )}
       <Card.Content>
         {error && (
-          <Alert
-            variant="error"
-            className={errorClasses}
-            style={{marginBottom: `calc(${theme.vars.spacing.unit} * 2)`}}
-          >
+          <Alert variant="error" className={cx(styles.errorContainer, errorClasses)}>
             <Alert.Title>{t('errors.title') || 'Error'}</Alert.Title>
             <Alert.Description>{error}</Alert.Description>
           </Alert>
         )}
 
-        <div style={{display: 'flex', flexDirection: 'column', gap: `calc(${theme.vars.spacing.unit} * 2)`}}>
+        <div className={styles.contentContainer}>
           {currentFlow.data?.components && renderComponents(currentFlow.data.components)}
         </div>
       </Card.Content>

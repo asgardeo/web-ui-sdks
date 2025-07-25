@@ -18,37 +18,9 @@
 
 import {CSSProperties, FC, ReactNode, ComponentPropsWithoutRef, ElementType} from 'react';
 import useTheme from '../../../contexts/Theme/useTheme';
-import clsx from 'clsx';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-
-// Typography variants mapped to HTML elements and styling
-export type TypographyVariant =
-  | 'h1'
-  | 'h2'
-  | 'h3'
-  | 'h4'
-  | 'h5'
-  | 'h6'
-  | 'subtitle1'
-  | 'subtitle2'
-  | 'body1'
-  | 'body2'
-  | 'caption'
-  | 'overline'
-  | 'button';
-
-export type TypographyAlign = 'left' | 'center' | 'right' | 'justify';
-
-export type TypographyColor =
-  | 'primary'
-  | 'secondary'
-  | 'error'
-  | 'success'
-  | 'warning'
-  | 'info'
-  | 'textPrimary'
-  | 'textSecondary'
-  | 'inherit';
+import {cx} from '@emotion/css';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import useStyles, {TypographyVariant, TypographyAlign, TypographyColor} from './Typography.styles';
 
 export interface TypographyProps {
   /**
@@ -142,172 +114,69 @@ const Typography: FC<TypographyProps> = ({
   gutterBottom = false,
   ...rest
 }) => {
-  const {theme} = useTheme();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(
+    theme,
+    colorScheme,
+    variant,
+    align,
+    color,
+    noWrap,
+    inline,
+    gutterBottom,
+    fontWeight,
+    fontSize,
+    lineHeight,
+  );
 
-  // Determine the component to render
   const Component = component || variantMapping[variant] || 'span';
 
-  // Get color value from theme
-  const getColorValue = (colorVariant: TypographyColor): string => {
-    switch (colorVariant) {
-      case 'primary':
-        return theme.colors.primary.main;
-      case 'secondary':
-        return theme.colors.secondary.main;
-      case 'error':
-        return theme.colors.error.main;
-      case 'textPrimary':
-        return theme.colors.text.primary;
-      case 'textSecondary':
-        return theme.colors.text.secondary;
-      case 'inherit':
-        return 'inherit';
-      default:
-        return theme.colors.text.primary;
-    }
-  };
-
-  // Get variant styles
-  const getVariantStyles = (variantName: TypographyVariant): CSSProperties => {
-    const baseUnit = theme.spacing.unit;
-
+  const getVariantClass = (variantName: TypographyVariant) => {
     switch (variantName) {
       case 'h1':
-        return {
-          fontSize: theme.vars.typography.fontSizes['3xl'], // 34px
-          fontWeight: 600,
-          lineHeight: 1.235,
-          letterSpacing: '-0.00735em',
-        };
+        return styles.typographyH1;
       case 'h2':
-        return {
-          fontSize: theme.vars.typography.fontSizes['2xl'], // 24px
-          fontWeight: 600,
-          lineHeight: 1.334,
-          letterSpacing: '0em',
-        };
+        return styles.typographyH2;
       case 'h3':
-        return {
-          fontSize: theme.vars.typography.fontSizes.xl, // 20px
-          fontWeight: 600,
-          lineHeight: 1.6,
-          letterSpacing: '0.0075em',
-        };
+        return styles.typographyH3;
       case 'h4':
-        return {
-          fontSize: theme.vars.typography.fontSizes.lg, // 18px
-          fontWeight: 600,
-          lineHeight: 1.5,
-          letterSpacing: '0.00938em',
-        };
+        return styles.typographyH4;
       case 'h5':
-        return {
-          fontSize: theme.vars.typography.fontSizes.md, // 16px
-          fontWeight: 600,
-          lineHeight: 1.334,
-          letterSpacing: '0em',
-        };
+        return styles.typographyH5;
       case 'h6':
-        return {
-          fontSize: theme.vars.typography.fontSizes.sm, // 14px
-          fontWeight: 500,
-          lineHeight: 1.6,
-          letterSpacing: '0.0075em',
-        };
+        return styles.typographyH6;
       case 'subtitle1':
-        return {
-          fontSize: theme.vars.typography.fontSizes.md, // 16px
-          fontWeight: 400,
-          lineHeight: 1.75,
-          letterSpacing: '0.00938em',
-        };
+        return styles.typographySubtitle1;
       case 'subtitle2':
-        return {
-          fontSize: theme.vars.typography.fontSizes.sm, // 14px
-          fontWeight: 500,
-          lineHeight: 1.57,
-          letterSpacing: '0.00714em',
-        };
+        return styles.typographySubtitle2;
       case 'body1':
-        return {
-          fontSize: theme.vars.typography.fontSizes.md, // 16px
-          fontWeight: 400,
-          lineHeight: 1.5,
-          letterSpacing: '0.00938em',
-        };
+        return styles.typographyBody1;
       case 'body2':
-        return {
-          fontSize: theme.vars.typography.fontSizes.sm, // 14px
-          fontWeight: 400,
-          lineHeight: 1.43,
-          letterSpacing: '0.01071em',
-        };
+        return styles.typographyBody2;
       case 'caption':
-        return {
-          fontSize: theme.vars.typography.fontSizes.xs, // 12px
-          fontWeight: 400,
-          lineHeight: 1.66,
-          letterSpacing: '0.03333em',
-        };
+        return styles.typographyCaption;
       case 'overline':
-        return {
-          fontSize: theme.vars.typography.fontSizes.xs, // 12px
-          fontWeight: 400,
-          lineHeight: 2.66,
-          letterSpacing: '0.08333em',
-          textTransform: 'uppercase',
-        };
+        return styles.typographyOverline;
       case 'button':
-        return {
-          fontSize: theme.vars.typography.fontSizes.sm, // 14px
-          fontWeight: 500,
-          lineHeight: 1.75,
-          letterSpacing: '0.02857em',
-          textTransform: 'uppercase',
-        };
+        return styles.typographyButton;
       default:
-        return {};
+        return '';
     }
   };
 
-  const variantStyles = getVariantStyles(variant);
-
-  const typographyStyle: CSSProperties = {
-    margin: 0,
-    color: getColorValue(color),
-    textAlign: align,
-    display: inline ? 'inline' : variantMapping[variant] === 'span' ? 'inline' : 'block',
-    ...variantStyles,
-    // Custom overrides
-    ...(fontWeight && {fontWeight}),
-    ...(fontSize && {fontSize: typeof fontSize === 'number' ? `${fontSize}px` : fontSize}),
-    ...(lineHeight && {lineHeight}),
-    ...(noWrap && {
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
-    }),
-    ...(gutterBottom && {
-      marginBottom: theme.spacing.unit + 'px',
-    }),
-    ...style,
-  };
+  const typographyClassName = cx(
+    withVendorCSSClassPrefix(bem('typography')),
+    withVendorCSSClassPrefix(bem('typography', variant)),
+    styles.typography,
+    getVariantClass(variant),
+    noWrap && styles.typographyNoWrap,
+    inline && styles.typographyInline,
+    gutterBottom && styles.typographyGutterBottom,
+    className,
+  );
 
   return (
-    <Component
-      className={clsx(
-        withVendorCSSClassPrefix('typography'),
-        withVendorCSSClassPrefix(`typography-${variant}`),
-        {
-          [withVendorCSSClassPrefix('typography-noWrap')]: noWrap,
-          [withVendorCSSClassPrefix('typography-inline')]: inline,
-          [withVendorCSSClassPrefix('typography-gutterBottom')]: gutterBottom,
-        },
-        className,
-      )}
-      style={typographyStyle}
-      {...rest}
-    >
+    <Component className={typographyClassName} style={style} {...rest}>
       {children}
     </Component>
   );

@@ -79,6 +79,13 @@ const translations: I18nTranslations = {
   'username.password.subtitle': 'Enter your username and password to continue.',
 
   /* |---------------------------------------------------------------| */
+  /* |                          User Profile                         | */
+  /* |---------------------------------------------------------------| */
+
+  'user.profile.title': 'Profile',
+  'user.profile.update.generic.error': 'An error occurred while updating your profile. Please try again.',
+
+  /* |---------------------------------------------------------------| */
   /* |                     Organization Switcher                     | */
   /* |---------------------------------------------------------------| */
 

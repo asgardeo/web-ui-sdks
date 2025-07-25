@@ -17,9 +17,10 @@
  */
 
 import {FC, CSSProperties} from 'react';
-import {withVendorCSSClassPrefix} from '@asgardeo/browser';
-import {clsx} from 'clsx';
+import {withVendorCSSClassPrefix, bem} from '@asgardeo/browser';
+import {cx} from '@emotion/css';
 import useTheme from '../../../contexts/Theme/useTheme';
+import useStyles from './Spinner.styles';
 
 export type SpinnerSize = 'small' | 'medium' | 'large';
 
@@ -58,44 +59,19 @@ export interface SpinnerProps {
  * ```
  */
 const Spinner: FC<SpinnerProps> = ({size = 'medium', color, className, style}) => {
-  const {theme} = useTheme();
+  const {theme, colorScheme} = useTheme();
+  const styles = useStyles(theme, colorScheme, size, color);
 
-  const spinnerSize = {
-    small: '16px',
-    medium: '20px',
-    large: '32px',
-  }[size];
-
-  const spinnerColor = color || theme.vars.colors.primary.main;
-
-  const spinnerStyle: CSSProperties = {
-    width: spinnerSize,
-    height: spinnerSize,
-    border: '2px solid transparent',
-    borderTop: `2px solid ${spinnerColor}`,
-    borderRadius: '50%',
-    animation: 'asgardeo-spinner-spin 1s linear infinite',
-    ...style,
-  };
-
-  return (
-    <>
-      <style>
-        {`
-          @keyframes asgardeo-spinner-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}
-      </style>
-      <span
-        className={clsx(withVendorCSSClassPrefix('spinner'), className)}
-        style={spinnerStyle}
-        role="status"
-        aria-label="Loading"
-      />
-    </>
+  const spinnerClassName = cx(
+    withVendorCSSClassPrefix(bem('spinner')),
+    styles.spinner,
+    size === 'small' && styles.spinnerSmall,
+    size === 'medium' && styles.spinnerMedium,
+    size === 'large' && styles.spinnerLarge,
+    className,
   );
+
+  return <span className={spinnerClassName} style={style} role="status" aria-label="Loading" />;
 };
 
 export default Spinner;
