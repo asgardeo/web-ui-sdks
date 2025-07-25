@@ -113,7 +113,7 @@ const useStyles = (theme: Theme, colorScheme: string) => {
     `;
 
     const info = css`
-      padding: calc(${theme.vars.spacing.unit} * 2) 0;
+      padding: calc(${theme.vars.spacing.unit} * 1.5) 0;
       border-bottom: 1px solid ${theme.vars.colors.border};
     `;
 

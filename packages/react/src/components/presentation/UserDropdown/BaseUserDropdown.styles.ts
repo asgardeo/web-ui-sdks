@@ -37,7 +37,9 @@ const useStyles = (theme: Theme, colorScheme: string) => {
       border: none;
       cursor: pointer;
       border-radius: ${theme.vars.borderRadius.medium};
-      transition: background-color 0.15s ease-in-out;
+      transition: none;
+      box-shadow: none;
+      background-color: transparent;
 
       &:hover {
         background-color: ${theme.vars.colors.action?.hover || 'rgba(0, 0, 0, 0.05)'};
@@ -46,6 +48,11 @@ const useStyles = (theme: Theme, colorScheme: string) => {
       &:focus {
         outline: 2px solid ${theme.vars.colors.primary};
         outline-offset: 2px;
+      }
+
+      &:hover, &:focus, &:active, &:focus-visible {
+        transition: none;
+        box-shadow: none;
       }
     `;
 
@@ -86,15 +93,22 @@ const useStyles = (theme: Theme, colorScheme: string) => {
       color: ${theme.vars.colors.text.primary};
       text-decoration: none;
       border: none;
-      background: none;
       cursor: pointer;
       font-size: 0.875rem;
       text-align: left;
       border-radius: ${theme.vars.borderRadius.medium};
-      transition: background-color 0.15s ease-in-out;
+      transition: none;
+      box-shadow: none;
+      background: transparent;
+
 
       &:hover {
         background-color: ${theme.vars.colors.action?.hover || 'rgba(0, 0, 0, 0.05)'};
+      }
+
+      &:hover, &:focus, &:active, &:focus-visible {
+        transition: none;
+        box-shadow: none;
       }
     `;
 

@@ -23,8 +23,8 @@ import createTheme from '../theme/createTheme';
 /**
  * Safely extracts a color value from the branding preference structure
  */
-type ColorVariant = { main?: string; dark?: string; contrastText?: string };
-type TextColors = { primary?: string; secondary?: string; dark?: string };
+type ColorVariant = {main?: string; dark?: string; contrastText?: string};
+type TextColors = {primary?: string; secondary?: string; dark?: string};
 
 const extractColorValue = (colorVariant?: ColorVariant, preferDark = false): string | undefined => {
   if (preferDark && colorVariant?.dark && colorVariant.dark.trim()) {
@@ -77,7 +77,8 @@ const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Part
       background: {
         surface: extractColorValue(colors?.background?.surface as ColorVariant, isDark),
         disabled: extractColorValue(colors?.background?.surface as ColorVariant, isDark),
-        dark: (colors?.background?.surface as ColorVariant)?.dark || (colors?.background?.surface as ColorVariant)?.main,
+        dark:
+          (colors?.background?.surface as ColorVariant)?.dark || (colors?.background?.surface as ColorVariant)?.main,
         body: {
           main: extractColorValue(colors?.background?.body as ColorVariant, isDark),
           dark: (colors?.background?.body as ColorVariant)?.dark || (colors?.background?.body as ColorVariant)?.main,
