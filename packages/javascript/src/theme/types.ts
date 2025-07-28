@@ -122,6 +122,17 @@ export interface ThemeComponents {
     defaultProps?: Record<string, any>;
     variants?: Array<Record<string, any>>;
   };
+  Field?: {
+    styleOverrides?: {
+      root?: {
+        borderRadius?: string;
+        [key: string]: any;
+      };
+      [slot: string]: Record<string, any> | undefined;
+    };
+    defaultProps?: Record<string, any>;
+    variants?: Array<Record<string, any>>;
+  };
   [componentName: string]:
     | {
         styleOverrides?: ThemeComponentStyleOverrides;
@@ -186,6 +197,13 @@ export interface ThemeConfig {
 
 export interface ThemeComponentVars {
   Button?: {
+    root?: {
+      borderRadius?: string;
+      [key: string]: any;
+    };
+    [slot: string]: Record<string, any> | undefined;
+  };
+  Field?: {
     root?: {
       borderRadius?: string;
       [key: string]: any;

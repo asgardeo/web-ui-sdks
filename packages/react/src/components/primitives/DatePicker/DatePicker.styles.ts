@@ -34,7 +34,7 @@ const useStyles = (theme: Theme, colorScheme: string, hasError: boolean, disable
       width: 100%;
       padding: ${theme.vars.spacing.unit} calc(${theme.vars.spacing.unit} * 1.5);
       border: 1px solid ${theme.vars.colors.border};
-      border-radius: ${theme.vars.borderRadius.medium};
+      border-radius: ${theme.vars.components?.Field?.root?.borderRadius || theme.vars.borderRadius.medium};
       font-size: 1rem;
       color: ${theme.vars.colors.text.primary};
       background-color: ${theme.vars.colors.background.surface};

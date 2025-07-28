@@ -129,17 +129,33 @@ const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Part
     },
   };
 
-  // --- COMPONENT OVERRIDES: Button borderRadius ---
+  /* |---------------------------------------------------------------| */
+  /* |                       Components                              | */
+  /* |---------------------------------------------------------------| */
+
   const buttonBorderRadius = buttons?.primary?.base?.border?.borderRadius;
-  if (buttonBorderRadius) {
+  const fieldBorderRadius = inputs?.base?.border?.borderRadius;
+
+  if (buttonBorderRadius || fieldBorderRadius) {
     config.components = {
-      Button: {
-        styleOverrides: {
-          root: {
-            borderRadius: buttonBorderRadius,
+      ...(buttonBorderRadius && {
+        Button: {
+          styleOverrides: {
+            root: {
+              borderRadius: buttonBorderRadius,
+            },
           },
         },
-      },
+      }),
+      ...(fieldBorderRadius && {
+        Field: {
+          styleOverrides: {
+            root: {
+              borderRadius: fieldBorderRadius,
+            },
+          },
+        },
+      }),
     };
   }
 

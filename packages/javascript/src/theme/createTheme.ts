@@ -459,6 +459,11 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
       theme.components.Button.styleOverrides.root.borderRadius;
   }
 
+  // Field Overrides (Parent of `TextField`, `DatePicker`, `OtpField`, `Select`, etc.)
+  if (theme.components?.Field?.styleOverrides?.root?.borderRadius) {
+    cssVars[`--${prefix}-component-field-root-borderRadius`] = theme.components.Field.styleOverrides.root.borderRadius;
+  }
+
   return cssVars;
 };
 
@@ -470,6 +475,13 @@ const toThemeVars = (theme: ThemeConfig): ThemeVars => {
     componentVars.Button = {
       root: {
         borderRadius: `var(--${prefix}-component-button-root-borderRadius)`,
+      },
+    };
+  }
+  if (theme.components?.Field?.styleOverrides?.root?.borderRadius) {
+    componentVars.Field = {
+      root: {
+        borderRadius: `var(--${prefix}-component-field-root-borderRadius)`,
       },
     };
   }
