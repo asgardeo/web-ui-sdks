@@ -175,6 +175,7 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
       shadows: brandingTheme.shadows,
       spacing: brandingTheme.spacing,
       images: brandingTheme.images,
+      components: brandingTheme.components,
     };
 
     // Merge branding theme with user-provided theme config
@@ -201,6 +202,10 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
       images: {
         ...brandingThemeConfig.images,
         ...themeConfig?.images,
+      },
+      components: {
+        ...brandingThemeConfig.components,
+        ...themeConfig?.components,
       },
     };
   }, [inheritFromBranding, brandingTheme, themeConfig]);

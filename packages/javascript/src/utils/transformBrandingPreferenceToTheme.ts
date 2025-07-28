@@ -49,7 +49,7 @@ const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Part
   const inputs = themeVariant.inputs;
   const images = themeVariant.images;
 
-  return {
+  const config: Partial<ThemeConfig> = {
     colors: {
       action: {
         active: isDark ? 'rgba(255, 255, 255, 0.70)' : 'rgba(0, 0, 0, 0.54)',
@@ -111,13 +111,6 @@ const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Part
         dark: (colors?.alerts?.warning as ColorVariant)?.dark || (colors?.alerts?.warning as ColorVariant)?.main,
       },
     },
-    // Extract border radius from buttons or inputs
-    borderRadius: {
-      small: buttons?.primary?.base?.border?.borderRadius || inputs?.base?.border?.borderRadius,
-      medium: buttons?.secondary?.base?.border?.borderRadius,
-      large: buttons?.externalConnection?.base?.border?.borderRadius,
-    },
-    // Extract and transform images
     images: {
       favicon: images?.favicon
         ? {
@@ -135,6 +128,38 @@ const transformThemeVariant = (themeVariant: ThemeVariant, isDark = false): Part
         : undefined,
     },
   };
+
+  /* |---------------------------------------------------------------| */
+  /* |                       Components                              | */
+  /* |---------------------------------------------------------------| */
+
+  const buttonBorderRadius = buttons?.primary?.base?.border?.borderRadius;
+  const fieldBorderRadius = inputs?.base?.border?.borderRadius;
+
+  if (buttonBorderRadius || fieldBorderRadius) {
+    config.components = {
+      ...(buttonBorderRadius && {
+        Button: {
+          styleOverrides: {
+            root: {
+              borderRadius: buttonBorderRadius,
+            },
+          },
+        },
+      }),
+      ...(fieldBorderRadius && {
+        Field: {
+          styleOverrides: {
+            root: {
+              borderRadius: fieldBorderRadius,
+            },
+          },
+        },
+      }),
+    };
+  }
+
+  return config;
 };
 
 /**

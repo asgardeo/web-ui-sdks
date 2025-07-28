@@ -53,7 +53,9 @@ const useStyles = (
       align-items: center;
       justify-content: center;
       gap: calc(${theme.vars.spacing.unit} * 1);
-      border-radius: ${shape === 'round' ? '50%' : theme.vars.borderRadius.medium};
+      border-radius: ${shape === 'round'
+        ? '50%'
+        : theme.vars.components?.Button?.root?.borderRadius || theme.vars.borderRadius.medium};
       font-weight: 500;
       cursor: ${disabled || loading ? 'not-allowed' : 'pointer'};
       outline: none;

@@ -449,11 +449,42 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
     });
   }
 
+  /* |---------------------------------------------------------------| */
+  /* |                       Components                              | */
+  /* |---------------------------------------------------------------| */
+
+  // Button Overrides
+  if (theme.components?.Button?.styleOverrides?.root?.borderRadius) {
+    cssVars[`--${prefix}-component-button-root-borderRadius`] =
+      theme.components.Button.styleOverrides.root.borderRadius;
+  }
+
+  // Field Overrides (Parent of `TextField`, `DatePicker`, `OtpField`, `Select`, etc.)
+  if (theme.components?.Field?.styleOverrides?.root?.borderRadius) {
+    cssVars[`--${prefix}-component-field-root-borderRadius`] = theme.components.Field.styleOverrides.root.borderRadius;
+  }
+
   return cssVars;
 };
 
 const toThemeVars = (theme: ThemeConfig): ThemeVars => {
   const prefix = theme.cssVarPrefix || VendorConstants.VENDOR_PREFIX;
+
+  const componentVars: ThemeVars['components'] = {};
+  if (theme.components?.Button?.styleOverrides?.root?.borderRadius) {
+    componentVars.Button = {
+      root: {
+        borderRadius: `var(--${prefix}-component-button-root-borderRadius)`,
+      },
+    };
+  }
+  if (theme.components?.Field?.styleOverrides?.root?.borderRadius) {
+    componentVars.Field = {
+      root: {
+        borderRadius: `var(--${prefix}-component-field-root-borderRadius)`,
+      },
+    };
+  }
 
   const themeVars: ThemeVars = {
     colors: {
@@ -556,6 +587,10 @@ const toThemeVars = (theme: ThemeConfig): ThemeVars => {
         alt: imageConfig?.alt ? `var(--${prefix}-image-${imageKey}-alt)` : undefined,
       };
     });
+  }
+
+  if (Object.keys(componentVars).length > 0) {
+    themeVars.components = componentVars;
   }
 
   return themeVars;
