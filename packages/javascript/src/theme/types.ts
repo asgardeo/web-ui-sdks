@@ -101,6 +101,36 @@ export interface ThemeColors {
   };
 }
 
+export interface ThemeComponentStyleOverrides {
+  /**
+   * Style overrides for the root element or slots.
+   * Example: { root: { borderRadius: '8px' } }
+   */
+  root?: Record<string, any>;
+  [slot: string]: Record<string, any> | undefined;
+}
+
+export interface ThemeComponents {
+  Button?: {
+    styleOverrides?: {
+      root?: {
+        borderRadius?: string;
+        [key: string]: any;
+      };
+      [slot: string]: Record<string, any> | undefined;
+    };
+    defaultProps?: Record<string, any>;
+    variants?: Array<Record<string, any>>;
+  };
+  [componentName: string]:
+    | {
+        styleOverrides?: ThemeComponentStyleOverrides;
+        defaultProps?: Record<string, any>;
+        variants?: Array<Record<string, any>>;
+      }
+    | undefined;
+}
+
 export interface ThemeConfig {
   borderRadius: {
     large: string;
@@ -148,6 +178,25 @@ export interface ThemeConfig {
    * @default 'asgardeo' (from VendorConstants.VENDOR_PREFIX)
    */
   cssVarPrefix?: string;
+  /**
+   * Component style overrides
+   */
+  components?: ThemeComponents;
+}
+
+export interface ThemeComponentVars {
+  Button?: {
+    root?: {
+      borderRadius?: string;
+      [key: string]: any;
+    };
+    [slot: string]: Record<string, any> | undefined;
+  };
+  [componentName: string]:
+    | {
+        [slot: string]: Record<string, any> | undefined;
+      }
+    | undefined;
 }
 
 export interface ThemeVars {
@@ -266,6 +315,10 @@ export interface ThemeVars {
         }
       | undefined;
   };
+  /**
+   * Component CSS variable references (e.g., for overrides)
+   */
+  components?: ThemeComponentVars;
 }
 
 export interface Theme extends ThemeConfig {

@@ -449,11 +449,30 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
     });
   }
 
+  /* |---------------------------------------------------------------| */
+  /* |                       Components                              | */
+  /* |---------------------------------------------------------------| */
+
+  // Button Overrides
+  if (theme.components?.Button?.styleOverrides?.root?.borderRadius) {
+    cssVars[`--${prefix}-component-button-root-borderRadius`] =
+      theme.components.Button.styleOverrides.root.borderRadius;
+  }
+
   return cssVars;
 };
 
 const toThemeVars = (theme: ThemeConfig): ThemeVars => {
   const prefix = theme.cssVarPrefix || VendorConstants.VENDOR_PREFIX;
+
+  const componentVars: ThemeVars['components'] = {};
+  if (theme.components?.Button?.styleOverrides?.root?.borderRadius) {
+    componentVars.Button = {
+      root: {
+        borderRadius: `var(--${prefix}-component-button-root-borderRadius)`,
+      },
+    };
+  }
 
   const themeVars: ThemeVars = {
     colors: {
@@ -556,6 +575,10 @@ const toThemeVars = (theme: ThemeConfig): ThemeVars => {
         alt: imageConfig?.alt ? `var(--${prefix}-image-${imageKey}-alt)` : undefined,
       };
     });
+  }
+
+  if (Object.keys(componentVars).length > 0) {
+    themeVars.components = componentVars;
   }
 
   return themeVars;
