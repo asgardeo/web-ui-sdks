@@ -1,5 +1,16 @@
 # @asgardeo/react
 
+## 0.5.14
+
+### Patch Changes
+
+- [#113](https://github.com/asgardeo/javascript/pull/113)
+  [`6ba5b4b`](https://github.com/asgardeo/javascript/commit/6ba5b4bed7e6d64fbedb7d9099ce8126c58de7eb) Thanks
+  [@brionmario](https://github.com/brionmario)! - Add component-specific overrides.
+
+- Updated dependencies []:
+  - @asgardeo/browser@0.1.10
+
 ## 0.5.13
 
 ### Patch Changes
