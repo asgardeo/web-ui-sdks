@@ -44,7 +44,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: "web-ui-sdks"
+      url: "javascript"
     runs-on: ubuntu-latest
     strategy:
       matrix:

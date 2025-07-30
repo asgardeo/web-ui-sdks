@@ -77,7 +77,7 @@ const hideToken = () => {
           Practical demonstration of authentication for Single Page Applications using the OpenID
           Connect Authorization Code flow with the
           <a
-            href="https://github.com/asgardeo/web-ui-sdks/tree/main/packages/vue"
+            href="https://github.com/asgardeo/javascript/tree/main/packages/vue"
             target="_blank"
             class="sdk-link"
             >Asgardeo Auth Vue SDK</a
