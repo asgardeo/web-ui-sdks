@@ -1,13 +1,11 @@
 <p align="center" style="color: #343a40">
   <img
-    src="https://github.com/asgardeo/web-ui-sdks/assets/25959096/ae77b70c-6570-40b1-a723-719abd0f7d02" alt="Asgardeo Logo" height="40" width="auto"
+    src="./docs/assets/images/banner.png" alt="Asgardeo Logo"
   >
-  <h1 align="center">
-    Asgardeo JavaScript SDKs
-  </h1>
+
 </p>
 <p align="center" style="font-size: 1.2rem;">
-  JavaScript SDKs for building applications with <a href="https://wso2.com/asgardeo">Asgardeo</a>
+  Designed for building applications with <a href="https://wso2.com/asgardeo">Asgardeo</a>
 </p>
 
 <div align="center">
