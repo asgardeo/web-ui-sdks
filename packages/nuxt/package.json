@@ -4,13 +4,13 @@
   "description": "Nuxt module for Asgardeo - Authentication and Identity Management",
   "author": "WSO2",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/asgardeo/web-ui-sdks/tree/main/packages/nuxt#readme",
+  "homepage": "https://github.com/asgardeo/javascript/tree/main/packages/nuxt#readme",
   "bugs": {
-    "url": "https://github.com/asgardeo/web-ui-sdks/issues"
+    "url": "https://github.com/asgardeo/javascript/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/asgardeo/web-ui-sdks",
+    "url": "https://github.com/asgardeo/javascript",
     "directory": "packages/nuxt"
   },
   "keywords": [

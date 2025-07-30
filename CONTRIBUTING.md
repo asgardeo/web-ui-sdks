@@ -73,13 +73,13 @@ Sorts JSON objects in alphabetical order.
 Replace `<github username>` with your own username.
 
 ```shell
-git clone https://github.com/<github username>/web-ui-sdks.git
+git clone https://github.com/<github username>/javascript.git
 ```
 
 3. Set the original repo as the upstream remote.
 
 ```shell
-git remote add upstream https://github.com/asgardeo/web-ui-sdks.git
+git remote add upstream https://github.com/asgardeo/javascript.git
 ```
 
 ## Setting up the Development Environment

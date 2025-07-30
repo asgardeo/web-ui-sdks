@@ -96,7 +96,7 @@ Please read [Contributing to the Code Base](../../CONTRIBUTING.md) for details o
 
 ### Reporting Issues
 
-We encourage you to report issues, improvements, and feature requests by creating [Github Issues](https://github.com/asgardeo/web-ui-sdks/issues).
+We encourage you to report issues, improvements, and feature requests by creating [Github Issues](https://github.com/asgardeo/javascript/issues).
 
 Important: Please be advised that security issues must be reported to security@wso2.com, not as GitHub issues, in order to reach the proper audience. We strongly advise following the WSO2 Security Vulnerability Reporting Guidelines when reporting security issues.
 
