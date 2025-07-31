@@ -47,6 +47,7 @@ jobs:
         id: get-pnpm-cache-dir
         run: |
           echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
       - name: 🧩 Install Dependencies
         id: install-dependencies
         run: pnpm install
@@ -61,7 +62,7 @@ jobs:
         with:
           title: "[Release] [GitHub Action] Update package versions"
           publish: pnpm publish:packages
-          version: pnpm version:packages
+          version: pnpm version:packages && pnpm aggregate-changelogs
           commit: "[WSO2 Release] [GitHub Action] [Release] [skip ci] update package versions"
         env:
           GITHUB_TOKEN: ${{ env.GH_TOKEN }}

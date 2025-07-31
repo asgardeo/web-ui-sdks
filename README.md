@@ -25,9 +25,10 @@
 Follow these simple steps to get started with Asgardeo:
 
 1. Create an account in Asgardeo 👉 [Sign Up](https://asgardeo.io/signup?visitor_id=685a48bc57b3b5.46411343&utm_source=site&utm_medium=organic)
+
 2. Refer to our **Quick Start Guides** and get started in minutes.
-  - `React Quick Start`: [React Quick Start](https://wso2.com/asgardeo/docs/quick-starts/react/)
-  - `Next.js Quick Start`: [Next.js Quick Start](https://wso2.com/asgardeo/docs/quick-starts/nextjs/)
+  - [React Quick Start](https://wso2.com/asgardeo/docs/quick-starts/react/)
+  - [Next.js Quick Start](https://wso2.com/asgardeo/docs/quick-starts/nextjs/)
 
 ## Packages
 
