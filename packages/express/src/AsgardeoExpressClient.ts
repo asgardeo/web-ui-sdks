@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {LegacyAsgardeoNodeClient, SignOutOptions} from '@asgardeo/node';
+import {LegacyAsgardeoNodeClient} from '@asgardeo/node';
 import {AsgardeoExpressConfig} from './models/config';
 
 /**
