@@ -395,7 +395,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         request: asgardeo.request.bind(asgardeo),
         requestAll: asgardeo.requestAll.bind(asgardeo),
       },
-      signInOptions
+      signInOptions,
+      getDecodedIdToken: asgardeo.getDecodedIdToken.bind(asgardeo),
     }),
     [
       applicationId,
@@ -412,7 +413,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       signInSilently,
       user,
       asgardeo,
-      signInOptions
+      signInOptions,
     ],
   );
 
