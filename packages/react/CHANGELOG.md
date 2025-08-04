@@ -1,5 +1,17 @@
 # @asgardeo/react
 
+## 0.5.16
+
+### Patch Changes
+
+- [#122](https://github.com/asgardeo/javascript/pull/122)
+  [`f01f421`](https://github.com/asgardeo/javascript/commit/f01f421acb6bafe10142cb329641749cc4cd64bb) Thanks
+  [@brionmario](https://github.com/brionmario)! - Expose `getDecodedIdToken` from the public API
+
+- Updated dependencies
+  [[`f01f421`](https://github.com/asgardeo/javascript/commit/f01f421acb6bafe10142cb329641749cc4cd64bb)]:
+  - @asgardeo/browser@0.1.12
+
 ## 0.5.15
 
 ### Patch Changes
