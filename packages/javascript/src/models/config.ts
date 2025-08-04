@@ -185,6 +185,18 @@ export interface BaseConfig<T = unknown> extends WithPreferences {
    * @see {@link SignUpOptions} for more details.
    */
   signUpOptions?: SignUpOptions;
+
+  /**
+   * Flag to indicate whether the Application session should be synchronized with the IdP session.
+   * @remarks This uses the OIDC iframe base session management feature to keep the application session in sync with the IdP session.
+   * WARNING: This may not work in all browsers due to 3rd party cookie restrictions.
+   * It is recommended to use this feature only if you are aware of the implications and have tested it in your target browsers.
+   * If you are not sure, it is safer to leave this option as `false`.
+   * @example
+   * syncSession: true
+   * @see {@link https://openid.net/specs/openid-connect-session-management-1_0.html#IframeBasedSessionManagement}
+   */
+  syncSession?: boolean;
 }
 
 export interface WithPreferences {

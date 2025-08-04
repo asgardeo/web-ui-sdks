@@ -406,7 +406,7 @@ export const MainThreadClient = async (
     await _authenticationClient.reInitialize(config);
 
     // Re-initiates check session if the check session endpoint is updated.
-    if (config.enableOIDCSessionManagement && isCheckSessionIframeDifferent) {
+    if (config.syncSession && isCheckSessionIframeDifferent) {
       _sessionManagementHelper.reset();
 
       checkSession();

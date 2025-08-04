@@ -57,6 +57,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
   organizationHandle,
   applicationId,
   signInOptions,
+  syncSession,
   ...rest
 }: PropsWithChildren<AsgardeoProviderProps>): ReactElement => {
   const reRenderCheckRef: RefObject<boolean> = useRef(false);
@@ -83,6 +84,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     signUpUrl,
     signInUrl,
     signInOptions,
+    syncSession,
     ...rest,
   });
 
@@ -397,6 +399,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       },
       signInOptions,
       getDecodedIdToken: asgardeo.getDecodedIdToken.bind(asgardeo),
+      syncSession,
     }),
     [
       applicationId,
@@ -414,6 +417,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
       user,
       asgardeo,
       signInOptions,
+      syncSession,
     ],
   );
 

@@ -506,7 +506,7 @@ export const WebWorkerClient = async (
             SPAUtils.setSignOutURL(url, config.clientId, instanceID);
 
             // Enable OIDC Sessions Management only if it is set to true in the config.
-            if (config.enableOIDCSessionManagement) {
+            if (config.syncSession) {
               checkSession();
             }
 
@@ -534,7 +534,7 @@ export const WebWorkerClient = async (
       await startAutoRefreshToken();
 
       // Enable OIDC Sessions Management only if it is set to true in the config.
-      if (config.enableOIDCSessionManagement) {
+      if (config.syncSession) {
         checkSession();
       }
 
@@ -829,7 +829,7 @@ export const WebWorkerClient = async (
     await communicate<Partial<AuthClientConfig<WebWorkerClientConfig>>, void>(message);
 
     // Re-initiates check session if the check session endpoint is updated.
-    if (config.enableOIDCSessionManagement && isCheckSessionIframeDifferent) {
+    if (config.syncSession && isCheckSessionIframeDifferent) {
       _sessionManagementHelper.reset();
 
       checkSession();
