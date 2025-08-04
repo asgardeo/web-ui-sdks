@@ -1,5 +1,17 @@
 # @asgardeo/react-router
 
+## 0.0.8
+
+### Patch Changes
+
+- [#119](https://github.com/asgardeo/javascript/pull/119)
+  [`ad71f09`](https://github.com/asgardeo/javascript/commit/ad71f09af3440b6e0b8d3aa1e93d0cbc941a1df3) Thanks
+  [@brionmario](https://github.com/brionmario)! - Update Sign In
+
+- Updated dependencies
+  [[`ad71f09`](https://github.com/asgardeo/javascript/commit/ad71f09af3440b6e0b8d3aa1e93d0cbc941a1df3)]:
+  - @asgardeo/react@0.5.15
+
 ## 0.0.7
 
 ### Patch Changes
