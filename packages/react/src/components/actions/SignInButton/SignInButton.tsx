@@ -25,7 +25,12 @@ import useTranslation from '../../../hooks/useTranslation';
 /**
  * Props interface of {@link SignInButton}
  */
-export type SignInButtonProps = BaseSignInButtonProps;
+export type SignInButtonProps = BaseSignInButtonProps & {
+  /**
+   * Additional parameters to pass to the `authorize` request.
+   */
+  signInOptions?: Record<string, any>;
+};
 
 /**
  * SignInButton component that supports both render props and traditional props patterns.
@@ -70,8 +75,8 @@ export type SignInButtonProps = BaseSignInButtonProps;
 const SignInButton: ForwardRefExoticComponent<SignInButtonProps & RefAttributes<HTMLButtonElement>> = forwardRef<
   HTMLButtonElement,
   SignInButtonProps
->(({children, onClick, preferences, ...rest}: SignInButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
-  const {signIn, signInUrl} = useAsgardeo();
+>(({children, onClick, preferences, signInOptions: overriddenSignInOptions = {}, ...rest}: SignInButtonProps, ref: Ref<HTMLButtonElement>): ReactElement => {
+  const {signIn, signInUrl, signInOptions} = useAsgardeo();
   const {t} = useTranslation(preferences?.i18n);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -86,7 +91,7 @@ const SignInButton: ForwardRefExoticComponent<SignInButtonProps & RefAttributes<
 
         window.dispatchEvent(new PopStateEvent('popstate', {state: null}));
       } else {
-        await signIn();
+        await signIn(overriddenSignInOptions ?? signInOptions);
       }
 
       if (onClick) {

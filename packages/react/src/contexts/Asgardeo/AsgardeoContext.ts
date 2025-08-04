@@ -17,7 +17,7 @@
  */
 
 import {Context, createContext} from 'react';
-import {HttpRequestConfig, HttpResponse, Organization} from '@asgardeo/browser';
+import {HttpRequestConfig, HttpResponse, Organization, SignInOptions} from '@asgardeo/browser';
 import AsgardeoReactClient from '../../AsgardeoReactClient';
 
 /**
@@ -79,6 +79,16 @@ export type AsgardeoContextProps = {
      */
     requestAll: (requestConfigs?: HttpRequestConfig[]) => Promise<HttpResponse<any>[]>;
   };
+  /**
+   * Optional additional parameters to be sent in the sign-in request.
+   * This can include custom parameters that your authorization server supports.
+   * These parameters will be included in the authorization request sent to the server.
+   * If not provided, no additional parameters will be sent.
+   *
+   * @example
+   * signInOptions: { prompt: "login", fidp: "OrganizationSSO" }
+   */
+  signInOptions?: SignInOptions;
 };
 
 /**
@@ -104,6 +114,7 @@ const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null
     request: () => null,
     requestAll: () => null,
   },
+  signInOptions: {},
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';

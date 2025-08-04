@@ -17,8 +17,8 @@
  */
 
 import {AllOrganizationsApiResponse} from './models/organization';
-import {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './models/client';
-import {Config} from './models/config';
+import {AsgardeoClient} from './models/client';
+import {Config, SignInOptions, SignOutOptions, SignUpOptions} from './models/config';
 import {Storage} from './models/store';
 import {EmbeddedFlowExecuteRequestPayload, EmbeddedFlowExecuteResponse} from './models/embedded-flow';
 import {EmbeddedSignInFlowHandleRequestPayload} from './models/embedded-signin-flow';

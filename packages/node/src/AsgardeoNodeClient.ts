@@ -18,7 +18,6 @@
 
 import {AsgardeoJavaScriptClient} from '@asgardeo/javascript';
 import {AsgardeoNodeConfig} from './models/config';
-import {SignOutOptions} from '@asgardeo/javascript/dist/models/client';
 
 /**
  * Base class for implementing Asgardeo in Node.js based applications.
