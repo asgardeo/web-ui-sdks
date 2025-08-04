@@ -26,35 +26,19 @@ const path = require('path');
 const rootDir = process.cwd();
 const outputFile = path.join(rootDir, 'CHANGELOG.md');
 
-
 // List of package or directory names to skip when aggregating changelogs
-const SKIP_PACKAGES = [
-  '__legacy__',
-  'node_modules',
-  'dist',
-  'build',
-  'coverage',
-  'scripts',
-  'docs',
-];
+const SKIP_PACKAGES = ['__legacy__', 'node_modules', 'dist', 'build', 'coverage', 'scripts', 'docs'];
 
-const findChangelogs = (dir) => {
+const findChangelogs = dir => {
   let changelogs = [];
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const entries = fs.readdirSync(dir, {withFileTypes: true});
 
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
 
-    if (
-      entry.isDirectory() &&
-      !SKIP_PACKAGES.includes(entry.name)
-    ) {
+    if (entry.isDirectory() && !SKIP_PACKAGES.includes(entry.name)) {
       changelogs = changelogs.concat(findChangelogs(fullPath));
-    } else if (
-      entry.isFile() &&
-      entry.name === 'CHANGELOG.md' &&
-      fullPath !== outputFile
-    ) {
+    } else if (entry.isFile() && entry.name === 'CHANGELOG.md' && fullPath !== outputFile) {
       // Check if the changelog is inside a skipped package
       const relPath = path.relative(rootDir, fullPath);
       const parts = relPath.split(path.sep);
@@ -65,8 +49,7 @@ const findChangelogs = (dir) => {
   }
 
   return changelogs;
-}
-
+};
 
 const aggregate = () => {
   const changelogFiles = findChangelogs(rootDir);
@@ -93,6 +76,6 @@ const aggregate = () => {
   fs.writeFileSync(outputFile, toc + output);
 
   console.log(`Aggregated ${changelogFiles.length} changelogs into ${outputFile}`);
-}
+};
 
 aggregate();
