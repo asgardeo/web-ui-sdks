@@ -17,7 +17,8 @@ env:
 jobs:
   release:
     name: 📦 Release
-    if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci')"
+    if:
+      "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -60,9 +61,9 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          title: "[Release] [GitHub Action] Update package versions"
+          title: '[Release] [GitHub Action] Update package versions'
           publish: pnpm publish:packages
           version: pnpm version:packages && pnpm aggregate-changelogs
-          commit: "[WSO2 Release] [GitHub Action] [Release] [skip ci] update package versions"
+          commit: '[WSO2 Release] [GitHub Action] [Release] [skip ci] update package versions'
         env:
           GITHUB_TOKEN: ${{ env.GH_TOKEN }}

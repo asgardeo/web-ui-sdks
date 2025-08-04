@@ -26,6 +26,7 @@ import {
   getBrandingPreference,
   GetBrandingPreferenceConfig,
   BrandingPreference,
+  IdToken,
 } from '@asgardeo/browser';
 import {FC, RefObject, PropsWithChildren, ReactElement, useEffect, useMemo, useRef, useState, useCallback} from 'react';
 import AsgardeoContext from './AsgardeoContext';
@@ -84,6 +85,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     ...rest,
   });
 
+  const [isUpdatingSession, setIsUpdatingSession] = useState<boolean>(false);
+
   // Branding state
   const [brandingPreference, setBrandingPreference] = useState<BrandingPreference | null>(null);
   const [isBrandingLoading, setIsBrandingLoading] = useState<boolean>(false);
@@ -125,13 +128,17 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
     (async (): Promise<void> => {
       // User is already authenticated. Skip...
-      if (await asgardeo.isSignedIn()) {
-        await updateSession();
+      const isAlreadySignedIn: boolean = await asgardeo.isSignedIn();
 
+      if (isAlreadySignedIn) {
+        await updateSession();
         return;
       }
 
-      if (hasAuthParams(new URL(window.location.href), afterSignInUrl)) {
+      const currentUrl: URL = new URL(window.location.href);
+      const hasAuthParamsResult: boolean = hasAuthParams(currentUrl, afterSignInUrl);
+
+      if (hasAuthParamsResult) {
         try {
           await signIn(
             {callOnlyOnRedirect: true},
@@ -139,13 +146,14 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
             // authParams?.sessionState,
             // authParams?.state,
           );
-
           // setError(null);
         } catch (error) {
           if (error && Object.prototype.hasOwnProperty.call(error, 'code')) {
             // setError(error);
           }
         }
+      } else {
+        // TODO: Add a debug log to indicate that the user is not signed in
       }
     })();
   }, []);
@@ -173,6 +181,8 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
               clearInterval(interval);
             }
           }, 1000);
+        } else {
+          // TODO: Add a debug log to indicate that the user is already signed in.
         }
       } catch (error) {
         setIsSignedInSync(false);
@@ -203,8 +213,12 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
    */
   useEffect(() => {
     const checkLoadingState = (): void => {
-      const loadingState = asgardeo.isLoading();
-      setIsLoadingSync(loadingState);
+      // Don't override loading state during critical session updates
+      if (isUpdatingSession) {
+        return;
+      }
+
+      setIsLoadingSync(asgardeo.isLoading());
     };
 
     // Initial check
@@ -216,25 +230,44 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     return (): void => {
       clearInterval(interval);
     };
-  }, [asgardeo]);
+  }, [asgardeo, isLoadingSync, isSignedInSync, isUpdatingSession]);
 
   const updateSession = async (): Promise<void> => {
     try {
+      // Set flag to prevent loading state tracking from interfering
+      setIsUpdatingSession(true);
       setIsLoadingSync(true);
       let _baseUrl: string = baseUrl;
 
+      const decodedToken: IdToken = await asgardeo.getDecodedIdToken();
+
       // If there's a `user_org` claim in the ID token,
       // Treat this login as a organization login.
-      if ((await asgardeo.getDecodedIdToken())?.['user_org']) {
+      if (decodedToken?.['user_org']) {
         _baseUrl = `${(await asgardeo.getConfiguration()).baseUrl}/o`;
         setBaseUrl(_baseUrl);
       }
 
-      setUser(await asgardeo.getUser({baseUrl: _baseUrl}));
-      setUserProfile(await asgardeo.getUserProfile({baseUrl: _baseUrl}));
-      setCurrentOrganization(await asgardeo.getCurrentOrganization());
-      setMyOrganizations(await asgardeo.getMyOrganizations());
+      const user: User = await asgardeo.getUser({baseUrl: _baseUrl});
+      const userProfile: UserProfile = await asgardeo.getUserProfile({baseUrl: _baseUrl});
+      const currentOrganization: Organization = await asgardeo.getCurrentOrganization();
+      const myOrganizations: Organization[] = await asgardeo.getMyOrganizations();
+
+      // Update user data first
+      setUser(user);
+      setUserProfile(userProfile);
+      setCurrentOrganization(currentOrganization);
+      setMyOrganizations(myOrganizations);
+
+      // CRITICAL: Update sign-in status BEFORE setting loading to false
+      // This prevents the race condition where ProtectedRoute sees isLoading=false but isSignedIn=false
+      const currentSignInStatus = await asgardeo.isSignedIn();
+      setIsSignedInSync(await asgardeo.isSignedIn());
+    } catch (error) {
+      // TODO: Add an error log.
     } finally {
+      // Clear the flag and set final loading state
+      setIsUpdatingSession(false);
       setIsLoadingSync(asgardeo.isLoading());
     }
   };
@@ -298,6 +331,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
 
   const signIn = async (...args: any): Promise<User> => {
     try {
+      setIsUpdatingSession(true);
       setIsLoadingSync(true);
       const response: User = await asgardeo.signIn(...args);
 
@@ -309,12 +343,14 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
     } catch (error) {
       throw new Error(`Error while signing in: ${error}`);
     } finally {
+      setIsUpdatingSession(false);
       setIsLoadingSync(asgardeo.isLoading());
     }
   };
 
   const signInSilently = async (options?: SignInOptions): Promise<User | boolean> => {
     try {
+      setIsUpdatingSession(true);
       setIsLoadingSync(true);
       const response: User | boolean = await asgardeo.signInSilently(options);
 
@@ -331,12 +367,14 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         'An error occurred while trying to sign in silently.',
       );
     } finally {
+      setIsUpdatingSession(false);
       setIsLoadingSync(asgardeo.isLoading());
     }
   };
 
   const switchOrganization = async (organization: Organization): Promise<void> => {
     try {
+      setIsUpdatingSession(true);
       setIsLoadingSync(true);
       await asgardeo.switchOrganization(organization);
 
@@ -351,6 +389,7 @@ const AsgardeoProvider: FC<PropsWithChildren<AsgardeoProviderProps>> = ({
         'An error occurred while switching to the specified organization.',
       );
     } finally {
+      setIsUpdatingSession(false);
       setIsLoadingSync(asgardeo.isLoading());
     }
   };
