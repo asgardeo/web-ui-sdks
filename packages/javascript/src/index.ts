@@ -75,8 +75,18 @@ export {
   EmbeddedFlowExecuteRequestConfig,
 } from './models/embedded-flow';
 export {FlowMode} from './models/flow';
-export {AsgardeoClient, SignInOptions, SignOutOptions, SignUpOptions} from './models/client';
-export {BaseConfig, Config, Preferences, ThemePreferences, I18nPreferences, WithPreferences} from './models/config';
+export {AsgardeoClient} from './models/client';
+export {
+  BaseConfig,
+  Config,
+  Preferences,
+  ThemePreferences,
+  I18nPreferences,
+  WithPreferences,
+  SignInOptions,
+  SignOutOptions,
+  SignUpOptions,
+} from './models/config';
 export {TokenResponse, IdToken, TokenExchangeRequestConfig} from './models/token';
 export {Crypto, JWKInterface} from './models/crypto';
 export {OAuthResponseMode} from './models/oauth-response';

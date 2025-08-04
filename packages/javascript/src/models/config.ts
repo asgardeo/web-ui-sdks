@@ -20,6 +20,39 @@ import {I18nBundle} from './i18n';
 import {RecursivePartial} from './utility-types';
 import {ThemeConfig, ThemeMode} from '../theme/types';
 
+/**
+ * Interface representing the additional parameters to be sent in the sign-in request.
+ * This can include custom parameters that your authorization server supports.
+ * These parameters will be included in the authorization request sent to the server.
+ * If not provided, no additional parameters will be sent.
+ *
+ * @example
+ * signInOptions: { prompt: "login", fidp: "OrganizationSSO" }
+ */
+export type SignInOptions = Record<string, any>;
+
+/**
+ * Interface representing the additional parameters to be sent in the sign-out request.
+ * This can include custom parameters that your authorization server supports.
+ * These parameters will be included in the sign-out request sent to the server.
+ * If not provided, no additional parameters will be sent.
+ *
+ * @example
+ * signOutOptions: { idTokenHint: "your-id-token-hint" }
+ */
+export type SignOutOptions = Record<string, unknown>;
+
+/**
+ * Interface representing the additional parameters to be sent in the sign-up request.
+ * This can include custom parameters that your authorization server supports.
+ * These parameters will be included in the sign-up request sent to the server.
+ * If not provided, no additional parameters will be sent.
+ *
+ * @example
+ * signUpOptions: { appId: "your-app-id" }
+ */
+export type SignUpOptions = Record<string, unknown>;
+
 export interface BaseConfig<T = unknown> extends WithPreferences {
   /**
    * Optional URL where the authorization server should redirect after authentication.
@@ -134,6 +167,24 @@ export interface BaseConfig<T = unknown> extends WithPreferences {
       clockTolerance?: number;
     };
   };
+
+  /**
+   * Optional additional parameters to be sent in the authorize request.
+   * @see {@link SignInOptions} for more details.
+   */
+  signInOptions?: SignInOptions;
+
+  /**
+   * Optional additional parameters to be sent in the sign-out request.
+   * @see {@link SignOutOptions} for more details.
+   */
+  signOutOptions?: SignOutOptions;
+
+  /**
+   * Optional additional parameters to be sent in the sign-up request.
+   * @see {@link SignUpOptions} for more details.
+   */
+  signUpOptions?: SignUpOptions;
 }
 
 export interface WithPreferences {
