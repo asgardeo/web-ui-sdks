@@ -1,5 +1,18 @@
 # @asgardeo/nextjs
 
+## 0.1.16
+
+### Patch Changes
+
+- [#119](https://github.com/asgardeo/javascript/pull/119)
+  [`ad71f09`](https://github.com/asgardeo/javascript/commit/ad71f09af3440b6e0b8d3aa1e93d0cbc941a1df3) Thanks
+  [@brionmario](https://github.com/brionmario)! - Update Sign In
+
+- Updated dependencies
+  [[`ad71f09`](https://github.com/asgardeo/javascript/commit/ad71f09af3440b6e0b8d3aa1e93d0cbc941a1df3)]:
+  - @asgardeo/node@0.0.13
+  - @asgardeo/react@0.5.15
+
 ## 0.1.15
 
 ### Patch Changes
