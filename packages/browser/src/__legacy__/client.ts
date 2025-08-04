@@ -53,7 +53,7 @@ import {SPAUtils} from './utils';
 const DefaultConfig: Partial<AuthClientConfig<Config>> = {
   autoLogoutOnTokenRefreshError: false,
   checkSessionInterval: 3,
-  enableOIDCSessionManagement: false,
+  syncSession: false,
   periodicTokenRefresh: false,
   sessionRefreshInterval: 300,
   storage: BrowserStorage.SessionStorage,

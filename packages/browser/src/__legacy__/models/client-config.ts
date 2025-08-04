@@ -25,7 +25,7 @@ export interface SPAConfig {
    * @remarks If the consumer app the OP is hosted in different domains,
    * third party cookies has to be enabled for this to work properly.
    */
-  enableOIDCSessionManagement?: boolean;
+  syncSession?: boolean;
   checkSessionInterval?: number;
   sessionRefreshInterval?: number;
   resourceServerURLs?: string[];

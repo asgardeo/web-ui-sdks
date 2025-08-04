@@ -480,7 +480,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
             }
 
             // Enable OIDC Sessions Management only if it is set to true in the config.
-            if (checkSession && typeof checkSession === 'function' && config.enableOIDCSessionManagement) {
+            if (checkSession && typeof checkSession === 'function' && config.syncSession) {
               checkSession();
             }
           } else {
@@ -606,7 +606,7 @@ export class AuthenticationHelper<T extends MainThreadClientConfig | WebWorkerCl
         this._spaHelper.refreshAccessTokenAutomatically(this);
 
         // Enable OIDC Sessions Management only if it is set to true in the config.
-        if (config.enableOIDCSessionManagement) {
+        if (config.syncSession) {
           checkSession();
         }
 

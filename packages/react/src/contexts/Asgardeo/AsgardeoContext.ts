@@ -17,7 +17,7 @@
  */
 
 import {Context, createContext} from 'react';
-import {HttpRequestConfig, HttpResponse, Organization, SignInOptions} from '@asgardeo/browser';
+import {HttpRequestConfig, HttpResponse, IdToken, Organization, SignInOptions} from '@asgardeo/browser';
 import AsgardeoReactClient from '../../AsgardeoReactClient';
 
 /**
@@ -89,6 +89,14 @@ export type AsgardeoContextProps = {
    * signInOptions: { prompt: "login", fidp: "OrganizationSSO" }
    */
   signInOptions?: SignInOptions;
+  /**
+   * Function to retrieve the decoded ID token.
+   * This function decodes the ID token and returns its payload.
+   * It can be used to access user claims and other information contained in the ID token.
+   *
+   * @returns A promise that resolves to the decoded ID token payload.
+   */
+  getDecodedIdToken?: () => Promise<IdToken>;
 };
 
 /**
@@ -115,6 +123,7 @@ const AsgardeoContext: Context<AsgardeoContextProps | null> = createContext<null
     requestAll: () => null,
   },
   signInOptions: {},
+  getDecodedIdToken: null,
 });
 
 AsgardeoContext.displayName = 'AsgardeoContext';
