@@ -27,7 +27,12 @@ import {useRouter} from 'next/navigation';
 /**
  * Props interface of {@link SignInButton}
  */
-export type SignInButtonProps = BaseSignInButtonProps;
+export type SignInButtonProps = BaseSignInButtonProps & {
+  /**
+   * Additional parameters to pass to the `authorize` request.
+   */
+  signInOptions?: Record<string, any>;
+}
 
 /**
  * SignInButton component that uses server actions for authentication in Next.js.
@@ -55,7 +60,7 @@ export type SignInButtonProps = BaseSignInButtonProps;
  */
 const SignInButton = forwardRef<HTMLButtonElement, SignInButtonProps>(
   (
-    {className, style, children, preferences, onClick, ...rest}: SignInButtonProps,
+    {className, style, children, preferences, onClick, signInOptions = {}, ...rest}: SignInButtonProps,
     ref: Ref<HTMLButtonElement>,
   ): ReactElement => {
     const {signIn, signInUrl} = useAsgardeo();
@@ -72,7 +77,7 @@ const SignInButton = forwardRef<HTMLButtonElement, SignInButtonProps>(
         if (signInUrl) {
           router.push(signInUrl);
         } else {
-          await signIn();
+          await signIn(signInOptions);
         }
 
         if (onClick) {
