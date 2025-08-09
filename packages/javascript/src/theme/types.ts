@@ -57,39 +57,89 @@ export interface ThemeColors {
   background: {
     body: {
       main: string;
+      dark?: string;
     };
     disabled: string;
     surface: string;
+    dark?: string;
   };
   border: string;
   error: {
     contrastText: string;
     main: string;
+    dark?: string;
   };
   info: {
     contrastText: string;
     main: string;
+    dark?: string;
   };
   primary: {
     contrastText: string;
     main: string;
+    dark?: string;
   };
   secondary: {
     contrastText: string;
     main: string;
+    dark?: string;
   };
   success: {
     contrastText: string;
     main: string;
+    dark?: string;
   };
   text: {
     primary: string;
     secondary: string;
+    dark?: string;
   };
   warning: {
     contrastText: string;
     main: string;
+    dark?: string;
   };
+}
+
+export interface ThemeComponentStyleOverrides {
+  /**
+   * Style overrides for the root element or slots.
+   * Example: { root: { borderRadius: '8px' } }
+   */
+  root?: Record<string, any>;
+  [slot: string]: Record<string, any> | undefined;
+}
+
+export interface ThemeComponents {
+  Button?: {
+    styleOverrides?: {
+      root?: {
+        borderRadius?: string;
+        [key: string]: any;
+      };
+      [slot: string]: Record<string, any> | undefined;
+    };
+    defaultProps?: Record<string, any>;
+    variants?: Array<Record<string, any>>;
+  };
+  Field?: {
+    styleOverrides?: {
+      root?: {
+        borderRadius?: string;
+        [key: string]: any;
+      };
+      [slot: string]: Record<string, any> | undefined;
+    };
+    defaultProps?: Record<string, any>;
+    variants?: Array<Record<string, any>>;
+  };
+  [componentName: string]:
+    | {
+        styleOverrides?: ThemeComponentStyleOverrides;
+        defaultProps?: Record<string, any>;
+        variants?: Array<Record<string, any>>;
+      }
+    | undefined;
 }
 
 export interface ThemeConfig {
@@ -139,6 +189,32 @@ export interface ThemeConfig {
    * @default 'asgardeo' (from VendorConstants.VENDOR_PREFIX)
    */
   cssVarPrefix?: string;
+  /**
+   * Component style overrides
+   */
+  components?: ThemeComponents;
+}
+
+export interface ThemeComponentVars {
+  Button?: {
+    root?: {
+      borderRadius?: string;
+      [key: string]: any;
+    };
+    [slot: string]: Record<string, any> | undefined;
+  };
+  Field?: {
+    root?: {
+      borderRadius?: string;
+      [key: string]: any;
+    };
+    [slot: string]: Record<string, any> | undefined;
+  };
+  [componentName: string]:
+    | {
+        [slot: string]: Record<string, any> | undefined;
+      }
+    | undefined;
 }
 
 export interface ThemeVars {
@@ -159,37 +235,46 @@ export interface ThemeVars {
     primary: {
       main: string;
       contrastText: string;
+      dark?: string;
     };
     secondary: {
       main: string;
       contrastText: string;
+      dark?: string;
     };
     background: {
       surface: string;
       disabled: string;
+      dark?: string;
       body: {
         main: string;
+        dark?: string;
       };
     };
     error: {
       main: string;
       contrastText: string;
+      dark?: string;
     };
     info: {
       contrastText: string;
       main: string;
+      dark?: string;
     };
     success: {
       main: string;
       contrastText: string;
+      dark?: string;
     };
     warning: {
       main: string;
       contrastText: string;
+      dark?: string;
     };
     text: {
       primary: string;
       secondary: string;
+      dark?: string;
     };
     border: string;
   };
@@ -248,6 +333,10 @@ export interface ThemeVars {
         }
       | undefined;
   };
+  /**
+   * Component CSS variable references (e.g., for overrides)
+   */
+  components?: ThemeComponentVars;
 }
 
 export interface Theme extends ThemeConfig {

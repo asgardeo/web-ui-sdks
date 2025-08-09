@@ -347,7 +347,9 @@ const BaseUserProfile: FC<BaseUserProfileProps> = ({
                 fieldType={type as 'STRING' | 'DATE_TIME' | 'BOOLEAN'}
                 type={type === 'DATE_TIME' ? 'date' : type === 'STRING' ? 'text' : 'text'}
                 required={required}
-                // Removed inline style, use .styles.ts for marginBottom if needed
+                style={{
+                  marginBottom: 0,
+                }}
               />
             </div>
           </>

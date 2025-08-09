@@ -84,28 +84,6 @@ const useStyles = (theme: Theme, colorScheme: string) => {
       line-height: 1.5;
     `;
 
-    const closeButton = css`
-      all: unset;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: calc(${theme.vars.spacing.unit} * 0.5);
-      border-radius: ${theme.vars.borderRadius.small};
-      color: ${theme.vars.colors.text.secondary};
-      transition: all 0.2s ease-in-out;
-
-      &:hover {
-        background-color: ${theme.vars.colors.action.hover};
-        color: ${theme.vars.colors.text.primary};
-      }
-
-      &:focus-visible {
-        outline: 2px solid ${theme.vars.colors.primary.main};
-        outline-offset: 2px;
-      }
-    `;
-
     return {
       overlay,
       content,
@@ -114,7 +92,6 @@ const useStyles = (theme: Theme, colorScheme: string) => {
       headerTitle,
       contentBody,
       description,
-      closeButton,
     };
   }, [theme, colorScheme]);
 };

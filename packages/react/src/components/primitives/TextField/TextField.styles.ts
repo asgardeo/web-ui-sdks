@@ -54,7 +54,7 @@ const useStyles = (
       width: 100%;
       padding: ${theme.vars.spacing.unit} ${rightPadding} ${theme.vars.spacing.unit} ${leftPadding};
       border: 1px solid ${hasError ? theme.vars.colors.error.main : theme.vars.colors.border};
-      border-radius: ${theme.vars.borderRadius.medium};
+      border-radius: ${theme.vars.components?.Field?.root?.borderRadius || theme.vars.borderRadius.medium};
       font-size: ${theme.vars.typography.fontSizes.md};
       color: ${theme.vars.colors.text.primary};
       background-color: ${disabled ? theme.vars.colors.background.disabled : theme.vars.colors.background.surface};

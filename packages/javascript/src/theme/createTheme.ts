@@ -54,37 +54,46 @@ const lightTheme: ThemeConfig = {
     primary: {
       main: '#1a73e8',
       contrastText: '#ffffff',
+      dark: '#174ea6',
     },
     secondary: {
       main: '#424242',
       contrastText: '#ffffff',
+      dark: '#212121',
     },
     background: {
       surface: '#ffffff',
       disabled: '#f0f0f0',
+      dark: '#212121',
       body: {
         main: '#1a1a1a',
+        dark: '#212121',
       },
     },
     error: {
       main: '#d32f2f',
       contrastText: '#d52828',
+      dark: '#b71c1c',
     },
     info: {
       main: '#bbebff',
       contrastText: '#43aeda',
+      dark: '#01579b',
     },
     success: {
       main: '#4caf50',
       contrastText: '#00a807',
+      dark: '#388e3c',
     },
     warning: {
       main: '#ff9800',
       contrastText: '#be7100',
+      dark: '#f57c00',
     },
     text: {
       primary: '#1a1a1a',
       secondary: '#666666',
+      dark: '#212121',
     },
     border: '#e0e0e0',
   },
@@ -148,37 +157,46 @@ const darkTheme: ThemeConfig = {
     primary: {
       main: '#1a73e8',
       contrastText: '#ffffff',
+      dark: '#174ea6',
     },
     secondary: {
       main: '#424242',
       contrastText: '#ffffff',
+      dark: '#212121',
     },
     background: {
       surface: '#121212',
       disabled: '#1f1f1f',
+      dark: '#212121',
       body: {
         main: '#ffffff',
+        dark: '#212121',
       },
     },
     error: {
       main: '#d32f2f',
       contrastText: '#d52828',
+      dark: '#b71c1c',
     },
     info: {
       main: '#bbebff',
       contrastText: '#43aeda',
+      dark: '#01579b',
     },
     success: {
       main: '#4caf50',
       contrastText: '#00a807',
+      dark: '#388e3c',
     },
     warning: {
       main: '#ff9800',
       contrastText: '#be7100',
+      dark: '#f57c00',
     },
     text: {
       primary: '#ffffff',
       secondary: '#b3b3b3',
+      dark: '#212121',
     },
     border: '#404040',
   },
@@ -431,11 +449,42 @@ const toCssVariables = (theme: ThemeConfig): Record<string, string> => {
     });
   }
 
+  /* |---------------------------------------------------------------| */
+  /* |                       Components                              | */
+  /* |---------------------------------------------------------------| */
+
+  // Button Overrides
+  if (theme.components?.Button?.styleOverrides?.root?.borderRadius) {
+    cssVars[`--${prefix}-component-button-root-borderRadius`] =
+      theme.components.Button.styleOverrides.root.borderRadius;
+  }
+
+  // Field Overrides (Parent of `TextField`, `DatePicker`, `OtpField`, `Select`, etc.)
+  if (theme.components?.Field?.styleOverrides?.root?.borderRadius) {
+    cssVars[`--${prefix}-component-field-root-borderRadius`] = theme.components.Field.styleOverrides.root.borderRadius;
+  }
+
   return cssVars;
 };
 
 const toThemeVars = (theme: ThemeConfig): ThemeVars => {
   const prefix = theme.cssVarPrefix || VendorConstants.VENDOR_PREFIX;
+
+  const componentVars: ThemeVars['components'] = {};
+  if (theme.components?.Button?.styleOverrides?.root?.borderRadius) {
+    componentVars.Button = {
+      root: {
+        borderRadius: `var(--${prefix}-component-button-root-borderRadius)`,
+      },
+    };
+  }
+  if (theme.components?.Field?.styleOverrides?.root?.borderRadius) {
+    componentVars.Field = {
+      root: {
+        borderRadius: `var(--${prefix}-component-field-root-borderRadius)`,
+      },
+    };
+  }
 
   const themeVars: ThemeVars = {
     colors: {
@@ -538,6 +587,10 @@ const toThemeVars = (theme: ThemeConfig): ThemeVars => {
         alt: imageConfig?.alt ? `var(--${prefix}-image-${imageKey}-alt)` : undefined,
       };
     });
+  }
+
+  if (Object.keys(componentVars).length > 0) {
+    themeVars.components = componentVars;
   }
 
   return themeVars;

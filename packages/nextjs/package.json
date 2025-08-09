@@ -1,6 +1,6 @@
 {
   "name": "@asgardeo/nextjs",
-  "version": "0.1.13",
+  "version": "0.1.17",
   "description": "Next.js implementation of Asgardeo JavaScript SDK.",
   "keywords": [
     "asgardeo",
@@ -8,9 +8,9 @@
     "react",
     "ssr"
   ],
-  "homepage": "https://github.com/asgardeo/web-ui-sdks/tree/main/packages/next#readme",
+  "homepage": "https://github.com/asgardeo/javascript/tree/main/packages/next#readme",
   "bugs": {
-    "url": "https://github.com/asgardeo/web-ui-sdks/issues"
+    "url": "https://github.com/asgardeo/javascript/issues"
   },
   "author": "WSO2",
   "license": "Apache-2.0",
@@ -38,7 +38,7 @@
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/asgardeo/web-ui-sdks",
+    "url": "https://github.com/asgardeo/javascript",
     "directory": "packages/next"
   },
   "scripts": {

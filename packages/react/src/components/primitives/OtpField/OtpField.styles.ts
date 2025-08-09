@@ -54,7 +54,7 @@ const useStyles = (
       font-size: ${theme.vars.typography.fontSizes.xl};
       font-weight: 500;
       border: 2px solid ${hasError ? theme.vars.colors.error.main : theme.vars.colors.border};
-      border-radius: ${theme.vars.borderRadius.medium};
+      border-radius: ${theme.vars.components?.Field?.root?.borderRadius || theme.vars.borderRadius.medium};
       color: ${theme.vars.colors.text.primary};
       background-color: ${disabled ? theme.vars.colors.background.disabled : theme.vars.colors.background.surface};
       outline: none;

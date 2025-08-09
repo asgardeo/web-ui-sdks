@@ -20,6 +20,39 @@ import {I18nBundle} from './i18n';
 import {RecursivePartial} from './utility-types';
 import {ThemeConfig, ThemeMode} from '../theme/types';
 
+/**
+ * Interface representing the additional parameters to be sent in the sign-in request.
+ * This can include custom parameters that your authorization server supports.
+ * These parameters will be included in the authorization request sent to the server.
+ * If not provided, no additional parameters will be sent.
+ *
+ * @example
+ * signInOptions: { prompt: "login", fidp: "OrganizationSSO" }
+ */
+export type SignInOptions = Record<string, any>;
+
+/**
+ * Interface representing the additional parameters to be sent in the sign-out request.
+ * This can include custom parameters that your authorization server supports.
+ * These parameters will be included in the sign-out request sent to the server.
+ * If not provided, no additional parameters will be sent.
+ *
+ * @example
+ * signOutOptions: { idTokenHint: "your-id-token-hint" }
+ */
+export type SignOutOptions = Record<string, unknown>;
+
+/**
+ * Interface representing the additional parameters to be sent in the sign-up request.
+ * This can include custom parameters that your authorization server supports.
+ * These parameters will be included in the sign-up request sent to the server.
+ * If not provided, no additional parameters will be sent.
+ *
+ * @example
+ * signUpOptions: { appId: "your-app-id" }
+ */
+export type SignUpOptions = Record<string, unknown>;
+
 export interface BaseConfig<T = unknown> extends WithPreferences {
   /**
    * Optional URL where the authorization server should redirect after authentication.
@@ -134,6 +167,36 @@ export interface BaseConfig<T = unknown> extends WithPreferences {
       clockTolerance?: number;
     };
   };
+
+  /**
+   * Optional additional parameters to be sent in the authorize request.
+   * @see {@link SignInOptions} for more details.
+   */
+  signInOptions?: SignInOptions;
+
+  /**
+   * Optional additional parameters to be sent in the sign-out request.
+   * @see {@link SignOutOptions} for more details.
+   */
+  signOutOptions?: SignOutOptions;
+
+  /**
+   * Optional additional parameters to be sent in the sign-up request.
+   * @see {@link SignUpOptions} for more details.
+   */
+  signUpOptions?: SignUpOptions;
+
+  /**
+   * Flag to indicate whether the Application session should be synchronized with the IdP session.
+   * @remarks This uses the OIDC iframe base session management feature to keep the application session in sync with the IdP session.
+   * WARNING: This may not work in all browsers due to 3rd party cookie restrictions.
+   * It is recommended to use this feature only if you are aware of the implications and have tested it in your target browsers.
+   * If you are not sure, it is safer to leave this option as `false`.
+   * @example
+   * syncSession: true
+   * @see {@link https://openid.net/specs/openid-connect-session-management-1_0.html#IframeBasedSessionManagement}
+   */
+  syncSession?: boolean;
 }
 
 export interface WithPreferences {

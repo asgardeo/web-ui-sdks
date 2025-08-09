@@ -229,7 +229,7 @@ This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE
 
 - 📖 [Documentation](https://wso2.com/asgardeo/docs/sdks/react/)
 - 💬 [Community Forum](https://stackoverflow.com/questions/tagged/asgardeo)
-- 🐛 [Issues](https://github.com/asgardeo/web-ui-sdks/issues)
+- 🐛 [Issues](https://github.com/asgardeo/javascript/issues)
 
 ---
 

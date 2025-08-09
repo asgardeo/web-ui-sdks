@@ -1,15 +1,15 @@
 {
   "name": "@asgardeo/react",
-  "version": "0.5.12",
+  "version": "0.5.16",
   "description": "React implementation of Asgardeo JavaScript SDK.",
   "keywords": [
     "asgardeo",
     "react",
     "spa"
   ],
-  "homepage": "https://github.com/asgardeo/web-ui-sdks/tree/main/packages/react#readme",
+  "homepage": "https://github.com/asgardeo/javascript/tree/main/packages/react#readme",
   "bugs": {
-    "url": "https://github.com/asgardeo/web-ui-sdks/issues"
+    "url": "https://github.com/asgardeo/javascript/issues"
   },
   "author": "WSO2",
   "license": "Apache-2.0",
@@ -28,7 +28,7 @@
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/asgardeo/web-ui-sdks",
+    "url": "https://github.com/asgardeo/javascript",
     "directory": "packages/react"
   },
   "scripts": {

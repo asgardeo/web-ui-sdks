@@ -27,10 +27,7 @@ import {Organization} from './organization';
 import {User, UserProfile} from './user';
 import {TokenResponse} from './token';
 import {Storage} from './store';
-
-export type SignInOptions = Record<string, unknown>;
-export type SignOutOptions = Record<string, unknown>;
-export type SignUpOptions = Record<string, unknown>;
+import {SignInOptions, SignOutOptions, SignUpOptions} from './config';
 
 /**
  * Interface defining the core functionality for Asgardeo authentication clients.

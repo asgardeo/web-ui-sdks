@@ -21,7 +21,7 @@ import {useMemo} from 'react';
 import {Theme} from '@asgardeo/browser';
 
 export type ButtonColor = 'primary' | 'secondary' | 'tertiary' | string;
-export type ButtonVariant = 'solid' | 'outline' | 'text';
+export type ButtonVariant = 'solid' | 'outline' | 'text' | 'icon';
 export type ButtonSize = 'small' | 'medium' | 'large';
 
 /**
@@ -45,6 +45,7 @@ const useStyles = (
   fullWidth: boolean,
   disabled: boolean,
   loading: boolean,
+  shape: 'square' | 'round' = 'square',
 ) => {
   return useMemo(() => {
     const baseButton = css`
@@ -52,7 +53,9 @@ const useStyles = (
       align-items: center;
       justify-content: center;
       gap: calc(${theme.vars.spacing.unit} * 1);
-      border-radius: ${theme.vars.borderRadius.medium};
+      border-radius: ${shape === 'round'
+        ? '50%'
+        : theme.vars.components?.Button?.root?.borderRadius || theme.vars.borderRadius.medium};
       font-weight: 500;
       cursor: ${disabled || loading ? 'not-allowed' : 'pointer'};
       outline: none;
@@ -63,23 +66,52 @@ const useStyles = (
       font-family: inherit;
       border-width: 1px;
       border-style: solid;
+      ${variant === 'icon'
+        ? `
+        padding: 0;
+        min-width: unset;
+        min-height: unset;
+        width: ${
+          size === 'small'
+            ? `calc(${theme.vars.spacing.unit} * 3)`
+            : size === 'medium'
+            ? `calc(${theme.vars.spacing.unit} * 4)`
+            : `calc(${theme.vars.spacing.unit} * 5)`
+        };
+        height: ${
+          size === 'small'
+            ? `calc(${theme.vars.spacing.unit} * 3)`
+            : size === 'medium'
+            ? `calc(${theme.vars.spacing.unit} * 4)`
+            : `calc(${theme.vars.spacing.unit} * 5)`
+        };
+        justify-content: center;
+        align-items: center;
+      `
+        : ''}
     `;
 
     const sizeStyles = {
       small: css`
-        padding: calc(${theme.vars.spacing.unit} * 0.5) calc(${theme.vars.spacing.unit} * 1);
-        font-size: ${theme.vars.typography.fontSizes.sm};
-        min-height: calc(${theme.vars.spacing.unit} * 3);
+        ${variant === 'icon'
+          ? `font-size: ${theme.vars.typography.fontSizes.sm};`
+          : `padding: calc(${theme.vars.spacing.unit} * 0.5) calc(${theme.vars.spacing.unit} * 1);
+             font-size: ${theme.vars.typography.fontSizes.sm};
+             min-height: calc(${theme.vars.spacing.unit} * 3);`}
       `,
       medium: css`
-        padding: calc(${theme.vars.spacing.unit} * 1) calc(${theme.vars.spacing.unit} * 2);
-        font-size: ${theme.vars.typography.fontSizes.md};
-        min-height: calc(${theme.vars.spacing.unit} * 4);
+        ${variant === 'icon'
+          ? `font-size: ${theme.vars.typography.fontSizes.md};`
+          : `padding: calc(${theme.vars.spacing.unit} * 1) calc(${theme.vars.spacing.unit} * 2);
+             font-size: ${theme.vars.typography.fontSizes.md};
+             min-height: calc(${theme.vars.spacing.unit} * 4);`}
       `,
       large: css`
-        padding: calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 3);
-        font-size: ${theme.vars.typography.fontSizes.lg};
-        min-height: calc(${theme.vars.spacing.unit} * 5);
+        ${variant === 'icon'
+          ? `font-size: ${theme.vars.typography.fontSizes.lg};`
+          : `padding: calc(${theme.vars.spacing.unit} * 1.5) calc(${theme.vars.spacing.unit} * 3);
+             font-size: ${theme.vars.typography.fontSizes.lg};
+             min-height: calc(${theme.vars.spacing.unit} * 5);`}
       `,
     };
 
@@ -88,12 +120,10 @@ const useStyles = (
         background-color: ${theme.vars.colors.primary.main};
         color: ${theme.vars.colors.primary.contrastText};
         border-color: ${theme.vars.colors.primary.main};
-
         &:hover:not(:disabled) {
           background-color: ${theme.vars.colors.primary.main};
           opacity: 0.9;
         }
-
         &:active:not(:disabled) {
           background-color: ${theme.vars.colors.primary.main};
           opacity: 0.8;
@@ -103,12 +133,10 @@ const useStyles = (
         background-color: transparent;
         color: ${theme.vars.colors.primary.main};
         border-color: ${theme.vars.colors.primary.main};
-
         &:hover:not(:disabled) {
           background-color: ${theme.vars.colors.primary.main};
           color: ${theme.vars.colors.primary.contrastText};
         }
-
         &:active:not(:disabled) {
           background-color: ${theme.vars.colors.primary.main};
           color: ${theme.vars.colors.primary.contrastText};
@@ -119,25 +147,34 @@ const useStyles = (
         background-color: transparent;
         color: ${theme.vars.colors.primary.main};
         border-color: transparent;
-
         &:hover:not(:disabled) {
           background-color: ${theme.vars.colors.action.hover};
         }
-
         &:active:not(:disabled) {
           background-color: ${theme.vars.colors.action.selected};
+        }
+      `,
+      'primary-icon': css`
+        background-color: transparent;
+        color: ${theme.vars.colors.primary.main};
+        border-color: transparent;
+        &:hover:not(:disabled) {
+          background-color: ${theme.vars.colors.action.hover};
+          color: ${theme.vars.colors.primary.dark};
+        }
+        &:active:not(:disabled) {
+          background-color: ${theme.vars.colors.action.selected};
+          color: ${theme.vars.colors.primary.dark};
         }
       `,
       'secondary-solid': css`
         background-color: ${theme.vars.colors.secondary.main};
         color: ${theme.vars.colors.secondary.contrastText};
         border-color: ${theme.vars.colors.secondary.main};
-
         &:hover:not(:disabled) {
           background-color: ${theme.vars.colors.secondary.main};
           opacity: 0.9;
         }
-
         &:active:not(:disabled) {
           background-color: ${theme.vars.colors.secondary.main};
           opacity: 0.8;
@@ -147,12 +184,10 @@ const useStyles = (
         background-color: transparent;
         color: ${theme.vars.colors.secondary.main};
         border-color: ${theme.vars.colors.secondary.main};
-
         &:hover:not(:disabled) {
           background-color: ${theme.vars.colors.secondary.main};
           color: ${theme.vars.colors.secondary.contrastText};
         }
-
         &:active:not(:disabled) {
           background-color: ${theme.vars.colors.secondary.main};
           color: ${theme.vars.colors.secondary.contrastText};
@@ -163,25 +198,34 @@ const useStyles = (
         background-color: transparent;
         color: ${theme.vars.colors.secondary.main};
         border-color: transparent;
-
         &:hover:not(:disabled) {
           background-color: ${theme.vars.colors.action.hover};
         }
-
         &:active:not(:disabled) {
           background-color: ${theme.vars.colors.action.selected};
+        }
+      `,
+      'secondary-icon': css`
+        background-color: transparent;
+        color: ${theme.vars.colors.secondary.main};
+        border-color: transparent;
+        &:hover:not(:disabled) {
+          background-color: ${theme.vars.colors.action.hover};
+          color: ${theme.vars.colors.secondary.dark};
+        }
+        &:active:not(:disabled) {
+          background-color: ${theme.vars.colors.action.selected};
+          color: ${theme.vars.colors.secondary.dark};
         }
       `,
       'tertiary-solid': css`
         background-color: ${theme.vars.colors.text.secondary};
         color: ${theme.vars.colors.background.surface};
         border-color: ${theme.vars.colors.text.secondary};
-
         &:hover:not(:disabled) {
           background-color: ${theme.vars.colors.text.primary};
           color: ${theme.vars.colors.background.surface};
         }
-
         &:active:not(:disabled) {
           background-color: ${theme.vars.colors.text.primary};
           color: ${theme.vars.colors.background.surface};
@@ -192,12 +236,10 @@ const useStyles = (
         background-color: transparent;
         color: ${theme.vars.colors.text.secondary};
         border-color: ${theme.vars.colors.border};
-
         &:hover:not(:disabled) {
           background-color: ${theme.vars.colors.action.hover};
           border-color: ${theme.vars.colors.text.secondary};
         }
-
         &:active:not(:disabled) {
           background-color: ${theme.vars.colors.action.selected};
           border-color: ${theme.vars.colors.text.primary};
@@ -207,12 +249,23 @@ const useStyles = (
         background-color: transparent;
         color: ${theme.vars.colors.text.secondary};
         border-color: transparent;
-
         &:hover:not(:disabled) {
           background-color: ${theme.vars.colors.action.hover};
           color: ${theme.vars.colors.text.primary};
         }
-
+        &:active:not(:disabled) {
+          background-color: ${theme.vars.colors.action.selected};
+          color: ${theme.vars.colors.text.primary};
+        }
+      `,
+      'tertiary-icon': css`
+        background-color: transparent;
+        color: ${theme.vars.colors.text.secondary};
+        border-color: transparent;
+        &:hover:not(:disabled) {
+          background-color: ${theme.vars.colors.action.hover};
+          color: ${theme.vars.colors.text.primary};
+        }
         &:active:not(:disabled) {
           background-color: ${theme.vars.colors.action.selected};
           color: ${theme.vars.colors.text.primary};
@@ -252,7 +305,14 @@ const useStyles = (
             pointer-events: none;
           `
         : null,
+      shape:
+        shape === 'round'
+          ? css`
+              border-radius: 50%;
+            `
+          : null,
       spinner: spinnerStyles,
+      icon: iconStyles,
       startIcon: iconStyles,
       endIcon: iconStyles,
       content: contentStyles,
